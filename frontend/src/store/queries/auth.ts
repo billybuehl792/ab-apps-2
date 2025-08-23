@@ -1,0 +1,18 @@
+import { queryOptions } from "@tanstack/react-query";
+import api from "../config/api";
+import ROUTES from "../constants/routes";
+import type { User } from "../types";
+
+const me = () =>
+  queryOptions({
+    queryKey: ["auth", "me"],
+    initialData: null,
+    queryFn: async () => {
+      const res = await api.get<User>(ROUTES.AUTH.ME);
+      return res.data;
+    },
+  });
+
+export const authQueries = {
+  me,
+};

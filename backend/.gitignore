@@ -1,0 +1,38 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Python
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.Python
+
+# Migrations
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Test and coverage
+.coverage
+htmlcov/
+coverage.xml
+nosetests.xml
+test-results/
+
+# Other
+*.swp
+*.swo
+*.bak
