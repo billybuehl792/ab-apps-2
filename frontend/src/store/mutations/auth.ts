@@ -2,11 +2,12 @@ import { mutationOptions } from "@tanstack/react-query";
 import api from "../config/api";
 import ROUTES from "../constants/routes";
 import { authUtils } from "../utils/auth";
+import type { Credentials } from "../types";
 
-const authenticateUser = () =>
+const setTokens = () =>
   mutationOptions({
-    mutationKey: ["authenticateUser"],
-    mutationFn: async (credentials: { username: string; password: string }) => {
+    mutationKey: ["tokens"],
+    mutationFn: async (credentials: Credentials) => {
       const res = await api.post<{ access: string; refresh: string }>(
         ROUTES.AUTH.TOKEN,
         credentials
@@ -34,6 +35,6 @@ const refreshAuthTokens = () =>
   });
 
 export const authMutations = {
-  authenticateUser,
+  setTokens,
   refreshAuthTokens,
 };

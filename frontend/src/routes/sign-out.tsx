@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sign-out")({
   }),
   beforeLoad: async ({ context, search }) => {
     context.auth.signOut();
-    await queryUtils.delay(1000);
+    await queryUtils.delay(300);
     throw redirect({ to: "/sign-in", replace: true, search });
   },
   pendingComponent: () => <StatusCard loading description="Signing out..." />,

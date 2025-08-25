@@ -1,14 +1,15 @@
 import { createContext } from "react";
-import { type UseMutationResult } from "@tanstack/react-query";
-import { User } from "../types";
+import type { Credentials, User } from "../types";
 
 export default createContext<{
   user: User | null;
-  signIn: UseMutationResult<
-    { access: string; refresh: string },
-    Error,
-    { username: string; password: string }
-  >;
+  signIn: (
+    credentials: Credentials,
+    options?: {
+      onSuccess?: (user: User) => void;
+      onError?: (error: Error) => void;
+    }
+  ) => Promise<User>;
   signOut: VoidFunction;
 }>({
   user: null,

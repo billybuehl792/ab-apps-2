@@ -16,7 +16,7 @@ export const Route = createFileRoute("/sign-in")({
   beforeLoad: ({ context, search }) => {
     const isAuthenticated = !!context.auth.user;
     if (isAuthenticated)
-      redirect({ to: search.redirect ?? "/", replace: true, throw: true });
+      throw redirect({ to: search.redirect ?? "/", replace: true });
   },
   component: RouteComponent,
 });
@@ -36,7 +36,7 @@ function RouteComponent() {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
-    auth.signIn.mutate(
+    auth.signIn(
       { username, password },
       { onSuccess: () => router.invalidate() }
     );

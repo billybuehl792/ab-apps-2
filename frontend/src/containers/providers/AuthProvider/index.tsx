@@ -6,12 +6,13 @@ import {
   useCallback,
 } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import AuthContext from "../../../store/context/AuthContext";
+import { CircularProgress, Typography } from "@mui/material";
+import AuthContext from "@/store/context/AuthContext";
+import FullScreen from "@/components/layout/FullScreen";
 import { authUtils } from "@/store/utils/auth";
 import { authQueries } from "@/store/queries/auth";
 import { authMutations } from "@/store/mutations/auth";
-import FullScreen from "@/components/layout/FullScreen";
-import { CircularProgress, Typography } from "@mui/material";
+import { queryUtils } from "@/store/utils/queries";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] =
@@ -24,9 +25,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   /** Mutations */
 
-  const signIn: ContextType<typeof AuthContext>["signIn"] = useMutation(
-    authMutations.authenticateUser()
-  );
+  const setTokensMutation = useMutation(authMutations.setTokens());
 
   /** Callbacks */
 
@@ -37,25 +36,43 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       queryClient.clear();
     }, [queryClient]);
 
-  const handleFetchMe = useCallback(() => {
+  const handleFetchMeUser = useCallback(async () => {
     setLoading(true);
-    queryClient
-      .fetchQuery(authQueries.me())
-      .then((res) => setUser(res))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, [queryClient]);
+    try {
+      const authToken = authUtils.getAccessToken();
+      if (!authToken) throw new Error("User is not authenticated");
+
+      const user = await queryClient.fetchQuery(authQueries.me());
+      setUser(user);
+      await queryUtils.delay(300);
+
+      return user;
+    } catch (error) {
+      signOut();
+      throw error as Error;
+    } finally {
+      setLoading(false);
+    }
+  }, [queryClient, signOut]);
+
+  const signIn: ContextType<typeof AuthContext>["signIn"] = async (
+    credentials,
+    options
+  ) => {
+    try {
+      await setTokensMutation.mutateAsync(credentials);
+      return await handleFetchMeUser();
+    } catch (error) {
+      options?.onError?.(error as Error);
+      throw error;
+    }
+  };
 
   /** Effects */
 
   useEffect(() => {
-    if (authUtils.getAccessToken()) handleFetchMe();
-    else signOut();
-  }, [handleFetchMe, signOut]);
-
-  useEffect(() => {
-    if (signIn.isSuccess) handleFetchMe();
-  }, [signIn.isSuccess, handleFetchMe]);
+    handleFetchMeUser();
+  }, [handleFetchMeUser]);
 
   return (
     <AuthContext value={{ user, signIn, signOut }}>

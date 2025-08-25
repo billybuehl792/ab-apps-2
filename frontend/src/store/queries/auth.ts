@@ -6,7 +6,6 @@ import type { User } from "../types";
 const me = () =>
   queryOptions({
     queryKey: ["auth", "me"],
-    initialData: null,
     queryFn: async () => {
       const res = await api.get<User>(ROUTES.AUTH.ME);
       return res.data;
