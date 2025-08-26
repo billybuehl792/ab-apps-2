@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import api from "../config/api";
+import api from "../api";
 import ROUTES from "../constants/routes";
 import type { Client } from "../types";
 

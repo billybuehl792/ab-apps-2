@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import api from "../config/api";
+import api from "../api";
 import ROUTES from "../constants/routes";
 import { authUtils } from "../utils/auth";
 import type { Credentials } from "../types";
