@@ -4,37 +4,44 @@ import ROUTES from "../constants/routes";
 import { authUtils } from "../utils/auth";
 import type { Credentials } from "../types";
 
-const setTokens = () =>
+const signIn = () =>
   mutationOptions({
-    mutationKey: ["tokens"],
+    mutationKey: ["accessToken"],
     mutationFn: async (credentials: Credentials) => {
-      const res = await api.post<{ access: string; refresh: string }>(
+      const res = await api.post<{ access: string }>(
         ROUTES.AUTH.TOKEN,
         credentials
       );
-
-      authUtils.setTokens(res.data);
+      authUtils.setAccessToken(res.data.access);
 
       return res.data;
     },
   });
 
-const refreshAuthTokens = () =>
+const signOut = () =>
   mutationOptions({
-    mutationKey: ["refreshAuthTokens"],
-    mutationFn: async (body: { refresh: string }) => {
-      const res = await api.post<{ access: string }>(
-        ROUTES.AUTH.TOKEN_REFRESH,
-        body
-      );
+    mutationKey: ["signOut"],
+    mutationFn: async () => {
+      const res = await api.post<{ detail: string }>(ROUTES.AUTH.SIGN_OUT);
+      authUtils.setAccessToken(null);
 
-      authUtils.setTokens(res.data);
+      return res.data;
+    },
+  });
+
+const refreshAccessToken = () =>
+  mutationOptions({
+    mutationKey: ["refreshToken"],
+    mutationFn: async () => {
+      const res = await api.post<{ access: string }>(ROUTES.AUTH.TOKEN_REFRESH);
+      authUtils.setAccessToken(res.data.access);
 
       return res.data;
     },
   });
 
 export const authMutations = {
-  setTokens,
-  refreshAuthTokens,
+  signIn,
+  signOut,
+  refreshAccessToken,
 };

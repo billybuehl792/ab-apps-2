@@ -3,21 +3,16 @@ import {
   useEffect,
   useState,
   type PropsWithChildren,
-  useCallback,
 } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircularProgress, Typography } from "@mui/material";
+import { authMutations } from "@/store/mutations/auth";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
-import { authUtils } from "@/store/utils/auth";
-import { authQueries } from "@/store/queries/auth";
-import { authMutations } from "@/store/mutations/auth";
 import { queryUtils } from "@/store/utils/queries";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] =
-    useState<ContextType<typeof AuthContext>["user"]>(null);
-  const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   /** Values */
 
@@ -25,62 +20,54 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   /** Mutations */
 
-  const setTokensMutation = useMutation(authMutations.setTokens());
+  const signInMutation = useMutation(authMutations.signIn());
+  const signOutMutation = useMutation(authMutations.signOut());
+  const refreshTokenMutation = useMutation(authMutations.refreshAccessToken());
 
   /** Callbacks */
 
-  const signOut: ContextType<typeof AuthContext>["signOut"] =
-    useCallback(() => {
-      authUtils.revokeTokens();
-      setUser(null);
-      queryClient.clear();
-    }, [queryClient]);
-
-  const handleFetchMeUser = useCallback(async () => {
-    setLoading(true);
-    try {
-      const authToken = authUtils.getAccessToken();
-      if (!authToken) throw new Error("User is not authenticated");
-
-      const user = await queryClient.fetchQuery(authQueries.me());
-      setUser(user);
-      await queryUtils.delay(300);
-
-      return user;
-    } catch (error) {
-      signOut();
-      throw error as Error;
-    } finally {
-      setLoading(false);
-    }
-  }, [queryClient, signOut]);
-
   const signIn: ContextType<typeof AuthContext>["signIn"] = async (
-    credentials,
-    options
+    credentials
   ) => {
-    try {
-      await setTokensMutation.mutateAsync(credentials);
-      return await handleFetchMeUser();
-    } catch (error) {
-      options?.onError?.(error as Error);
-      throw error;
-    }
+    await signInMutation.mutateAsync(credentials, {
+      onSuccess: () => setIsAuthenticated(true),
+    });
+    await queryUtils.delay(500); // Allow auth state to propagate to router
+  };
+
+  const signOut: ContextType<typeof AuthContext>["signOut"] = async () => {
+    await signOutMutation.mutateAsync(undefined, {
+      onSuccess: () => {
+        setIsAuthenticated(false);
+        queryClient.clear();
+      },
+    });
+    await queryUtils.delay(500); // Allow auth state to propagate to router
   };
 
   /** Effects */
 
   useEffect(() => {
-    handleFetchMeUser();
-  }, [handleFetchMeUser]);
+    refreshTokenMutation.mutate(undefined, {
+      onSuccess: () => setIsAuthenticated(true),
+      onError: () => setIsAuthenticated(false),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <AuthContext value={{ user, signIn, signOut }}>
-      {loading ? (
+    <AuthContext
+      value={{
+        isAuthenticated,
+        signIn,
+        signOut,
+      }}
+    >
+      {refreshTokenMutation.isPending ? (
         <FullScreen>
           <CircularProgress color="inherit" />
           <Typography variant="caption" color="inherit">
-            Loading user...
+            Loading auth state...
           </Typography>
         </FullScreen>
       ) : (

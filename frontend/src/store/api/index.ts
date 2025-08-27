@@ -2,9 +2,11 @@ import axios from "axios";
 import ROUTES from "../constants/routes";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
+import { authMutations } from "../mutations/auth";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
@@ -20,28 +22,30 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
     let error = requestError;
 
-    if (requestError.response?.status === 401 && !originalRequest._retry) {
+    if (
+      !Object.values(ROUTES.AUTH).includes(originalRequest.url) &&
+      requestError.response?.status === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
-      const refreshToken = authUtils.getRefreshToken();
+      try {
+        const refreshAccessTokenResult = await authMutations
+          .refreshAccessToken()
+          .mutationFn?.call(undefined);
 
-      if (refreshToken) {
-        try {
-          const res = await axios.post(ROUTES.AUTH.TOKEN_REFRESH, {
-            refresh: refreshToken,
-          });
-          const { access, refresh } = res.data;
+        if (!refreshAccessTokenResult)
+          throw new Error("No access token returned");
 
-          authUtils.setTokens({ access, refresh });
-          originalRequest.headers.Authorization = `Bearer ${access}`;
+        authUtils.setAccessToken(refreshAccessTokenResult.access);
+        originalRequest.headers.Authorization = `Bearer ${refreshAccessTokenResult.access}`;
 
-          return api(originalRequest);
-        } catch (refreshErr) {
-          error = refreshErr;
-        }
+        return api(originalRequest);
+      } catch (refreshErr) {
+        error = refreshErr;
       }
 
-      authUtils.revokeTokens();
+      authUtils.setAccessToken(null);
 
       const pathname = router.state.location.pathname;
       const search = ["/", "/sign-in", "/sign-out"].includes(pathname)

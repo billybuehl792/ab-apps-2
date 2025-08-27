@@ -1,16 +1,20 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Stack, Typography } from "@mui/material";
 import ProfileProvider from "@/containers/providers/ProfileProvider";
+import { profileQueries } from "@/store/queries/profile";
 
 export const Route = createFileRoute("/app")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.user)
+  beforeLoad: async ({ context, location }) => {
+    if (!context.auth.isAuthenticated)
       throw redirect({
         to: "/sign-in",
         search: { redirect: location.href },
         replace: true,
       });
-    return { user: context.auth.user };
+
+    const me = await context.queryClient.ensureQueryData(profileQueries.me());
+
+    return { me };
   },
   component: RouteComponent,
 });
@@ -18,12 +22,12 @@ export const Route = createFileRoute("/app")({
 function RouteComponent() {
   /** Values */
 
-  const { user } = Route.useRouteContext();
+  const { me } = Route.useRouteContext();
 
   return (
-    <ProfileProvider me={user}>
+    <ProfileProvider me={me}>
       <Stack spacing={2}>
-        <Typography variant="h6">Current User: {user.username}</Typography>
+        <Typography variant="h6">Current User: {me.username}</Typography>
         <Outlet />
       </Stack>
     </ProfileProvider>

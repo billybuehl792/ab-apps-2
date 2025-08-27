@@ -3,9 +3,12 @@ const API_URL = BASE_URL + "/api";
 
 const ROUTES = {
   AUTH: {
-    TOKEN: `${BASE_URL}/token/`,
-    TOKEN_REFRESH: `${BASE_URL}/token/refresh/`,
-    ME: `${BASE_URL}/me/`,
+    TOKEN: `${API_URL}/account/token/`,
+    TOKEN_REFRESH: `${API_URL}/account/token/refresh/`,
+    SIGN_OUT: `${API_URL}/account/sign-out/`,
+  },
+  PROFILE: {
+    ME: `${API_URL}/account/me/`,
   },
   CLIENTS: {
     LIST: `${API_URL}/clients/`,

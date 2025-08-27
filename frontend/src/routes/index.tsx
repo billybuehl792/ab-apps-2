@@ -15,8 +15,11 @@ function RouteComponent() {
     <Stack spacing={2}>
       <Stack>
         <Typography variant="body1">Home</Typography>
-        <Typography variant="caption">
-          Current User: {auth.user?.username ?? "(none)"}
+        <Typography
+          variant="caption"
+          color={auth.isAuthenticated ? "success" : "error"}
+        >
+          Authenticated: {auth.isAuthenticated ? "True" : "False"}
         </Typography>
       </Stack>
       <Stack direction="row" spacing={2}>

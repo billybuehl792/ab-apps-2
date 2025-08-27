@@ -12,6 +12,7 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
     { id: "home", link: { to: "/" }, label: "Home" },
     { id: "app", link: { to: "/app" }, label: "App" },
     { id: "clients", link: { to: "/app/clients" }, label: "Clients" },
+    { id: "user", link: { to: "/app/user" }, label: "User" },
     { id: "sign-in", link: { to: "/sign-in" }, label: "Sign In" },
     { id: "sign-out", link: { to: "/sign-out" }, label: "Sign Out" },
   ];

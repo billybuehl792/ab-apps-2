@@ -5,13 +5,14 @@ import type { User } from "../types";
 
 const me = () =>
   queryOptions({
-    queryKey: ["auth", "me"],
+    queryKey: ["profile", "me"],
     queryFn: async () => {
-      const res = await api.get<User>(ROUTES.AUTH.ME);
+      const res = await api.get<User>(ROUTES.PROFILE.ME);
+
       return res.data;
     },
   });
 
-export const authQueries = {
+export const profileQueries = {
   me,
 };

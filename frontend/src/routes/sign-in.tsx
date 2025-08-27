@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import {
   Button,
   Card,
   CardContent,
+  FormHelperText,
   Stack,
   TextField,
   Typography,
@@ -14,14 +16,16 @@ export const Route = createFileRoute("/sign-in")({
     redirect: (search.redirect as string) || undefined,
   }),
   beforeLoad: ({ context, search }) => {
-    const isAuthenticated = !!context.auth.user;
-    if (isAuthenticated)
+    if (context.auth.isAuthenticated)
       throw redirect({ to: search.redirect ?? "/", replace: true });
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   /** Values */
 
   const auth = useAuth();
@@ -31,15 +35,19 @@ function RouteComponent() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    event.stopPropagation();
+
     const formData = new FormData(event.currentTarget);
 
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
-    auth.signIn(
-      { username, password },
-      { onSuccess: () => router.invalidate() }
-    );
+    setSubmitting(true);
+    auth
+      .signIn({ username, password })
+      .then(() => router.invalidate())
+      .catch((error) => setError(error.message))
+      .finally(() => setSubmitting(false));
   };
 
   return (
@@ -63,7 +71,13 @@ function RouteComponent() {
               fullWidth
               required
             />
-            <Button type="submit" variant="outlined" color="primary">
+            {!!error && <FormHelperText error>{error}</FormHelperText>}
+            <Button
+              type="submit"
+              variant="outlined"
+              color="primary"
+              loading={submitting}
+            >
               Sign In
             </Button>
           </Stack>
