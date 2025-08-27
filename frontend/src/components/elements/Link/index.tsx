@@ -10,13 +10,14 @@ interface LinkProps
   extends Omit<LinkComponentProps, "children" | "color">,
     Omit<MuiLinkProps, "href" | "target"> {
   label: ReactNode;
+  active?: boolean;
 }
 
-const Link = ({ label, ...props }: LinkProps) => {
+const Link = ({ label, active, ...props }: LinkProps) => {
   /** Values */
 
   const location = useLocation();
-  const isActive = props.to === location.pathname;
+  const isActive = active || props.to === location.pathname;
 
   return (
     <MuiLink

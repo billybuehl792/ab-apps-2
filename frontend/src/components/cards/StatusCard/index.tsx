@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import { type ReactNode } from "react";
 import {
   Card,
   CardContent,
@@ -11,11 +11,11 @@ import {
 import { ErrorOutline } from "@mui/icons-material";
 
 interface StatusCardProps extends Omit<CardProps, "content"> {
-  loading?: boolean | string | JSX.Element;
-  error?: boolean | string | Error | JSX.Element;
-  content?: JSX.Element | string;
-  description?: JSX.Element | string;
-  icon?: JSX.Element;
+  loading?: boolean | string | ReactNode;
+  error?: boolean | string | Error | ReactNode;
+  content?: ReactNode | string;
+  description?: ReactNode | string;
+  icon?: ReactNode;
 }
 
 const StatusCard = ({
@@ -51,7 +51,7 @@ const StatusCard = ({
 
   const DescriptionComponent =
     typeof description === "string" ? (
-      <Typography variant="caption">{description}</Typography>
+      <Typography variant="body2">{description}</Typography>
     ) : (
       description
     );
@@ -67,7 +67,7 @@ const StatusCard = ({
     <Card variant="outlined" {...props}>
       <CardContent
         component={Stack}
-        spacing={1}
+        spacing={2}
         alignItems="center"
         minWidth={420}
       >

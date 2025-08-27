@@ -1,5 +1,5 @@
 import axios from "axios";
-import ROUTES from "../constants/routes";
+import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
 import { authMutations } from "../mutations/auth";
@@ -22,8 +22,14 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
     let error = requestError;
 
+    const authRoutes = [
+      endpoints.auth.token(),
+      endpoints.auth.tokenRefresh(),
+      endpoints.auth.signOut(),
+    ];
+
     if (
-      !Object.values(ROUTES.AUTH).includes(originalRequest.url) &&
+      !authRoutes.includes(originalRequest.url) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {

@@ -16,6 +16,7 @@ export interface Place {
   address: string;
   place_id: string;
 }
+
 export interface Client {
   id: string;
   first_name: string;

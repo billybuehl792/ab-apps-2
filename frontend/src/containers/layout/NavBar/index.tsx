@@ -33,8 +33,9 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
             color="primary.contrastText"
             underline="none"
             fontWeight={600}
+            noWrap
           />
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} flexShrink={0}>
             {items.map((item) => (
               <Link
                 key={item.id}

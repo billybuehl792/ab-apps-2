@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppUserRouteImport } from './routes/app/user'
 import { Route as AppClientsRouteImport } from './routes/app/clients'
 import { Route as AppClientsIndexRouteImport } from './routes/app/clients/index'
+import { Route as AppClientsCreateRouteImport } from './routes/app/clients/create'
 import { Route as AppClientsIdRouteImport } from './routes/app/clients/$id'
 
 const SignOutRoute = SignOutRouteImport.update({
@@ -53,6 +54,11 @@ const AppClientsIndexRoute = AppClientsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppClientsRoute,
 } as any)
+const AppClientsCreateRoute = AppClientsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AppClientsRoute,
+} as any)
 const AppClientsIdRoute = AppClientsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/app/clients': typeof AppClientsRouteWithChildren
   '/app/user': typeof AppUserRoute
   '/app/clients/$id': typeof AppClientsIdRoute
+  '/app/clients/create': typeof AppClientsCreateRoute
   '/app/clients/': typeof AppClientsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/sign-out': typeof SignOutRoute
   '/app/user': typeof AppUserRoute
   '/app/clients/$id': typeof AppClientsIdRoute
+  '/app/clients/create': typeof AppClientsCreateRoute
   '/app/clients': typeof AppClientsIndexRoute
 }
 export interface FileRoutesById {
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/app/clients': typeof AppClientsRouteWithChildren
   '/app/user': typeof AppUserRoute
   '/app/clients/$id': typeof AppClientsIdRoute
+  '/app/clients/create': typeof AppClientsCreateRoute
   '/app/clients/': typeof AppClientsIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/app/clients'
     | '/app/user'
     | '/app/clients/$id'
+    | '/app/clients/create'
     | '/app/clients/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/sign-out'
     | '/app/user'
     | '/app/clients/$id'
+    | '/app/clients/create'
     | '/app/clients'
   id:
     | '__root__'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/app/clients'
     | '/app/user'
     | '/app/clients/$id'
+    | '/app/clients/create'
     | '/app/clients/'
   fileRoutesById: FileRoutesById
 }
@@ -179,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientsIndexRouteImport
       parentRoute: typeof AppClientsRoute
     }
+    '/app/clients/create': {
+      id: '/app/clients/create'
+      path: '/create'
+      fullPath: '/app/clients/create'
+      preLoaderRoute: typeof AppClientsCreateRouteImport
+      parentRoute: typeof AppClientsRoute
+    }
     '/app/clients/$id': {
       id: '/app/clients/$id'
       path: '/$id'
@@ -191,11 +210,13 @@ declare module '@tanstack/react-router' {
 
 interface AppClientsRouteChildren {
   AppClientsIdRoute: typeof AppClientsIdRoute
+  AppClientsCreateRoute: typeof AppClientsCreateRoute
   AppClientsIndexRoute: typeof AppClientsIndexRoute
 }
 
 const AppClientsRouteChildren: AppClientsRouteChildren = {
   AppClientsIdRoute: AppClientsIdRoute,
+  AppClientsCreateRoute: AppClientsCreateRoute,
   AppClientsIndexRoute: AppClientsIndexRoute,
 }
 

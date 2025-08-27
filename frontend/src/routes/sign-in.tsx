@@ -35,16 +35,15 @@ function RouteComponent() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    event.stopPropagation();
 
     const formData = new FormData(event.currentTarget);
 
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-
     setSubmitting(true);
     auth
-      .signIn({ username, password })
+      .signIn({
+        username: formData.get("username") as string,
+        password: formData.get("password") as string,
+      })
       .then(() => router.invalidate())
       .catch((error) => setError(error.message))
       .finally(() => setSubmitting(false));

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Skeleton, Stack, Typography } from "@mui/material";
-import { profileQueries } from "@/store/queries/profile";
+import { authQueries } from "@/store/queries/auth";
 
 export const Route = createFileRoute("/app/user")({
   component: RouteComponent,
@@ -14,7 +14,7 @@ function RouteComponent() {
 
   /** Queries */
 
-  const meQuery = useQuery(profileQueries.me());
+  const meQuery = useQuery(authQueries.me());
 
   /** Callbacks */
 

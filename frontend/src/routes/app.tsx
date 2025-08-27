@@ -1,7 +1,9 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Stack, Typography } from "@mui/material";
+import { authQueries } from "@/store/queries/auth";
 import ProfileProvider from "@/containers/providers/ProfileProvider";
-import { profileQueries } from "@/store/queries/profile";
+import StatusCard from "@/components/cards/StatusCard";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async ({ context, location }) => {
@@ -11,23 +13,23 @@ export const Route = createFileRoute("/app")({
         search: { redirect: location.href },
         replace: true,
       });
-
-    const me = await context.queryClient.ensureQueryData(profileQueries.me());
-
-    return { me };
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  /** Values */
+  /** Queries */
 
-  const { me } = Route.useRouteContext();
+  const meQuery = useQuery(authQueries.me());
 
+  if (!meQuery.isSuccess)
+    return <StatusCard loading={meQuery.isLoading} error={meQuery.error} />;
   return (
-    <ProfileProvider me={me}>
+    <ProfileProvider me={meQuery.data}>
       <Stack spacing={2}>
-        <Typography variant="h6">Current User: {me.username}</Typography>
+        <Typography variant="h6">
+          Current User: {meQuery.data.username}
+        </Typography>
         <Outlet />
       </Stack>
     </ProfileProvider>
