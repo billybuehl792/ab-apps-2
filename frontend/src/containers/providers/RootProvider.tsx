@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material";
 import RouterProvider from "./RouterProvider";
 import AuthProvider from "./AuthProvider";
 import ConfirmProvider from "./ConfirmProvider";
+import MenuProvider from "./MenuProvider";
 import { theme } from "@/store/config/theme";
 
 const RootProvider = ({ children }: PropsWithChildren) => {
@@ -15,9 +16,11 @@ const RootProvider = ({ children }: PropsWithChildren) => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <ConfirmProvider>
-          <AuthProvider>
-            <RouterProvider>{children}</RouterProvider>
-          </AuthProvider>
+          <MenuProvider>
+            <AuthProvider>
+              <RouterProvider>{children}</RouterProvider>
+            </AuthProvider>
+          </MenuProvider>
         </ConfirmProvider>
       </ThemeProvider>
     </QueryClientProvider>

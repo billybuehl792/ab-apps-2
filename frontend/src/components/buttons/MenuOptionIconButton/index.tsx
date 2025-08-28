@@ -1,40 +1,31 @@
-import { useState } from "react";
 import { IconButton, type IconButtonProps } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
-import MenuOptionModal from "@/components/modals/MenuOptionModal";
+import useMenu from "@/store/hooks/useMenu";
+import { type MenuOptions } from "@/components/modals/MenuOptionModal";
 
-interface MenuOptionIconButtonProps extends IconButtonProps {
-  options: MenuOption[];
-}
+type MenuOptionIconButtonProps = IconButtonProps & MenuOptions;
 
 const MenuOptionIconButton = ({
+  title,
   options,
+  disableCloseOnSelect,
+  variant,
   ...props
 }: MenuOptionIconButtonProps) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   /** Values */
+
+  const menu = useMenu();
 
   /** Callbacks */
 
   const handleOpen: IconButtonProps["onClick"] = (event) => {
-    setAnchorEl(event.currentTarget);
+    menu.open({ title, options, disableCloseOnSelect, variant }, event);
   };
 
-  const handleClose = () => setAnchorEl(null);
-
   return (
-    <>
-      <IconButton component="span" onClick={handleOpen} {...props}>
-        <MoreVert />
-      </IconButton>
-      <MenuOptionModal
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        options={options}
-        onClose={handleClose}
-      />
-    </>
+    <IconButton component="span" onClick={handleOpen} {...props}>
+      <MoreVert />
+    </IconButton>
   );
 };
 

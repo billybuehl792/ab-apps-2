@@ -1,5 +1,6 @@
 import {
   createFileRoute,
+  type LinkOptions,
   Outlet,
   useChildMatches,
 } from "@tanstack/react-router";
@@ -17,18 +18,21 @@ function RouteComponent() {
 
   const matches = useChildMatches();
 
-  const isRoot = matches.some((m) => m.routeId === "/app/clients/");
-  const clientId = matches.find((m) => m.routeId === "/app/clients/$id")?.params
-    .id;
+  const rootMatch = matches.some((m) => m.routeId === "/app/clients/");
+  const detailMatch = matches.find((m) => m.routeId === "/app/clients/$id");
 
-  const crumbs: MenuOption[] = [
-    { id: "clients", label: "Clients", link: { to: "/app/clients" } },
+  const crumbs = [
+    {
+      id: "clients",
+      label: "Clients",
+      link: { to: "/app/clients" } as LinkOptions,
+    },
     ...matches
       .filter((m) => !!m.loaderData?.crumb)
       .map((m) => ({
         id: m.id,
         label: m.loaderData?.crumb ?? "",
-        link: { to: m.pathname } as MenuOption["link"],
+        link: { to: m.pathname } as LinkOptions,
       })),
   ];
 
@@ -40,8 +44,10 @@ function RouteComponent() {
             <Link id={crumb.id} label={crumb.label} {...crumb.link} />
           ))}
         </Breadcrumbs>
-        {isRoot && <Link to="/app/clients/create" label="Create" />}
-        {!!clientId && <ClientMenuOptionIconButton client={clientId} />}
+        {!!rootMatch && <Link to="/app/clients/create" label="Create" />}
+        {!!detailMatch && (
+          <ClientMenuOptionIconButton client={detailMatch.params.id} />
+        )}
       </Stack>
       <Outlet />
     </Stack>

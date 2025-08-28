@@ -37,14 +37,14 @@ declare global {
     color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
     tooltip?: ReactNode;
     disableCloseOnSelect?: boolean;
-    link?: LinkOptions;
     onClick?: VoidFunction;
   }
 
   interface ListItem
     extends Omit<MenuOption, "color" | "disableCloseOnSelect"> {
-    items?: ListItem[];
+    link?: LinkOptions;
     expanded?: boolean;
+    items?: ListItem[];
   }
 
   interface String {

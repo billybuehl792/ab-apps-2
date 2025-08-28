@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -27,8 +28,8 @@ interface ConfirmDialogProps
 }
 
 const ConfirmDialog = ({
-  title,
-  description,
+  title = "Confirm",
+  description = "Are you sure you want to continue?",
   content,
   confirmButtonText,
   cancelButtonText,
@@ -48,13 +49,26 @@ const ConfirmDialog = ({
         component={Stack}
         direction="row"
         justifyContent="space-between"
+        alignItems="center"
       >
-        {title}
-        {!!onClose && <CloseIconButton onClick={onClose} />}
+        <Box
+          component="span"
+          sx={{
+            flex: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {title}
+        </Box>
+        {!!onClose && (
+          <CloseIconButton onClick={onClose} sx={{ flexShrink: 0 }} />
+        )}
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {description ?? "Are you sure you want to continue?"}
+          {description}
         </DialogContentText>
         {typeof content === "string" ? (
           <DialogContentText>{content}</DialogContentText>

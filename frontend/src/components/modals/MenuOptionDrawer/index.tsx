@@ -1,16 +1,15 @@
 import { type ComponentProps } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { MenuList, useMediaQuery } from "@mui/material";
 import MenuOptionMenuItem from "@/components/menu-items/MenuOptionMenuItem";
 import Drawer from "@/components/modals/Drawer";
+import type { MenuOptions } from "../MenuOptionModal";
 import { theme } from "@/store/config/theme";
 
-interface MenuOptionDrawerProps extends Partial<ComponentProps<typeof Drawer>> {
-  options: MenuOption[];
-  disableCloseOnSelect?: boolean;
-}
+type MenuOptionDrawerProps = Partial<ComponentProps<typeof Drawer>> &
+  Omit<MenuOptions, "variant">;
 
 const MenuOptionDrawer = ({
+  title = "Options",
   options,
   disableCloseOnSelect,
   onClose,
@@ -19,18 +18,10 @@ const MenuOptionDrawer = ({
   /** Values */
 
   const isSm = useMediaQuery((theme) => theme.breakpoints.up("sm"));
-  const navigate = useNavigate();
-
-  /** Callbacks */
-
-  const handleMenuItemClicked = (option: MenuOption) => {
-    if (option.link) void navigate(option.link);
-    else if (option.onClick) option.onClick();
-  };
 
   return (
     <Drawer
-      title="Options"
+      title={title}
       anchor={isSm ? "right" : "bottom"}
       onClose={onClose}
       {...props}
@@ -38,17 +29,20 @@ const MenuOptionDrawer = ({
       <MenuList sx={{ minWidth: 300 }}>
         {options
           .filter(({ render }) => render !== false)
-          .map(({ link, onClick, ...option }) => (
+          .map(({ onClick, ...option }) => (
             <MenuOptionMenuItem
               key={option.id}
               option={option}
               onClick={() => {
-                if (!disableCloseOnSelect || !option.disableCloseOnSelect) {
+                if (disableCloseOnSelect || option.disableCloseOnSelect)
+                  onClick?.();
+                else {
                   onClose?.();
-                  setTimeout(() => {
-                    handleMenuItemClicked({ link, onClick, ...option });
-                  }, theme.transitions.duration.leavingScreen);
-                } else handleMenuItemClicked({ link, onClick, ...option });
+                  setTimeout(
+                    () => onClick?.(),
+                    theme.transitions.duration.leavingScreen
+                  );
+                }
               }}
             />
           ))}

@@ -3,13 +3,18 @@ import { useMediaQuery, type MenuProps } from "@mui/material";
 import MenuOptionListDrawer from "../MenuOptionDrawer";
 import MenuOptionListMenu from "../MenuOptionMenu";
 
-interface MenuOptionModalProps {
-  anchorEl?: MenuProps["anchorEl"];
-  open: boolean;
+export interface MenuOptions {
+  title?: ReactNode;
   options: MenuOption[];
   disableCloseOnSelect?: boolean;
-  title?: ReactNode;
+  variant?: "drawer" | "menu";
+}
+
+interface MenuOptionModalProps extends MenuOptions {
+  anchorEl?: MenuProps["anchorEl"];
+  open: boolean;
   onClose: VoidFunction;
+  onTransitionExited?: VoidFunction;
   slotProps?: {
     drawer?: Partial<ComponentProps<typeof MenuOptionListDrawer>>;
     menu?: Partial<ComponentProps<typeof MenuOptionListMenu>>;
@@ -26,30 +31,35 @@ const MenuOptionModal = ({
   options,
   disableCloseOnSelect,
   title = "Options",
+  variant,
   onClose,
+  onTransitionExited,
   slotProps,
 }: MenuOptionModalProps) => {
   /** Values */
 
   const isTouch = useMediaQuery("(pointer: coarse)");
+  const asMenu = variant === "menu" || !isTouch;
 
-  return isTouch ? (
-    <MenuOptionListDrawer
-      title={title}
-      open={open}
-      options={options}
-      disableCloseOnSelect={disableCloseOnSelect}
-      onClose={onClose}
-      {...slotProps?.drawer}
-    />
-  ) : (
+  return asMenu ? (
     <MenuOptionListMenu
       anchorEl={anchorEl}
       open={open}
       options={options}
       disableCloseOnSelect={disableCloseOnSelect}
       onClose={onClose}
+      onTransitionExited={onTransitionExited}
       {...slotProps?.menu}
+    />
+  ) : (
+    <MenuOptionListDrawer
+      title={title}
+      open={open}
+      options={options}
+      disableCloseOnSelect={disableCloseOnSelect}
+      onClose={onClose}
+      onTransitionExited={onTransitionExited}
+      {...slotProps?.drawer}
     />
   );
 };

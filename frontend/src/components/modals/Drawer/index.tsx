@@ -6,8 +6,11 @@ import {
   type SwipeableDrawerProps as MuiSwipeableDrawerProps,
   useMediaQuery,
   styled,
+  Typography,
+  Divider,
 } from "@mui/material";
-import DrawerHeader from "../DrawerHeader";
+import BackIconButton from "@/components/buttons/BackIconButton";
+import CloseIconButton from "@/components/buttons/CloseIconButton";
 
 const iOS =
   typeof navigator !== "undefined" &&
@@ -90,7 +93,22 @@ const Drawer = ({
       })}
       {...props}
     >
-      <DrawerHeader title={title} onClose={onClose} onBack={onBack} />
+      <Stack>
+        <Stack direction="row" justifyContent="space-between" px={2} py={1.5}>
+          <Stack direction="row">
+            {!!onBack && <BackIconButton onClick={onBack} />}
+            {typeof title === "string" ? (
+              <Typography variant="h6" noWrap>
+                {title}
+              </Typography>
+            ) : (
+              title
+            )}
+          </Stack>
+          {!!onClose && <CloseIconButton onClick={onClose} />}
+        </Stack>
+        <Divider variant="middle" />
+      </Stack>
       <Stack flexGrow={1} overflow="auto">
         {children}
       </Stack>

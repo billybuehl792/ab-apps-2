@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import {
   ListItemIcon,
   ListItemText,
@@ -21,7 +20,6 @@ const MenuOptionMenuItem = ({ option, ...props }: MenuOptionMenuItemProps) => {
       selected={option.selected}
       disabled={option.disabled}
       onClick={option.onClick}
-      {...(!!option.link && { component: Link, ...option.link })}
       {...props}
       sx={[{ color }, ...sxUtils.asArray(props.sx)]}
     >

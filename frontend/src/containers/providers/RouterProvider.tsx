@@ -4,7 +4,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { router } from "@/main";
 import useAuth from "@/store/hooks/useAuth";
 
-const RouterProvider = (props: PropsWithChildren) => {
+const RouterProvider = ({
+  children: _children,
+  ...props
+}: PropsWithChildren) => {
   /** Values */
 
   const queryClient = useQueryClient();
