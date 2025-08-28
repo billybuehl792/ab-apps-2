@@ -3,12 +3,18 @@ export interface Credentials {
   password: string;
 }
 
+export interface Company {
+  id: string;
+  label: string;
+  description: string;
+}
+
 export interface User {
   id: string;
   username: string;
   email: string;
-  role: "user";
-  company: string;
+  role: "user" | "admin" | "super_admin";
+  company: Company | null;
 }
 
 export interface Place {

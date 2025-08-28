@@ -8,11 +8,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ErrorOutline } from "@mui/icons-material";
+import { ErrorOutline, FolderOff } from "@mui/icons-material";
 
 interface StatusCardProps extends Omit<CardProps, "content"> {
-  loading?: boolean | string | ReactNode;
-  error?: boolean | string | Error | ReactNode;
+  loading?: true | string | ReactNode;
+  error?: true | string | Error | ReactNode;
+  empty?: true | string | ReactNode;
   content?: ReactNode | string;
   description?: ReactNode | string;
   icon?: ReactNode;
@@ -22,6 +23,7 @@ const StatusCard = ({
   children,
   loading,
   error,
+  empty,
   icon: iconProp,
   description,
   content,
@@ -29,25 +31,39 @@ const StatusCard = ({
 }: StatusCardProps) => {
   /** Values */
 
+  const isLoading = !!loading;
+  const isError = !!error;
+  const isEmpty = !!empty;
+
   const icon =
     iconProp ??
-    (loading ? (
+    (isLoading ? (
       <CircularProgress />
-    ) : error ? (
+    ) : isError ? (
       <ErrorOutline fontSize="large" color="error" />
+    ) : isEmpty ? (
+      <FolderOff fontSize="large" color="disabled" />
     ) : null);
 
-  const errorMessage =
-    !!error &&
-    (typeof error === "string"
+  const loadingMessage = isLoading
+    ? typeof loading === "string"
+      ? loading
+      : null
+    : null;
+  const errorMessage = isError
+    ? typeof error === "string"
       ? error
       : error instanceof Error
         ? error.message
-        : typeof error === "boolean" && "An unexpected error occurred.");
+        : "An unexpected error occurred."
+    : null;
+  const emptyMessage = isEmpty
+    ? typeof empty === "string"
+      ? empty
+      : "No Results"
+    : null;
 
-  const loadingMessage = !!loading && typeof loading === "string" && loading;
-
-  const message = loadingMessage || errorMessage;
+  const message = loadingMessage || errorMessage || emptyMessage;
 
   const DescriptionComponent =
     typeof description === "string" ? (
@@ -64,12 +80,12 @@ const StatusCard = ({
     );
 
   return (
-    <Card variant="outlined" {...props}>
+    <Stack component={Card} {...props}>
       <CardContent
         component={Stack}
         spacing={2}
         alignItems="center"
-        minWidth={420}
+        justifyContent="center"
       >
         {children ?? (
           <>
@@ -77,7 +93,7 @@ const StatusCard = ({
             {message && (
               <Typography
                 component="span"
-                color="error"
+                color={isError ? "error" : "text.disabled"}
                 textAlign="center"
                 sx={{ wordBreak: "break-word" }}
               >
@@ -94,7 +110,7 @@ const StatusCard = ({
           </>
         )}
       </CardContent>
-    </Card>
+    </Stack>
   );
 };
 

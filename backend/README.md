@@ -1,13 +1,13 @@
-# Django REST API with JWT Auth, Clients & Jobs
+# Django REST API with JWT Auth, Clients & WorkOrders
 
-A Django + Django REST Framework backend with JWT authentication and two models: `Client` (customers) and `Job` (work orders) in a one-to-many relationship.
+A Django + Django REST Framework backend with JWT authentication and two models: `Client` (customers) and `WorkOrder` (work orders) in a one-to-many relationship.
 
 ---
 
 ## 🚀 Features
 
 - JWT authentication using `djangorestframework-simplejwt`
-- CRUD API for Clients and Jobs
+- CRUD API for Clients and WorkOrders
 - Filtering, searching, and ordering with DRF
 - Django Admin integration
 - Extensible for per-user or per-company ownership
@@ -96,18 +96,18 @@ curl -H "Authorization: Bearer <ACCESS_TOKEN>" http://127.0.0.1:8000/api/clients
 - `PUT/PATCH /api/clients/{id}/` → update client
 - `DELETE /api/clients/{id}/` → delete client
 
-### Jobs
+### work-orders
 
-- `GET /api/jobs/` → list all jobs
-- `POST /api/jobs/` → create a job
-- `GET /api/jobs/{id}/` → retrieve one job
-- `PUT/PATCH /api/jobs/{id}/` → update job
-- `DELETE /api/jobs/{id}/` → delete job
+- `GET /api/work-orders/` → list all work-orders
+- `POST /api/work-orders/` → create a work-order
+- `GET /api/work-orders/{id}/` → retrieve one work-order
+- `PUT/PATCH /api/work-orders/{id}/` → update work-order
+- `DELETE /api/work-orders/{id}/` → delete work-order
 
 Supports filtering, searching, and ordering. Example:
 
 ```bash
-/jobs/?client=1&status=in_progress&ordering=price
+/work-orders/?client=1&status=in_progress&ordering=price
 ```
 
 ---
@@ -118,7 +118,7 @@ Supports filtering, searching, and ordering. Example:
 project-root/
 ├── core/                # Django project settings
 ├── api/                 # App containing models, views, serializers
-│   ├── models.py        # Database models (Client, Job)
+│   ├── models.py        # Database models (Client, WorkOrder)
 │   ├── serializers.py   # DRF serializers (JSON ↔ Models)
 │   ├── views.py         # API endpoints (ViewSets)
 │   ├── admin.py         # Django admin config
@@ -139,7 +139,7 @@ project-root/
 ## 🔧 Next Steps
 
 - Configure production settings (`SECRET_KEY`, `ALLOWED_HOSTS`, DB config)
-- Add ownership (link Clients/Jobs to `User`) for multi-user apps
+- Add ownership (link Clients/work-orders to `User`) for multi-user apps
 - Deploy backend to services like Railway, Render, or Heroku
 - Deploy frontend (React/Vite) separately on Vercel and point it to this API
 

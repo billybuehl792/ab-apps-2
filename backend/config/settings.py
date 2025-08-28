@@ -58,8 +58,9 @@ INSTALLED_APPS = [
     # Local
     "app.common",
     "app.account",
+    "app.companies",
     "app.clients",
-    "app.jobs",
+    "app.work_orders",
 ]
 
 MIDDLEWARE = [
