@@ -1,7 +1,7 @@
 import { type ComponentProps } from "react";
 import { useMatches, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Delete, Info } from "@mui/icons-material";
+import { Delete, Edit, Info } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
 import { clientMutations } from "@/store/mutations/clients";
 import useConfirm from "@/store/hooks/useConfirm";
@@ -68,6 +68,17 @@ const ClientMenuOptionIconButton = ({
       icon: <Info />,
       onClick: () =>
         navigate({ to: "/app/clients/$id", params: { id: clientId } }),
+    },
+    {
+      id: "edit",
+      label: "Edit",
+      icon: <Edit />,
+      onClick: () =>
+        navigate({
+          to: "/app/clients/$id",
+          params: { id: clientId },
+          search: { edit: true },
+        }),
     },
     {
       id: "delete",

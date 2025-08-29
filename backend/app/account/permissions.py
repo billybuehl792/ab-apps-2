@@ -23,9 +23,14 @@ class IsAdminOnly(BasePermission):
 class IsFromCompany(BasePermission):
     """
     Allows access only to objects belonging to the user's company.
+    Blocks all actions if user has no company.
     """
 
-    def has_object_permission(self, request, view, obj):  # type: ignore
-        print('in obj permissions', request.user, obj)
+    def has_permission(self, request, view):  # type: ignore
         user_company = getattr(request.user, 'company', None)
-        return bool(user_company) and obj.company == user_company
+        return bool(user_company)
+
+    def has_object_permission(self, request, view, obj):  # type: ignore
+        user_company = getattr(request.user, 'company', None)
+        object_company = getattr(obj, 'company', None)
+        return bool(user_company) and bool(object_company) and object_company == user_company

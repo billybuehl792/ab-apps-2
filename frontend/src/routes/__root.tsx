@@ -26,15 +26,13 @@ export const Route = createRootRouteWithContext<{
           overflow: "auto",
         }}
       >
-        <Box p={2}>
-          <Outlet />
-        </Box>
+        <Outlet />
       </Box>
     </>
   ),
   pendingComponent: () => (
     <FullScreen>
-      <StatusCard loading description="Loading app..." />
+      <StatusCard loading="Loading app..." />
     </FullScreen>
   ),
   errorComponent: ({ error }) => (

@@ -12,7 +12,7 @@ function RouteComponent() {
   const auth = useAuth();
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} p={2}>
       <Stack>
         <Typography variant="body1">Home</Typography>
         <Typography

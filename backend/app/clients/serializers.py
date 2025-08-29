@@ -9,7 +9,7 @@ from app.work_orders.serializers import WorkOrderSerializer
 class ClientSerializer(serializers.ModelSerializer):
     work_orders = WorkOrderSerializer(many=True, read_only=True)
     place_id = serializers.PrimaryKeyRelatedField(
-        queryset=Place.objects.all(), required=False
+        queryset=Place.objects.all(), required=False, allow_null=True
     )
     place = PlaceSerializer(read_only=True)
 

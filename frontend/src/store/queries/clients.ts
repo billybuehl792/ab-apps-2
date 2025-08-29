@@ -1,24 +1,16 @@
 import { queryOptions } from "@tanstack/react-query";
-import api from "../config/api";
-import endpoints from "../constants/endpoints";
-import type { Client } from "../types";
+import { clientApi } from "../api/clients";
 
-const detail = (id: string) =>
+const detail = (id: Parameters<typeof clientApi.detail>[0]) =>
   queryOptions({
     queryKey: ["clients", "detail", id],
-    queryFn: async () => {
-      const res = await api.get<Client>(endpoints.clients.detail(id));
-      return res.data;
-    },
+    queryFn: () => clientApi.detail(id).then((res) => res.data),
   });
 
-const list = () =>
+const list = (params?: Parameters<typeof clientApi.list>[0]) =>
   queryOptions({
-    queryKey: ["clients", "list"],
-    queryFn: async () => {
-      const res = await api.get<ListRequest<Client>>(endpoints.clients());
-      return res.data;
-    },
+    queryKey: ["clients", "list", params],
+    queryFn: () => clientApi.list(params).then((res) => res.data),
   });
 
 export const clientQueries = {

@@ -21,7 +21,7 @@ function RouteComponent() {
   const handleInvalidateMe = () => queryClient.invalidateQueries(meQuery);
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} p={2}>
       {meQuery.isFetching ? (
         <Skeleton />
       ) : (

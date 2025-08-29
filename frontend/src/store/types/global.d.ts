@@ -19,13 +19,6 @@ declare global {
         Partial<Record<Exclude<Keys, K>, undefined>>;
     }[Keys];
 
-  interface ListRequest<T> {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: T[];
-  }
-
   interface MenuOption<T = string> {
     id: T;
     render?: boolean;

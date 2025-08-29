@@ -1,15 +1,8 @@
-import { useState } from "react";
+import { type ComponentProps } from "react";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
-import {
-  Button,
-  Card,
-  CardContent,
-  FormHelperText,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
 import useAuth from "@/store/hooks/useAuth";
+import SignInForm from "@/containers/forms/SignInForm";
 
 export const Route = createFileRoute("/sign-in")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
@@ -23,9 +16,6 @@ export const Route = createFileRoute("/sign-in")({
 });
 
 function RouteComponent() {
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
   /** Values */
 
   const auth = useAuth();
@@ -33,53 +23,15 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-
-    setSubmitting(true);
-    auth
-      .signIn({
-        username: formData.get("username") as string,
-        password: formData.get("password") as string,
-      })
-      .then(() => router.invalidate())
-      .catch((error) => setError(error.message))
-      .finally(() => setSubmitting(false));
-  };
+  const handleSignIn: ComponentProps<typeof SignInForm>["onSubmit"] = (data) =>
+    auth.signIn(data).then(() => router.invalidate());
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} p={2}>
       <Typography variant="h6">Sign In</Typography>
-      <Card variant="outlined">
+      <Card>
         <CardContent>
-          <Stack component="form" spacing={2} onSubmit={handleSubmit}>
-            <TextField
-              name="username"
-              label="Username"
-              variant="outlined"
-              fullWidth
-              required
-            />
-            <TextField
-              name="password"
-              label="Password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              required
-            />
-            {!!error && <FormHelperText error>{error}</FormHelperText>}
-            <Button
-              type="submit"
-              variant="outlined"
-              color="primary"
-              loading={submitting}
-            >
-              Sign In
-            </Button>
-          </Stack>
+          <SignInForm onSubmit={handleSignIn} />
         </CardContent>
       </Card>
     </Stack>

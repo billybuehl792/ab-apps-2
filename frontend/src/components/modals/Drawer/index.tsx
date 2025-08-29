@@ -53,7 +53,7 @@ interface DrawerProps
 }
 
 const Drawer = ({
-  anchor: anchorProp = "bottom",
+  anchor: anchorProp = "right",
   title,
   children,
   fullHeight,
@@ -81,6 +81,7 @@ const Drawer = ({
       slotProps={{
         ...slotProps,
         transition: {
+          appear: true,
           mountOnEnter: true,
           unmountOnExit: true,
           ...slotProps?.transition,

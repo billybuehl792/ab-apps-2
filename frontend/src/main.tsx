@@ -20,9 +20,11 @@ export const router = createRouter({
     queryClient: null!,
     auth: {} as ContextType<typeof AuthContext>,
   },
-  defaultErrorComponent: ({ error }) => <StatusCard error={error} />,
-  defaultPendingComponent: () => <StatusCard loading />,
-  defaultNotFoundComponent: () => <StatusCard error="Page not found :(" />,
+  defaultErrorComponent: ({ error }) => <StatusCard error={error} m={2} />,
+  defaultPendingComponent: () => <StatusCard loading m={2} />,
+  defaultNotFoundComponent: () => (
+    <StatusCard error="Page not found :(" m={2} />
+  ),
 });
 
 const rootElement = document.getElementById("root")!;

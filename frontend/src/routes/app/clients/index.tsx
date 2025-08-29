@@ -1,41 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Skeleton, Stack } from "@mui/material";
-import { clientQueries } from "@/store/queries/clients";
-import ClientListCard from "@/containers/cards/ClientListCard";
-import StatusCard from "@/components/cards/StatusCard";
-import Link from "@/components/elements/Link";
+import { type ComponentProps } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import ClientList from "@/containers/lists/ClientList";
+import { clientApi } from "@/store/api/clients";
 
 export const Route = createFileRoute("/app/clients/")({
+  validateSearch: (
+    search: Record<string, unknown>
+  ): Parameters<typeof clientApi.list>[0] => ({
+    page: search?.page ? Number(search.page) : undefined,
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  /** Queries */
+  /** Values */
 
-  const clientListQuery = useQuery(clientQueries.list());
+  const params = Route.useSearch();
+  const navigate = useNavigate();
 
-  return (
-    <Stack spacing={1}>
-      {clientListQuery.isLoading ? (
-        Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton key={index} variant="rounded" height={100} />
-        ))
-      ) : clientListQuery.isSuccess && clientListQuery.data.count ? (
-        clientListQuery.data.results.map((client) => (
-          <ClientListCard key={client.id} client={client} />
-        ))
-      ) : (
-        <StatusCard
-          error={clientListQuery.error}
-          {...(clientListQuery.data?.count === 0 && {
-            empty: "No Clients",
-            description: (
-              <Link label="Create Client" to="/app/clients/create" />
-            ),
-          })}
-        />
-      )}
-    </Stack>
-  );
+  /** Callbacks */
+
+  const onPageChange: ComponentProps<typeof ClientList>["onPageChange"] = (
+    page
+  ) => navigate({ to: "/app/clients", search: { ...params, page } });
+
+  return <ClientList params={params} onPageChange={onPageChange} />;
 }

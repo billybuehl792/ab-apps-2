@@ -1,32 +1,33 @@
-import { type ReactNode } from "react";
+import { type JSX } from "react";
 import {
   Card,
   CardContent,
-  type CardProps,
   CircularProgress,
   Divider,
   Stack,
+  StackProps,
   Typography,
 } from "@mui/material";
 import { ErrorOutline, FolderOff } from "@mui/icons-material";
+import { errorUtils } from "@/store/utils/error";
 
-interface StatusCardProps extends Omit<CardProps, "content"> {
-  loading?: true | string | ReactNode;
-  error?: true | string | Error | ReactNode;
-  empty?: true | string | ReactNode;
-  content?: ReactNode | string;
-  description?: ReactNode | string;
-  icon?: ReactNode;
+interface StatusCardProps extends StackProps {
+  icon?: JSX.Element;
+  label?: JSX.Element | string;
+  description?: JSX.Element | string;
+  loading?: boolean | string | JSX.Element;
+  error?: boolean | string | Error | null | JSX.Element;
+  empty?: boolean | string | JSX.Element;
 }
 
 const StatusCard = ({
   children,
+  icon: iconProp,
+  label,
+  description,
   loading,
   error,
   empty,
-  icon: iconProp,
-  description,
-  content,
   ...props
 }: StatusCardProps) => {
   /** Values */
@@ -50,13 +51,7 @@ const StatusCard = ({
       ? loading
       : null
     : null;
-  const errorMessage = isError
-    ? typeof error === "string"
-      ? error
-      : error instanceof Error
-        ? error.message
-        : "An unexpected error occurred."
-    : null;
+  const errorMessage = isError ? errorUtils.getErrorMessage(error) : null;
   const emptyMessage = isEmpty
     ? typeof empty === "string"
       ? empty
@@ -65,18 +60,18 @@ const StatusCard = ({
 
   const message = loadingMessage || errorMessage || emptyMessage;
 
+  const LabelComponent =
+    typeof label === "string" ? (
+      <Typography variant="body2">{label}</Typography>
+    ) : (
+      label
+    );
+
   const DescriptionComponent =
     typeof description === "string" ? (
       <Typography variant="body2">{description}</Typography>
     ) : (
       description
-    );
-
-  const ContentComponent =
-    typeof content === "string" ? (
-      <Typography variant="body2">{content}</Typography>
-    ) : (
-      content
     );
 
   return (
@@ -93,6 +88,7 @@ const StatusCard = ({
             {message && (
               <Typography
                 component="span"
+                variant="body2"
                 color={isError ? "error" : "text.disabled"}
                 textAlign="center"
                 sx={{ wordBreak: "break-word" }}
@@ -100,11 +96,11 @@ const StatusCard = ({
                 {message}
               </Typography>
             )}
-            {DescriptionComponent}
-            {!!ContentComponent && (
+            {LabelComponent}
+            {!!DescriptionComponent && (
               <>
                 <Divider sx={{ width: "100%" }} />
-                {ContentComponent}
+                {DescriptionComponent}
               </>
             )}
           </>

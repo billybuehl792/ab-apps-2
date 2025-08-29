@@ -1,5 +1,6 @@
-import StatusCard from "@/components/cards/StatusCard";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import StatusCard from "@/components/cards/StatusCard";
+import FullScreen from "@/components/layout/FullScreen";
 
 export const Route = createFileRoute("/sign-out")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
@@ -9,5 +10,9 @@ export const Route = createFileRoute("/sign-out")({
     await context.auth.signOut();
     throw redirect({ to: "/sign-in", replace: true, search });
   },
-  pendingComponent: () => <StatusCard loading description="Signing out..." />,
+  pendingComponent: () => (
+    <FullScreen>
+      <StatusCard loading="Signing out..." />
+    </FullScreen>
+  ),
 });
