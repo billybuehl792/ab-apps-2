@@ -11,6 +11,9 @@ const endpoints = {
   clients: Object.assign(() => `${API_URL}/clients/`, {
     detail: (id: string) => `${endpoints.clients()}${id}/`,
   }),
+  workOrders: Object.assign(() => `${API_URL}/work-orders/`, {
+    detail: (id: string) => `${endpoints.workOrders()}${id}/`,
+  }),
 };
 
 export default endpoints;

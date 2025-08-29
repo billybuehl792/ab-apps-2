@@ -1,4 +1,5 @@
 import { type ComponentProps } from "react";
+import { type AxiosResponse } from "axios";
 import { Stack } from "@mui/material";
 import Form from "@/components/forms/Form";
 import ClientFormFirstNameField from "./fields/ClientFormFirstNameField";
@@ -10,7 +11,9 @@ import type { Client } from "@/store/types";
 
 export type ClientForm = Omit<Client, "id">;
 
-const ClientForm = (props: ComponentProps<typeof Form<ClientForm, Client>>) => {
+const ClientForm = (
+  props: ComponentProps<typeof Form<ClientForm, AxiosResponse<Client>>>
+) => {
   return (
     <Form {...props}>
       <Stack direction="row" spacing={1}>

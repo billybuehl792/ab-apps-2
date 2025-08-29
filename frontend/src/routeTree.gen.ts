@@ -13,9 +13,13 @@ import { Route as SignOutRouteImport } from './routes/sign-out'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppWorkOrdersRouteImport } from './routes/app/work-orders'
 import { Route as AppUserRouteImport } from './routes/app/user'
 import { Route as AppClientsRouteImport } from './routes/app/clients'
+import { Route as AppWorkOrdersIndexRouteImport } from './routes/app/work-orders/index'
 import { Route as AppClientsIndexRouteImport } from './routes/app/clients/index'
+import { Route as AppWorkOrdersCreateRouteImport } from './routes/app/work-orders/create'
+import { Route as AppWorkOrdersIdRouteImport } from './routes/app/work-orders/$id'
 import { Route as AppClientsCreateRouteImport } from './routes/app/clients/create'
 import { Route as AppClientsIdRouteImport } from './routes/app/clients/$id'
 
@@ -39,6 +43,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppWorkOrdersRoute = AppWorkOrdersRouteImport.update({
+  id: '/work-orders',
+  path: '/work-orders',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppUserRoute = AppUserRouteImport.update({
   id: '/user',
   path: '/user',
@@ -49,10 +58,25 @@ const AppClientsRoute = AppClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWorkOrdersIndexRoute = AppWorkOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppWorkOrdersRoute,
+} as any)
 const AppClientsIndexRoute = AppClientsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppClientsRoute,
+} as any)
+const AppWorkOrdersCreateRoute = AppWorkOrdersCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AppWorkOrdersRoute,
+} as any)
+const AppWorkOrdersIdRoute = AppWorkOrdersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppWorkOrdersRoute,
 } as any)
 const AppClientsCreateRoute = AppClientsCreateRouteImport.update({
   id: '/create',
@@ -72,9 +96,13 @@ export interface FileRoutesByFullPath {
   '/sign-out': typeof SignOutRoute
   '/app/clients': typeof AppClientsRouteWithChildren
   '/app/user': typeof AppUserRoute
+  '/app/work-orders': typeof AppWorkOrdersRouteWithChildren
   '/app/clients/$id': typeof AppClientsIdRoute
   '/app/clients/create': typeof AppClientsCreateRoute
+  '/app/work-orders/$id': typeof AppWorkOrdersIdRoute
+  '/app/work-orders/create': typeof AppWorkOrdersCreateRoute
   '/app/clients/': typeof AppClientsIndexRoute
+  '/app/work-orders/': typeof AppWorkOrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,7 +112,10 @@ export interface FileRoutesByTo {
   '/app/user': typeof AppUserRoute
   '/app/clients/$id': typeof AppClientsIdRoute
   '/app/clients/create': typeof AppClientsCreateRoute
+  '/app/work-orders/$id': typeof AppWorkOrdersIdRoute
+  '/app/work-orders/create': typeof AppWorkOrdersCreateRoute
   '/app/clients': typeof AppClientsIndexRoute
+  '/app/work-orders': typeof AppWorkOrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,9 +125,13 @@ export interface FileRoutesById {
   '/sign-out': typeof SignOutRoute
   '/app/clients': typeof AppClientsRouteWithChildren
   '/app/user': typeof AppUserRoute
+  '/app/work-orders': typeof AppWorkOrdersRouteWithChildren
   '/app/clients/$id': typeof AppClientsIdRoute
   '/app/clients/create': typeof AppClientsCreateRoute
+  '/app/work-orders/$id': typeof AppWorkOrdersIdRoute
+  '/app/work-orders/create': typeof AppWorkOrdersCreateRoute
   '/app/clients/': typeof AppClientsIndexRoute
+  '/app/work-orders/': typeof AppWorkOrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,9 +142,13 @@ export interface FileRouteTypes {
     | '/sign-out'
     | '/app/clients'
     | '/app/user'
+    | '/app/work-orders'
     | '/app/clients/$id'
     | '/app/clients/create'
+    | '/app/work-orders/$id'
+    | '/app/work-orders/create'
     | '/app/clients/'
+    | '/app/work-orders/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,7 +158,10 @@ export interface FileRouteTypes {
     | '/app/user'
     | '/app/clients/$id'
     | '/app/clients/create'
+    | '/app/work-orders/$id'
+    | '/app/work-orders/create'
     | '/app/clients'
+    | '/app/work-orders'
   id:
     | '__root__'
     | '/'
@@ -128,9 +170,13 @@ export interface FileRouteTypes {
     | '/sign-out'
     | '/app/clients'
     | '/app/user'
+    | '/app/work-orders'
     | '/app/clients/$id'
     | '/app/clients/create'
+    | '/app/work-orders/$id'
+    | '/app/work-orders/create'
     | '/app/clients/'
+    | '/app/work-orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/work-orders': {
+      id: '/app/work-orders'
+      path: '/work-orders'
+      fullPath: '/app/work-orders'
+      preLoaderRoute: typeof AppWorkOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/user': {
       id: '/app/user'
       path: '/user'
@@ -184,12 +237,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/work-orders/': {
+      id: '/app/work-orders/'
+      path: '/'
+      fullPath: '/app/work-orders/'
+      preLoaderRoute: typeof AppWorkOrdersIndexRouteImport
+      parentRoute: typeof AppWorkOrdersRoute
+    }
     '/app/clients/': {
       id: '/app/clients/'
       path: '/'
       fullPath: '/app/clients/'
       preLoaderRoute: typeof AppClientsIndexRouteImport
       parentRoute: typeof AppClientsRoute
+    }
+    '/app/work-orders/create': {
+      id: '/app/work-orders/create'
+      path: '/create'
+      fullPath: '/app/work-orders/create'
+      preLoaderRoute: typeof AppWorkOrdersCreateRouteImport
+      parentRoute: typeof AppWorkOrdersRoute
+    }
+    '/app/work-orders/$id': {
+      id: '/app/work-orders/$id'
+      path: '/$id'
+      fullPath: '/app/work-orders/$id'
+      preLoaderRoute: typeof AppWorkOrdersIdRouteImport
+      parentRoute: typeof AppWorkOrdersRoute
     }
     '/app/clients/create': {
       id: '/app/clients/create'
@@ -224,14 +298,32 @@ const AppClientsRouteWithChildren = AppClientsRoute._addFileChildren(
   AppClientsRouteChildren,
 )
 
+interface AppWorkOrdersRouteChildren {
+  AppWorkOrdersIdRoute: typeof AppWorkOrdersIdRoute
+  AppWorkOrdersCreateRoute: typeof AppWorkOrdersCreateRoute
+  AppWorkOrdersIndexRoute: typeof AppWorkOrdersIndexRoute
+}
+
+const AppWorkOrdersRouteChildren: AppWorkOrdersRouteChildren = {
+  AppWorkOrdersIdRoute: AppWorkOrdersIdRoute,
+  AppWorkOrdersCreateRoute: AppWorkOrdersCreateRoute,
+  AppWorkOrdersIndexRoute: AppWorkOrdersIndexRoute,
+}
+
+const AppWorkOrdersRouteWithChildren = AppWorkOrdersRoute._addFileChildren(
+  AppWorkOrdersRouteChildren,
+)
+
 interface AppRouteChildren {
   AppClientsRoute: typeof AppClientsRouteWithChildren
   AppUserRoute: typeof AppUserRoute
+  AppWorkOrdersRoute: typeof AppWorkOrdersRouteWithChildren
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppClientsRoute: AppClientsRouteWithChildren,
   AppUserRoute: AppUserRoute,
+  AppWorkOrdersRoute: AppWorkOrdersRouteWithChildren,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

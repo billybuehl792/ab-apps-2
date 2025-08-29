@@ -21,7 +21,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
-    "reset-css": "^5.0.2"
+    "reset-css": "^5.0.2",
+    "use-debounce": "^10.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
