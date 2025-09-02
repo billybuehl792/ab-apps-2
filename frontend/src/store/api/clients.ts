@@ -1,14 +1,10 @@
 import api from "../config/api";
 import endpoints from "../constants/endpoints";
+import { ClientListOrdering, ClientListFilters } from "../enums/clients";
 import type { ApiListRequest, ApiListResponse } from "../types/api";
 import type { Client } from "../types";
 
-const list = (
-  params?: ApiListRequest<
-    "created_at" | "first_name" | "last_name",
-    "email" | "first_name" | "last_name"
-  >
-) =>
+const list = (params?: ApiListRequest<ClientListOrdering, ClientListFilters>) =>
   api.get<ApiListResponse<Client>>(endpoints.clients(), {
     params,
   });

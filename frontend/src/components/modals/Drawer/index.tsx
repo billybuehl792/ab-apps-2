@@ -96,7 +96,7 @@ const Drawer = ({
     >
       <Stack>
         <Stack direction="row" justifyContent="space-between" px={2} py={1.5}>
-          <Stack direction="row">
+          <Stack direction="row" overflow="hidden">
             {!!onBack && <BackIconButton onClick={onBack} />}
             {typeof title === "string" ? (
               <Typography variant="h6" noWrap>

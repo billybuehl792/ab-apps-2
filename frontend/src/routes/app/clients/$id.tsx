@@ -1,6 +1,7 @@
 import { type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
+import { Box } from "@mui/material";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
 import StatusCard from "@/components/cards/StatusCard";
@@ -18,9 +19,9 @@ export const Route = createFileRoute("/app/clients/$id")({
 
     return { client, crumb: `${client.first_name} ${client.last_name}` };
   },
-  pendingComponent: () => <StatusCard loading="loading client..." />,
+  pendingComponent: () => <StatusCard loading="loading client..." m={2} />,
   component: RouteComponent,
-  errorComponent: ({ error }) => <StatusCard error={error} />,
+  errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
 });
 
 function RouteComponent() {
@@ -55,13 +56,13 @@ function RouteComponent() {
     });
 
   return (
-    <>
+    <Box p={2}>
       <ClientDetailCard client={client} />
       <ClientFormDrawer
         open={isEditing}
         form={{ values: client, onSubmit: handleUpdateClient }}
         onClose={handleOnClose}
       />
-    </>
+    </Box>
   );
 }

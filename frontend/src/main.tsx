@@ -5,7 +5,9 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import StatusCard from "./components/cards/StatusCard";
 import type AuthContext from "./store/context/AuthContext";
+
 import "reset-css/reset.css";
+import "./store/utils/string";
 
 declare module "@tanstack/react-router" {
   interface Register {

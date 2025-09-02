@@ -21,7 +21,9 @@ const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
       <CardContent component={Stack}>
         <Typography variant="h6">{fullName}</Typography>
         <Typography variant="caption">Email: {client.email}</Typography>
-        <Typography variant="caption">Phone: {client.phone_primary}</Typography>
+        <Typography variant="caption">
+          Phone: {client.phone_primary.toPhone()}
+        </Typography>
       </CardContent>
     </Card>
   );

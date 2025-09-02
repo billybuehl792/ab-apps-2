@@ -1,34 +1,19 @@
-import { Divider, Stack, type StackProps } from "@mui/material";
+import { Stack, type StackProps } from "@mui/material";
 
-interface PageHeaderProps extends StackProps {
-  disableDivider?: boolean;
-  slotProps?: {
-    root?: StackProps;
-  };
-}
-
-const PageHeader = ({
-  children,
-  disableDivider,
-  slotProps,
-  ...props
-}: PageHeaderProps) => {
+const PageHeader = (props: StackProps) => {
   return (
     <Stack
       position="sticky"
-      top={0}
-      p={2}
-      pb={0}
       spacing={2}
+      boxSizing="border-box"
+      top={0}
+      py={2}
+      mx={2}
       bgcolor={(theme) => theme.palette.background.paper}
       zIndex={1}
-      {...slotProps?.root}
-    >
-      <Stack height={32} {...props}>
-        {children}
-      </Stack>
-      {!disableDivider && <Divider variant="middle" />}
-    </Stack>
+      borderBottom={(theme) => `1px solid ${theme.palette.divider}`}
+      {...props}
+    />
   );
 };
 
