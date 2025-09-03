@@ -14,7 +14,7 @@ export const Route = createFileRoute("/app/clients/$id")({
   }),
   loader: async ({ context, params }) => {
     const client = await context.queryClient.fetchQuery(
-      clientQueries.detail(params.id)
+      clientQueries.detail(Number(params.id))
     );
 
     return { client, crumb: `${client.first_name} ${client.last_name}` };
@@ -51,7 +51,7 @@ function RouteComponent() {
   const handleOnClose = () =>
     navigate({
       to: "/app/clients/$id",
-      params: { id: client.id },
+      params: { id: String(client.id) },
       search: { edit: false },
     });
 

@@ -1,6 +1,7 @@
 import { type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
+import { Box } from "@mui/material";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import { workOrderQueries } from "@/store/queries/workOrders";
 import StatusCard from "@/components/cards/StatusCard";
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/app/work-orders/$id")({
   }),
   loader: async ({ context, params }) => {
     const workOrder = await context.queryClient.fetchQuery(
-      workOrderQueries.detail(params.id)
+      workOrderQueries.detail(Number(params.id))
     );
 
     return { workOrder, crumb: workOrder.label };
@@ -50,18 +51,18 @@ function RouteComponent() {
   const handleOnClose = () =>
     navigate({
       to: "/app/work-orders/$id",
-      params: { id: workOrder.id },
+      params: { id: String(workOrder.id) },
       search: { edit: false },
     });
 
   return (
-    <>
+    <Box p={2}>
       <WorkOrderDetailCard workOrder={workOrder} />
       <WorkOrderFormDrawer
         open={isEditing}
         form={{ values: workOrder, onSubmit: handleUpdateWorkOrder }}
         onClose={handleOnClose}
       />
-    </>
+    </Box>
   );
 }

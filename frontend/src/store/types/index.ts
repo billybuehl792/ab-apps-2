@@ -4,7 +4,7 @@ export interface Credentials {
 }
 
 interface ObjectBase {
-  id: string;
+  id: number;
   created_at: string;
   updated_at: string;
 }
@@ -34,7 +34,7 @@ export interface Client extends ObjectBase {
   phone_secondary: string;
   place_id: Place["id"] | null;
   place: Place | null;
-  work_orders: WorkOrder[];
+  work_orders: Pick<WorkOrder, "id" | "label" | "status">[];
 }
 
 export interface WorkOrder extends ObjectBase {
@@ -44,6 +44,7 @@ export interface WorkOrder extends ObjectBase {
   scheduled_date: string | null;
   completed_date: string | null;
   cost: number;
+  client_id: Client["id"];
   client: Client;
   place_id: Place["id"];
   place: Place;

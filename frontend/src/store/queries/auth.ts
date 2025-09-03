@@ -1,16 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import api from "../config/api";
-import endpoints from "../constants/endpoints";
-import type { User } from "../types";
+import { queryUtils } from "../utils/queries";
+import { authApi } from "../api/auth";
 
 const me = () =>
   queryOptions({
-    queryKey: ["auth", "me"],
-    queryFn: async () => {
-      const res = await api.get<User>(endpoints.auth.me());
-
-      return res.data;
-    },
+    queryKey: queryUtils.getQueryKey(["auth", "me"]),
+    queryFn: () => authApi.me().then((res) => res.data),
   });
 
 export const authQueries = {

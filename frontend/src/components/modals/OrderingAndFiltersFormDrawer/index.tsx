@@ -1,20 +1,27 @@
 import { type ComponentProps } from "react";
 import Drawer from "../Drawer";
-import FilterAndSortForm from "@/components/forms/FilterAndSortForm";
+import OrderingAndFiltersForm, {
+  type FilterOption,
+  type OrderingOption,
+} from "@/components/forms/OrderingAndFiltersForm";
 
-interface FilterAndSortDrawerProps<O, F> extends ComponentProps<typeof Drawer> {
-  form: ComponentProps<typeof FilterAndSortForm<O, F>>;
-  disableCloseOnSubmit?: boolean;
+interface OrderingAndFiltersFormDrawerProps<
+  O extends OrderingOption,
+  F extends FilterOption,
+> extends ComponentProps<typeof Drawer> {
+  form: ComponentProps<typeof OrderingAndFiltersForm<O, F>>;
 }
 
-const FilterAndSortDrawer = <O, F>({
+const OrderingAndFiltersFormDrawer = <
+  O extends OrderingOption,
+  F extends FilterOption,
+>({
   form,
-  disableCloseOnSubmit,
   ...props
-}: FilterAndSortDrawerProps<O, F>) => {
+}: OrderingAndFiltersFormDrawerProps<O, F>) => {
   return (
     <Drawer title="Filter and Sort" fullHeight {...props}>
-      <FilterAndSortForm
+      <OrderingAndFiltersForm
         minWidth={360}
         flexGrow={1}
         resetLabel="Cancel"
@@ -39,4 +46,4 @@ const FilterAndSortDrawer = <O, F>({
   );
 };
 
-export default FilterAndSortDrawer;
+export default OrderingAndFiltersFormDrawer;

@@ -8,7 +8,9 @@ import {
   Typography,
   type CardProps,
 } from "@mui/material";
+import { Work } from "@mui/icons-material";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
+import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import type { WorkOrder } from "@/store/types";
 
 interface WorkOrderListCardProps extends CardProps {
@@ -22,13 +24,25 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
         LinkComponent={Link}
         href={`/app/work-orders/${workOrder.id}`}
       >
-        <CardContent component={Stack} mr={7.5}>
-          <Typography variant="h6" noWrap>
-            {workOrder.label}
-          </Typography>
-          <Typography variant="body2" noWrap>
-            {workOrder.status}
-          </Typography>
+        <CardContent
+          component={Stack}
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          mr={7.5}
+        >
+          <Work fontSize="large" color="disabled" />
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            overflow="hidden"
+          >
+            <Typography variant="h6" noWrap>
+              {workOrder.label}
+            </Typography>
+            <WorkOrderStatusChip workOrder={workOrder} size="small" />
+          </Stack>
         </CardContent>
       </CardActionArea>
       <CardActions

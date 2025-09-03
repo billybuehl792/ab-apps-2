@@ -1,11 +1,17 @@
 from rest_framework import serializers
 
 from app.common.models import Place
+from app.clients.models import Client
 from .models import WorkOrder
+from app.clients.serializers import ClientSerializer
 from app.common.serializers import PlaceSerializer
 
 
 class WorkOrderSerializer(serializers.ModelSerializer):
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), required=False, allow_null=True
+    )
+    client = ClientSerializer(read_only=True)
     place_id = serializers.PrimaryKeyRelatedField(
         queryset=Place.objects.all(), required=False
     )
@@ -21,6 +27,7 @@ class WorkOrderSerializer(serializers.ModelSerializer):
             "cost",
             "scheduled_date",
             "completed_date",
+            "client_id",
             "client",
             "place_id",
             "place",

@@ -9,10 +9,10 @@ const endpoints = {
     me: () => `${endpoints.auth()}me/`,
   }),
   clients: Object.assign(() => `${API_URL}/clients/`, {
-    detail: (id: string) => `${endpoints.clients()}${id}/`,
+    detail: (id: number) => `${endpoints.clients()}${id}/`,
   }),
   workOrders: Object.assign(() => `${API_URL}/work-orders/`, {
-    detail: (id: string) => `${endpoints.workOrders()}${id}/`,
+    detail: (id: number) => `${endpoints.workOrders()}${id}/`,
   }),
 };
 

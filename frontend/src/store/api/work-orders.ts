@@ -4,10 +4,7 @@ import type { ApiListRequest, ApiListResponse } from "../types/api";
 import type { WorkOrder } from "../types";
 
 const list = (
-  params?: ApiListRequest<
-    "created_at" | "first_name" | "last_name",
-    "email" | "first_name" | "last_name"
-  >
+  params?: ApiListRequest<"created_at" | "first_name" | "last_name">
 ) =>
   api.get<ApiListResponse<WorkOrder>>(endpoints.workOrders(), {
     params,

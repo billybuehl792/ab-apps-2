@@ -2,12 +2,18 @@ from rest_framework import serializers
 
 from app.common.models import Place
 from .models import Client
+from app.work_orders.models import WorkOrder
 from app.common.serializers import PlaceSerializer
-from app.work_orders.serializers import WorkOrderSerializer
+
+
+class ClientWorkOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkOrder
+        fields = ["id", "label", "status"]
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    work_orders = WorkOrderSerializer(many=True, read_only=True)
+    work_orders = ClientWorkOrderSerializer(many=True, read_only=True)
     place_id = serializers.PrimaryKeyRelatedField(
         queryset=Place.objects.all(), required=False, allow_null=True
     )

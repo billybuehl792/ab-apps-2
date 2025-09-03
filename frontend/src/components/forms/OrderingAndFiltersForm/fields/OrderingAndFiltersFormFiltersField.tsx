@@ -9,27 +9,27 @@ import {
   Grow,
   IconButton,
   Stack,
-  StackProps,
+  type StackProps,
   Tooltip,
 } from "@mui/material";
-import FilterAndSortForm, { type FilterAndSortFormValues } from "..";
 import { FilterAltOff } from "@mui/icons-material";
+import OrderingAndFiltersForm, { type OrderingAndFiltersFormValues } from "..";
 
-interface FilterAndSortFormFiltersFieldProps extends StackProps {
-  label?: ComponentProps<typeof FilterAndSortForm>["filterLabel"];
+interface OrderingAndFiltersFormFiltersFieldProps extends StackProps {
+  label?: ComponentProps<typeof OrderingAndFiltersForm>["filterLabel"];
   options: NonNullable<
-    ComponentProps<typeof FilterAndSortForm>["filterOptions"]
+    ComponentProps<typeof OrderingAndFiltersForm>["filterOptions"]
   >;
 }
 
-const FilterAndSortFormFiltersField = ({
+const OrderingAndFiltersFormFiltersField = ({
   label = "Filter By",
   options,
   ...props
-}: FilterAndSortFormFiltersFieldProps) => {
+}: OrderingAndFiltersFormFiltersFieldProps) => {
   /** Values */
 
-  const methods = useFormContext<FilterAndSortFormValues>();
+  const methods = useFormContext<OrderingAndFiltersFormValues>();
 
   return (
     <Controller
@@ -51,19 +51,17 @@ const FilterAndSortFormFiltersField = ({
             <FormGroup ref={ref}>
               {options.map((option) => (
                 <FormControlLabel
-                  key={String(option.value)}
+                  key={option.id}
                   value={option.value}
                   label={option.label}
-                  checked={value.some(({ value }) => value === option.value)}
+                  checked={value.some(({ id }) => id === option.id)}
                   disabled={option.disabled || disabled}
                   control={
                     <Checkbox
                       onChange={(_, checked) => {
                         if (checked) onChange([...value, option]);
                         else
-                          onChange(
-                            value.filter(({ value }) => value !== option.value)
-                          );
+                          onChange(value.filter(({ id }) => id !== option.id));
                       }}
                       onBlur={onBlur}
                     />
@@ -78,4 +76,4 @@ const FilterAndSortFormFiltersField = ({
   );
 };
 
-export default FilterAndSortFormFiltersField;
+export default OrderingAndFiltersFormFiltersField;

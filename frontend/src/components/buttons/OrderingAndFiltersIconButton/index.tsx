@@ -7,17 +7,26 @@ import {
   type IconButtonProps,
 } from "@mui/material";
 import { Tune } from "@mui/icons-material";
-import FilterAndSortDrawer from "@/components/modals/FilterAndSortDrawer";
+import OrderingAndFiltersForm, {
+  type FilterOption,
+  type OrderingOption,
+} from "@/components/forms/OrderingAndFiltersForm";
+import OrderingAndFiltersFormDrawer from "@/components/modals/OrderingAndFiltersFormDrawer";
 
-interface FilterAndSortIconButtonProps<O, F>
-  extends Omit<IconButtonProps, "form"> {
-  form: ComponentProps<typeof FilterAndSortDrawer<O, F>>["form"];
+interface OrderingAndFiltersIconButtonProps<
+  O extends OrderingOption,
+  F extends FilterOption,
+> extends Omit<IconButtonProps, "form"> {
+  form: ComponentProps<typeof OrderingAndFiltersForm<O, F>>;
 }
 
-const FilterAndSortIconButton = <O, F>({
+const OrderingAndFiltersIconButton = <
+  O extends OrderingOption,
+  F extends FilterOption,
+>({
   form,
   ...props
-}: FilterAndSortIconButtonProps<O, F>) => {
+}: OrderingAndFiltersIconButtonProps<O, F>) => {
   const [open, setOpen] = useState(false);
 
   /** Values */
@@ -33,7 +42,7 @@ const FilterAndSortIconButton = <O, F>({
 
   return (
     <>
-      <Tooltip title="Filter and Sort">
+      <Tooltip title="Filter and Ordering">
         <Box component="span">
           <IconButton onClick={handleOpen} {...props}>
             <Badge
@@ -45,7 +54,7 @@ const FilterAndSortIconButton = <O, F>({
           </IconButton>
         </Box>
       </Tooltip>
-      <FilterAndSortDrawer
+      <OrderingAndFiltersFormDrawer
         open={open}
         form={{
           ...form,
@@ -57,4 +66,4 @@ const FilterAndSortIconButton = <O, F>({
   );
 };
 
-export default FilterAndSortIconButton;
+export default OrderingAndFiltersIconButton;

@@ -1,7 +1,6 @@
 import { type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import { Box } from "@mui/material";
 import { clientMutations } from "@/store/mutations/clients";
 import ClientForm from "@/containers/forms/ClientForm";
 
@@ -26,9 +25,5 @@ function RouteComponent() {
       onSuccess: (res) => navigate({ to: `/app/clients/${res.data.id}` }),
     });
 
-  return (
-    <Box p={2}>
-      <ClientForm onSubmit={handleSubmit} />
-    </Box>
-  );
+  return <ClientForm p={2} onSubmit={handleSubmit} />;
 }

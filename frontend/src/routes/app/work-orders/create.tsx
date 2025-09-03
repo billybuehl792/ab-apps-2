@@ -27,5 +27,5 @@ function RouteComponent() {
       onSuccess: (res) => navigate({ to: `/app/work-orders/${res.data.id}` }),
     });
 
-  return <WorkOrderForm onSubmit={handleSubmit} />;
+  return <WorkOrderForm p={2} onSubmit={handleSubmit} />;
 }

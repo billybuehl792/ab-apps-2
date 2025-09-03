@@ -12,7 +12,7 @@ import Link from "@/components/elements/Link";
 import StatusCard from "@/components/cards/StatusCard";
 import ClientListCard from "@/containers/cards/ClientListCard";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
-import FilterAndSortIconButton from "@/components/buttons/FilterAndSortIconButton";
+import FilterAndSortIconButton from "@/components/buttons/OrderingAndFiltersIconButton";
 import { ClientListFilters, ClientListOrdering } from "@/store/enums/clients";
 import { sxUtils } from "@/store/utils/sx";
 

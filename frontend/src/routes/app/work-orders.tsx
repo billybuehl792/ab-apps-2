@@ -4,7 +4,7 @@ import {
   Outlet,
   useMatches,
 } from "@tanstack/react-router";
-import { Box, Breadcrumbs, Stack } from "@mui/material";
+import { Breadcrumbs } from "@mui/material";
 import Link from "@/components/elements/Link";
 import PageHeader from "@/components/layout/PageHeader";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
@@ -32,7 +32,7 @@ function RouteComponent() {
     }));
 
   return (
-    <Stack>
+    <>
       <PageHeader
         direction="row"
         justifyContent="space-between"
@@ -46,12 +46,12 @@ function RouteComponent() {
         </Breadcrumbs>
         {!!rootMatch && <Link to="/app/work-orders/create" label="Create" />}
         {!!detailMatch && (
-          <WorkOrderMenuOptionIconButton workOrder={detailMatch.params.id} />
+          <WorkOrderMenuOptionIconButton
+            workOrder={Number(detailMatch.params.id)}
+          />
         )}
       </PageHeader>
-      <Box p={2}>
-        <Outlet />
-      </Box>
-    </Stack>
+      <Outlet />
+    </>
   );
 }

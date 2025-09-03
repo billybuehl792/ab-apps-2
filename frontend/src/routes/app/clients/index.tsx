@@ -1,17 +1,23 @@
-import { type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { clientApi } from "@/store/api/clients";
-import ClientList from "@/containers/lists/ClientList";
-import { paramUtils } from "@/store/utils/params";
+import { clientQueries } from "@/store/queries/clients";
+import PaginatedList from "@/components/lists/PaginatedList";
+import ClientListCard from "@/containers/cards/ClientListCard";
 import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { paramUtils } from "@/store/utils/params";
 
-const cleanSearch = (search: Record<string, unknown>) =>
-  paramUtils.cleanSearch<NonNullable<Parameters<typeof clientApi.list>[0]>>(
-    search
-  );
+type Params = NonNullable<Parameters<typeof clientQueries.list>[0]>;
+
+const cleanParams = (params: Record<string, unknown>) =>
+  paramUtils.cleanApiListRequestParams<Params>(params);
+
+const ORDERING_OPTIONS = [
+  { value: "first_name", label: "First Name" },
+  { value: "last_name", label: "Last Name" },
+] as const;
+const FILTER_OPTIONS = [{ id: "has_email", value: 1, label: "Has Email" }];
 
 export const Route = createFileRoute("/app/clients/")({
-  validateSearch: (search) => cleanSearch(search),
+  validateSearch: cleanParams,
   component: RouteComponent,
 });
 
@@ -21,42 +27,50 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
+  const queryOptions = clientQueries.list(params);
+
   /** Callbacks */
 
-  const onPageChange: ComponentProps<typeof ClientList>["onPageChange"] = (
-    page
-  ) =>
+  const handlePageChange = (page: number) =>
     navigate({
       to: "/app/clients",
-      search: cleanSearch({ ...params, page }),
+      search: cleanParams({ ...params, page }),
     });
 
-  const onSearch: ComponentProps<typeof ClientList>["onSearch"] = (term) =>
+  const handleSearch = (term: string) =>
     navigate({
       to: "/app/clients",
-      search: cleanSearch({ ...params, page: 1, search: term }),
+      search: cleanParams({ ...params, page: 1, search: term }),
     });
 
-  const onFilterAndSort: ComponentProps<
-    typeof ClientList
-  >["onFilterAndSort"] = (data) =>
+  const handleOrderingAndFiltersChange = (res: {
+    ordering?: (typeof ORDERING_OPTIONS)[number];
+    filters?: (typeof FILTER_OPTIONS)[number][];
+  }) =>
     navigate({
       to: "/app/clients",
-      search: cleanSearch({
+      search: cleanParams({
+        page: undefined,
         search: params.search,
-        ordering: data.ordering?.value,
-        ...data.filters.reduce((acc, f) => ({ ...acc, [f.value]: 1 }), {}),
+        ordering: res.ordering?.value,
+        ...res.filters?.reduce((acc, f) => ({ ...acc, [f.id]: f.value }), {}),
       }),
     });
 
   return (
-    <ClientList
-      params={params}
-      p={2}
-      pt={0}
-      onPageChange={onPageChange}
-      onSearch={onSearch}
-      onFilterAndSort={onFilterAndSort}
+    <PaginatedList
+      queryOptions={queryOptions}
+      orderingAndFiltersOptions={{
+        ordering: ORDERING_OPTIONS,
+        filters: FILTER_OPTIONS,
+      }}
+      renderItem={(client) => (
+        <ClientListCard key={client.id} client={client} />
+      )}
+      onPageChange={handlePageChange}
+      onSearch={handleSearch}
+      onOrderingAndFiltersChange={handleOrderingAndFiltersChange}
+      sx={{ p: 2, pt: 0 }}
       slotProps={{
         header: {
           position: "sticky",

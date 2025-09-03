@@ -12,24 +12,24 @@ import {
   Tooltip,
   type StackProps,
 } from "@mui/material";
-import FilterAndSortForm, { type FilterAndSortFormValues } from "..";
 import { FilterListOff } from "@mui/icons-material";
+import OrderingAndFiltersForm, { type OrderingAndFiltersFormValues } from "..";
 
-interface FilterAndSortFormSortFieldProps extends StackProps {
-  label?: ComponentProps<typeof FilterAndSortForm>["orderingLabel"];
+interface OrderingAndFiltersFormOrderingFieldProps extends StackProps {
+  label?: ComponentProps<typeof OrderingAndFiltersForm>["orderingLabel"];
   options: NonNullable<
-    ComponentProps<typeof FilterAndSortForm>["orderingOptions"]
+    ComponentProps<typeof OrderingAndFiltersForm>["orderingOptions"]
   >;
 }
 
-const FilterAndSortFormSortField = ({
+const OrderingAndFiltersFormOrderingField = ({
   label = "Sort By",
   options,
   ...props
-}: FilterAndSortFormSortFieldProps) => {
+}: OrderingAndFiltersFormOrderingFieldProps) => {
   /** Values */
 
-  const methods = useFormContext<FilterAndSortFormValues>();
+  const methods = useFormContext<OrderingAndFiltersFormValues>();
 
   return (
     <Controller
@@ -83,4 +83,4 @@ const FilterAndSortFormSortField = ({
   );
 };
 
-export default FilterAndSortFormSortField;
+export default OrderingAndFiltersFormOrderingField;

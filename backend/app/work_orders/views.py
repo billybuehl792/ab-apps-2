@@ -6,12 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import WorkOrder
 from .serializers import WorkOrderSerializer
-from app.account.permissions import IsFromCompany
 
 
 class WorkOrderViewSet(viewsets.ModelViewSet):
     serializer_class = WorkOrderSerializer
-    permission_classes = [IsAuthenticated, IsFromCompany]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ["client", "status", "scheduled_date", "completed_date"]
     search_fields = ["label", "description",
@@ -21,6 +20,4 @@ class WorkOrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):  # type: ignore
         user_company = getattr(self.request.user, 'company', None)
-        if user_company is None:
-            return WorkOrder.objects.none()
-        return WorkOrder.objects.filter(client__company=user_company)
+        return WorkOrder.objects.filter(client__company=user_company).order_by("created_at", "id")

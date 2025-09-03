@@ -67,9 +67,7 @@ const DebouncedSearchField = ({
               spacing={1}
               position="end"
             >
-              {loading ? (
-                <CircularProgress color="inherit" size={props.size} />
-              ) : null}
+              {loading ? <CircularProgress size={16} /> : null}
               {!!localValue && (
                 <CloseIconButton size="small" onClick={handleOnClear} />
               )}
