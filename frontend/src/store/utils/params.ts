@@ -7,7 +7,7 @@ import type { ApiListRequest } from "../types/api";
  * @returns The parameters for the API list request.
  */
 const cleanApiListRequestParams = <P extends ApiListRequest = ApiListRequest>(
-  params: Record<string, unknown>
+  params?: Record<string, unknown>
 ): P => {
   const formatted = {
     ...params,

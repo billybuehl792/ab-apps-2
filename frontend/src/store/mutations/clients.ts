@@ -1,21 +1,22 @@
 import { mutationOptions } from "@tanstack/react-query";
 import { clientApi } from "../api/clients";
+import { queryUtils } from "../utils/queries";
 
 const create = () =>
   mutationOptions({
-    mutationKey: ["clients", "create"],
+    mutationKey: queryUtils.getQueryKey(["clients", "create"]),
     mutationFn: clientApi.create,
   });
 
 const update = () =>
   mutationOptions({
-    mutationKey: ["clients", "update"],
+    mutationKey: queryUtils.getQueryKey(["clients", "update"]),
     mutationFn: clientApi.update,
   });
 
 const _delete = () =>
   mutationOptions({
-    mutationKey: ["clients", "delete"],
+    mutationKey: queryUtils.getQueryKey(["clients", "delete"]),
     mutationFn: clientApi.delete,
   });
 

@@ -16,6 +16,7 @@ export type FilterOption<
 > = {
   /** The unique identifier for the filter option: `<id>=<value>` */
   id: T;
+  /** The unique value for the filter option: `<id>=<value>` */
   value: V;
   label: string;
   disabled?: boolean;

@@ -1,12 +1,13 @@
 import { mutationOptions } from "@tanstack/react-query";
 import api from "../config/api";
 import endpoints from "../constants/endpoints";
+import { queryUtils } from "../utils/queries";
 import { authUtils } from "../utils/auth";
-import type { Credentials } from "../types";
+import type { Credentials } from "../types/auth";
 
 const signIn = () =>
   mutationOptions({
-    mutationKey: ["accessToken"],
+    mutationKey: queryUtils.getQueryKey(["auth", "signIn"]),
     mutationFn: async (credentials: Credentials) => {
       const res = await api.post<{ access: string }>(
         endpoints.auth.token(),
@@ -20,7 +21,7 @@ const signIn = () =>
 
 const signOut = () =>
   mutationOptions({
-    mutationKey: ["signOut"],
+    mutationKey: queryUtils.getQueryKey(["auth", "signOut"]),
     mutationFn: async () => {
       const res = await api.post<{ detail: string }>(endpoints.auth.signOut());
       authUtils.setAccessToken(null);
@@ -31,7 +32,7 @@ const signOut = () =>
 
 const refreshAccessToken = () =>
   mutationOptions({
-    mutationKey: ["refreshToken"],
+    mutationKey: queryUtils.getQueryKey(["auth", "refreshToken"]),
     mutationFn: async () => {
       const res = await api.post<{ access: string }>(
         endpoints.auth.tokenRefresh()

@@ -8,6 +8,11 @@ const endpoints = {
     signOut: () => `${endpoints.auth()}sign-out/`,
     me: () => `${endpoints.auth()}me/`,
   }),
+  places: Object.assign(() => `${API_URL}/places/`, {
+    detail: (id: number) => `${endpoints.places()}${id}/`,
+    googlePlace: () => `${endpoints.places()}google-place/`,
+    googleSuggestions: () => `${endpoints.places()}google-suggestions/`,
+  }),
   clients: Object.assign(() => `${API_URL}/clients/`, {
     detail: (id: number) => `${endpoints.clients()}${id}/`,
   }),

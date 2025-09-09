@@ -13,6 +13,5 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ["place"]
-    search_fields = ["label", "description", "place__address"]
+    search_fields = ["label", "description"]
     ordering_fields = ["created_at", "label"]

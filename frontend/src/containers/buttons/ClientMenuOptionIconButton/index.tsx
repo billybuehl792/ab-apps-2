@@ -6,7 +6,7 @@ import { clientQueries } from "@/store/queries/clients";
 import { clientMutations } from "@/store/mutations/clients";
 import useConfirm from "@/store/hooks/useConfirm";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import type { Client } from "@/store/types";
+import type { Client } from "@/store/types/clients";
 
 interface ClientMenuOptionIconButtonProps
   extends Omit<ComponentProps<typeof MenuOptionIconButton>, "options"> {
@@ -24,7 +24,7 @@ const ClientMenuOptionIconButton = ({
   const confirm = useConfirm();
   const matches = useMatches();
 
-  const isId = typeof clientProp === "string";
+  const isId = !(clientProp instanceof Object);
   const clientId = isId ? clientProp : clientProp.id;
 
   const isDetail = matches.some((m) => m.routeId === "/app/clients/$id");
@@ -67,7 +67,7 @@ const ClientMenuOptionIconButton = ({
       label: "Detail",
       icon: <Info />,
       onClick: () =>
-        navigate({ to: "/app/clients/$id", params: { id: clientId } }),
+        navigate({ to: "/app/clients/$id", params: { id: String(clientId) } }),
     },
     {
       id: "edit",
@@ -76,7 +76,7 @@ const ClientMenuOptionIconButton = ({
       onClick: () =>
         navigate({
           to: "/app/clients/$id",
-          params: { id: clientId },
+          params: { id: String(clientId) },
           search: { edit: true },
         }),
     },

@@ -1,13 +1,13 @@
 import { useFormContext } from "react-hook-form";
 import { TextField, type TextFieldProps } from "@mui/material";
-import { type SignInForm } from "..";
+import { type SignInFormValues } from "..";
 
 const MAX_LENGTH = 64;
 
 const SignInFormUsernameField = (props: TextFieldProps) => {
   /** Values */
 
-  const methods = useFormContext<SignInForm>();
+  const methods = useFormContext<SignInFormValues>();
 
   return (
     <TextField

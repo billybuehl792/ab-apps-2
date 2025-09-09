@@ -1,4 +1,4 @@
-import { RegexPattern } from "./regex";
+import { RegexPattern } from "../constants/regex";
 
 String.prototype.toCapitalized = function () {
   return this.charAt(0).toUpperCase() + this.slice(1);
@@ -22,4 +22,8 @@ String.prototype.toTitleCase = function (): string {
 String.prototype.truncate = function (length?: number, append: string = "...") {
   if (!length) return this.toString();
   return `${this.slice(0, length)}${this.length > length ? append : ""}`;
+};
+
+String.prototype.snakeCaseToTitleCase = function (): string {
+  return this.replace(/_/g, " ").toTitleCase();
 };

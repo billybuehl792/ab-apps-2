@@ -4,11 +4,10 @@ import PaginatedList from "@/components/lists/PaginatedList";
 import ClientListCard from "@/containers/cards/ClientListCard";
 import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import { paramUtils } from "@/store/utils/params";
-
-type Params = NonNullable<Parameters<typeof clientQueries.list>[0]>;
+import type { ClientApiListRequest } from "@/store/types/clients";
 
 const cleanParams = (params: Record<string, unknown>) =>
-  paramUtils.cleanApiListRequestParams<Params>(params);
+  paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params);
 
 const ORDERING_OPTIONS = [
   { value: "first_name", label: "First Name" },

@@ -1,4 +1,4 @@
-import { type ComponentProps } from "react";
+import { type ReactNode } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   Checkbox,
@@ -13,13 +13,11 @@ import {
   Tooltip,
 } from "@mui/material";
 import { FilterAltOff } from "@mui/icons-material";
-import OrderingAndFiltersForm, { type OrderingAndFiltersFormValues } from "..";
+import type { FilterOption, OrderingAndFiltersFormValues } from "..";
 
 interface OrderingAndFiltersFormFiltersFieldProps extends StackProps {
-  label?: ComponentProps<typeof OrderingAndFiltersForm>["filterLabel"];
-  options: NonNullable<
-    ComponentProps<typeof OrderingAndFiltersForm>["filterOptions"]
-  >;
+  label?: ReactNode;
+  options: ReadonlyArray<FilterOption>;
 }
 
 const OrderingAndFiltersFormFiltersField = ({

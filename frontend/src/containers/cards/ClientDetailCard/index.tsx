@@ -9,7 +9,7 @@ import {
 import dayjs from "dayjs";
 import Metadata from "@/components/lists/Metadata";
 import { DateTimeFormat } from "@/store/enums/datetime";
-import type { Client } from "@/store/types";
+import type { Client } from "@/store/types/clients";
 
 interface ClientDetailCardProps extends CardProps {
   client: Client;

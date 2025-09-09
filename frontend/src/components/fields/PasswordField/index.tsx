@@ -13,15 +13,11 @@ const PasswordField = (props: TextFieldProps) => {
 
   /** Callbacks */
 
-  const handleTogglePasswordVisibility: IconButtonProps["onClick"] = () => {
+  const handleTogglePasswordVisibility: IconButtonProps["onClick"] = () =>
     setShowPassword((show) => !show);
-  };
 
-  const handleIconButtonMouseEvent: IconButtonProps["onMouseDown"] = (
-    event
-  ) => {
+  const handleIconButtonMouseEvent: IconButtonProps["onMouseDown"] = (event) =>
     event.preventDefault();
-  };
 
   return (
     <TextField

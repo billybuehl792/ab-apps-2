@@ -11,7 +11,6 @@ class CompanySerializer(serializers.ModelSerializer):
             "id",
             "label",
             "description",
-            "place",
             "created_at",
             "updated_at",
         ]

@@ -1,8 +1,4 @@
 import { createContext } from "react";
-import type { User } from "../types";
+import type { User } from "../types/auth";
 
-export default createContext<{
-  me: User;
-}>({
-  me: null!,
-});
+export default createContext<{ me: User }>({ me: null! });

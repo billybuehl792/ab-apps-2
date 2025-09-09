@@ -57,8 +57,9 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local
     "app.common",
-    "app.account",
     "app.companies",
+    "app.account",
+    "app.places",
     "app.clients",
     "app.work_orders",
 ]
@@ -141,3 +142,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
 }
+
+# Additional settings
+
+GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")

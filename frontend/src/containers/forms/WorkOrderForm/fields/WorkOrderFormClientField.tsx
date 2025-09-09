@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
@@ -6,43 +5,48 @@ import { useQuery } from "@tanstack/react-query";
 import { clientQueries } from "@/store/queries/clients";
 import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
 import ClientChip from "@/containers/chips/ClientChip";
-import type { WorkOrderForm } from "..";
+import type { WorkOrderFormValues } from "..";
 
-const WorkOrderClientField = () => {
-  const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebounce(search || undefined, 400);
+const WorkOrderFormClientField = () => {
+  const [search, setSearch] = useDebounce("", 600);
 
   /** Values */
 
-  const methods = useFormContext<WorkOrderForm>();
+  const methods = useFormContext<WorkOrderFormValues>();
 
   /** Queries */
 
-  const clientListQuery = useQuery(
-    clientQueries.list({ search: debouncedSearch })
-  );
+  const clientListQuery = useQuery(clientQueries.list({ search }));
 
   return (
     <Controller
       name="client"
       control={methods.control}
-      render={({ field }) => (
+      render={({ field, formState }) => (
         <Autocomplete
-          value={field.value ?? null}
+          value={field.value}
           options={clientListQuery.data?.results ?? []}
+          disabled={field.disabled}
+          loading={clientListQuery.isLoading}
           getOptionLabel={(option) =>
             `${option.first_name} ${option.last_name}`
           }
           getOptionKey={(option) => option.id}
-          loading={clientListQuery.isLoading}
+          includeInputInList
           filterOptions={(options) => options}
           isOptionEqualToValue={(option, value) => option.id === value.id}
+          onInputChange={(_, value) => setSearch(value)}
           renderInput={(params) => (
             <TextField
-              {...params}
               label="Client"
-              required
-              onChange={(event) => setSearch(event.target.value)}
+              name={field.name}
+              inputRef={field.ref}
+              {...(formState.errors.client && {
+                error: true,
+                helperText: formState.errors.client.message,
+              })}
+              {...params}
+              onBlur={field.onBlur}
               slotProps={{
                 input: {
                   ...params.InputProps,
@@ -61,11 +65,8 @@ const WorkOrderClientField = () => {
           renderOption={({ key, ...props }, option) => (
             <ClientMenuItem key={key} client={option} {...props} />
           )}
-          renderValue={(selected) => (
-            <ClientChip
-              client={selected}
-              onDelete={() => field.onChange(null)}
-            />
+          renderValue={(selected, getItemProps) => (
+            <ClientChip client={selected} {...getItemProps()} />
           )}
           onChange={(_, value) => field.onChange(value)}
         />
@@ -74,4 +75,4 @@ const WorkOrderClientField = () => {
   );
 };
 
-export default WorkOrderClientField;
+export default WorkOrderFormClientField;

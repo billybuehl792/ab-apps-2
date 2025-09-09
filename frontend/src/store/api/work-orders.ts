@@ -1,23 +1,23 @@
 import api from "../config/api";
 import endpoints from "../constants/endpoints";
-import type { ApiListRequest, ApiListResponse } from "../types/api";
-import type { WorkOrder } from "../types";
+import type { ApiListResponse } from "../types/api";
+import type {
+  WorkOrder,
+  WorkOrderApiListRequest,
+  WriteableWorkOrder,
+} from "../types/work-orders";
 
-const list = (
-  params?: ApiListRequest<"created_at" | "first_name" | "last_name">
-) =>
-  api.get<ApiListResponse<WorkOrder>>(endpoints.workOrders(), {
-    params,
-  });
+const list = (params?: WorkOrderApiListRequest) =>
+  api.get<ApiListResponse<WorkOrder>>(endpoints.workOrders(), { params });
 
 const detail = (id: WorkOrder["id"]) =>
   api.get<WorkOrder>(endpoints.workOrders.detail(id));
 
-const create = (body: Omit<WorkOrder, "id">) =>
-  api.post<WorkOrder>(endpoints.workOrders(), body);
+const create = (body: Omit<WriteableWorkOrder, "id">) =>
+  api.post<WriteableWorkOrder>(endpoints.workOrders(), body);
 
-const update = (body: Pick<WorkOrder, "id"> & Partial<Omit<WorkOrder, "id">>) =>
-  api.patch<WorkOrder>(endpoints.workOrders.detail(body.id), body);
+const update = ({ id, ...body }: WriteableWorkOrder) =>
+  api.patch<WriteableWorkOrder>(endpoints.workOrders.detail(id), body);
 
 const _delete = (body: WorkOrder["id"]) =>
   api.delete(endpoints.workOrders.detail(body));

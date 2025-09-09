@@ -1,31 +1,46 @@
+from enum import Enum
 from django.db import models
-from typing import Optional
 from decimal import Decimal
 
-from app.common.models import Place, TimeStampedModel
+from app.common.models import TimeStampedModel
 from app.companies.models import Company
+from app.places.models import Place
 from app.clients.models import Client
 
 
+class StatusEnum(Enum):
+    NEW = "new"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELED = "canceled"
+
+    @classmethod
+    def choices(cls):
+        return [
+            (item.value, item.name.replace("_", " ").title())
+            for item in cls
+        ]
+
+
 class WorkOrder(TimeStampedModel):
-
-    class Status(models.TextChoices):
-        NEW = "new", "New"
-        IN_PROGRESS = "in_progress", "In Progress"
-        COMPLETED = "completed", "Completed"
-        CANCELED = "canceled", "Canceled"
-
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name="work_orders",
+    )
     label = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, default="")
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.NEW)
+        max_length=20, choices=StatusEnum.choices(), default=StatusEnum.NEW.value)
     scheduled_date = models.DateField(null=True, blank=True)
     completed_date = models.DateField(null=True, blank=True)
     cost = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal("0"))
     client = models.ForeignKey(
         Client,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="work_orders",
     )
     place = models.ForeignKey(
@@ -41,4 +56,4 @@ class WorkOrder(TimeStampedModel):
         verbose_name_plural = "Work Orders"
 
     def __str__(self):
-        return f"{self.label}"
+        return self.label

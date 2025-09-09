@@ -1,13 +1,13 @@
 import { useFormContext } from "react-hook-form";
 import { TextField, type TextFieldProps } from "@mui/material";
-import type { WorkOrderForm } from "..";
+import type { WorkOrderFormValues } from "..";
 
 const MAX_LENGTH = 32;
 
-const WorkOrderLabelField = (props: TextFieldProps) => {
+const WorkOrderFormLabelField = (props: TextFieldProps) => {
   /** Values */
 
-  const methods = useFormContext<WorkOrderForm>();
+  const methods = useFormContext<WorkOrderFormValues>();
 
   return (
     <TextField
@@ -28,4 +28,4 @@ const WorkOrderLabelField = (props: TextFieldProps) => {
   );
 };
 
-export default WorkOrderLabelField;
+export default WorkOrderFormLabelField;

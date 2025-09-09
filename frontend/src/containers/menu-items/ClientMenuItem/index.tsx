@@ -5,7 +5,7 @@ import {
   type MenuItemProps,
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
-import { type Client } from "@/store/types";
+import { type Client } from "@/store/types/clients";
 
 interface ClientMenuItemProps extends MenuItemProps {
   client: Client;

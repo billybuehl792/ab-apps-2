@@ -6,11 +6,9 @@ import { type SxProps, type Theme } from "@mui/material";
  *
  * https://mui.com/system/getting-started/the-sx-prop/#passing-the-sx-prop
  */
-export const asArray = (sx?: SxProps<Theme>) => {
+const asArray = (sx?: SxProps<Theme>) => {
   if (!sx) return [];
   return Array.isArray(sx) ? sx : [sx];
 };
 
-export const sxUtils = {
-  asArray,
-};
+export const sxUtils = { asArray };

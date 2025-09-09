@@ -17,6 +17,9 @@ const iOS =
   /iPad|iPhone|iPod/.test(navigator.userAgent);
 
 const StyledDrawer = styled(MuiSwipeableDrawer)(({ theme }) => ({
+  ".MuiDrawer-paperAnchorRight": {
+    width: 420,
+  },
   "&.full-height": {
     ".MuiDrawer-paperAnchorBottom": {
       height: `calc(100vh - ${theme.spacing(8)})`,

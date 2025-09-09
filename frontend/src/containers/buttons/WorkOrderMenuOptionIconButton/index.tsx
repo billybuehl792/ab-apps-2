@@ -2,11 +2,11 @@ import { type ComponentProps } from "react";
 import { useMatches, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Delete, Edit, Info } from "@mui/icons-material";
-import { workOrderQueries } from "@/store/queries/workOrders";
+import { workOrderQueries } from "@/store/queries/work-orders";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import useConfirm from "@/store/hooks/useConfirm";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import type { WorkOrder } from "@/store/types";
+import type { WorkOrder } from "@/store/types/work-orders";
 
 interface WorkOrderMenuOptionIconButtonProps
   extends Omit<ComponentProps<typeof MenuOptionIconButton>, "options"> {
@@ -24,7 +24,7 @@ const WorkOrderMenuOptionIconButton = ({
   const confirm = useConfirm();
   const matches = useMatches();
 
-  const isId = typeof workOrderProp === "string";
+  const isId = !(workOrderProp instanceof Object);
   const workOrderId = isId ? workOrderProp : workOrderProp.id;
 
   const isDetail = matches.some((m) => m.routeId === "/app/work-orders/$id");
@@ -65,7 +65,10 @@ const WorkOrderMenuOptionIconButton = ({
       label: "Detail",
       icon: <Info />,
       onClick: () =>
-        navigate({ to: "/app/work-orders/$id", params: { id: workOrderId } }),
+        navigate({
+          to: "/app/work-orders/$id",
+          params: { id: String(workOrderId) },
+        }),
     },
     {
       id: "edit",
@@ -74,7 +77,7 @@ const WorkOrderMenuOptionIconButton = ({
       onClick: () =>
         navigate({
           to: "/app/work-orders/$id",
-          params: { id: workOrderId },
+          params: { id: String(workOrderId) },
           search: { edit: true },
         }),
     },

@@ -1,0 +1,28 @@
+import {
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  type MenuItemProps,
+} from "@mui/material";
+import { Place as PlaceIcon } from "@mui/icons-material";
+import type { Place } from "@/store/types/places";
+
+interface PlaceMenuItemProps extends MenuItemProps {
+  place: Place;
+}
+
+const PlaceMenuItem = ({ place, ...props }: PlaceMenuItemProps) => {
+  return (
+    <MenuItem {...props}>
+      <ListItemIcon>
+        <PlaceIcon />
+      </ListItemIcon>
+      <ListItemText
+        primary={place.address_short}
+        secondary={`${place.city}, ${place.state}`}
+      />
+    </MenuItem>
+  );
+};
+
+export default PlaceMenuItem;

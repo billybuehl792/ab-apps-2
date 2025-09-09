@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
-import type { Client } from "@/store/types";
+import type { Client } from "@/store/types/clients";
 
 interface ClientListCardProps extends CardProps {
   client: Client;

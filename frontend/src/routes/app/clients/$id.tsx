@@ -44,7 +44,12 @@ function RouteComponent() {
     typeof ClientFormDrawer
   >["form"]["onSubmit"] = (values) =>
     updateClientMutation.mutateAsync(
-      { id: client.id, ...values },
+      {
+        ...values,
+        id: client.id,
+        place: values.place?.google_place_id ?? null,
+        work_orders: values.work_orders?.map(({ id }) => id),
+      },
       { onSuccess: handleOnClose }
     );
 
@@ -60,7 +65,10 @@ function RouteComponent() {
       <ClientDetailCard client={client} />
       <ClientFormDrawer
         open={isEditing}
-        form={{ values: client, onSubmit: handleUpdateClient }}
+        form={{
+          values: client,
+          onSubmit: handleUpdateClient,
+        }}
         onClose={handleOnClose}
       />
     </Box>

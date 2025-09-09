@@ -11,6 +11,4 @@ const getErrorMessage = (error: unknown): string => {
   return message;
 };
 
-export const errorUtils = {
-  getErrorMessage,
-};
+export const errorUtils = { getErrorMessage };

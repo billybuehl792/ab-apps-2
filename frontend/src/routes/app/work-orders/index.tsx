@@ -1,14 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PaginatedList from "@/components/lists/PaginatedList";
-import { workOrderQueries } from "@/store/queries/workOrders";
+import { workOrderQueries } from "@/store/queries/work-orders";
 import { paramUtils } from "@/store/utils/params";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
-
-type Params = NonNullable<Parameters<typeof workOrderQueries.list>[0]>;
+import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 const cleanParams = (params: Record<string, unknown>) =>
-  paramUtils.cleanApiListRequestParams<Params>(params);
+  paramUtils.cleanApiListRequestParams<WorkOrderApiListRequest>(params);
 
 export const Route = createFileRoute("/app/work-orders/")({
   validateSearch: cleanParams,

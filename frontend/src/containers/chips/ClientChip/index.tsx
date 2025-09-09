@@ -2,16 +2,16 @@ import { Chip, Skeleton, type ChipProps } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Person } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
-import type { Client } from "@/store/types";
+import type { Client } from "@/store/types/clients";
 
 interface ClientChipProps extends ChipProps {
-  client: Client;
+  client: Client | Client["id"];
 }
 
 const ClientChip = ({ client: clientProp, ...props }: ClientChipProps) => {
   /** Values */
 
-  const isId = typeof clientProp === "number";
+  const isId = !(clientProp instanceof Object);
   const clientId = isId ? clientProp : clientProp.id;
 
   /** Queries */

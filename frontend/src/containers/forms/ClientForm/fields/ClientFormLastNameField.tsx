@@ -1,13 +1,13 @@
 import { useFormContext } from "react-hook-form";
 import { TextField, type TextFieldProps } from "@mui/material";
-import { ClientForm } from "..";
+import { ClientFormValues } from "..";
 
 const MAX_LENGTH = 32;
 
 const ClientFormLastNameField = (props: TextFieldProps) => {
   /** Values */
 
-  const methods = useFormContext<ClientForm>();
+  const methods = useFormContext<ClientFormValues>();
 
   return (
     <TextField

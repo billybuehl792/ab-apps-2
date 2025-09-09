@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { Credentials } from "../types";
+import type { Credentials } from "../types/auth";
 
 export default createContext<{
   isAuthenticated: boolean;

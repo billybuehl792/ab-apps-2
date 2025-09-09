@@ -1,0 +1,44 @@
+import { Chip, Skeleton, type ChipProps } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { Work } from "@mui/icons-material";
+import { workOrderQueries } from "@/store/queries/work-orders";
+import type { WorkOrder } from "@/store/types/work-orders";
+
+interface WorkOrderChipProps extends ChipProps {
+  workOrder: WorkOrder | WorkOrder["id"];
+}
+
+const WorkOrderChip = ({
+  workOrder: workOrderProp,
+  ...props
+}: WorkOrderChipProps) => {
+  /** Values */
+
+  const isId = !(workOrderProp instanceof Object);
+  const workOrderId = isId ? workOrderProp : workOrderProp.id;
+
+  /** Queries */
+
+  const workOrderQuery = useQuery({
+    ...workOrderQueries.detail(workOrderId),
+    enabled: isId,
+  });
+
+  /** Data */
+
+  const workOrder = isId ? workOrderQuery.data : workOrderProp;
+  const label = workOrderQuery.isError ? "error" : (workOrder?.label ?? "-");
+
+  return (
+    <Chip
+      icon={<Work fontSize={props.size} />}
+      label={
+        workOrderQuery.isLoading ? <Skeleton height={24} width={100} /> : label
+      }
+      variant="outlined"
+      {...props}
+    />
+  );
+};
+
+export default WorkOrderChip;

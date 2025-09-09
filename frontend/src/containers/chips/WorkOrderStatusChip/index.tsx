@@ -1,5 +1,6 @@
 import { Chip, type ChipProps } from "@mui/material";
-import type { WorkOrder } from "@/store/types";
+import type { WorkOrder } from "@/store/types/work-orders";
+import { WorkOrderStatus } from "@/store/enums/work-orders";
 
 interface WorkOrderStatusChip extends ChipProps {
   workOrder: WorkOrder;
@@ -11,9 +12,9 @@ const WorkOrderStatusChip = ({ workOrder, ...props }: WorkOrderStatusChip) => {
       label={workOrder.status.replace(/_/g, " ").toTitleCase()}
       variant="outlined"
       color={
-        workOrder.status === "completed"
+        workOrder.status === WorkOrderStatus.Completed
           ? "success"
-          : workOrder.status === "canceled"
+          : workOrder.status === WorkOrderStatus.Canceled
             ? "error"
             : "info"
       }

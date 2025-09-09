@@ -1,4 +1,4 @@
-import { type ComponentProps } from "react";
+import { type ReactNode } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import {
   FormControl,
@@ -13,13 +13,11 @@ import {
   type StackProps,
 } from "@mui/material";
 import { FilterListOff } from "@mui/icons-material";
-import OrderingAndFiltersForm, { type OrderingAndFiltersFormValues } from "..";
+import type { OrderingOption, OrderingAndFiltersFormValues } from "..";
 
 interface OrderingAndFiltersFormOrderingFieldProps extends StackProps {
-  label?: ComponentProps<typeof OrderingAndFiltersForm>["orderingLabel"];
-  options: NonNullable<
-    ComponentProps<typeof OrderingAndFiltersForm>["orderingOptions"]
-  >;
+  label?: ReactNode;
+  options: ReadonlyArray<OrderingOption>;
 }
 
 const OrderingAndFiltersFormOrderingField = ({

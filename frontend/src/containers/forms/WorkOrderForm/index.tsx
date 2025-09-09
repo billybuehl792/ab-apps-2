@@ -1,19 +1,23 @@
 import { type ComponentProps } from "react";
 import { type AxiosResponse } from "axios";
 import Form from "@/components/forms/Form";
-import WorkOrderLabelField from "./fields/WorkOrderLabelField";
-import WorkOrderClientField from "./fields/WorkOrderClientField";
-import type { WorkOrder } from "@/store/types";
+import WorkOrderFormLabelField from "./fields/WorkOrderFormLabelField";
+import WorkOrderFormClientField from "./fields/WorkOrderFormClientField";
+import WorkOrderFormPlaceField from "./fields/WorkOrderFormPlaceField";
+import type { WorkOrder, WriteableWorkOrder } from "@/store/types/work-orders";
 
-export type WorkOrderForm = Omit<WorkOrder, "id">;
+export type WorkOrderFormValues = Omit<WorkOrder, "id">;
 
 const WorkOrderForm = (
-  props: ComponentProps<typeof Form<WorkOrderForm, AxiosResponse<WorkOrder>>>
+  props: ComponentProps<
+    typeof Form<WorkOrderFormValues, AxiosResponse<WriteableWorkOrder>>
+  >
 ) => {
   return (
     <Form {...props}>
-      <WorkOrderLabelField />
-      <WorkOrderClientField />
+      <WorkOrderFormLabelField />
+      <WorkOrderFormClientField />
+      <WorkOrderFormPlaceField />
     </Form>
   );
 };

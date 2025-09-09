@@ -75,6 +75,14 @@ declare global {
      * @returns A new string truncated to the specified length with the suffix appended if truncation occurs, or the original string if no truncation is needed.
      */
     truncate(length?: number, append?: string): string;
+
+    /**
+     * Converts a 'snake_case' string to 'Title Case'.
+     *
+     * @param string - The input 'snake_case' string to be converted.
+     * @returns A new string converted to 'Title Case'.
+     */
+    snakeCaseToTitleCase(): string;
   }
 
   interface Number {

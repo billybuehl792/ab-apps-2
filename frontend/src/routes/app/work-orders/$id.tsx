@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Box } from "@mui/material";
 import { workOrderMutations } from "@/store/mutations/work-orders";
-import { workOrderQueries } from "@/store/queries/workOrders";
+import { workOrderQueries } from "@/store/queries/work-orders";
 import StatusCard from "@/components/cards/StatusCard";
 import WorkOrderDetailCard from "@/containers/cards/WorkOrderDetailCard";
 import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
@@ -19,9 +19,9 @@ export const Route = createFileRoute("/app/work-orders/$id")({
 
     return { workOrder, crumb: workOrder.label };
   },
-  pendingComponent: () => <StatusCard loading="loading work order..." />,
   component: RouteComponent,
-  errorComponent: ({ error }) => <StatusCard error={error} />,
+  pendingComponent: () => <StatusCard loading="loading work order..." m={2} />,
+  errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
 });
 
 function RouteComponent() {
@@ -42,11 +42,17 @@ function RouteComponent() {
 
   const handleUpdateWorkOrder: ComponentProps<
     typeof WorkOrderFormDrawer
-  >["form"]["onSubmit"] = (values) =>
-    updateWorkOrderMutation.mutateAsync(
-      { id: workOrder.id, ...values },
+  >["form"]["onSubmit"] = (values) => {
+    return updateWorkOrderMutation.mutateAsync(
+      {
+        ...values,
+        id: workOrder.id,
+        client: values.client?.id ?? null,
+        place: values.place?.google_place_id ?? null,
+      },
       { onSuccess: handleOnClose }
     );
+  };
 
   const handleOnClose = () =>
     navigate({
@@ -60,7 +66,10 @@ function RouteComponent() {
       <WorkOrderDetailCard workOrder={workOrder} />
       <WorkOrderFormDrawer
         open={isEditing}
-        form={{ values: workOrder, onSubmit: handleUpdateWorkOrder }}
+        form={{
+          values: workOrder,
+          onSubmit: handleUpdateWorkOrder,
+        }}
         onClose={handleOnClose}
       />
     </Box>

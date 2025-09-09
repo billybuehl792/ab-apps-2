@@ -6,7 +6,4 @@ const setAccessToken = (token?: string | null) => {
   accessToken = token ?? null;
 };
 
-export const authUtils = {
-  getAccessToken,
-  setAccessToken,
-};
+export const authUtils = { getAccessToken, setAccessToken };
