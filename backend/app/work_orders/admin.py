@@ -5,8 +5,7 @@ from .models import WorkOrder
 
 @admin.register(WorkOrder)
 class WorkOrderAdmin(admin.ModelAdmin):
-    list_display = ("id", "company", "label", "client", "status", "cost",
-                    "scheduled_date", "completed_date", "created_at")
-    list_filter = ("status",)
-    search_fields = ("label", "company", "client__first_name",
-                     "client__last_name", "client__email")
+    list_display = ("id", "label", "client", "status", "cost",
+                    "scheduled_date", "completed_date", "place", "company")
+    list_filter = ("company", "client", "status")
+    search_fields = ("label", "client__first_name", "client__last_name")
