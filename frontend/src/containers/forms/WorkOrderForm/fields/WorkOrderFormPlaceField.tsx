@@ -21,6 +21,7 @@ const WorkOrderFormPlaceField = () => {
     <Controller
       name="place"
       control={methods.control}
+      rules={{ required: "Location is required" }}
       render={({ field, formState }) => (
         <Autocomplete
           value={field.value}

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import Metadata from "@/components/lists/Metadata";
-import ClientChip from "@/containers/chips/ClientChip";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
+import WorkOrderClientFormChip from "@/containers/chips/WorkOrderClientFormChip";
 import { DateTimeFormat } from "@/store/enums/datetime";
 import type { WorkOrder } from "@/store/types/work-orders";
 
@@ -28,9 +28,11 @@ const WorkOrderDetailCard = ({
     {
       id: "scheduled",
       label: "Scheduled Date",
-      value: dayjs(workOrder.scheduled_date).format(
-        DateTimeFormat.DATETIME_MERIDIEM
-      ),
+      value: workOrder.scheduled_date
+        ? dayjs(workOrder.scheduled_date).format(
+            DateTimeFormat.DATETIME_MERIDIEM
+          )
+        : "-",
     },
     {
       id: "created",
@@ -60,12 +62,42 @@ const WorkOrderDetailCard = ({
             <Typography variant="h6">{workOrder.label}</Typography>
             <WorkOrderStatusChip workOrder={workOrder} size="small" />
           </Stack>
-          {!!workOrder.client && (
+          <Stack spacing={0.5}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2">Client:</Typography>
-              <ClientChip client={workOrder.client} size="small" />
+              <Typography variant="body2" color="text.secondary">
+                Location:
+              </Typography>
+              <Typography
+                variant="body2"
+                color={workOrder.place ? "text.primary" : "text.disabled"}
+              >
+                {workOrder.place?.address_full ?? "None"}
+              </Typography>
             </Stack>
-          )}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="body2" color="text.secondary">
+                Client:
+              </Typography>
+              <WorkOrderClientFormChip
+                workOrder={workOrder}
+                variant="outlined"
+                size="xs"
+              />
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="body2" color="text.secondary">
+                Cost:
+              </Typography>
+              <Typography
+                variant="body2"
+                color={
+                  workOrder.cost !== null ? "text.primary" : "text.disabled"
+                }
+              >
+                {Number(workOrder.cost).toUSD()}
+              </Typography>
+            </Stack>
+          </Stack>
         </Stack>
         <Metadata items={metadata} />
       </CardContent>

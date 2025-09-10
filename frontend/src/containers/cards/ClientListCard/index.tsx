@@ -36,7 +36,7 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
             <Typography variant="body1" noWrap>
               {fullName}
             </Typography>
-            <Typography variant="caption" noWrap>
+            <Typography variant="caption" color="text.secondary" noWrap>
               {client.email}
             </Typography>
           </Stack>

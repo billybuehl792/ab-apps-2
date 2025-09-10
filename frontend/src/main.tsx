@@ -8,6 +8,7 @@ import type AuthContext from "./store/context/AuthContext";
 
 import "reset-css/reset.css";
 import "./store/utils/string";
+import "./store/utils/number";
 import "./store/utils/dayjs";
 
 declare module "@tanstack/react-router" {

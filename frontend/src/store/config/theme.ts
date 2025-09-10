@@ -1,5 +1,14 @@
 import { createTheme } from "@mui/material";
 
+declare module "@mui/material/Chip" {
+  interface ChipPropsSizeOverrides {
+    xs: true;
+  }
+  interface ChipPropsColorOverrides {
+    disabled: true;
+  }
+}
+
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -51,6 +60,26 @@ export const theme = createTheme({
           padding: 16,
         },
       },
+    },
+    MuiChip: {
+      variants: [
+        {
+          props: { size: "xs" },
+          style: {
+            height: 24,
+            fontSize: 12,
+            borderRadius: 6,
+            padding: 0,
+            "& .MuiChip-icon": { fontSize: 12 },
+            "& .MuiChip-deleteIcon": { fontSize: 12 },
+            "& .MuiChip-label": { paddingLeft: 12, paddingRight: 12 },
+          },
+        },
+        {
+          props: { color: "disabled" },
+          style: ({ theme }) => ({ color: theme.palette.text.disabled }),
+        },
+      ],
     },
     MuiDialogContent: {
       defaultProps: { dividers: true },

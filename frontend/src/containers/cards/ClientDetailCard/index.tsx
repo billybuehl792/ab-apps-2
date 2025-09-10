@@ -34,7 +34,10 @@ const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
     {
       id: "created",
       label: "Created",
-      value: dayjs(client.created_at).format(DateTimeFormat.DATETIME_MERIDIEM),
+      value: dayjs(client.created_at).fromNow(),
+      tooltip: dayjs(client.created_at).format(
+        DateTimeFormat.DATETIME_MERIDIEM
+      ),
     },
   ];
 

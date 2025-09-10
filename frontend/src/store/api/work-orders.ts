@@ -16,7 +16,10 @@ const detail = (id: WorkOrder["id"]) =>
 const create = (body: Omit<WriteableWorkOrder, "id">) =>
   api.post<WriteableWorkOrder>(endpoints.workOrders(), body);
 
-const update = ({ id, ...body }: WriteableWorkOrder) =>
+const update = ({
+  id,
+  ...body
+}: Partial<WriteableWorkOrder> & { id: WorkOrder["id"] }) =>
   api.patch<WriteableWorkOrder>(endpoints.workOrders.detail(id), body);
 
 const _delete = (body: WorkOrder["id"]) =>

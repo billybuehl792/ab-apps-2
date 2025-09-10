@@ -10,7 +10,7 @@ export interface WorkOrder {
   status: WorkOrderStatus;
   scheduled_date: string | null;
   completed_date: string | null;
-  cost: number;
+  cost: string;
   client: Client | null;
   place: Place | null;
   created_at: string;

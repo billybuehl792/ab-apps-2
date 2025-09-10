@@ -11,8 +11,8 @@ import {
 import { Work } from "@mui/icons-material";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
-import type { WorkOrder } from "@/store/types/work-orders";
 import ClientChip from "@/containers/chips/ClientChip";
+import type { WorkOrder } from "@/store/types/work-orders";
 
 interface WorkOrderListCardProps extends CardProps {
   workOrder: WorkOrder;
@@ -32,8 +32,15 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
           alignItems="center"
           mr={7.5}
         >
-          <Work fontSize="large" color="disabled" />
-          <Stack>
+          <Work color="disabled" />
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            justifyContent="space-between"
+            flexGrow={1}
+            overflow="hidden"
+          >
             <Stack
               direction="row"
               spacing={1}
@@ -46,9 +53,7 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
               <WorkOrderStatusChip workOrder={workOrder} size="small" />
             </Stack>
             {!!workOrder.client && (
-              <Stack direction="row">
-                <ClientChip client={workOrder.client} size="small" />
-              </Stack>
+              <ClientChip client={workOrder.client} size="small" />
             )}
           </Stack>
         </CardContent>

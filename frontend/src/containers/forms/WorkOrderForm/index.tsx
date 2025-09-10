@@ -2,6 +2,9 @@ import { type ComponentProps } from "react";
 import { type AxiosResponse } from "axios";
 import Form from "@/components/forms/Form";
 import WorkOrderFormLabelField from "./fields/WorkOrderFormLabelField";
+import WorkOrderFormDescriptionField from "./fields/WorkOrderFormDescriptionField";
+import WorkOrderFormCostField from "./fields/WorkOrderFormCostField";
+import WorkOrderFormStatusField from "./fields/WorkOrderFormStatusField";
 import WorkOrderFormClientField from "./fields/WorkOrderFormClientField";
 import WorkOrderFormPlaceField from "./fields/WorkOrderFormPlaceField";
 import type { WorkOrder, WriteableWorkOrder } from "@/store/types/work-orders";
@@ -16,6 +19,9 @@ const WorkOrderForm = (
   return (
     <Form {...props}>
       <WorkOrderFormLabelField />
+      <WorkOrderFormDescriptionField />
+      <WorkOrderFormCostField />
+      <WorkOrderFormStatusField />
       <WorkOrderFormClientField />
       <WorkOrderFormPlaceField />
     </Form>
