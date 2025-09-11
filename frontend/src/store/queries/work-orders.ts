@@ -22,7 +22,18 @@ const list = (params?: WorkOrderApiListRequest) =>
       workOrderApi.list(params).then((res) => res.data),
   });
 
+const count = (params?: WorkOrderApiListRequest) =>
+  queryOptions({
+    queryKey: queryUtils.getQueryKey(
+      ["work-orders", "count"],
+      paramUtils.cleanApiListRequestParams<WorkOrderApiListRequest>(params)
+    ),
+    queryFn: ({ queryKey: [_, params] }) =>
+      workOrderApi.count(params).then((res) => res.data),
+  });
+
 export const workOrderQueries = {
   detail,
   list,
+  count,
 };

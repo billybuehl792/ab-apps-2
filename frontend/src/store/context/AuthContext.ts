@@ -1,12 +1,12 @@
 import { createContext } from "react";
-import type { Credentials } from "../types/account";
+import type { Credentials, User } from "../types/account";
 
 export default createContext<{
-  isAuthenticated: boolean;
+  me: User | null;
   signIn: (credentials: Credentials) => Promise<void>;
   signOut: () => Promise<void>;
 }>({
-  isAuthenticated: false,
+  me: null,
   signIn: () => Promise.resolve(),
   signOut: () => Promise.resolve(),
 });

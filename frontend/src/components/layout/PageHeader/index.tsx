@@ -12,7 +12,7 @@ const PageHeader = (props: StackProps) => {
       py={2}
       mx={2}
       bgcolor={(theme) => theme.palette.background.paper}
-      zIndex={1}
+      zIndex={2}
       borderBottom={(theme) => `1px solid ${theme.palette.divider}`}
       {...props}
     />

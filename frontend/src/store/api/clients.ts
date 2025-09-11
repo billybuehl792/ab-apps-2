@@ -10,6 +10,9 @@ import type {
 const list = (params?: ClientApiListRequest) =>
   api.get<ApiListResponse<Client>>(endpoints.clients(), { params });
 
+const count = (params?: ClientApiListRequest) =>
+  api.get<{ count: number }>(endpoints.clients.count(), { params });
+
 const detail = (id: Client["id"]) =>
   api.get<Client>(endpoints.clients.detail(id));
 
@@ -24,6 +27,7 @@ const _delete = (body: Client["id"]) =>
 
 export const clientApi = {
   list,
+  count,
   detail,
   create,
   update,

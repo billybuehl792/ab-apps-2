@@ -2,7 +2,7 @@ import axios from "axios";
 import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
-import { authMutations } from "../mutations/auth";
+import { accountMutations } from "../mutations/account";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -36,7 +36,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshAccessTokenResult = await authMutations
+        const refreshAccessTokenResult = await accountMutations
           .refreshAccessToken()
           .mutationFn?.call(undefined);
 

@@ -4,11 +4,12 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CircularProgress, Typography } from "@mui/material";
-import { authMutations } from "@/store/mutations/auth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { accountQueries } from "@/store/queries/account";
+import { accountMutations } from "@/store/mutations/account";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
+import StatusCard from "@/components/cards/StatusCard";
 import { queryUtils } from "@/store/utils/queries";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
@@ -18,11 +19,20 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const queryClient = useQueryClient();
 
+  /** Queries */
+
+  const meQuery = useQuery({
+    ...accountQueries.me(),
+    enabled: isAuthenticated,
+  });
+
   /** Mutations */
 
-  const signInMutation = useMutation(authMutations.signIn());
-  const signOutMutation = useMutation(authMutations.signOut());
-  const refreshTokenMutation = useMutation(authMutations.refreshAccessToken());
+  const signInMutation = useMutation(accountMutations.signIn());
+  const signOutMutation = useMutation(accountMutations.signOut());
+  const refreshTokenMutation = useMutation(
+    accountMutations.refreshAccessToken()
+  );
 
   /** Callbacks */
 
@@ -58,17 +68,19 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   return (
     <AuthContext
       value={{
-        isAuthenticated,
+        me: meQuery.data ?? null,
         signIn,
         signOut,
       }}
     >
-      {refreshTokenMutation.isPending ? (
+      {refreshTokenMutation.isPending ||
+      meQuery.isLoading ||
+      meQuery.isError ? (
         <FullScreen>
-          <CircularProgress color="inherit" />
-          <Typography variant="caption" color="inherit">
-            Loading auth state...
-          </Typography>
+          <StatusCard
+            loading="Loading authentication..."
+            error={meQuery.error}
+          />
         </FullScreen>
       ) : (
         children

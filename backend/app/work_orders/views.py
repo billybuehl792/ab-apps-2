@@ -1,5 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from app.common.views import CompanyScopedViewSet
 from .models import WorkOrder
@@ -19,3 +21,8 @@ class WorkOrderViewSet(CompanyScopedViewSet):
         if self.action in ["list", "retrieve"]:
             return WorkOrderReadSerializer
         return WorkOrderWriteSerializer
+
+    @action(detail=False, methods=['get'])
+    def count(self, request):
+        count = self.get_queryset().count()
+        return Response({'count': count})

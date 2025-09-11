@@ -1,15 +1,16 @@
 import { type ComponentProps } from "react";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { Card, CardContent, CardHeader, Stack } from "@mui/material";
 import useAuth from "@/store/hooks/useAuth";
 import SignInForm from "@/containers/forms/SignInForm";
+import FullScreen from "@/components/layout/FullScreen";
 
 export const Route = createFileRoute("/sign-in")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
     redirect: (search.redirect as string) || undefined,
   }),
   beforeLoad: ({ context, search }) => {
-    if (context.auth.isAuthenticated)
+    if (context.auth.me)
       throw redirect({ to: search.redirect ?? "/", replace: true });
   },
   component: RouteComponent,
@@ -27,13 +28,13 @@ function RouteComponent() {
     auth.signIn(data).then(() => router.invalidate());
 
   return (
-    <Stack spacing={2} p={2}>
-      <Typography variant="h6">Sign In</Typography>
-      <Card>
+    <FullScreen>
+      <Stack component={Card} width="100%" maxWidth={600}>
+        <CardHeader title="Sign In" />
         <CardContent>
           <SignInForm onSubmit={handleSignIn} />
         </CardContent>
-      </Card>
-    </Stack>
+      </Stack>
+    </FullScreen>
   );
 }

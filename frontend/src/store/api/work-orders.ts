@@ -10,6 +10,9 @@ import type {
 const list = (params?: WorkOrderApiListRequest) =>
   api.get<ApiListResponse<WorkOrder>>(endpoints.workOrders(), { params });
 
+const count = (params?: WorkOrderApiListRequest) =>
+  api.get<{ count: number }>(endpoints.workOrders.count(), { params });
+
 const detail = (id: WorkOrder["id"]) =>
   api.get<WorkOrder>(endpoints.workOrders.detail(id));
 
@@ -27,6 +30,7 @@ const _delete = (body: WorkOrder["id"]) =>
 
 export const workOrderApi = {
   list,
+  count,
   detail,
   create,
   update,

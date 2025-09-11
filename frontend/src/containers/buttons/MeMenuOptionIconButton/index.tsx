@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Avatar } from "@mui/material";
 import { Logout, Person } from "@mui/icons-material";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import useProfile from "@/store/hooks/useProfile";
 import useConfirm from "@/store/hooks/useConfirm";
+import useAuth from "@/store/hooks/useAuth";
 
 type MeMenuOptionIconButtonProps = Omit<
   ComponentProps<typeof MenuOptionIconButton>,
@@ -16,7 +16,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const profile = useProfile();
+  const auth = useAuth();
   const confirm = useConfirm();
 
   const options: MenuOption[] = [
@@ -28,7 +28,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
       onClick: () =>
         navigate({
           to: "/app/profile/$id",
-          params: { id: String(profile.me.id) },
+          params: { id: String(auth.me?.id ?? 0) },
         }),
     },
     {

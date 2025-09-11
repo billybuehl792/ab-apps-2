@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Box } from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import { accountQueries } from "@/store/queries/account";
 import StatusCard from "@/components/cards/StatusCard";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import { accountQueries } from "@/store/queries/account";
+import PageHeader from "@/components/layout/PageHeader";
 
 export const Route = createFileRoute("/app/profile/$id")({
   loader: async ({ context, params }) => {
@@ -25,8 +26,11 @@ function RouteComponent() {
   const user = loaderData.user;
 
   return (
-    <Box p={2}>
-      <UserDetailCard user={user} />
-    </Box>
+    <Container maxWidth="lg" disableGutters>
+      <PageHeader justifyContent="center">
+        <Typography variant="h6">Profile</Typography>
+      </PageHeader>
+      <UserDetailCard user={user} sx={{ m: 2 }} />
+    </Container>
   );
 }

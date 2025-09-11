@@ -18,9 +18,11 @@ const endpoints = {
   }),
   clients: Object.assign(() => `${API_URL}/clients/`, {
     detail: (id: number) => `${endpoints.clients()}${id}/`,
+    count: () => `${endpoints.clients()}count/`,
   }),
   workOrders: Object.assign(() => `${API_URL}/work-orders/`, {
     detail: (id: number) => `${endpoints.workOrders()}${id}/`,
+    count: () => `${endpoints.workOrders()}count/`,
   }),
 };
 

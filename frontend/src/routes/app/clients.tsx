@@ -4,7 +4,7 @@ import {
   Outlet,
   useMatches,
 } from "@tanstack/react-router";
-import { Breadcrumbs } from "@mui/material";
+import { Breadcrumbs, Container } from "@mui/material";
 import Link from "@/components/elements/Link";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import PageHeader from "@/components/layout/PageHeader";
@@ -31,7 +31,7 @@ function RouteComponent() {
     }));
 
   return (
-    <>
+    <Container maxWidth="lg" disableGutters>
       <PageHeader
         direction="row"
         justifyContent="space-between"
@@ -48,6 +48,6 @@ function RouteComponent() {
         )}
       </PageHeader>
       <Outlet />
-    </>
+    </Container>
   );
 }

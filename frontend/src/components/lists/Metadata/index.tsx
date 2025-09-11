@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import {
+  Box,
   Stack,
   Tooltip,
   Typography,
@@ -48,7 +49,7 @@ const Metadata = ({ items, slotProps, ...props }: MetadataProps) => {
                   {item.value}
                 </Typography>
               ) : (
-                <>{item.value}</>
+                <Box component="span">{item.value}</Box>
               )}
             </Tooltip>
           </Stack>

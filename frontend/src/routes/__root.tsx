@@ -1,5 +1,5 @@
 import { type ContextType } from "react";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { createRootRouteWithContext } from "@tanstack/react-router";
 import { QueryClient } from "@tanstack/react-query";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
@@ -9,7 +9,6 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   auth: ContextType<typeof AuthContext>;
 }>()({
-  component: Outlet,
   pendingComponent: () => (
     <FullScreen>
       <StatusCard loading="Loading app..." />

@@ -1,5 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from app.common.views import CompanyScopedViewSet
 from config.pagination import AdjustableSizePagination
@@ -20,3 +22,8 @@ class ClientViewSet(CompanyScopedViewSet):
         if self.action in ["list", "retrieve"]:
             return ClientReadSerializer
         return ClientWriteSerializer
+
+    @action(detail=False, methods=['get'])
+    def count(self, request):
+        count = self.get_queryset().count()
+        return Response({'count': count})

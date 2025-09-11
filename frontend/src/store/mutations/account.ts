@@ -45,7 +45,7 @@ const refreshAccessToken = () =>
     },
   });
 
-export const authMutations = {
+export const accountMutations = {
   signIn,
   signOut,
   refreshAccessToken,

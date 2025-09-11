@@ -22,7 +22,18 @@ const list = (params?: ClientApiListRequest) =>
       clientApi.list(params).then((res) => res.data),
   });
 
+const count = (params?: ClientApiListRequest) =>
+  queryOptions({
+    queryKey: queryUtils.getQueryKey(
+      ["clients", "count"],
+      paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params)
+    ),
+    queryFn: ({ queryKey: [_, params] }) =>
+      clientApi.count(params).then((res) => res.data),
+  });
+
 export const clientQueries = {
   detail,
   list,
+  count,
 };

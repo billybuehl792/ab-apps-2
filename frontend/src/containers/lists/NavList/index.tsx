@@ -2,12 +2,12 @@ import { type ComponentProps } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { Groups, Home, Person, Work } from "@mui/icons-material";
 import NestedList from "@/components/lists/NestedList";
-import useProfile from "@/store/hooks/useProfile";
+import useAuth from "@/store/hooks/useAuth";
 
 const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
   /** Values */
 
-  const profile = useProfile();
+  const auth = useAuth();
   const location = useLocation();
 
   const items: ListItem[] = [
@@ -39,7 +39,7 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
       selected: location.pathname.startsWith("/app/profile"),
       link: {
         to: "/app/profile/$id",
-        params: { id: String(profile.me.id) },
+        params: { id: String(auth.me?.id) },
       },
     },
   ];
