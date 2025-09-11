@@ -2,7 +2,6 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 from typing import Dict, Any
 
-
 from .models import CustomUser
 from app.companies.models import Company
 from app.companies.serializers import CompanySerializer

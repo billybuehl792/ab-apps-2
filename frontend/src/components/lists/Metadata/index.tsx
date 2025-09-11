@@ -1,5 +1,11 @@
 import { type ReactNode } from "react";
-import { Stack, Tooltip, Typography, type StackProps } from "@mui/material";
+import {
+  Stack,
+  Tooltip,
+  Typography,
+  TypographyProps,
+  type StackProps,
+} from "@mui/material";
 
 interface Item {
   id: string;
@@ -11,9 +17,13 @@ interface Item {
 
 interface MetadataProps extends StackProps {
   items: Item[];
+  slotProps?: {
+    label?: TypographyProps;
+    value?: TypographyProps;
+  };
 }
 
-const Metadata = ({ items, ...props }: MetadataProps) => {
+const Metadata = ({ items, slotProps, ...props }: MetadataProps) => {
   return (
     <Stack {...props}>
       {items
@@ -21,7 +31,7 @@ const Metadata = ({ items, ...props }: MetadataProps) => {
         .map((item) => (
           <Stack key={item.id} direction="row" spacing={1} alignItems="center">
             {typeof item.label === "string" ? (
-              <Typography variant="caption" noWrap>
+              <Typography variant="caption" noWrap {...slotProps?.label}>
                 {item.label}:
               </Typography>
             ) : (
@@ -33,6 +43,7 @@ const Metadata = ({ items, ...props }: MetadataProps) => {
                   variant="caption"
                   color="text.secondary"
                   fontWeight={400}
+                  {...slotProps?.value}
                 >
                   {item.value}
                 </Typography>

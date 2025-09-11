@@ -23,9 +23,17 @@ function RouteComponent() {
   const handleSubmit: ComponentProps<typeof WorkOrderForm>["onSubmit"] = (
     data
   ) =>
-    createWorkOrderMutation.mutateAsync(data, {
-      onSuccess: (res) => navigate({ to: `/app/work-orders/${res.data.id}` }),
-    });
+    createWorkOrderMutation.mutateAsync(
+      {
+        ...data,
+        client: data.client?.id ?? null,
+        place: data.place?.google_place_id ?? null,
+        cost: Number(data.cost),
+      },
+      {
+        onSuccess: (res) => navigate({ to: `/app/work-orders/${res.data.id}` }),
+      }
+    );
 
   return <WorkOrderForm p={2} onSubmit={handleSubmit} />;
 }

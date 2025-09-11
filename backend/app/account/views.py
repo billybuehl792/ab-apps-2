@@ -6,8 +6,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
 
+from config.pagination import AdjustableSizePagination
 from .serializers import CustomUserSerializer, RegisterSerializer
+from app.common.views import CompanyScopedViewSet
+from app.account.models import CustomUser
+
 
 REFRESH_TOKEN_COOKIE_NAME = "ab_refresh_token"
 
@@ -88,6 +94,16 @@ class SignOutView(APIView):
         response.delete_cookie(REFRESH_TOKEN_COOKIE_NAME)
 
         return response
+
+
+class CustomUserViewSet(CompanyScopedViewSet):
+    queryset = CustomUser.objects.all().order_by("-username")
+    serializer_class = CustomUserSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = ["groups"]
+    search_fields = ["username", "email"]
+    ordering_fields = ["username"]
+    pagination_class = AdjustableSizePagination
 
 
 @api_view(['GET'])

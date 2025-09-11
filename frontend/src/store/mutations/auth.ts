@@ -3,14 +3,14 @@ import api from "../config/api";
 import endpoints from "../constants/endpoints";
 import { queryUtils } from "../utils/queries";
 import { authUtils } from "../utils/auth";
-import type { Credentials } from "../types/auth";
+import type { Credentials } from "../types/account";
 
 const signIn = () =>
   mutationOptions({
-    mutationKey: queryUtils.getQueryKey(["auth", "signIn"]),
+    mutationKey: queryUtils.getQueryKey(["account", "signIn"]),
     mutationFn: async (credentials: Credentials) => {
       const res = await api.post<{ access: string }>(
-        endpoints.auth.token(),
+        endpoints.account.token(),
         credentials
       );
       authUtils.setAccessToken(res.data.access);
@@ -21,9 +21,11 @@ const signIn = () =>
 
 const signOut = () =>
   mutationOptions({
-    mutationKey: queryUtils.getQueryKey(["auth", "signOut"]),
+    mutationKey: queryUtils.getQueryKey(["account", "signOut"]),
     mutationFn: async () => {
-      const res = await api.post<{ detail: string }>(endpoints.auth.signOut());
+      const res = await api.post<{ detail: string }>(
+        endpoints.account.signOut()
+      );
       authUtils.setAccessToken(null);
 
       return res.data;
@@ -32,10 +34,10 @@ const signOut = () =>
 
 const refreshAccessToken = () =>
   mutationOptions({
-    mutationKey: queryUtils.getQueryKey(["auth", "refreshToken"]),
+    mutationKey: queryUtils.getQueryKey(["account", "refreshToken"]),
     mutationFn: async () => {
       const res = await api.post<{ access: string }>(
-        endpoints.auth.tokenRefresh()
+        endpoints.account.tokenRefresh()
       );
       authUtils.setAccessToken(res.data.access);
 

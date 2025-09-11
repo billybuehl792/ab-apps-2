@@ -24,10 +24,34 @@ const WorkOrderDetailCard = ({
 }: WorkOrderDetailCardProps) => {
   /** Values */
 
+  const items: ComponentProps<typeof Metadata>["items"] = [
+    {
+      id: "location",
+      label: "Location",
+      value: workOrder.place?.address_full ?? "None",
+    },
+    {
+      id: "client",
+      label: "Client",
+      value: (
+        <WorkOrderClientFormChip
+          workOrder={workOrder}
+          variant="outlined"
+          size="xs"
+        />
+      ),
+    },
+    {
+      id: "cost",
+      label: "Cost",
+      value: Number(workOrder.cost).toUSD(),
+    },
+  ];
+
   const metadata: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "scheduled",
-      label: "Scheduled Date",
+      label: "Scheduled",
       value: workOrder.scheduled_date
         ? dayjs(workOrder.scheduled_date).format(
             DateTimeFormat.DATETIME_MERIDIEM
@@ -62,42 +86,14 @@ const WorkOrderDetailCard = ({
             <Typography variant="h6">{workOrder.label}</Typography>
             <WorkOrderStatusChip workOrder={workOrder} size="small" />
           </Stack>
-          <Stack spacing={0.5}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Location:
-              </Typography>
-              <Typography
-                variant="body2"
-                color={workOrder.place ? "text.primary" : "text.disabled"}
-              >
-                {workOrder.place?.address_full ?? "None"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Client:
-              </Typography>
-              <WorkOrderClientFormChip
-                workOrder={workOrder}
-                variant="outlined"
-                size="xs"
-              />
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Cost:
-              </Typography>
-              <Typography
-                variant="body2"
-                color={
-                  workOrder.cost !== null ? "text.primary" : "text.disabled"
-                }
-              >
-                {Number(workOrder.cost).toUSD()}
-              </Typography>
-            </Stack>
-          </Stack>
+          <Metadata
+            items={items}
+            spacing={0.5}
+            slotProps={{
+              label: { variant: "body2" },
+              value: { variant: "body2" },
+            }}
+          />
         </Stack>
         <Metadata items={metadata} />
       </CardContent>

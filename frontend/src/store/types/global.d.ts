@@ -19,25 +19,32 @@ declare global {
         Partial<Record<Exclude<Keys, K>, undefined>>;
     }[Keys];
 
-  interface MenuOption<T = string> {
-    id: T;
+  interface MenuOption<
+    TId = string,
+    TIcon = ReactNode,
+    TCallback = VoidFunction,
+  > {
+    id: TId;
     render?: boolean;
     label: string;
-    icon?: ReactNode;
+    icon?: TIcon;
     description?: ReactNode;
     disabled?: boolean;
     selected?: boolean;
     color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
     tooltip?: ReactNode;
     disableCloseOnSelect?: boolean;
-    onClick?: VoidFunction;
+    onClick?: TCallback;
   }
 
-  interface ListItem
-    extends Omit<MenuOption, "color" | "disableCloseOnSelect"> {
+  interface ListItem<TId = string, TIcon = ReactNode, TCallback = VoidFunction>
+    extends Omit<
+      MenuOption<TId, TIcon, TCallback>,
+      "color" | "disableCloseOnSelect"
+    > {
     link?: LinkOptions;
     expanded?: boolean;
-    items?: ListItem[];
+    items?: ListItem<TId, TIcon, TCallback>[];
   }
 
   interface String {

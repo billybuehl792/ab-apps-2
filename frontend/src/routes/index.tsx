@@ -1,40 +1,12 @@
-import useAuth from "@/store/hooks/useAuth";
-import { Button, Stack, Typography } from "@mui/material";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import StatusCard from "@/components/cards/StatusCard";
+import FullScreen from "@/components/layout/FullScreen";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: RouteComponent,
+  beforeLoad: () => redirect({ to: "/app", replace: true, throw: true }),
+  pendingComponent: () => (
+    <FullScreen>
+      <StatusCard loading="Redirecting..." />
+    </FullScreen>
+  ),
 });
-
-function RouteComponent() {
-  /** Values */
-
-  const auth = useAuth();
-
-  return (
-    <Stack spacing={2} p={2}>
-      <Stack>
-        <Typography variant="body1">Home</Typography>
-        <Typography
-          variant="caption"
-          color={auth.isAuthenticated ? "success" : "error"}
-        >
-          Authenticated: {auth.isAuthenticated ? "True" : "False"}
-        </Typography>
-      </Stack>
-      <Stack direction="row" spacing={2}>
-        <Button
-          LinkComponent={Link}
-          href="/sign-out"
-          variant="outlined"
-          size="small"
-        >
-          Sign Out Link
-        </Button>
-        <Button onClick={auth.signOut} variant="outlined" size="small">
-          Sign Out
-        </Button>
-      </Stack>
-    </Stack>
-  );
-}

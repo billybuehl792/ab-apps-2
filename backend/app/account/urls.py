@@ -1,5 +1,9 @@
-from django.urls import path
+from rest_framework import routers
+from django.urls import include, path
 from . import views
+
+router = routers.DefaultRouter()
+router.register(r'users', views.CustomUserViewSet, basename='user')
 
 urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register"),
@@ -9,5 +13,5 @@ urlpatterns = [
          name="token_refresh"),
     path("sign-out/", views.SignOutView.as_view(), name="sign_out"),
     path("me/", views.me, name="me"),
-
+    path("", include(router.urls)),
 ]

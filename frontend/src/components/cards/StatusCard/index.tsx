@@ -75,7 +75,7 @@ const StatusCard = ({
     );
 
   return (
-    <Stack component={Card} {...props}>
+    <Stack component={Card} p={5} {...props}>
       <CardContent
         component={Stack}
         spacing={2}

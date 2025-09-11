@@ -22,8 +22,8 @@ const WorkOrderForm = (
       <WorkOrderFormDescriptionField />
       <WorkOrderFormCostField />
       <WorkOrderFormStatusField />
-      <WorkOrderFormClientField />
       <WorkOrderFormPlaceField />
+      <WorkOrderFormClientField />
     </Form>
   );
 };

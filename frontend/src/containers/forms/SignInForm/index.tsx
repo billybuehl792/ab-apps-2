@@ -2,7 +2,7 @@ import { type ComponentProps } from "react";
 import Form from "@/components/forms/Form";
 import SignInFormUsernameField from "./fields/SignInFormUsernameField";
 import SignInFormPasswordField from "./fields/SignInFormPasswordField";
-import type { Credentials } from "@/store/types/auth";
+import type { Credentials } from "@/store/types/account";
 
 export type SignInFormValues = Credentials;
 

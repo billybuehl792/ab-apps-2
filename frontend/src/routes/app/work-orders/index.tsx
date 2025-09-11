@@ -3,7 +3,7 @@ import PaginatedList from "@/components/lists/PaginatedList";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import { paramUtils } from "@/store/utils/params";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
-import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 const cleanParams = (params: Record<string, unknown>) =>
@@ -48,7 +48,7 @@ function RouteComponent() {
       slotProps={{
         header: {
           position: "sticky",
-          top: DEFAULT_PAGE_HEADER_HEIGHT,
+          top: PAGE_HEADER_HEIGHT,
           pt: 2,
           bgcolor: (theme) => theme.palette.background.paper,
           zIndex: 1,

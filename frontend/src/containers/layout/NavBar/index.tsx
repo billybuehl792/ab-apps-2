@@ -1,58 +1,79 @@
-import { AppBar, type AppBarProps, Stack, Toolbar } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useLocation } from "@tanstack/react-router";
+import {
+  AppBar,
+  type AppBarProps,
+  Stack,
+  Toolbar,
+  useMediaQuery,
+} from "@mui/material";
 import Link from "@/components/elements/Link";
+import MeMenuOptionIconButton from "@/containers/buttons/MeMenuOptionIconButton";
+import MenuIconButton from "@/components/buttons/MenuIconButton";
+import Drawer from "@/components/modals/Drawer";
+import NavList from "@/containers/lists/NavList";
 
 interface NavBarProps extends AppBarProps {
   height: number;
 }
 
 const NavBar = ({ height, ...props }: NavBarProps) => {
+  const [open, setOpen] = useState(false);
+
   /** Values */
 
-  const items: ListItem[] = [
-    { id: "home", link: { to: "/" }, label: "Home" },
-    { id: "app", link: { to: "/app" }, label: "App" },
-    { id: "clients", link: { to: "/app/clients" }, label: "Clients" },
-    {
-      id: "work-orders",
-      link: { to: "/app/work-orders" },
-      label: "Work Orders",
-    },
-    { id: "user", link: { to: "/app/user" }, label: "User" },
-    { id: "sign-in", link: { to: "/sign-in" }, label: "Sign In" },
-    { id: "sign-out", link: { to: "/sign-out" }, label: "Sign Out" },
-  ];
+  const location = useLocation();
+  const isMobile = useMediaQuery(({ breakpoints }) => breakpoints.down("sm"));
+
+  /** Callbacks */
+
+  const handleToggleNavDrawerOpen = () => setOpen(!open);
+
+  /** Effects */
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname, isMobile]);
 
   return (
-    <AppBar variant="outlined" {...props}>
-      <Toolbar sx={{ height }}>
+    <>
+      <AppBar variant="outlined" sx={{ height }} {...props}>
         <Stack
+          component={Toolbar}
           direction="row"
           flexGrow={1}
           alignItems="center"
           justifyContent="space-between"
         >
-          <Link
-            to="/"
-            label="AB Sandbox App"
-            variant="h6"
-            color="primary.contrastText"
-            underline="none"
-            fontWeight={600}
-            noWrap
-          />
-          <Stack direction="row" spacing={2} flexShrink={0}>
-            {items.map((item) => (
-              <Link
-                key={item.id}
-                label={item.label}
-                {...item.link}
-                color="primary.contrastText"
-              />
-            ))}
+          <Stack spacing={2} direction="row" alignItems="center">
+            {isMobile && (
+              <MenuIconButton open={open} onClick={handleToggleNavDrawerOpen} />
+            )}
+            <Link
+              to="/"
+              label="AB Sandbox App"
+              variant="h6"
+              color="primary.contrastText"
+              underline="none"
+              fontWeight={600}
+              noWrap
+            />
           </Stack>
+          <MeMenuOptionIconButton />
         </Stack>
-      </Toolbar>
-    </AppBar>
+      </AppBar>
+
+      {/* Modals */}
+      <Drawer
+        title="AB Apps"
+        anchor="left"
+        fullHeight
+        open={open}
+        onClose={handleToggleNavDrawerOpen}
+      >
+        <NavList />
+      </Drawer>
+    </>
   );
 };
 

@@ -12,6 +12,19 @@ export default defineConfig({
     }),
     react(),
   ],
+  build: {
+    sourcemap: true, // Source map generation must be turned on for Sentry
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules") && !id.includes("sentry")) {
+            return id.split("node_modules/")[1].split("/")[0];
+          }
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

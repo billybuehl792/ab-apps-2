@@ -8,7 +8,6 @@ import { Breadcrumbs } from "@mui/material";
 import Link from "@/components/elements/Link";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import PageHeader from "@/components/layout/PageHeader";
-import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 
 export const Route = createFileRoute("/app/clients")({
   loader: () => ({ crumb: "Clients" }),
@@ -37,7 +36,6 @@ function RouteComponent() {
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        height={DEFAULT_PAGE_HEADER_HEIGHT}
       >
         <Breadcrumbs>
           {crumbs.map((crumb) => (

@@ -10,6 +10,7 @@ const MenuOptionIconButton = ({
   options,
   disableCloseOnSelect,
   variant,
+  children,
   ...props
 }: MenuOptionIconButtonProps) => {
   /** Values */
@@ -24,7 +25,7 @@ const MenuOptionIconButton = ({
 
   return (
     <IconButton component="span" onClick={handleOpen} {...props}>
-      <MoreVert />
+      {children ?? <MoreVert />}
     </IconButton>
   );
 };

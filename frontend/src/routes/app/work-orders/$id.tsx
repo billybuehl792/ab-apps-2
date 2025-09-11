@@ -42,13 +42,14 @@ function RouteComponent() {
 
   const handleUpdateWorkOrder: ComponentProps<
     typeof WorkOrderFormDrawer
-  >["form"]["onSubmit"] = (values) => {
+  >["form"]["onSubmit"] = (data) => {
     return updateWorkOrderMutation.mutateAsync(
       {
-        ...values,
+        ...data,
         id: workOrder.id,
-        client: values.client?.id ?? null,
-        place: values.place?.google_place_id ?? null,
+        client: data.client?.id ?? null,
+        place: data.place?.google_place_id ?? null,
+        cost: Number(data.cost),
       },
       { onSuccess: handleOnClose }
     );

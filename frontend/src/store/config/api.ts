@@ -22,14 +22,14 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
     let error = requestError;
 
-    const authRoutes = [
-      endpoints.auth.token(),
-      endpoints.auth.tokenRefresh(),
-      endpoints.auth.signOut(),
+    const ignoreRoutes = [
+      endpoints.account.token(),
+      endpoints.account.tokenRefresh(),
+      endpoints.account.signOut(),
     ];
 
     if (
-      !authRoutes.includes(originalRequest.url) &&
+      !ignoreRoutes.includes(originalRequest.url) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {

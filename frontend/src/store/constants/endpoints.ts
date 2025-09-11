@@ -2,11 +2,14 @@ const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 const API_URL = BASE_URL + "/api";
 
 const endpoints = {
-  auth: Object.assign(() => `${API_URL}/account/`, {
-    token: () => `${endpoints.auth()}token/`,
-    tokenRefresh: () => `${endpoints.auth()}token/refresh/`,
-    signOut: () => `${endpoints.auth()}sign-out/`,
-    me: () => `${endpoints.auth()}me/`,
+  account: Object.assign(() => `${API_URL}/account/`, {
+    token: () => `${endpoints.account()}token/`,
+    tokenRefresh: () => `${endpoints.account()}token/refresh/`,
+    signOut: () => `${endpoints.account()}sign-out/`,
+    me: () => `${endpoints.account()}me/`,
+    users: Object.assign(() => `${endpoints.account()}users/`, {
+      detail: (id: number) => `${endpoints.account.users()}${id}/`,
+    }),
   }),
   places: Object.assign(() => `${API_URL}/places/`, {
     detail: (id: number) => `${endpoints.places()}${id}/`,

@@ -12,7 +12,7 @@ class ClientViewSet(CompanyScopedViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ["email", "first_name", "last_name"]
     search_fields = ["first_name", "last_name",
-                     "email", "phone_primary", "place__address"]
+                     "email", "phone_primary", "place__address_full"]
     ordering_fields = ["created_at", "first_name", "last_name"]
     pagination_class = AdjustableSizePagination
 

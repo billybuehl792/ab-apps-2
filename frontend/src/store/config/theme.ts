@@ -9,6 +9,12 @@ declare module "@mui/material/Chip" {
   }
 }
 
+declare module "@mui/material/SvgIcon" {
+  interface SvgIconPropsSizeOverrides {
+    xs: true;
+  }
+}
+
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -98,13 +104,19 @@ export const theme = createTheme({
     },
     MuiSvgIcon: {
       styleOverrides: {
-        fontSizeSmall: {
-          fontSize: "1rem",
-        },
         fontSizeMedium: {
           fontSize: "1.25rem",
         },
+        fontSizeSmall: {
+          fontSize: "1rem",
+        },
       },
+      variants: [
+        {
+          props: { fontSize: "xs" },
+          style: { fontSize: "0.875rem" },
+        },
+      ],
     },
     MuiTextField: {
       defaultProps: {

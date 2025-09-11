@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { clientQueries } from "@/store/queries/clients";
 import PaginatedList from "@/components/lists/PaginatedList";
 import ClientListCard from "@/containers/cards/ClientListCard";
-import { DEFAULT_PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import { paramUtils } from "@/store/utils/params";
 import type { ClientApiListRequest } from "@/store/types/clients";
 
@@ -73,7 +73,7 @@ function RouteComponent() {
       slotProps={{
         header: {
           position: "sticky",
-          top: DEFAULT_PAGE_HEADER_HEIGHT,
+          top: PAGE_HEADER_HEIGHT,
           pt: 2,
           bgcolor: (theme) => theme.palette.background.paper,
           zIndex: 1,
