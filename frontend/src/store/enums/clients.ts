@@ -1,6 +1,6 @@
 /** API */
 
-export enum ClientOrdering {
+export enum ClientApiListRequestOrdering {
   FirstName = "first_name",
   LastName = "last_name",
 }

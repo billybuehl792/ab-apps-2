@@ -32,7 +32,10 @@ const DebouncedSearchField = ({
     handleDebouncedSearch(term);
   };
 
-  const handleOnClear = () => handleOnChange("");
+  const handleOnClear = () => {
+    setLocalValue("");
+    onSearch("");
+  };
 
   const handleDebouncedSearch = useDebouncedCallback(
     (term: string) => onSearch(term),

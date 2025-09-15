@@ -1,4 +1,5 @@
-import { ClientOrdering } from "../enums/clients";
+import { ClientApiListRequestOrdering } from "../enums/clients";
+import { WorkOrderStatus } from "../enums/work-orders";
 import type { ApiListRequest } from "./api";
 import type { Place } from "./places";
 import type { WorkOrder } from "./work-orders";
@@ -29,6 +30,9 @@ export interface WriteableClient {
 
 /** API */
 
-export type ClientApiListRequest = ApiListRequest<ClientOrdering> & {
-  has_email?: 1;
+type ClientApiListRequestFilters = {
+  work_orders__status?: WorkOrderStatus[];
 };
+
+export type ClientApiListRequest =
+  ApiListRequest<ClientApiListRequestOrdering> & ClientApiListRequestFilters;

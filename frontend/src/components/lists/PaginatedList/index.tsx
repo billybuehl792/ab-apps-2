@@ -7,43 +7,26 @@ import {
   Stack,
   type StackProps,
 } from "@mui/material";
-import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
-import FilterAndSortIconButton from "@/components/buttons/OrderingAndFiltersIconButton";
 import StatusCard from "@/components/cards/StatusCard";
 import { sxUtils } from "@/store/utils/sx";
-import type {
-  OrderingAndFiltersFormValues,
-  FilterOption,
-  OrderingOption,
-} from "@/components/forms/OrderingAndFiltersForm";
 import type { QueryKey } from "@/store/types/queries";
 import type { ApiListRequest, ApiListResponse } from "@/store/types/api";
 
 interface PaginatedListProps<
-  P extends ApiListRequest | undefined = undefined,
-  D = unknown,
-  O extends OrderingOption = OrderingOption,
-  F extends FilterOption = FilterOption,
+  TParams extends ApiListRequest = ApiListRequest,
+  TData = unknown,
 > extends StackProps {
   queryOptions: UseQueryOptions<
-    ApiListResponse<D>,
+    ApiListResponse<TData>,
     Error,
-    ApiListResponse<D>,
-    QueryKey<P>
+    ApiListResponse<TData>,
+    QueryKey<TParams>
   >;
-  orderingAndFiltersOptions?: {
-    ordering: ReadonlyArray<O>;
-    filters: ReadonlyArray<F>;
-  };
-  renderItem: (item: D) => JSX.Element;
+  renderItem: (item: TData) => JSX.Element;
   renderSkeletonItem?: (index: number) => JSX.Element;
   onPageChange?: (page: number) => void;
   onSearch?: (term: string) => void;
-  onOrderingAndFiltersChange?: (
-    data: OrderingAndFiltersFormValues<O, F>
-  ) => void;
   slotProps?: {
-    header?: StackProps;
     list?: StackProps;
     pagination?: PaginationProps;
   };
@@ -52,32 +35,22 @@ interface PaginatedListProps<
 const DEFAULT_PAGE_SIZE = 20;
 
 const PaginatedList = <
-  P extends ApiListRequest | undefined = undefined,
-  D = unknown,
-  O extends OrderingOption = OrderingOption,
-  F extends FilterOption = FilterOption,
+  TParams extends ApiListRequest = ApiListRequest,
+  TData = unknown,
 >({
   queryOptions,
-  orderingAndFiltersOptions,
+  slotProps,
   renderItem,
   renderSkeletonItem,
   onPageChange,
-  onSearch,
-  onOrderingAndFiltersChange,
-  slotProps,
   ...props
-}: PaginatedListProps<P, D, O, F>) => {
+}: PaginatedListProps<TParams, TData>) => {
   const [pageCount, setPageCount] = useState(0);
 
   /** Values */
 
-  const {
-    search,
-    ordering,
-    page_size: pageSize = DEFAULT_PAGE_SIZE,
-    page = 1,
-    ...filters
-  } = queryOptions.queryKey[1] ?? {};
+  const { page_size: pageSize = DEFAULT_PAGE_SIZE, page = 1 } =
+    queryOptions.queryKey[1] ?? {};
 
   /** Queries */
 
@@ -91,44 +64,6 @@ const PaginatedList = <
 
   return (
     <Stack spacing={2} {...props}>
-      {(!!onSearch || !!orderingAndFiltersOptions) && (
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
-          {...slotProps?.header}
-        >
-          {!!onSearch && (
-            <DebouncedSearchField
-              value={search}
-              size="small"
-              placeholder="Search..."
-              loading={!!search && query.isLoading}
-              onSearch={onSearch}
-            />
-          )}
-          {!!orderingAndFiltersOptions && !!onOrderingAndFiltersChange && (
-            <FilterAndSortIconButton
-              form={{
-                orderingOptions: orderingAndFiltersOptions.ordering,
-                filterOptions: orderingAndFiltersOptions.filters,
-                values: {
-                  ordering: orderingAndFiltersOptions.ordering.find(
-                    (option) => option.value === ordering
-                  ),
-                  filters: orderingAndFiltersOptions.filters.filter((option) =>
-                    Object.entries(filters).some(
-                      ([key, value]) =>
-                        option.id === key && option.value === value
-                    )
-                  ),
-                },
-                onSubmit: async (data) => onOrderingAndFiltersChange(data),
-              }}
-            />
-          )}
-        </Stack>
-      )}
       <Stack spacing={1} {...slotProps?.list}>
         {query.isLoading ? (
           Array.from({ length: pageSize }).map(
@@ -140,17 +75,7 @@ const PaginatedList = <
         ) : query.isSuccess && query.data.count ? (
           query.data.results.map(renderItem)
         ) : (
-          <StatusCard
-            error={query.error}
-            {...(query.data?.count === 0 && {
-              empty: "No Results",
-              label: search
-                ? `Searching "${search}"`
-                : Object.keys(filters).length
-                  ? `Filtering by '${Object.keys(filters).join(", ")}'`
-                  : undefined,
-            })}
-          />
+          <StatusCard error={query.error} empty={query.data?.count === 0} />
         )}
       </Stack>
       {pageCount > 1 && !!onPageChange && (

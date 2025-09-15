@@ -47,7 +47,11 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
         >
           <Stack spacing={2} direction="row" alignItems="center">
             {isMobile && (
-              <MenuIconButton open={open} onClick={handleToggleNavDrawerOpen} />
+              <MenuIconButton
+                open={open}
+                color="inherit"
+                onClick={handleToggleNavDrawerOpen}
+              />
             )}
             <Link
               to="/"

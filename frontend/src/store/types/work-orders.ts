@@ -1,4 +1,7 @@
-import { WorkOrderOrdering, WorkOrderStatus } from "../enums/work-orders";
+import {
+  WorkOrderApiListRequestOrdering,
+  WorkOrderStatus,
+} from "../enums/work-orders";
 import type { ApiListRequest } from "./api";
 import type { Client } from "./clients";
 import type { Place } from "./places";
@@ -31,4 +34,11 @@ export interface WriteableWorkOrder {
 
 /** API */
 
-export type WorkOrderApiListRequest = ApiListRequest<WorkOrderOrdering>;
+type WorkOrderApiListRequestFilters = {
+  status?: WorkOrderStatus[];
+  client?: Client["id"][];
+};
+
+export type WorkOrderApiListRequest =
+  ApiListRequest<WorkOrderApiListRequestOrdering> &
+    WorkOrderApiListRequestFilters;

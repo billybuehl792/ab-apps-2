@@ -1,5 +1,5 @@
 export type ApiListRequest<O extends string = string> = {
-  ordering?: O;
+  ordering?: O | null;
   page_size?: number;
   page?: number;
   search?: string;

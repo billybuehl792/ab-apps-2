@@ -7,8 +7,9 @@ export enum WorkOrderStatus {
 
 /** API */
 
-export enum WorkOrderOrdering {
-  CreatedAt = "created_at",
-  FirstName = "first_name",
-  LastName = "last_name",
+export enum WorkOrderApiListRequestOrdering {
+  Cost = "cost",
+  Created = "created_at",
+  ScheduledDate = "scheduled_date",
+  CompletedDate = "completed_date",
 }

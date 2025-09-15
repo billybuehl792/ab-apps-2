@@ -1,4 +1,5 @@
 import { type ContextType, StrictMode } from "react";
+import qs from "qs";
 import ReactDOM from "react-dom/client";
 import RootProvider from "./containers/providers/RootProvider";
 import { createRouter } from "@tanstack/react-router";
@@ -23,6 +24,11 @@ export const router = createRouter({
   context: {
     queryClient: null!,
     auth: {} as ContextType<typeof AuthContext>,
+  },
+  parseSearch: (searchStr) => qs.parse(searchStr, { ignoreQueryPrefix: true }),
+  stringifySearch: (searchObj) => {
+    const str = qs.stringify(searchObj, { arrayFormat: "repeat" });
+    return str ? `?${str}` : "";
   },
   defaultErrorComponent: ({ error }) => <StatusCard error={error} m={2} />,
   defaultPendingComponent: () => <StatusCard loading m={2} />,

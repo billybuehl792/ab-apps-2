@@ -19,7 +19,9 @@ const cleanApiListRequestParams = <P extends ApiListRequest = ApiListRequest>(
   };
 
   return Object.fromEntries(
-    Object.entries(formatted).filter(([, value]) => value !== undefined)
+    Object.entries(formatted).filter(
+      ([, value]) => value !== undefined && value !== "" && value !== null
+    )
   ) as P;
 };
 

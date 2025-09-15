@@ -2,47 +2,49 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { workOrderQueries } from "@/store/queries/work-orders";
-import WorkOrderMenuItem from "@/containers/menu-items/WorkOrderMenuItem";
-import WorkOrderChip from "@/containers/chips/WorkOrderChip";
-import type { ClientFormValues } from "..";
+import { clientQueries } from "@/store/queries/clients";
+import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
+import ClientChip from "@/containers/chips/ClientChip";
+import type { WorkOrderApiListRequestFormValues } from "..";
 
-const ClientFormWorkOrdersField = () => {
+const WorkOrderApiListRequestFormClientField = () => {
   const [search, setSearch] = useDebounce("", 600);
 
   /** Values */
 
-  const methods = useFormContext<ClientFormValues>();
+  const methods = useFormContext<WorkOrderApiListRequestFormValues>();
 
   /** Queries */
 
-  const workOrderListQuery = useQuery(workOrderQueries.list({ search }));
+  const clientListQuery = useQuery(clientQueries.list({ search }));
 
   return (
     <Controller
-      name="work_orders"
+      name="client"
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
-          options={workOrderListQuery.data?.results ?? []}
+          value={field.value ?? []}
           multiple
+          options={
+            clientListQuery.data?.results.map((client) => client.id) ?? []
+          }
           disabled={field.disabled}
-          loading={workOrderListQuery.isLoading}
-          getOptionLabel={(option) => option.label}
-          getOptionKey={(option) => option.id}
+          loading={clientListQuery.isLoading}
+          getOptionKey={(option) => option}
+          getOptionLabel={(option) => String(option)}
           includeInputInList
           filterOptions={(options) => options}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
+          isOptionEqualToValue={(option, value) => option === value}
           onInputChange={(_, value) => setSearch(value)}
           renderInput={(params) => (
             <TextField
+              label="Client"
               name={field.name}
-              label="Work Orders"
               inputRef={field.ref}
-              {...(formState.errors.work_orders && {
+              {...(formState.errors.client && {
                 error: true,
-                helperText: formState.errors.work_orders.message,
+                helperText: formState.errors.client.message,
               })}
               {...params}
               onBlur={field.onBlur}
@@ -51,7 +53,7 @@ const ClientFormWorkOrdersField = () => {
                   ...params.InputProps,
                   endAdornment: (
                     <>
-                      {workOrderListQuery.isLoading && (
+                      {clientListQuery.isLoading && (
                         <CircularProgress color="inherit" size={20} />
                       )}
                       {params.InputProps.endAdornment}
@@ -61,14 +63,19 @@ const ClientFormWorkOrdersField = () => {
               }}
             />
           )}
-          renderOption={({ key, ...props }, option) => (
-            <WorkOrderMenuItem key={key} workOrder={option} {...props} />
+          renderOption={(props, option) => (
+            <ClientMenuItem client={option} {...props} key={option} />
           )}
           renderValue={(value, getItemProps) =>
             value.map((item, index) => {
               const { key, ...itemProps } = getItemProps({ index });
               return (
-                <WorkOrderChip key={key} workOrder={item} {...itemProps} />
+                <ClientChip
+                  key={key}
+                  client={item}
+                  size="small"
+                  {...itemProps}
+                />
               );
             })
           }
@@ -79,4 +86,4 @@ const ClientFormWorkOrdersField = () => {
   );
 };
 
-export default ClientFormWorkOrdersField;
+export default WorkOrderApiListRequestFormClientField;

@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
@@ -7,6 +8,7 @@ import { accountMutations } from "../mutations/account";
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
   withCredentials: true,
+  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
 });
 
 api.interceptors.request.use((config) => {

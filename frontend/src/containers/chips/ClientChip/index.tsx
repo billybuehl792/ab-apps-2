@@ -36,7 +36,6 @@ const ClientChip = ({ client: clientProp, ...props }: ClientChipProps) => {
       label={
         clientQuery.isLoading ? <Skeleton height={24} width={100} /> : label
       }
-      variant="outlined"
       {...props}
     />
   );

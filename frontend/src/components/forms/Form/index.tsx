@@ -1,4 +1,4 @@
-import { type ReactNode, type FormEventHandler } from "react";
+import { type ReactNode, type FormEventHandler, useState } from "react";
 import {
   FormProvider,
   useForm,
@@ -8,39 +8,55 @@ import {
 import { Button, FormHelperText, Stack, type StackProps } from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
 
-interface FormProps<V extends FieldValues, R = void>
+interface FormProps<TValues extends FieldValues, TResult = void>
   extends Omit<StackProps<"form">, "onSubmit" | "onReset">,
-    UseFormProps<V> {
+    UseFormProps<TValues> {
   submitLabel?: ReactNode;
   resetLabel?: ReactNode;
-  onSubmit: (data: V) => Promise<R>;
+  onSubmit: (data: TValues) => TResult | Promise<TResult>;
+  onSuccess?: (result: TResult) => void;
   onReset?: VoidFunction | true;
   slotProps?: { fieldset?: StackProps; actions?: StackProps };
 }
 
-const Form = <V extends FieldValues, R = void>({
+const Form = <TValues extends FieldValues, TResult = void>({
   values,
+  defaultValues,
   children,
   submitLabel = "Submit",
   resetLabel = "Reset",
-  onReset,
   onSubmit,
+  onSuccess,
+  onReset,
   slotProps,
   ...props
-}: FormProps<V, R>) => {
+}: FormProps<TValues, TResult>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   /** Values */
 
-  const methods = useForm<V>({ values, ...props });
+  const methods = useForm<TValues>({ values, defaultValues, ...props });
 
   /** Callbacks */
 
-  const handleSubmit = methods.handleSubmit(async (data) => {
+  const handleSubmit = methods.handleSubmit((data) => {
     try {
-      await onSubmit(data);
+      setIsSubmitting(true);
+      const res = onSubmit(data);
+      Promise.resolve(res)
+        .then(onSuccess)
+        .catch((error) => handleRootError(error));
     } catch (error) {
-      methods.setError("root", { message: errorUtils.getErrorMessage(error) });
+      handleRootError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   });
+
+  const handleRootError = (error: unknown) =>
+    methods.setError("root", {
+      message: errorUtils.getErrorMessage(error),
+    });
 
   const handleReset: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -80,9 +96,8 @@ const Form = <V extends FieldValues, R = void>({
           )}
           <Button
             type="submit"
-            color="primary"
             disabled={methods.formState.disabled}
-            loading={methods.formState.isSubmitting}
+            loading={isSubmitting}
           >
             {submitLabel}
           </Button>
