@@ -5,7 +5,9 @@ import ClientPaginatedList from "@/containers/lists/ClientPaginatedList";
 import type { ClientApiListRequest } from "@/store/types/clients";
 
 const cleanParams = (params: Record<string, unknown>) => {
+  const city = params.place__city;
   const workOrdersStatus = params.work_orders__status;
+  if (city && !(city instanceof Array)) params.place__city = [city];
   if (workOrdersStatus && !(workOrdersStatus instanceof Array))
     params.work_orders__status = [workOrdersStatus];
 

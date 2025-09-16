@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Chip, Stack, type StackProps } from "@mui/material";
-import { FilterAlt, Sort } from "@mui/icons-material";
+import { Stack, type StackProps } from "@mui/material";
 import { clientQueries } from "@/store/queries/clients";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import PaginatedList from "@/components/lists/PaginatedList";
 import ClientListCard from "@/containers/cards/ClientListCard";
+import ClientPaginatedListFilters from "./ClientPaginatedListFilters";
 import ClientApiListRequestFormIconButton from "@/containers/buttons/ClientApiListRequestFormIconButton";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { ClientApiListRequest } from "@/store/types/clients";
 
 interface ClientPaginatedListProps extends StackProps {
   queryOptions?: ReturnType<typeof clientQueries.list>;
-  onParamsChange?: (newParams: Record<string, unknown>) => void;
+  onParamsChange?: (params: ClientApiListRequest) => void;
   slotProps?: {
     header?: StackProps;
     list?: StackProps;
@@ -30,6 +30,12 @@ const ClientPaginatedList = ({
 
   const queryOptions = queryOptionsProp ?? clientQueries.list(localParams);
   const params = queryOptions?.queryKey[1] ?? {};
+
+  const showFilters = Boolean(
+    params.ordering ||
+      params.work_orders__status?.length ||
+      params.place__city?.length
+  );
 
   /** Callbacks */
 
@@ -66,35 +72,11 @@ const ClientPaginatedList = ({
             }}
           />
         </Stack>
-        {(!!params.work_orders__status?.length || !!params.ordering) && (
-          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-            {!!params.ordering && (
-              <Chip
-                label={`Ordering: ${params.ordering.snakeCaseToTitleCase()}`}
-                icon={<Sort />}
-                size="xs"
-                onDelete={() =>
-                  handleParamsChange({ ...params, ordering: null })
-                }
-              />
-            )}
-            {params.work_orders__status?.map((status) => (
-              <Chip
-                key={status}
-                label={`Work Orders: ${status.snakeCaseToTitleCase()}`}
-                icon={<FilterAlt />}
-                size="xs"
-                onDelete={() =>
-                  handleParamsChange({
-                    ...params,
-                    work_orders__status: params.work_orders__status?.filter(
-                      (s) => s !== status
-                    ),
-                  })
-                }
-              />
-            ))}
-          </Stack>
+        {showFilters && (
+          <ClientPaginatedListFilters
+            queryOptions={queryOptions}
+            onParamsChange={handleParamsChange}
+          />
         )}
       </Stack>
       <PaginatedList

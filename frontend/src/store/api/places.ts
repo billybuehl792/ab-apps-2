@@ -19,6 +19,10 @@ const _delete = (body: Place["id"]) =>
 
 /** Other */
 
+const cities = () => api.get<string[]>(endpoints.places.cities());
+
+/** Google */
+
 const googlePlace = (id: string, sessionToken?: string) =>
   api.get<Place>(endpoints.places.googlePlace(), {
     params: { id, sessionToken },
@@ -35,6 +39,9 @@ export const placeApi = {
   create,
   update,
   delete: _delete,
+  // Other
+  cities,
+  // Google
   googlePlace,
   googleSuggestions,
 };

@@ -34,7 +34,7 @@ const WorkOrderApiListRequestFormFiltersHead = () => {
       borderBottom={1}
       borderColor="divider"
     >
-      <Typography variant="body1">Filters</Typography>
+      <Typography variant="body1">Filter By</Typography>
       <Grow in={!!workOrdersStatus?.length}>
         <Tooltip title="Reset Filters">
           <IconButton size="small" onClick={handleResetFilters}>

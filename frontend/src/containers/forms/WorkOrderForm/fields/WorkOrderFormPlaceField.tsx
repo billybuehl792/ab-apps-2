@@ -24,7 +24,7 @@ const WorkOrderFormPlaceField = () => {
       rules={{ required: "Location is required" }}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
+          value={field.value ?? null}
           options={placeListQuery.data ?? []}
           disabled={field.disabled}
           loading={placeListQuery.isLoading}

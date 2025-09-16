@@ -7,8 +7,10 @@ import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 const cleanParams = (params: Record<string, unknown>) => {
   const status = params.status;
   const client = params.client;
+  const city = params.place__city;
   if (status && !(status instanceof Array)) params.status = [status];
   if (client && !(client instanceof Array)) params.client = [client];
+  if (city && !(city instanceof Array)) params.place__city = [city];
 
   return paramUtils.cleanApiListRequestParams<WorkOrderApiListRequest>(params);
 };

@@ -53,3 +53,15 @@ class PlaceViewSet(CompanyScopedViewSet):
             return Response(suggestion_list)
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["get"], url_path="cities")
+    def list_cities(self, request):
+        cities = (
+            Place.objects.values_list("city", flat=True)
+            .filter(company=self.request.user.company)  # type: ignore
+            .distinct()
+            .order_by("city")
+        )
+        cities = [city for city in cities if city]
+
+        return Response(cities)

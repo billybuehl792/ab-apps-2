@@ -3,6 +3,7 @@ import { createTheme } from "@mui/material";
 declare module "@mui/material/Chip" {
   interface ChipPropsSizeOverrides {
     xs: true;
+    xxs: true;
   }
   interface ChipPropsColorOverrides {
     disabled: true;
@@ -69,6 +70,18 @@ export const theme = createTheme({
     },
     MuiChip: {
       variants: [
+        {
+          props: { size: "xxs" },
+          style: {
+            height: 18,
+            fontSize: 10,
+            borderRadius: 6,
+            padding: 0,
+            "& .MuiChip-icon": { fontSize: 10 },
+            "& .MuiChip-deleteIcon": { fontSize: 10 },
+            "& .MuiChip-label": { paddingLeft: 10, paddingRight: 10 },
+          },
+        },
         {
           props: { size: "xs" },
           style: {
@@ -152,5 +165,8 @@ export const theme = createTheme({
       dark: "#0E1114",
       light: "#DEDEDE",
     },
+  },
+  typography: {
+    caption: { fontWeight: 300 },
   },
 });

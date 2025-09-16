@@ -31,11 +31,10 @@ const WorkOrderChip = ({
 
   return (
     <Chip
-      icon={<Work fontSize={props.size} />}
+      icon={<Work />}
       label={
         workOrderQuery.isLoading ? <Skeleton height={24} width={100} /> : label
       }
-      variant="outlined"
       {...props}
     />
   );

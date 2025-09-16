@@ -6,6 +6,7 @@ import WorkOrderApiListRequestFormFiltersHead from "./layout/WorkOrderApiListReq
 import WorkOrderApiListRequestFormOrderingField from "./fields/WorkOrderApiListRequestFormOrderingField";
 import WorkOrderApiListRequestFormStatusField from "./fields/WorkOrderApiListRequestFormStatusField";
 import WorkOrderApiListRequestFormClientField from "./fields/WorkOrderApiListRequestFormClientField";
+import WorkOrderApiListRequestFormCityField from "./fields/WorkOrderApiListRequestFormCityField";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 export type WorkOrderApiListRequestFormValues = WorkOrderApiListRequest;
@@ -26,6 +27,7 @@ const WorkOrderApiListRequestForm = (
         <WorkOrderApiListRequestFormFiltersHead />
         <Stack spacing={2} py={3}>
           <WorkOrderApiListRequestFormStatusField />
+          <WorkOrderApiListRequestFormCityField />
           <WorkOrderApiListRequestFormClientField />
         </Stack>
       </Stack>

@@ -23,7 +23,7 @@ const ClientFormPlaceField = () => {
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
+          value={field.value ?? null}
           options={placeListQuery.data ?? []}
           disabled={field.disabled}
           loading={placeListQuery.isLoading}

@@ -1,4 +1,5 @@
 import { type ComponentProps } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Card,
   CardContent,
@@ -10,7 +11,7 @@ import {
 import dayjs from "dayjs";
 import Metadata from "@/components/lists/Metadata";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
-import WorkOrderClientFormChip from "@/containers/chips/WorkOrderClientFormChip";
+import ClientChip from "@/containers/chips/ClientChip";
 import { DateTimeFormat } from "@/store/enums/datetime";
 import type { WorkOrder } from "@/store/types/work-orders";
 
@@ -24,6 +25,20 @@ const WorkOrderDetailCard = ({
 }: WorkOrderDetailCardProps) => {
   /** Values */
 
+  const navigate = useNavigate();
+
+  /** Callbacks */
+
+  const handleNavigateClient = () => {
+    if (!workOrder.client) return;
+    navigate({
+      to: "/app/clients/$id",
+      params: { id: String(workOrder.client.id) },
+    });
+  };
+
+  /** Options */
+
   const items: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "location",
@@ -33,12 +48,15 @@ const WorkOrderDetailCard = ({
     {
       id: "client",
       label: "Client",
-      value: (
-        <WorkOrderClientFormChip
-          workOrder={workOrder}
+      value: workOrder.client ? (
+        <ClientChip
+          client={workOrder.client}
           variant="outlined"
           size="xs"
+          onClick={handleNavigateClient}
         />
+      ) : (
+        "None"
       ),
     },
     {
@@ -81,10 +99,17 @@ const WorkOrderDetailCard = ({
         spacing={2}
         divider={<Divider variant="middle" />}
       >
-        <Stack spacing={1}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="h6">{workOrder.label}</Typography>
-            <WorkOrderStatusChip workOrder={workOrder} size="small" />
+        <Stack spacing={2}>
+          <Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="h6">{workOrder.label}</Typography>
+              <WorkOrderStatusChip workOrder={workOrder} size="small" />
+            </Stack>
+            {!!workOrder.description && (
+              <Typography variant="body2" color="text.secondary">
+                {workOrder.description}
+              </Typography>
+            )}
           </Stack>
           <Metadata
             items={items}

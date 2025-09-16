@@ -13,6 +13,7 @@ const endpoints = {
   }),
   places: Object.assign(() => `${API_URL}/places/`, {
     detail: (id: number) => `${endpoints.places()}${id}/`,
+    cities: () => `${endpoints.places()}cities/`,
     googlePlace: () => `${endpoints.places()}google-place/`,
     googleSuggestions: () => `${endpoints.places()}google-suggestions/`,
   }),

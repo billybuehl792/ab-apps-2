@@ -32,7 +32,7 @@ const WorkOrderApiListRequestFormOrderingHead = () => {
       borderBottom={1}
       borderColor="divider"
     >
-      <Typography variant="body1">Ordering</Typography>
+      <Typography variant="body1">Sort By</Typography>
       <Grow in={!!ordering}>
         <Tooltip title="Reset Ordering">
           <IconButton size="small" onClick={handleResetOrdering}>

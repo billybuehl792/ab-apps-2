@@ -32,6 +32,7 @@ export interface WriteableClient {
 
 type ClientApiListRequestFilters = {
   work_orders__status?: WorkOrderStatus[];
+  place__city?: string[];
 };
 
 export type ClientApiListRequest =

@@ -1,3 +1,4 @@
+import { type ComponentProps } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Card,
@@ -9,6 +10,7 @@ import {
   type CardProps,
 } from "@mui/material";
 import { Work } from "@mui/icons-material";
+import Metadata from "@/components/lists/Metadata";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import ClientChip from "@/containers/chips/ClientChip";
@@ -19,6 +21,25 @@ interface WorkOrderListCardProps extends CardProps {
 }
 
 const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
+  /** Values */
+
+  const items: ComponentProps<typeof Metadata>["items"] = [
+    {
+      id: "address",
+      label: "Address",
+      value: workOrder.place?.address_short ?? "None",
+    },
+    {
+      id: "client",
+      label: "Client",
+      value: workOrder.client ? (
+        <ClientChip client={workOrder.client} variant="outlined" size="xxs" />
+      ) : (
+        "None"
+      ),
+    },
+  ];
+
   return (
     <Stack component={Card} position="relative" {...props}>
       <CardActionArea
@@ -32,15 +53,8 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
           alignItems="center"
           mr={7.5}
         >
-          <Work color="disabled" />
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-between"
-            flexGrow={1}
-            overflow="hidden"
-          >
+          <Work fontSize="large" color="disabled" />
+          <Stack spacing={0.5} overflow="hidden">
             <Stack
               direction="row"
               spacing={1}
@@ -52,9 +66,7 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
               </Typography>
               <WorkOrderStatusChip workOrder={workOrder} size="small" />
             </Stack>
-            {!!workOrder.client && (
-              <ClientChip client={workOrder.client} size="small" />
-            )}
+            <Metadata items={items} />
           </Stack>
         </CardContent>
       </CardActionArea>

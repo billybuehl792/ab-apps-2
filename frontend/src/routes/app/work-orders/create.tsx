@@ -36,11 +36,15 @@ function RouteComponent() {
       }
     );
 
+  const handleCancel = () => navigate({ to: "/app/work-orders" });
+
   return (
     <WorkOrderForm
       defaultValues={{ status: WorkOrderStatus.New }}
+      resetLabel="Cancel"
       p={2}
       onSubmit={handleSubmit}
+      onReset={handleCancel}
     />
   );
 }

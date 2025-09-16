@@ -32,5 +32,14 @@ function RouteComponent() {
       }
     );
 
-  return <ClientForm p={2} onSubmit={handleSubmit} />;
+  const handleCancel = () => navigate({ to: "/app/clients" });
+
+  return (
+    <ClientForm
+      resetLabel="Cancel"
+      p={2}
+      onSubmit={handleSubmit}
+      onReset={handleCancel}
+    />
+  );
 }

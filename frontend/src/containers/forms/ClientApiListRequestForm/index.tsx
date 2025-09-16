@@ -5,6 +5,7 @@ import ClientApiListRequestFormOrderingHead from "./layout/ClientApiListRequestF
 import ClientApiListRequestFormFiltersHead from "./layout/ClientApiListRequestFormFiltersHead";
 import ClientApiListRequestFormOrderingField from "./fields/ClientApiListRequestFormOrderingField";
 import ClientApiListRequestFormWorkOrdersStatusField from "./fields/ClientApiListRequestFormWorkOrdersStatusField";
+import ClientApiListRequestFormCityField from "./fields/ClientApiListRequestFormCityField";
 import type { ClientApiListRequest } from "@/store/types/clients";
 
 export type ClientApiListRequestFormValues = ClientApiListRequest;
@@ -24,6 +25,7 @@ const ClientApiListRequestForm = (
         {/* Filters */}
         <ClientApiListRequestFormFiltersHead />
         <Stack spacing={2} py={3}>
+          <ClientApiListRequestFormCityField />
           <ClientApiListRequestFormWorkOrdersStatusField />
         </Stack>
       </Stack>

@@ -32,6 +32,14 @@ const list = (params?: PlaceApiListRequest) =>
 
 /** Other */
 
+const cities = () =>
+  queryOptions({
+    queryKey: queryUtils.getQueryKey(["places", "cities"]),
+    queryFn: () => placeApi.cities().then((res) => res.data),
+  });
+
+/** Google */
+
 const googlePlace = (id: string) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(["places", "googlePlace"], {
@@ -119,8 +127,12 @@ const googlePlacesAutocompleteSuggestionList = (
 export const placeQueries = {
   detail,
   list,
+  // Other
+  cities,
+  // Google
   googlePlace,
   googleSuggestions,
+  // Google Maps Places API
   googlePlacesPlaceDetail,
   googlePlacesAutocompleteSuggestionList,
 };

@@ -5,19 +5,21 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.views import CompanyScopedViewSet
-from app.common.filters import ListInFilter
+from app.common.filters import CaseInsensitiveListInFilter, ListInFilter
 from config.pagination import AdjustableSizePagination
 from .models import Client
 from .serializers import ClientReadSerializer, ClientWriteSerializer
 
 
 class ClientFilter(django_filters.FilterSet):
+    place__city = CaseInsensitiveListInFilter(
+        field_name="place__city", lookup_expr="in")
     work_orders__status = ListInFilter(
         field_name="work_orders__status", lookup_expr="in")
 
     class Meta:
         model = Client
-        fields = ['work_orders__status']
+        fields = ['place__city', 'work_orders__status']
 
 
 class ClientViewSet(CompanyScopedViewSet):

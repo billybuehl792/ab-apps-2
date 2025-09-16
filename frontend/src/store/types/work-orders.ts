@@ -37,6 +37,7 @@ export interface WriteableWorkOrder {
 type WorkOrderApiListRequestFilters = {
   status?: WorkOrderStatus[];
   client?: Client["id"][];
+  place__city?: string[];
 };
 
 export type WorkOrderApiListRequest =
