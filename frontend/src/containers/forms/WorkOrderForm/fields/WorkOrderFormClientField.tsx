@@ -24,7 +24,7 @@ const WorkOrderFormClientField = () => {
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
+          value={field.value ?? null}
           options={clientListQuery.data?.results ?? []}
           disabled={field.disabled}
           loading={clientListQuery.isLoading}

@@ -25,7 +25,7 @@ const WorkOrderClientFormClientField = () => {
       rules={{ required: "Client is required" }}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
+          value={field.value ?? null}
           options={clientListQuery.data?.results ?? []}
           disabled={field.disabled}
           loading={clientListQuery.isLoading}

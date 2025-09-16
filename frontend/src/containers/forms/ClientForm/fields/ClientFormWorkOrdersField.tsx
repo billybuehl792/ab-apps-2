@@ -24,7 +24,7 @@ const ClientFormWorkOrdersField = () => {
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value}
+          value={field.value ?? []}
           options={workOrderListQuery.data?.results ?? []}
           multiple
           disabled={field.disabled}

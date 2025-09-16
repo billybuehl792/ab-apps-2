@@ -1,6 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
 import {
-  Chip,
   FormControl,
   InputLabel,
   MenuItem,
@@ -8,6 +7,7 @@ import {
   Select,
 } from "@mui/material";
 import { WorkOrderStatus } from "@/store/enums/work-orders";
+import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import { type WorkOrderFormValues } from "..";
 
 const WorkOrderFormStatusField = () => {
@@ -28,22 +28,17 @@ const WorkOrderFormStatusField = () => {
             disabled={field.disabled}
             input={<OutlinedInput label="Status" />}
             renderValue={(selected) => (
-              <Chip
-                label={selected.snakeCaseToTitleCase()}
-                color={
-                  selected === WorkOrderStatus.Completed
-                    ? "success"
-                    : selected === WorkOrderStatus.Canceled
-                      ? "error"
-                      : "info"
-                }
-              />
+              <WorkOrderStatusChip status={selected} size="small" />
             )}
             {...field}
           >
             {Object.values(WorkOrderStatus).map((option) => (
               <MenuItem key={option} value={option}>
-                {option.snakeCaseToTitleCase()}
+                <WorkOrderStatusChip
+                  key={option}
+                  status={option}
+                  size="small"
+                />
               </MenuItem>
             ))}
           </Select>

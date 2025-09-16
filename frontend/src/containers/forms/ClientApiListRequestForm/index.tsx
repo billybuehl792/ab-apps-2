@@ -17,13 +17,13 @@ const ClientApiListRequestForm = (
       <Stack px={2}>
         {/* Ordering */}
         <ClientApiListRequestFormOrderingHead />
-        <Stack spacing={2} ml={2} py={1}>
+        <Stack spacing={2} py={1}>
           <ClientApiListRequestFormOrderingField />
         </Stack>
 
         {/* Filters */}
         <ClientApiListRequestFormFiltersHead />
-        <Stack spacing={2} ml={2} py={3}>
+        <Stack spacing={2} py={3}>
           <ClientApiListRequestFormWorkOrdersStatusField />
         </Stack>
       </Stack>

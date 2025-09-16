@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import WorkOrderForm from "@/containers/forms/WorkOrderForm";
+import { WorkOrderStatus } from "@/store/enums/work-orders";
 
 export const Route = createFileRoute("/app/work-orders/create")({
   loader: () => ({ crumb: "Create Work Order" }),
@@ -35,5 +36,11 @@ function RouteComponent() {
       }
     );
 
-  return <WorkOrderForm p={2} onSubmit={handleSubmit} />;
+  return (
+    <WorkOrderForm
+      defaultValues={{ status: WorkOrderStatus.New }}
+      p={2}
+      onSubmit={handleSubmit}
+    />
+  );
 }
