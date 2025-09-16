@@ -21,7 +21,6 @@ export const Route = createFileRoute("/app/work-orders/$id")({
   },
   component: RouteComponent,
   pendingComponent: () => <StatusCard loading="loading work order..." m={2} />,
-  errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
 });
 
 function RouteComponent() {

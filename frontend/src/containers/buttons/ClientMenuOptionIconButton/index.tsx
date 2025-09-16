@@ -1,7 +1,7 @@
 import { type ComponentProps } from "react";
 import { useMatches, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Delete, Edit, Info } from "@mui/icons-material";
+import { Delete, Edit, Info, Work } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
 import { clientMutations } from "@/store/mutations/clients";
 import useConfirm from "@/store/hooks/useConfirm";
@@ -78,6 +78,16 @@ const ClientMenuOptionIconButton = ({
           to: "/app/clients/$id",
           params: { id: String(clientId) },
           search: { edit: true },
+        }),
+    },
+    {
+      id: "createWorkOrder",
+      label: "Create Work Order",
+      icon: <Work />,
+      onClick: () =>
+        navigate({
+          to: "/app/work-orders/create",
+          search: { client: clientId },
         }),
     },
     {

@@ -1,5 +1,9 @@
 import { type ComponentProps } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { clientMutations } from "@/store/mutations/clients";
 import ClientForm from "@/containers/forms/ClientForm";
@@ -12,6 +16,7 @@ export const Route = createFileRoute("/app/clients/create")({
 function RouteComponent() {
   /** Values */
 
+  const router = useRouter();
   const navigate = useNavigate();
 
   /** Mutations */
@@ -32,14 +37,12 @@ function RouteComponent() {
       }
     );
 
-  const handleCancel = () => navigate({ to: "/app/clients" });
-
   return (
     <ClientForm
       resetLabel="Cancel"
       p={2}
       onSubmit={handleSubmit}
-      onReset={handleCancel}
+      onReset={router.history.back}
     />
   );
 }
