@@ -15,7 +15,8 @@ const endpoints = {
     detail: (id: number) => `${endpoints.places()}${id}/`,
     cities: () => `${endpoints.places()}cities/`,
     googlePlace: () => `${endpoints.places()}google-place/`,
-    googleSuggestions: () => `${endpoints.places()}google-suggestions/`,
+    googleAutocompleteSuggestions: () =>
+      `${endpoints.places()}google-autocomplete-suggestions/`,
   }),
   clients: Object.assign(() => `${API_URL}/clients/`, {
     detail: (id: number) => `${endpoints.clients()}${id}/`,

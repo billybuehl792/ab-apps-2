@@ -1,7 +1,7 @@
-import { type ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import { Box } from "@mui/material";
+import { Stack, Tab, Tabs } from "@mui/material";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import StatusCard from "@/components/cards/StatusCard";
@@ -24,6 +24,8 @@ export const Route = createFileRoute("/app/work-orders/$id")({
 });
 
 function RouteComponent() {
+  const [tabValue, setTabValue] = useState(0);
+
   /** Values */
 
   const loaderData = Route.useLoaderData();
@@ -62,8 +64,19 @@ function RouteComponent() {
     });
 
   return (
-    <Box p={2}>
+    <Stack spacing={1} p={2}>
       <WorkOrderDetailCard workOrder={workOrder} />
+      <Tabs
+        value={tabValue}
+        variant="scrollable"
+        scrollButtons={false}
+        onChange={(_, newValue) => setTabValue(newValue)}
+      >
+        <Tab label="Documents" />
+        <Tab label="History" />
+      </Tabs>
+
+      {/* Modals */}
       <WorkOrderFormDrawer
         open={isEditing}
         form={{
@@ -72,6 +85,6 @@ function RouteComponent() {
         }}
         onClose={handleOnClose}
       />
-    </Box>
+    </Stack>
   );
 }

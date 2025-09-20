@@ -4,8 +4,8 @@ from app.common.models import TimeStampedModel
 
 
 class Company(TimeStampedModel):
-    label = models.CharField(max_length=255)
-    description = models.TextField()
+    label = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, default="")
 
     class Meta(object):  # type: ignore
         verbose_name = "Company"

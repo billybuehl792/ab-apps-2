@@ -12,7 +12,7 @@ export interface Client {
   phone_primary: string;
   phone_secondary: string | null;
   place: Place | null;
-  work_orders: WorkOrder[];
+  work_orders: Omit<WorkOrder, "client">[];
   created_at: string;
   updated_at: string;
 }
@@ -24,7 +24,6 @@ export interface WriteableClient {
   email: string;
   phone_primary: string;
   phone_secondary?: string | null;
-  work_orders?: WorkOrder["id"][];
   place: Place["id"] | Place["google_place_id"] | null;
 }
 

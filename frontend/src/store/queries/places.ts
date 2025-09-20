@@ -50,15 +50,20 @@ const googlePlace = (id: string) =>
       placeApi.googlePlace(id).then((res) => res.data),
   });
 
-const googleSuggestions = (input: string, sessionToken?: string) =>
+const googleAutocompleteSuggestions = (input: string, sessionToken?: string) =>
   queryOptions({
-    queryKey: queryUtils.getQueryKey(["places", "googleSuggestions"], {
-      input,
-      sessionToken,
-    }),
+    queryKey: queryUtils.getQueryKey(
+      ["places", "googleAutocompleteSuggestions"],
+      {
+        input,
+        sessionToken,
+      }
+    ),
     enabled: Boolean(input),
     queryFn: ({ queryKey: [_, { input, sessionToken }] }) =>
-      placeApi.googleSuggestions(input, sessionToken).then((res) => res.data),
+      placeApi
+        .googleAutocompleteSuggestions(input, sessionToken)
+        .then((res) => res.data),
   });
 
 /** Google Maps Places API */
@@ -131,7 +136,7 @@ export const placeQueries = {
   cities,
   // Google
   googlePlace,
-  googleSuggestions,
+  googleAutocompleteSuggestions,
   // Google Maps Places API
   googlePlacesPlaceDetail,
   googlePlacesAutocompleteSuggestionList,

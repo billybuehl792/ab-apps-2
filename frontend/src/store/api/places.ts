@@ -28,8 +28,8 @@ const googlePlace = (id: string, sessionToken?: string) =>
     params: { id, sessionToken },
   });
 
-const googleSuggestions = (input: string, sessionToken?: string) =>
-  api.get<Place[]>(endpoints.places.googleSuggestions(), {
+const googleAutocompleteSuggestions = (input: string, sessionToken?: string) =>
+  api.get<Place[]>(endpoints.places.googleAutocompleteSuggestions(), {
     params: { input, sessionToken },
   });
 
@@ -43,5 +43,5 @@ export const placeApi = {
   cities,
   // Google
   googlePlace,
-  googleSuggestions,
+  googleAutocompleteSuggestions,
 };

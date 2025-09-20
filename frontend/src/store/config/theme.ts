@@ -143,6 +143,22 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          minHeight: 16,
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          padding: 12,
+          minHeight: 16,
+        },
+      },
+    },
     MuiToolbar: {
       styleOverrides: {
         root: ({ theme }) => ({

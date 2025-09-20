@@ -1,7 +1,7 @@
-import { type ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import { Box } from "@mui/material";
+import { Stack, Tab, Tabs } from "@mui/material";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
 import StatusCard from "@/components/cards/StatusCard";
@@ -19,12 +19,14 @@ export const Route = createFileRoute("/app/clients/$id")({
 
     return { client, crumb: `${client.first_name} ${client.last_name}` };
   },
-  pendingComponent: () => <StatusCard loading="loading client..." m={2} />,
   component: RouteComponent,
+  pendingComponent: () => <StatusCard loading="loading client..." m={2} />,
   errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
 });
 
 function RouteComponent() {
+  const [tabValue, setTabValue] = useState(0);
+
   /** Values */
 
   const loaderData = Route.useLoaderData();
@@ -61,16 +63,25 @@ function RouteComponent() {
     });
 
   return (
-    <Box p={2}>
+    <Stack spacing={1} p={2}>
       <ClientDetailCard client={client} />
+      <Tabs
+        value={tabValue}
+        variant="scrollable"
+        scrollButtons={false}
+        onChange={(_, newValue) => setTabValue(newValue)}
+      >
+        <Tab label="Work Orders" />
+        <Tab label="Documents" />
+        <Tab label="History" />
+      </Tabs>
+
+      {/* Modals */}
       <ClientFormDrawer
         open={isEditing}
-        form={{
-          values: client,
-          onSubmit: handleUpdateClient,
-        }}
+        form={{ values: client, onSubmit: handleUpdateClient }}
         onClose={handleOnClose}
       />
-    </Box>
+    </Stack>
   );
 }

@@ -15,7 +15,9 @@ const ClientFormPlaceField = () => {
 
   /** Queries */
 
-  const placeListQuery = useQuery(placeQueries.googleSuggestions(input));
+  const placeListQuery = useQuery(
+    placeQueries.googleAutocompleteSuggestions(input)
+  );
 
   return (
     <Controller

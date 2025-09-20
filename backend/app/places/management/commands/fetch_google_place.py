@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from app.places.services.google_places import fetch_google_place
+from app.places.services.google_places import GooglePlacesClient, GooglePlacesError
 
 
 class Command(BaseCommand):
@@ -11,5 +11,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         place_id = options["place_id"]
-        data = fetch_google_place(place_id)
-        self.stdout.write(self.style.SUCCESS(str(data)))
+
+        try:
+            client = GooglePlacesClient()
+            response = client.fetch_place_details(place_id)
+            place_data = response.parse_place_data()
+            self.stdout.write(self.style.SUCCESS(str(place_data.__dict__)))
+        except GooglePlacesError as e:
+            self.stdout.write(self.style.ERROR(f"Error fetching place: {e}"))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Unexpected error: {e}"))

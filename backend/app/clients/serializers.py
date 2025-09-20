@@ -1,86 +1,50 @@
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from .models import Client
-from app.work_orders.models import WorkOrder
-from app.places.serializers import PlaceSerializer
+from app.places.serializers_core import PlaceSerializer
+from app.work_orders.serializers_core import WorkOrderSerializer
 from app.places.services.place_utils import get_or_create_place_by_id
 
 
-class ClientWorkOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WorkOrder
-        fields = ["id", "label", "description", "status", "cost", "scheduled_date",
-                  "completed_date", "client", "place", "created_at", "updated_at"]
-
-
 class ClientReadSerializer(serializers.ModelSerializer):
-    work_orders = ClientWorkOrderSerializer(many=True, read_only=True)
+    work_orders = WorkOrderSerializer(many=True, read_only=True)
     place = PlaceSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Client
-        fields = [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "phone_primary",
-            "phone_secondary",
-            "place",
-            "work_orders",
-            "created_at",
-            "updated_at",
-        ]
-        read_only_fields = ["created_at", "updated_at"]
+        exclude = ("company",)
+        read_only_fields = ("created_at", "updated_at")
 
 
 class ClientWriteSerializer(serializers.ModelSerializer):
-    work_orders = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=WorkOrder.objects.all(), required=False
-    )
     place = serializers.CharField(
-        max_length=255, allow_null=True, required=False)
+        max_length=255,
+        allow_null=True,
+        required=False,
+        help_text="Place identifier to create or reference existing place"
+    )
 
     class Meta:
         model = Client
-        fields = [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "phone_primary",
-            "phone_secondary",
-            "place",
-            "work_orders",
-        ]
+        exclude = ("company", "created_at", "updated_at")
+        extra_kwargs = {
+            'email': {'help_text': 'Email address of the client'},
+            'phone_primary': {'help_text': 'Primary phone number of the client'},
+            'phone_secondary': {'help_text': 'Secondary phone number of the client'},
+        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def validate_place(self, value):
+        """Validate and convert place identifier to Place instance."""
+        if not value:
+            return None
+
         request = self.context.get("request")
-        if request and hasattr(request.user, "company"):
-            self.fields["work_orders"].queryset = WorkOrder.objects.filter(
-                company=request.user.company)
+        if not request or not isinstance(request, Request):
+            raise serializers.ValidationError("Invalid request context.")
 
-    def create(self, validated_data):
-        request = self.context.get("request")
-        company = getattr(request.user, "company", None) if request else None
-
-        if "place" in validated_data and validated_data["place"]:
-            place_id = validated_data.pop("place", None)
-            if place_id:
-                place = get_or_create_place_by_id(place_id, company)
-                validated_data["place"] = place
-
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        request = self.context.get("request")
-        company = getattr(request.user, "company", None) if request else None
-
-        if "place" in validated_data and validated_data["place"]:
-            place_id = validated_data.pop("place", None)
-            if place_id:
-                place = get_or_create_place_by_id(place_id, company)
-                validated_data["place"] = place
-
-        return super().update(instance, validated_data)
+        try:
+            return get_or_create_place_by_id(request, value)
+        except Exception as e:
+            raise serializers.ValidationError(
+                f"Error processing place: {str(e)}")

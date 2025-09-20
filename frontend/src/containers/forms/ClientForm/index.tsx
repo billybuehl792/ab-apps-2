@@ -8,7 +8,6 @@ import ClientFormEmailField from "./fields/ClientFormEmailField";
 import ClientFormPhonePrimaryField from "./fields/ClientFormPhonePrimaryField";
 import ClientFormPhoneSecondaryField from "./fields/ClientFormPhoneSecondaryField";
 import ClientFormPlaceField from "./fields/ClientFormPlaceField";
-import ClientFormWorkOrdersField from "./fields/ClientFormWorkOrdersField";
 import type { Client, WriteableClient } from "@/store/types/clients";
 
 export type ClientFormValues = Omit<Client, "id">;
@@ -28,7 +27,6 @@ const ClientForm = (
       <ClientFormPhonePrimaryField />
       <ClientFormPhoneSecondaryField />
       <ClientFormPlaceField />
-      <ClientFormWorkOrdersField />
     </Form>
   );
 };
