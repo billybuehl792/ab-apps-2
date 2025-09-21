@@ -5,8 +5,10 @@ import { workOrderQueries } from "@/store/queries/work-orders";
 import type { WorkOrder } from "@/store/types/work-orders";
 
 interface WorkOrderChipProps extends ChipProps {
-  workOrder: WorkOrder | WorkOrder["id"];
+  workOrder: WithRequired<WorkOrder, "id" | "label"> | WorkOrder["id"];
 }
+
+const DEFAULT_LABEL = "-";
 
 const WorkOrderChip = ({
   workOrder: workOrderProp,
@@ -27,7 +29,9 @@ const WorkOrderChip = ({
   /** Data */
 
   const workOrder = isId ? workOrderQuery.data : workOrderProp;
-  const label = workOrderQuery.isError ? "error" : (workOrder?.label ?? "-");
+  const label = workOrderQuery.isError
+    ? "error"
+    : (workOrder?.label ?? DEFAULT_LABEL);
 
   return (
     <Chip

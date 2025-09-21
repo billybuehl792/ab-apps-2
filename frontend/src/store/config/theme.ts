@@ -13,6 +13,7 @@ declare module "@mui/material/Chip" {
 declare module "@mui/material/SvgIcon" {
   interface SvgIconPropsSizeOverrides {
     xs: true;
+    xxs: true;
   }
 }
 
@@ -75,7 +76,6 @@ export const theme = createTheme({
           style: {
             height: 18,
             fontSize: 10,
-            borderRadius: 6,
             padding: 0,
             "& .MuiChip-icon": { fontSize: 10 },
             "& .MuiChip-deleteIcon": { fontSize: 10 },
@@ -85,9 +85,8 @@ export const theme = createTheme({
         {
           props: { size: "xs" },
           style: {
-            height: 24,
-            fontSize: 12,
-            borderRadius: 6,
+            height: 20,
+            fontSize: 10,
             padding: 0,
             "& .MuiChip-icon": { fontSize: 12 },
             "& .MuiChip-deleteIcon": { fontSize: 12 },
@@ -128,6 +127,10 @@ export const theme = createTheme({
         {
           props: { fontSize: "xs" },
           style: { fontSize: "0.875rem" },
+        },
+        {
+          props: { fontSize: "xxs" },
+          style: { fontSize: "0.75rem" },
         },
       ],
     },

@@ -3,7 +3,6 @@ import qs from "qs";
 import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
-import { accountMutations } from "../mutations/account";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -22,8 +21,6 @@ api.interceptors.response.use(
   (response) => response,
   async (requestError) => {
     const originalRequest = requestError.config;
-    let error = requestError;
-
     const ignoreRoutes = [
       endpoints.account.token(),
       endpoints.account.tokenRefresh(),
@@ -38,32 +35,34 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshAccessTokenResult = await accountMutations
-          .refreshAccessToken()
-          .mutationFn?.call(undefined);
+        const refreshAccessTokenResult = await api.post<{
+          access: string;
+        }>(endpoints.account.tokenRefresh());
 
-        if (!refreshAccessTokenResult)
-          throw new Error("No access token returned");
+        if (refreshAccessTokenResult.status !== 200)
+          throw new Error("Token refresh failed");
 
-        authUtils.setAccessToken(refreshAccessTokenResult.access);
-        originalRequest.headers.Authorization = `Bearer ${refreshAccessTokenResult.access}`;
+        const newToken = refreshAccessTokenResult.data.access;
+        authUtils.setAccessToken(newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
         return api(originalRequest);
       } catch (refreshErr) {
-        error = refreshErr;
+        authUtils.setAccessToken(null);
+
+        const pathname = router.state.location.pathname;
+        const search = ["/", "/sign-in", "/sign-out"].includes(pathname)
+          ? undefined
+          : { redirect: pathname };
+
+        // Redirect to sign-in page
+        router.navigate({ to: "/sign-out", replace: true, search });
+
+        return Promise.reject(refreshErr);
       }
-
-      authUtils.setAccessToken(null);
-
-      const pathname = router.state.location.pathname;
-      const search = ["/", "/sign-in", "/sign-out"].includes(pathname)
-        ? undefined
-        : { redirect: pathname };
-
-      router.navigate({ to: "/sign-out", replace: true, search });
     }
 
-    return Promise.reject(error);
+    return Promise.reject(requestError);
   }
 );
 

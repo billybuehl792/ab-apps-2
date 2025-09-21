@@ -25,9 +25,7 @@ interface PaginatedListProps<
   renderItem: (item: TData) => JSX.Element;
   renderSkeletonItem?: (index: number) => JSX.Element;
   onPageChange?: (page: number) => void;
-  onSearch?: (term: string) => void;
   slotProps?: {
-    list?: StackProps;
     pagination?: PaginationProps;
   };
 }
@@ -39,17 +37,17 @@ const PaginatedList = <
   TData = unknown,
 >({
   queryOptions,
-  slotProps,
   renderItem,
   renderSkeletonItem,
   onPageChange,
+  slotProps,
   ...props
 }: PaginatedListProps<TParams, TData>) => {
   const [pageCount, setPageCount] = useState(0);
 
   /** Values */
 
-  const { page_size: pageSize = DEFAULT_PAGE_SIZE, page = 1 } =
+  const { page = 1, page_size: pageSize = DEFAULT_PAGE_SIZE } =
     queryOptions.queryKey[1] ?? {};
 
   /** Queries */
@@ -63,21 +61,19 @@ const PaginatedList = <
   }, [query.data, pageSize]);
 
   return (
-    <Stack spacing={2} {...props}>
-      <Stack spacing={1} {...slotProps?.list}>
-        {query.isLoading ? (
-          Array.from({ length: pageSize }).map(
-            (_, index) =>
-              renderSkeletonItem?.(index) ?? (
-                <Skeleton key={index} variant="rounded" height={84} />
-              )
-          )
-        ) : query.isSuccess && query.data.count ? (
-          query.data.results.map(renderItem)
-        ) : (
-          <StatusCard error={query.error} empty={query.data?.count === 0} />
-        )}
-      </Stack>
+    <Stack spacing={1} {...props}>
+      {query.isLoading ? (
+        Array.from({ length: pageSize }).map(
+          (_, index) =>
+            renderSkeletonItem?.(index) ?? (
+              <Skeleton key={index} variant="rounded" height={84} />
+            )
+        )
+      ) : query.isSuccess && query.data.count ? (
+        query.data.results.map(renderItem)
+      ) : (
+        <StatusCard error={query.error} empty={query.data?.count === 0} />
+      )}
       {pageCount > 1 && !!onPageChange && (
         <Pagination
           count={pageCount}

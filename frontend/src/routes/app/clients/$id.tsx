@@ -2,11 +2,15 @@ import { useState, type ComponentProps } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
+import { workOrderQueries } from "@/store/queries/work-orders";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
 import StatusCard from "@/components/cards/StatusCard";
 import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
+import PaginatedList from "@/components/lists/PaginatedList";
+import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
+import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 export const Route = createFileRoute("/app/clients/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
@@ -17,7 +21,7 @@ export const Route = createFileRoute("/app/clients/$id")({
       clientQueries.detail(Number(params.id))
     );
 
-    return { client, crumb: `${client.first_name} ${client.last_name}` };
+    return { client, crumb: client.full_name };
   },
   component: RouteComponent,
   pendingComponent: () => <StatusCard loading="loading client..." m={2} />,
@@ -26,6 +30,8 @@ export const Route = createFileRoute("/app/clients/$id")({
 
 function RouteComponent() {
   const [tabValue, setTabValue] = useState(0);
+  const [workOrderListParams, setWorkOrderListParams] =
+    useState<WorkOrderApiListRequest>({});
 
   /** Values */
 
@@ -35,6 +41,13 @@ function RouteComponent() {
 
   const client = loaderData.client;
   const isEditing = search.edit;
+
+  /** Queries */
+
+  const workOrderListQueryOptions = workOrderQueries.list({
+    client: [client.id],
+    ...workOrderListParams,
+  });
 
   /** Mutations */
 
@@ -50,7 +63,6 @@ function RouteComponent() {
         ...values,
         id: client.id,
         place: values.place?.google_place_id ?? null,
-        work_orders: values.work_orders?.map(({ id }) => id),
       },
       { onSuccess: handleOnClose }
     );
@@ -65,16 +77,28 @@ function RouteComponent() {
   return (
     <Stack spacing={1} p={2}>
       <ClientDetailCard client={client} />
-      <Tabs
-        value={tabValue}
-        variant="scrollable"
-        scrollButtons={false}
-        onChange={(_, newValue) => setTabValue(newValue)}
-      >
-        <Tab label="Work Orders" />
-        <Tab label="Documents" />
-        <Tab label="History" />
-      </Tabs>
+      <Stack spacing={2}>
+        <Tabs
+          value={tabValue}
+          variant="scrollable"
+          scrollButtons={false}
+          onChange={(_, newValue) => setTabValue(newValue)}
+        >
+          <Tab label="Work Orders" />
+          <Tab label="Documents" />
+          <Tab label="History" />
+        </Tabs>
+
+        <PaginatedList
+          queryOptions={workOrderListQueryOptions}
+          renderItem={(workOrder) => (
+            <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
+          )}
+          onPageChange={(page) =>
+            setWorkOrderListParams((prev) => ({ ...prev, page }))
+          }
+        />
+      </Stack>
 
       {/* Modals */}
       <ClientFormDrawer

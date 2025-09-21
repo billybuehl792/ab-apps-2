@@ -15,7 +15,7 @@ export interface WorkOrder {
   completed_date: string | null;
   cost: string;
   client: Omit<Client, "work_orders"> | null;
-  place: Omit<Place, "work_orders"> | null;
+  place: Place | null;
   created_at: string;
   updated_at: string;
 }

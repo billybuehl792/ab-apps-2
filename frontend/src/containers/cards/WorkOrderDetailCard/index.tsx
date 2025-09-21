@@ -43,7 +43,7 @@ const WorkOrderDetailCard = ({
     {
       id: "location",
       label: "Location",
-      value: workOrder.place?.address_full ?? "None",
+      value: workOrder.place?.address_short ?? "None",
     },
     {
       id: "client",
@@ -111,14 +111,7 @@ const WorkOrderDetailCard = ({
               </Typography>
             )}
           </Stack>
-          <Metadata
-            items={items}
-            spacing={0.5}
-            slotProps={{
-              label: { variant: "body2" },
-              value: { variant: "body2" },
-            }}
-          />
+          <Metadata items={items} />
         </Stack>
         <Metadata items={metadata} />
       </CardContent>

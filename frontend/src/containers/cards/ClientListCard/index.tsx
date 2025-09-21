@@ -1,3 +1,4 @@
+import { type ComponentProps } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Card,
@@ -10,10 +11,9 @@ import {
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
-import type { Client } from "@/store/types/clients";
 import Metadata from "@/components/lists/Metadata";
-import { ComponentProps } from "react";
 import WorkOrderChip from "@/containers/chips/WorkOrderChip";
+import type { Client } from "@/store/types/clients";
 
 interface ClientListCardProps extends CardProps {
   client: Client;

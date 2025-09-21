@@ -10,7 +10,7 @@ import { clientQueries } from "@/store/queries/clients";
 import { type Client } from "@/store/types/clients";
 
 interface ClientMenuItemProps extends MenuItemProps {
-  client: Client | Client["id"];
+  client: WithRequired<Client, "id" | "full_name"> | Client["id"];
 }
 
 const ClientMenuItem = ({
@@ -32,7 +32,7 @@ const ClientMenuItem = ({
   /** Data */
 
   const client = isId ? clientQuery.data : clientProp;
-  const fullname = client ? `${client.first_name} ${client.last_name}` : "-";
+  const fullname = client ? client.full_name : "-";
 
   return (
     <MenuItem {...props}>

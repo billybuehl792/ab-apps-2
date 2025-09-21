@@ -27,14 +27,8 @@ function RouteComponent() {
 
   const handleSubmit: ComponentProps<typeof ClientForm>["onSubmit"] = (data) =>
     createClientMutation.mutateAsync(
-      {
-        ...data,
-        work_orders: data.work_orders.map(({ id }) => id),
-        place: data.place?.id ?? null,
-      },
-      {
-        onSuccess: (res) => navigate({ to: `/app/clients/${res.data.id}` }),
-      }
+      { ...data, place: data.place?.id ?? null },
+      { onSuccess: (res) => navigate({ to: `/app/clients/${res.data.id}` }) }
     );
 
   return (

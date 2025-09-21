@@ -2,22 +2,44 @@ import { type ReactNode } from "react";
 import { type LinkOptions } from "@tanstack/react-router";
 
 declare global {
-  type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
-    T,
-    Exclude<keyof T, Keys>
-  > &
+  /**
+   * Creates a type that requires at least one of the specified properties to be present.
+   * All specified keys become required in at least one variant, while other properties remain unchanged.
+   *
+   * @template T - The original type to transform
+   * @template K - The keys from T where at least one must be provided
+   *
+   */
+  type RequireAtLeastOne<T, K extends keyof T> = Omit<T, K> &
     {
-      [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
-    }[Keys];
+      [P in K]-?: Required<Pick<T, P>> & Partial<Pick<T, Exclude<K, P>>>;
+    }[K];
 
-  type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
+  /**
+   * Creates a union type that requires exactly one of the two specified properties to be present.
+   * The selected property becomes required while the other becomes explicitly undefined.
+   * All other properties from the original type remain unchanged.
+   *
+   * @template T - The original type to transform
+   * @template K1 - The first key that could be required
+   * @template K2 - The second key that could be required
+   */
+  type RequireOnlyOne<T, K1 extends keyof T, K2 extends keyof T> = Omit<
     T,
-    Exclude<keyof T, Keys>
+    K1 | K2
   > &
-    {
-      [K in Keys]-?: Required<Pick<T, K>> &
-        Partial<Record<Exclude<Keys, K>, undefined>>;
-    }[Keys];
+    (
+      | (Required<Pick<T, K1>> & { [P in K2]?: undefined })
+      | (Required<Pick<T, K2>> & { [P in K1]?: undefined })
+    );
+
+  /**
+   * Creates a new type where all properties are optional except for the specified keys, which become required.
+   *
+   * @template T - The original type to transform
+   * @template K - The keys from T that should be required (all other keys become optional)
+   */
+  type WithRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>;
 
   interface MenuOption<
     TId = string,
