@@ -8,7 +8,6 @@ import { useMutation } from "@tanstack/react-query";
 import { clientQueries } from "@/store/queries/clients";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import WorkOrderForm from "@/containers/forms/WorkOrderForm";
-import StatusCard from "@/components/cards/StatusCard";
 import { WorkOrderStatus } from "@/store/enums/work-orders";
 
 type SearchParams = { client?: number };
@@ -29,9 +28,6 @@ export const Route = createFileRoute("/app/work-orders/create")({
   },
   loaderDeps: ({ search }) => [search.client],
   component: RouteComponent,
-  pendingComponent: () => (
-    <StatusCard loading="loading create work order..." m={2} />
-  ),
 });
 
 function RouteComponent() {
@@ -64,15 +60,16 @@ function RouteComponent() {
 
   return (
     <WorkOrderForm
+      spacing={2}
       defaultValues={{
         status: WorkOrderStatus.New,
         client: loaderData?.client ?? undefined,
         place: loaderData?.client?.place ?? undefined,
       }}
       resetLabel="Cancel"
-      p={2}
       onSubmit={handleSubmit}
       onReset={router.history.back}
+      slotProps={{ fieldset: { spacing: 2 } }}
     />
   );
 }

@@ -20,6 +20,7 @@ interface DebouncedSearchFieldProps
 const DebouncedSearchField = ({
   value,
   loading,
+  disabled,
   onSearch,
   ...props
 }: DebouncedSearchFieldProps) => {
@@ -53,6 +54,7 @@ const DebouncedSearchField = ({
       autoComplete="off"
       fullWidth
       value={localValue}
+      disabled={disabled}
       onChange={(event) => handleOnChange(event.target.value)}
       {...props}
       slotProps={{
@@ -71,7 +73,7 @@ const DebouncedSearchField = ({
               position="end"
             >
               {loading ? <CircularProgress size={16} /> : null}
-              {!!localValue && (
+              {!!localValue && !disabled && (
                 <CloseIconButton size="small" onClick={handleOnClear} />
               )}
             </InputAdornment>

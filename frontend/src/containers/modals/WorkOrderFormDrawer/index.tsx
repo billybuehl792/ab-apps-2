@@ -25,7 +25,7 @@ const WorkOrderFormDrawer = ({ form, ...props }: WorkOrderFormDrawerProps) => {
         {...form}
         slotProps={{
           ...form.slotProps,
-          fieldset: { flexGrow: 1, p: 2, pb: 0, ...form.slotProps?.fieldset },
+          fieldset: { flexGrow: 1, p: 2, ...form.slotProps?.fieldset },
           actions: {
             direction: "column-reverse",
             position: "sticky",

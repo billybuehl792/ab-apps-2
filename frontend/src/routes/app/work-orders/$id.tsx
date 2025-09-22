@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app/work-orders/$id")({
     return { workOrder, crumb: workOrder.label };
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusCard loading="loading work order..." m={2} />,
+  pendingComponent: () => <StatusCard loading="loading work order..." />,
 });
 
 function RouteComponent() {
@@ -64,7 +64,7 @@ function RouteComponent() {
     });
 
   return (
-    <Stack spacing={1} p={2}>
+    <Stack spacing={1}>
       <WorkOrderDetailCard workOrder={workOrder} />
       <Tabs
         value={tabValue}

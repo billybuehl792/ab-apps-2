@@ -32,7 +32,7 @@ function RouteComponent() {
       <Stack component={Card} width="100%" maxWidth={600}>
         <CardHeader title="Sign In" />
         <CardContent>
-          <SignInForm onSubmit={handleSignIn} />
+          <SignInForm spacing={2} onSubmit={handleSignIn} />
         </CardContent>
       </Stack>
     </FullScreen>

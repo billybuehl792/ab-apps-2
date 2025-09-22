@@ -1,6 +1,12 @@
 import { type ComponentProps } from "react";
 import { useLocation } from "@tanstack/react-router";
-import { Groups, Home, Person, Work } from "@mui/icons-material";
+import {
+  AdminPanelSettings,
+  Groups,
+  Home,
+  Person,
+  Work,
+} from "@mui/icons-material";
 import NestedList from "@/components/lists/NestedList";
 import useAuth from "@/store/hooks/useAuth";
 
@@ -41,6 +47,13 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
         to: "/app/profile/$id",
         params: { id: String(auth.me?.id) },
       },
+    },
+    {
+      id: "admin",
+      label: "Admin",
+      icon: <AdminPanelSettings />,
+      selected: location.pathname.startsWith("/app/admin"),
+      link: { to: "/app/admin" },
     },
   ];
 

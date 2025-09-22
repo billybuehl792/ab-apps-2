@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Container, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import { accountQueries } from "@/store/queries/account";
 import StatusCard from "@/components/cards/StatusCard";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
@@ -26,11 +26,11 @@ function RouteComponent() {
   const user = loaderData.user;
 
   return (
-    <Container maxWidth="lg" disableGutters>
+    <Stack component={Container} spacing={2} maxWidth="lg">
       <PageHeader justifyContent="center">
         <Typography variant="h6">Profile</Typography>
       </PageHeader>
-      <UserDetailCard user={user} sx={{ m: 2 }} />
-    </Container>
+      <UserDetailCard user={user} />
+    </Stack>
   );
 }

@@ -4,12 +4,13 @@ import {
   useMatches,
   Outlet,
 } from "@tanstack/react-router";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import { Box, Breadcrumbs, Container } from "@mui/material";
 import Link from "@/components/elements/Link";
 import PageHeader from "@/components/layout/PageHeader";
 import UserMenuOptionIconButton from "@/containers/buttons/UserMenuOptionIconButton";
 
 export const Route = createFileRoute("/app/admin/users")({
+  loader: () => ({ crumb: "Users" }),
   component: RouteComponent,
 });
 
@@ -29,7 +30,7 @@ function RouteComponent() {
     }));
 
   return (
-    <>
+    <Container maxWidth="lg">
       <PageHeader
         direction="row"
         justifyContent="space-between"
@@ -45,7 +46,9 @@ function RouteComponent() {
           <UserMenuOptionIconButton user={Number(detailMatch.params.id)} />
         )}
       </PageHeader>
-      <Outlet />
-    </>
+      <Box p={2}>
+        <Outlet />
+      </Box>
+    </Container>
   );
 }

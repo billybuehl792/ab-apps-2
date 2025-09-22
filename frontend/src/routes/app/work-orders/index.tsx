@@ -1,7 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { workOrderQueries } from "@/store/queries/work-orders";
+import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
+import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
+import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import { paramUtils } from "@/store/utils/params";
-import WorkOrderPaginatedList from "@/containers/lists/WorkOrderPaginatedList";
+import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 const cleanParams = (params: Record<string, unknown>) => {
@@ -26,6 +29,8 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
+  /** Values */
+
   const queryOptions = workOrderQueries.list(params);
 
   /** Callbacks */
@@ -34,9 +39,23 @@ function RouteComponent() {
     navigate({ to: "/app/work-orders", search: cleanParams(newParams) });
 
   return (
-    <WorkOrderPaginatedList
+    <PaginatedQueryList
       queryOptions={queryOptions}
+      ParamsFormComponent={WorkOrderListParamsForm}
+      renderItem={(workOrder) => (
+        <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
+      )}
       onParamsChange={handleParamsChange}
+      slotProps={{
+        header: {
+          position: "sticky",
+          top: PAGE_HEADER_HEIGHT + 16,
+          zIndex: 2,
+          bgcolor: "background.paper",
+          boxShadow: (theme) =>
+            `0px -${PAGE_HEADER_HEIGHT / 4}px ${theme.palette.background.paper}`,
+        },
+      }}
     />
   );
 }

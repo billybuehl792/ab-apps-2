@@ -25,6 +25,7 @@ const Form = <TValues extends FieldValues, TResult = void>({
   children,
   submitLabel = "Submit",
   resetLabel = "Reset",
+  resetOptions,
   onSubmit,
   onSuccess,
   onReset,
@@ -35,7 +36,12 @@ const Form = <TValues extends FieldValues, TResult = void>({
 
   /** Values */
 
-  const methods = useForm<TValues>({ values, defaultValues, ...props });
+  const methods = useForm<TValues>({
+    values,
+    defaultValues,
+    resetOptions,
+    ...props,
+  });
 
   /** Callbacks */
 
@@ -62,7 +68,7 @@ const Form = <TValues extends FieldValues, TResult = void>({
     event.preventDefault();
 
     if (onReset !== true) onReset?.();
-    methods.reset();
+    else methods.reset();
   };
 
   return (
@@ -70,7 +76,6 @@ const Form = <TValues extends FieldValues, TResult = void>({
       <Stack
         component="form"
         noValidate
-        spacing={2}
         onSubmit={handleSubmit}
         onReset={handleReset}
         {...props}

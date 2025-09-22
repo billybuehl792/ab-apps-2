@@ -10,8 +10,7 @@ const PageHeader = (props: StackProps) => {
       boxSizing="border-box"
       top={0}
       py={2}
-      mx={2}
-      bgcolor={(theme) => theme.palette.background.paper}
+      bgcolor="background.paper"
       zIndex={2}
       borderBottom={(theme) => `1px solid ${theme.palette.divider}`}
       {...props}

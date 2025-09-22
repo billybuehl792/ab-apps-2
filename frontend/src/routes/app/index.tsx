@@ -12,11 +12,11 @@ function RouteComponent() {
   /** Values */
 
   return (
-    <Stack component={Container} maxWidth="lg" disableGutters>
+    <Stack component={Container} maxWidth="lg" spacing={2}>
       <PageHeader justifyContent="center">
         <Typography variant="h6">Dashboard</Typography>
       </PageHeader>
-      <Stack spacing={1} m={2}>
+      <Stack spacing={1}>
         <WorkOrderCountCard />
         <ClientCountCard />
       </Stack>

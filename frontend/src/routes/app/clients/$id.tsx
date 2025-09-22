@@ -5,11 +5,12 @@ import { Stack, Tab, Tabs } from "@mui/material";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
+import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import StatusCard from "@/components/cards/StatusCard";
 import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
-import PaginatedList from "@/components/lists/PaginatedList";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
+import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 
 export const Route = createFileRoute("/app/clients/$id")({
@@ -24,8 +25,7 @@ export const Route = createFileRoute("/app/clients/$id")({
     return { client, crumb: client.full_name };
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusCard loading="loading client..." m={2} />,
-  errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
+  pendingComponent: () => <StatusCard loading="loading client..." />,
 });
 
 function RouteComponent() {
@@ -44,9 +44,10 @@ function RouteComponent() {
 
   /** Queries */
 
+  const workOrderListBaseParams = { client: [client.id] };
   const workOrderListQueryOptions = workOrderQueries.list({
-    client: [client.id],
     ...workOrderListParams,
+    ...workOrderListBaseParams,
   });
 
   /** Mutations */
@@ -75,7 +76,7 @@ function RouteComponent() {
     });
 
   return (
-    <Stack spacing={1} p={2}>
+    <Stack spacing={1}>
       <ClientDetailCard client={client} />
       <Stack spacing={2}>
         <Tabs
@@ -89,14 +90,14 @@ function RouteComponent() {
           <Tab label="History" />
         </Tabs>
 
-        <PaginatedList
+        <PaginatedQueryList
           queryOptions={workOrderListQueryOptions}
+          ParamsFormComponent={WorkOrderListParamsForm}
+          baseParams={workOrderListBaseParams}
           renderItem={(workOrder) => (
             <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
           )}
-          onPageChange={(page) =>
-            setWorkOrderListParams((prev) => ({ ...prev, page }))
-          }
+          onParamsChange={setWorkOrderListParams}
         />
       </Stack>
 

@@ -3,7 +3,6 @@ import { UserGroup } from "@/store/enums/account";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app/admin")({
-  component: RouteComponent,
   beforeLoad: ({ context }) => {
     if (
       !context.auth.me?.groups.some((group) =>
@@ -12,6 +11,8 @@ export const Route = createFileRoute("/app/admin")({
     )
       throw new Error("Insufficient permissions to access this content.");
   },
+  loader: () => ({ crumb: "Admin" }),
+  component: RouteComponent,
   errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
 });
 

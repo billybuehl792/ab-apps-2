@@ -4,7 +4,7 @@ import {
   Outlet,
   useMatches,
 } from "@tanstack/react-router";
-import { Breadcrumbs, Container } from "@mui/material";
+import { Box, Breadcrumbs, Container } from "@mui/material";
 import Link from "@/components/elements/Link";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import PageHeader from "@/components/layout/PageHeader";
@@ -31,7 +31,7 @@ function RouteComponent() {
     }));
 
   return (
-    <Container maxWidth="lg" disableGutters>
+    <Container maxWidth="lg">
       <PageHeader
         direction="row"
         justifyContent="space-between"
@@ -47,7 +47,9 @@ function RouteComponent() {
           <ClientMenuOptionIconButton client={Number(detailMatch.params.id)} />
         )}
       </PageHeader>
-      <Outlet />
+      <Box py={2}>
+        <Outlet />
+      </Box>
     </Container>
   );
 }

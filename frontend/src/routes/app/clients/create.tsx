@@ -33,10 +33,11 @@ function RouteComponent() {
 
   return (
     <ClientForm
+      spacing={2}
       resetLabel="Cancel"
-      p={2}
       onSubmit={handleSubmit}
       onReset={router.history.back}
+      slotProps={{ fieldset: { spacing: 2 } }}
     />
   );
 }

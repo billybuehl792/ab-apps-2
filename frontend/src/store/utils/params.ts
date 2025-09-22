@@ -12,15 +12,23 @@ const cleanApiListRequestParams = <P extends ApiListRequest = ApiListRequest>(
   const formatted = {
     ...params,
     page:
-      params?.page && Number(params.page) > 1 ? Number(params.page) : undefined,
-    page_size: params?.page_size ? Number(params.page_size) : undefined,
+      params?.page && Number(params.page) > 1
+        ? Math.max(Number(params.page), 1)
+        : undefined,
+    page_size: params?.page_size
+      ? Math.min(Math.max(Number(params.page_size), 1), 20)
+      : undefined,
     ordering: params?.ordering ? String(params.ordering) : undefined,
     search: params?.search ? String(params.search) : undefined,
   };
 
   return Object.fromEntries(
     Object.entries(formatted).filter(
-      ([, value]) => value !== undefined && value !== "" && value !== null
+      ([, value]) =>
+        value !== undefined &&
+        value !== "" &&
+        value !== null &&
+        (Array.isArray(value) ? value.length > 0 : true)
     )
   ) as P;
 };
