@@ -28,9 +28,7 @@ const WorkOrderClientFormChip = ({
   const confirm = useConfirm();
 
   const title = "Work Order Client";
-  const clientName = workOrder.client
-    ? `${workOrder.client.first_name} ${workOrder.client.last_name}`
-    : "Client";
+  const clientName = workOrder.client ? workOrder.client.full_name : "-";
 
   /** Mutations */
 
@@ -49,19 +47,19 @@ const WorkOrderClientFormChip = ({
           {
             id: "client",
             label: clientName,
-            icon: <Person />,
+            Icon: Person,
             onClick: handleNavigateClient,
           },
           {
             id: "edit",
             label: "Edit",
-            icon: <Edit />,
+            Icon: Edit,
             onClick: () => setModalOpen(true),
           },
           {
             id: "unassign",
             label: "Unassign",
-            icon: <PersonOff />,
+            Icon: PersonOff,
             color: "error",
             onClick: handleUnassign,
           },

@@ -42,34 +42,37 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
 
   return (
     <Stack component={Card} position="relative" {...props}>
-      <CardActionArea
-        LinkComponent={Link}
-        href={`/app/work-orders/${workOrder.id}`}
+      <Link
+        to="/app/work-orders/$id"
+        params={{ id: String(workOrder.id) }}
+        style={{ textDecoration: "none", color: "inherit" }}
       >
-        <CardContent
-          component={Stack}
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          mr={7.5}
-        >
-          <Work fontSize="large" color="disabled" />
-          <Stack spacing={0.5} overflow="hidden">
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              overflow="hidden"
-            >
-              <Typography variant="body1" noWrap>
-                {workOrder.label}
-              </Typography>
-              <WorkOrderStatusChip workOrder={workOrder} size="small" />
+        <CardActionArea>
+          <CardContent
+            component={Stack}
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            mr={6}
+          >
+            <Work fontSize="large" color="disabled" />
+            <Stack spacing={0.5} overflow="hidden">
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                overflow="hidden"
+              >
+                <Typography variant="body1" noWrap>
+                  {workOrder.label}
+                </Typography>
+                <WorkOrderStatusChip workOrder={workOrder} size="small" />
+              </Stack>
+              <Metadata items={items} />
             </Stack>
-            <Metadata items={items} />
-          </Stack>
-        </CardContent>
-      </CardActionArea>
+          </CardContent>
+        </CardActionArea>
+      </Link>
       <CardActions
         sx={{
           position: "absolute",

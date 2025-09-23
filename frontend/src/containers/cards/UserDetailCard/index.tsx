@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import Metadata from "@/components/lists/Metadata";
 import type { User } from "@/store/types/account";
+import UserGroupChip from "@/containers/chips/UserGroupChip";
 
 interface UserDetailCardProps extends CardProps {
   user: User;
@@ -31,6 +32,17 @@ const UserDetailCard = ({ user, ...props }: UserDetailCardProps) => {
       id: "email",
       label: "Email",
       value: user.email,
+    },
+    {
+      id: "permissions",
+      label: "Permissions",
+      value: (
+        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+          {user.groups.map((group) => (
+            <UserGroupChip key={group} group={group} size="xxs" />
+          ))}
+        </Stack>
+      ),
     },
   ];
 

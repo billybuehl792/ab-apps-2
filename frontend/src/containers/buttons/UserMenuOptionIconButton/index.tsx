@@ -23,7 +23,7 @@ const UserMenuOptionIconButton = ({
     {
       id: "profile",
       label: "Profile",
-      icon: <Person fontSize="small" />,
+      Icon: Person,
       onClick: () =>
         navigate({ to: "/app/profile/$id", params: { id: String(userId) } }),
     },

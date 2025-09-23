@@ -22,8 +22,6 @@ interface ClientListCardProps extends CardProps {
 const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
   /** Values */
 
-  const fullName = `${client.first_name} ${client.last_name}`;
-
   const items: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "email",
@@ -56,23 +54,29 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
 
   return (
     <Stack component={Card} position="relative" {...props}>
-      <CardActionArea LinkComponent={Link} href={`/app/clients/${client.id}`}>
-        <CardContent
-          component={Stack}
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          mr={7.5}
-        >
-          <Person fontSize="large" color="disabled" />
-          <Stack spacing={0.5} overflow="hidden">
-            <Typography variant="body1" noWrap>
-              {fullName}
-            </Typography>
-            <Metadata items={items} />
-          </Stack>
-        </CardContent>
-      </CardActionArea>
+      <Link
+        to="/app/clients/$id"
+        params={{ id: String(client.id) }}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <CardActionArea>
+          <CardContent
+            component={Stack}
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            mr={6}
+          >
+            <Person fontSize="large" color="disabled" />
+            <Stack spacing={0.5} overflow="hidden">
+              <Typography variant="body1" noWrap>
+                {client.full_name}
+              </Typography>
+              <Metadata items={items} />
+            </Stack>
+          </CardContent>
+        </CardActionArea>
+      </Link>
       <CardActions
         sx={{
           position: "absolute",

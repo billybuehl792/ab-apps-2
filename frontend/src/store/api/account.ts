@@ -8,11 +8,15 @@ const me = () => api.get<User>(endpoints.account.me());
 const list = (params?: UserApiListRequest) =>
   api.get<ApiListResponse<User>>(endpoints.account.users(), { params });
 
+const count = (params?: UserApiListRequest) =>
+  api.get<ApiListResponse<User>>(endpoints.account.users.count(), { params });
+
 const detail = (id: User["id"]) =>
   api.get<User>(endpoints.account.users.detail(id));
 
 const users = {
   list,
+  count,
   detail,
 };
 

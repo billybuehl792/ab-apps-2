@@ -8,13 +8,13 @@ import ClientFormEmailField from "./fields/ClientFormEmailField";
 import ClientFormPhonePrimaryField from "./fields/ClientFormPhonePrimaryField";
 import ClientFormPhoneSecondaryField from "./fields/ClientFormPhoneSecondaryField";
 import ClientFormPlaceField from "./fields/ClientFormPlaceField";
-import type { Client, WriteableClient } from "@/store/types/clients";
+import type { Client, ClientWriteable } from "@/store/types/clients";
 
 export type ClientFormValues = Omit<Client, "id">;
 
 const ClientForm = (
   props: ComponentProps<
-    typeof Form<ClientFormValues, AxiosResponse<WriteableClient>>
+    typeof Form<ClientFormValues, AxiosResponse<ClientWriteable>>
   >
 ) => {
   return (

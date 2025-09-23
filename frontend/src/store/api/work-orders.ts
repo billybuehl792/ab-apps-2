@@ -4,7 +4,7 @@ import type { ApiListResponse } from "../types/api";
 import type {
   WorkOrder,
   WorkOrderApiListRequest,
-  WriteableWorkOrder,
+  WorkOrderWriteable,
 } from "../types/work-orders";
 
 const list = (params?: WorkOrderApiListRequest) =>
@@ -16,14 +16,14 @@ const count = (params?: WorkOrderApiListRequest) =>
 const detail = (id: WorkOrder["id"]) =>
   api.get<WorkOrder>(endpoints.workOrders.detail(id));
 
-const create = (body: Omit<WriteableWorkOrder, "id">) =>
-  api.post<WriteableWorkOrder>(endpoints.workOrders(), body);
+const create = (body: Omit<WorkOrderWriteable, "id">) =>
+  api.post<WorkOrderWriteable>(endpoints.workOrders(), body);
 
 const update = ({
   id,
   ...body
-}: Partial<WriteableWorkOrder> & { id: WorkOrder["id"] }) =>
-  api.patch<WriteableWorkOrder>(endpoints.workOrders.detail(id), body);
+}: Partial<WorkOrderWriteable> & { id: WorkOrder["id"] }) =>
+  api.patch<WorkOrderWriteable>(endpoints.workOrders.detail(id), body);
 
 const _delete = (body: WorkOrder["id"]) =>
   api.delete(endpoints.workOrders.detail(body));

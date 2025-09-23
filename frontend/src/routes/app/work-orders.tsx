@@ -46,6 +46,9 @@ function RouteComponent() {
         {!!detailMatch && (
           <WorkOrderMenuOptionIconButton
             workOrder={Number(detailMatch.params.id)}
+            renderOptions={(options) =>
+              options.filter(({ id }) => id !== "detail")
+            }
           />
         )}
       </PageHeader>

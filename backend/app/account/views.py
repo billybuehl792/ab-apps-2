@@ -1,7 +1,8 @@
 import os
 
 from rest_framework import generics, permissions, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, action, permission_classes
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -104,6 +105,12 @@ class CustomUserViewSet(CompanyScopedViewSet):
     search_fields = ["username", "email"]
     ordering_fields = ["username"]
     pagination_class = AdjustableSizePagination
+
+    @action(detail=False, methods=("get",))
+    def count(self, request: Request) -> Response:
+        """Return the total count of users in the filtered queryset."""
+        count = self.get_queryset().count()
+        return Response({"count": count})
 
 
 @api_view(['GET'])

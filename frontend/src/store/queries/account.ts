@@ -32,6 +32,16 @@ const list = (params?: UserApiListRequest) =>
       accountApi.users.list(params).then((res) => res.data),
   });
 
-const users = { detail, list };
+const count = (params?: UserApiListRequest) =>
+  queryOptions({
+    queryKey: queryUtils.getQueryKey(
+      ["account", "users", "count"],
+      paramUtils.cleanApiListRequestParams<UserApiListRequest>(params)
+    ),
+    queryFn: ({ queryKey: [_, params] }) =>
+      accountApi.users.count(params).then((res) => res.data),
+  });
+
+const users = { detail, list, count };
 
 export const accountQueries = { me, users };

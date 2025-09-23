@@ -4,7 +4,7 @@ import type { ApiListResponse } from "../types/api";
 import type {
   Client,
   ClientApiListRequest,
-  WriteableClient,
+  ClientWriteable,
 } from "../types/clients";
 
 const list = (params?: ClientApiListRequest) =>
@@ -16,11 +16,11 @@ const count = (params?: ClientApiListRequest) =>
 const detail = (id: Client["id"]) =>
   api.get<Client>(endpoints.clients.detail(id));
 
-const create = (body: Omit<WriteableClient, "id">) =>
-  api.post<WriteableClient>(endpoints.clients(), body);
+const create = (body: Omit<ClientWriteable, "id">) =>
+  api.post<ClientWriteable>(endpoints.clients(), body);
 
-const update = ({ id, ...body }: WriteableClient) =>
-  api.patch<WriteableClient>(endpoints.clients.detail(id), body);
+const update = ({ id, ...body }: ClientWriteable) =>
+  api.patch<ClientWriteable>(endpoints.clients.detail(id), body);
 
 const _delete = (body: Client["id"]) =>
   api.delete(endpoints.clients.detail(body));

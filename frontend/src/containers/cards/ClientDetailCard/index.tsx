@@ -18,8 +18,6 @@ interface ClientDetailCardProps extends CardProps {
 const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
   /** Values */
 
-  const fullName = `${client.first_name} ${client.last_name}`;
-
   const metadata: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "email",
@@ -44,7 +42,7 @@ const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
   return (
     <Card variant="outlined" {...props}>
       <CardContent component={Stack} spacing={1}>
-        <Typography variant="h6">{fullName}</Typography>
+        <Typography variant="h6">{client.full_name}</Typography>
         <Metadata items={metadata} />
       </CardContent>
     </Card>

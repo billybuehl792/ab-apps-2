@@ -3,8 +3,8 @@ import {
   WorkOrderStatus,
 } from "../enums/work-orders";
 import type { ApiListRequest } from "./api";
-import type { Client } from "./clients";
-import type { Place } from "./places";
+import type { ClientBasic } from "./clients";
+import type { PlaceBasic } from "./places";
 
 export interface WorkOrder {
   id: number;
@@ -14,13 +14,19 @@ export interface WorkOrder {
   scheduled_date: string | null;
   completed_date: string | null;
   cost: string;
-  client: Omit<Client, "work_orders"> | null;
-  place: Place | null;
+  client: ClientBasic | null;
+  place: PlaceBasic | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface WriteableWorkOrder {
+export interface WorkOrderBasic {
+  id: number;
+  label: string;
+  status: WorkOrderStatus;
+}
+
+export interface WorkOrderWriteable {
   id: number;
   label: string;
   description: string;
@@ -28,15 +34,15 @@ export interface WriteableWorkOrder {
   scheduled_date: string | null;
   completed_date: string | null;
   cost: number;
-  client: Client["id"] | null;
-  place: Place["id"] | Place["google_place_id"] | null;
+  client: number | null;
+  place: number | string | null;
 }
 
 /** API */
 
 type WorkOrderApiListRequestFilters = {
   status?: WorkOrderStatus[];
-  client?: Client["id"][];
+  client?: number[];
   place__city?: string[];
 };
 

@@ -15,4 +15,5 @@ export const Route = createFileRoute("/sign-out")({
       <StatusCard loading="Signing out..." />
     </FullScreen>
   ),
+  component: () => <FullScreen />,
 });

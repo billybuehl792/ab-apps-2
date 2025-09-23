@@ -41,32 +41,25 @@ declare global {
    */
   type WithRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>;
 
-  interface MenuOption<
-    TId = string,
-    TIcon = ReactNode,
-    TCallback = VoidFunction,
-  > {
-    id: TId;
+  interface MenuOption<T = string, C = VoidFunction> {
+    id: T;
     render?: boolean;
     label: string;
-    icon?: TIcon;
+    Icon?: SvgIconComponent;
     description?: ReactNode;
     disabled?: boolean;
     selected?: boolean;
     color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
     tooltip?: ReactNode;
     disableCloseOnSelect?: boolean;
-    onClick?: TCallback;
+    onClick?: C;
   }
 
-  interface ListItem<TId = string, TIcon = ReactNode, TCallback = VoidFunction>
-    extends Omit<
-      MenuOption<TId, TIcon, TCallback>,
-      "color" | "disableCloseOnSelect"
-    > {
+  interface ListItem<T = string, I = ReactNode, C = VoidFunction>
+    extends Omit<MenuOption<T, I, C>, "color" | "disableCloseOnSelect"> {
     link?: LinkOptions;
     expanded?: boolean;
-    items?: ListItem<TId, TIcon, TCallback>[];
+    items?: ListItem<T, I, C>[];
   }
 
   interface String {

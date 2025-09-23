@@ -23,7 +23,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
     {
       id: "profile",
       label: "Profile",
-      icon: <Person />,
+      Icon: Person,
       selected: location.pathname.startsWith("/app/profile"),
       onClick: () =>
         navigate({
@@ -34,7 +34,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
     {
       id: "signOut",
       label: "Sign Out",
-      icon: <Logout />,
+      Icon: Logout,
       color: "error",
       onClick: () => confirm("Sign Out", () => navigate({ to: "/sign-out" })),
     },

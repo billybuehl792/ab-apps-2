@@ -2,10 +2,10 @@ import { Chip, Skeleton, type ChipProps } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Work } from "@mui/icons-material";
 import { workOrderQueries } from "@/store/queries/work-orders";
-import type { WorkOrder } from "@/store/types/work-orders";
+import type { WorkOrderBasic } from "@/store/types/work-orders";
 
 interface WorkOrderChipProps extends ChipProps {
-  workOrder: WithRequired<WorkOrder, "id" | "label"> | WorkOrder["id"];
+  workOrder: WorkOrderBasic | number;
 }
 
 const DEFAULT_LABEL = "-";
@@ -16,7 +16,7 @@ const WorkOrderChip = ({
 }: WorkOrderChipProps) => {
   /** Values */
 
-  const isId = !(workOrderProp instanceof Object);
+  const isId = typeof workOrderProp === "number";
   const workOrderId = isId ? workOrderProp : workOrderProp.id;
 
   /** Queries */

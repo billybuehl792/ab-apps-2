@@ -2,14 +2,13 @@ import { Link } from "@tanstack/react-router";
 import {
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
   Stack,
   Typography,
   type CardProps,
 } from "@mui/material";
-import { Person } from "@mui/icons-material";
-import UserMenuOptionIconButton from "@/containers/buttons/UserMenuOptionIconButton";
+import { ArrowForwardIos, Person } from "@mui/icons-material";
+import UserGroupChip from "@/containers/chips/UserGroupChip";
 import type { User } from "@/store/types/account";
 
 interface UserListCardProps extends CardProps {
@@ -17,49 +16,61 @@ interface UserListCardProps extends CardProps {
 }
 
 const UserListCard = ({ user, ...props }: UserListCardProps) => {
+  /** Values */
+
+  const fullName =
+    user.first_name && user.last_name
+      ? `${user.first_name} ${user.last_name}`
+      : user.first_name || user.last_name || null;
+
   return (
     <Stack component={Card} position="relative" {...props}>
-      <CardActionArea LinkComponent={Link} href={`/app/users/${user.id}`}>
-        <CardContent
-          component={Stack}
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          mr={7.5}
-        >
-          <Person color="disabled" />
-          <Stack
+      <Link
+        to="/app/admin/users/$id"
+        params={{ id: String(user.id) }}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <CardActionArea>
+          <CardContent
+            component={Stack}
             direction="row"
-            spacing={1}
+            spacing={2}
             alignItems="center"
-            justifyContent="space-between"
-            flexGrow={1}
-            overflow="hidden"
           >
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              flexGrow={1}
+              overflow="hidden"
+            >
+              <Person color="disabled" />
+              <Stack overflow="hidden">
+                <Typography variant="body1" noWrap>
+                  {user.username}
+                </Typography>
+                <Typography variant="caption" noWrap>
+                  {fullName}
+                </Typography>
+              </Stack>
+            </Stack>
             <Stack
               direction="row"
               spacing={1}
               alignItems="center"
-              overflow="hidden"
+              justifyContent="end"
+              useFlexGap
+              flexWrap="wrap"
+              flexShrink={2}
             >
-              <Typography variant="body1" noWrap>
-                {user.username}
-              </Typography>
+              {user.groups.map((group) => (
+                <UserGroupChip key={group} group={group} size="xs" />
+              ))}
             </Stack>
-          </Stack>
-        </CardContent>
-      </CardActionArea>
-      <CardActions
-        sx={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          right: 0,
-          pointerEvents: "none",
-        }}
-      >
-        <UserMenuOptionIconButton user={user} sx={{ pointerEvents: "auto" }} />
-      </CardActions>
+            <ArrowForwardIos fontSize="xs" />
+          </CardContent>
+        </CardActionArea>
+      </Link>
     </Stack>
   );
 };

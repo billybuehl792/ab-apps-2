@@ -2,10 +2,10 @@ import { Chip, Skeleton, type ChipProps } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Person } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
-import type { Client } from "@/store/types/clients";
+import type { ClientBasic } from "@/store/types/clients";
 
 interface ClientChipProps extends ChipProps {
-  client: (Pick<Client, "id"> & Partial<Client>) | Client["id"];
+  client: ClientBasic | number;
 }
 
 const DEFAULT_LABEL = "-";
@@ -13,7 +13,7 @@ const DEFAULT_LABEL = "-";
 const ClientChip = ({ client: clientProp, ...props }: ClientChipProps) => {
   /** Values */
 
-  const isId = !(clientProp instanceof Object);
+  const isId = typeof clientProp === "number";
   const clientId = isId ? clientProp : clientProp.id;
 
   /** Queries */

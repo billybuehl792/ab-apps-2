@@ -10,7 +10,12 @@ import { theme } from "@/store/config/theme";
 const RootProvider = ({ children }: PropsWithChildren) => {
   /** Values */
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

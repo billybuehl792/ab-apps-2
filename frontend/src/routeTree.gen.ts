@@ -27,7 +27,6 @@ import { Route as AppClientsCreateRouteImport } from './routes/app/clients/creat
 import { Route as AppClientsIdRouteImport } from './routes/app/clients/$id'
 import { Route as AppAdminUsersRouteImport } from './routes/app/admin/users'
 import { Route as AppAdminUsersIndexRouteImport } from './routes/app/admin/users/index'
-import { Route as AppAdminUsersCreateRouteImport } from './routes/app/admin/users/create'
 import { Route as AppAdminUsersIdRouteImport } from './routes/app/admin/users/$id'
 
 const SignOutRoute = SignOutRouteImport.update({
@@ -120,11 +119,6 @@ const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAdminUsersRoute,
 } as any)
-const AppAdminUsersCreateRoute = AppAdminUsersCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => AppAdminUsersRoute,
-} as any)
 const AppAdminUsersIdRoute = AppAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/app/clients/': typeof AppClientsIndexRoute
   '/app/work-orders/': typeof AppWorkOrdersIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/admin/users/': typeof AppAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -167,7 +160,6 @@ export interface FileRoutesByTo {
   '/app/clients': typeof AppClientsIndexRoute
   '/app/work-orders': typeof AppWorkOrdersIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/admin/users': typeof AppAdminUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -190,7 +182,6 @@ export interface FileRoutesById {
   '/app/clients/': typeof AppClientsIndexRoute
   '/app/work-orders/': typeof AppWorkOrdersIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/admin/users/': typeof AppAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -214,7 +205,6 @@ export interface FileRouteTypes {
     | '/app/clients/'
     | '/app/work-orders/'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,7 +221,6 @@ export interface FileRouteTypes {
     | '/app/clients'
     | '/app/work-orders'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/admin/users'
   id:
     | '__root__'
@@ -253,7 +242,6 @@ export interface FileRouteTypes {
     | '/app/clients/'
     | '/app/work-orders/'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/admin/users/'
   fileRoutesById: FileRoutesById
 }
@@ -392,13 +380,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminUsersIndexRouteImport
       parentRoute: typeof AppAdminUsersRoute
     }
-    '/app/admin/users/create': {
-      id: '/app/admin/users/create'
-      path: '/create'
-      fullPath: '/app/admin/users/create'
-      preLoaderRoute: typeof AppAdminUsersCreateRouteImport
-      parentRoute: typeof AppAdminUsersRoute
-    }
     '/app/admin/users/$id': {
       id: '/app/admin/users/$id'
       path: '/$id'
@@ -411,13 +392,11 @@ declare module '@tanstack/react-router' {
 
 interface AppAdminUsersRouteChildren {
   AppAdminUsersIdRoute: typeof AppAdminUsersIdRoute
-  AppAdminUsersCreateRoute: typeof AppAdminUsersCreateRoute
   AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute
 }
 
 const AppAdminUsersRouteChildren: AppAdminUsersRouteChildren = {
   AppAdminUsersIdRoute: AppAdminUsersIdRoute,
-  AppAdminUsersCreateRoute: AppAdminUsersCreateRoute,
   AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
 }
 

@@ -2,14 +2,14 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from .models import Client
-from app.places.serializers_core import PlaceSerializer
+from app.places.serializers_core import PlaceBasicSerializer
 from app.work_orders.serializers_core import WorkOrderSerializer
 from app.places.services.place_utils import get_or_create_place_by_id
 
 
 class ClientReadSerializer(serializers.ModelSerializer):
     work_orders = WorkOrderSerializer(many=True, read_only=True)
-    place = PlaceSerializer(read_only=True, allow_null=True)
+    place = PlaceBasicSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Client

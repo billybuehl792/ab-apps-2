@@ -44,7 +44,12 @@ function RouteComponent() {
         </Breadcrumbs>
         {!!rootMatch && <Link to="/app/clients/create" label="Create" />}
         {!!detailMatch && (
-          <ClientMenuOptionIconButton client={Number(detailMatch.params.id)} />
+          <ClientMenuOptionIconButton
+            client={Number(detailMatch.params.id)}
+            renderOptions={(options) =>
+              options.filter(({ id }) => id !== "detail")
+            }
+          />
         )}
       </PageHeader>
       <Box py={2}>

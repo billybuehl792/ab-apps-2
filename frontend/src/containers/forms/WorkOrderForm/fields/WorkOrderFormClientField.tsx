@@ -28,9 +28,7 @@ const WorkOrderFormClientField = () => {
           options={clientListQuery.data?.results ?? []}
           disabled={field.disabled}
           loading={clientListQuery.isLoading}
-          getOptionLabel={(option) =>
-            `${option.first_name} ${option.last_name}`
-          }
+          getOptionLabel={(option) => option.full_name}
           getOptionKey={(option) => option.id}
           includeInputInList
           filterOptions={(options) => options}

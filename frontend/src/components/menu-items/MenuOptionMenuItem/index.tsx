@@ -4,7 +4,6 @@ import {
   MenuItem,
   type MenuItemProps,
 } from "@mui/material";
-import { sxUtils } from "@/store/utils/sx";
 
 interface MenuOptionMenuItemProps extends MenuItemProps {
   option: MenuOption;
@@ -14,6 +13,7 @@ const MenuOptionMenuItem = ({ option, ...props }: MenuOptionMenuItemProps) => {
   /** Values */
 
   const color = option.color ? `${option.color}.main` : undefined;
+  const Icon = option.Icon;
 
   return (
     <MenuItem
@@ -21,12 +21,17 @@ const MenuOptionMenuItem = ({ option, ...props }: MenuOptionMenuItemProps) => {
       disabled={option.disabled}
       onClick={option.onClick}
       {...props}
-      sx={[{ color }, ...sxUtils.asArray(props.sx)]}
     >
-      {!!option.icon && (
-        <ListItemIcon sx={{ svg: { color } }}>{option.icon}</ListItemIcon>
+      {!!Icon && (
+        <ListItemIcon sx={{ color }}>
+          <Icon />
+        </ListItemIcon>
       )}
-      <ListItemText primary={option.label} secondary={option.description} />
+      <ListItemText
+        primary={option.label}
+        secondary={option.description}
+        sx={{ color }}
+      />
     </MenuItem>
   );
 };

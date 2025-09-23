@@ -1,8 +1,8 @@
 import { ClientApiListRequestOrdering } from "../enums/clients";
 import { WorkOrderStatus } from "../enums/work-orders";
 import type { ApiListRequest } from "./api";
-import type { Place } from "./places";
-import type { WorkOrder } from "./work-orders";
+import type { PlaceBasic } from "./places";
+import type { WorkOrderBasic } from "./work-orders";
 
 export interface Client {
   id: number;
@@ -12,20 +12,27 @@ export interface Client {
   email: string;
   phone_primary: string;
   phone_secondary: string | null;
-  place: Place | null;
-  work_orders: Omit<WorkOrder, "client">[];
+  place: PlaceBasic | null;
+  work_orders: WorkOrderBasic[];
   created_at: string;
   updated_at: string;
 }
 
-export interface WriteableClient {
+export interface ClientBasic {
+  id: number;
+  full_name: string;
+  email: string;
+  phone_primary: string;
+}
+
+export interface ClientWriteable {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
   phone_primary: string;
   phone_secondary?: string | null;
-  place: Place["id"] | Place["google_place_id"] | null;
+  place: number | string | null;
 }
 
 /** API */

@@ -5,14 +5,18 @@ import {
   CircularProgress,
   Divider,
   Stack,
-  StackProps,
+  type StackProps,
   Typography,
 } from "@mui/material";
-import { ErrorOutline, FolderOff } from "@mui/icons-material";
+import {
+  ErrorOutline,
+  FolderOff,
+  type SvgIconComponent,
+} from "@mui/icons-material";
 import { errorUtils } from "@/store/utils/error";
 
 interface StatusCardProps extends StackProps {
-  icon?: JSX.Element;
+  Icon?: SvgIconComponent;
   label?: JSX.Element | string;
   description?: JSX.Element | string;
   loading?: boolean | string | JSX.Element;
@@ -22,7 +26,7 @@ interface StatusCardProps extends StackProps {
 
 const StatusCard = ({
   children,
-  icon: iconProp,
+  Icon,
   label,
   description,
   loading,
@@ -35,16 +39,6 @@ const StatusCard = ({
   const isLoading = !!loading;
   const isError = !!error;
   const isEmpty = !!empty;
-
-  const icon =
-    iconProp ??
-    (isLoading ? (
-      <CircularProgress />
-    ) : isError ? (
-      <ErrorOutline fontSize="large" color="error" />
-    ) : isEmpty ? (
-      <FolderOff fontSize="large" color="disabled" />
-    ) : null);
 
   const loadingMessage = isLoading
     ? typeof loading === "string"
@@ -84,7 +78,14 @@ const StatusCard = ({
       >
         {children ?? (
           <>
-            {icon}
+            {Icon ??
+              (isLoading ? (
+                <CircularProgress />
+              ) : isError ? (
+                <ErrorOutline fontSize="large" color="error" />
+              ) : isEmpty ? (
+                <FolderOff fontSize="large" color="disabled" />
+              ) : null)}
             {message && (
               <Typography
                 component="span"

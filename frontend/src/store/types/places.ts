@@ -4,19 +4,29 @@ export interface Place {
   id: number;
   /** Google `placeId` */
   google_place_id: string;
-  /** Country code (e.g., "US") */
-  country: string;
-  state: string;
-  city: string;
-  postal_code: string;
   /** Human-readable address */
   address_full: string;
   /** Shortened human-readable address */
   address_short: string;
+  /** Country code (e.g., "US") */
+  city: string;
+  postal_code: string;
+  state: string;
+  country: string;
   latitude: number;
   longitude: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface PlaceBasic {
+  id: number;
+  /** Google `placeId` */
+  google_place_id: string;
+  /** Shortened human-readable address */
+  address_short: string;
+  city: string;
+  state: string;
 }
 
 /** API */

@@ -9,6 +9,7 @@ const endpoints = {
     me: () => `${endpoints.account()}me/`,
     users: Object.assign(() => `${endpoints.account()}users/`, {
       detail: (id: number) => `${endpoints.account.users()}${id}/`,
+      count: () => `${endpoints.account.users()}count/`,
     }),
   }),
   places: Object.assign(() => `${API_URL}/places/`, {

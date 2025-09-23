@@ -30,7 +30,7 @@ const ClientFormPlaceField = () => {
           disabled={field.disabled}
           loading={placeListQuery.isLoading}
           getOptionKey={(option) => option.google_place_id}
-          getOptionLabel={(option) => option.address_full}
+          getOptionLabel={(option) => option.address_short}
           onInputChange={(_, newInputValue) => setInput(newInputValue)}
           filterOptions={(options) => options}
           isOptionEqualToValue={(option, value) =>

@@ -5,6 +5,7 @@ import {
   useLocation,
 } from "@tanstack/react-router";
 import { Link as MuiLink, type LinkProps as MuiLinkProps } from "@mui/material";
+import { type SvgIconComponent } from "@mui/icons-material";
 import { sxUtils } from "@/store/utils/sx";
 
 interface LinkProps
@@ -12,10 +13,10 @@ interface LinkProps
     Omit<MuiLinkProps, "href" | "target"> {
   label: ReactNode;
   active?: boolean;
-  icon?: ReactNode;
+  Icon?: SvgIconComponent;
 }
 
-const Link = ({ label, active, icon, sx, ...props }: LinkProps) => {
+const Link = ({ label, active, Icon, sx, ...props }: LinkProps) => {
   /** Values */
 
   const location = useLocation();
@@ -23,7 +24,7 @@ const Link = ({ label, active, icon, sx, ...props }: LinkProps) => {
 
   /** Components */
 
-  const BaseLink = (
+  return (
     <MuiLink
       component={TanstackLink}
       variant="body2"
@@ -36,12 +37,10 @@ const Link = ({ label, active, icon, sx, ...props }: LinkProps) => {
       ]}
       {...props}
     >
-      {icon}
+      {Icon && <Icon fontSize="inherit" />}
       {label}
     </MuiLink>
   );
-
-  return BaseLink;
 };
 
 export default Link;
