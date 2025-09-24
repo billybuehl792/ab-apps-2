@@ -3,6 +3,7 @@ import qs from "qs";
 import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
+import { accountApi } from "../api/account";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -21,30 +22,19 @@ api.interceptors.response.use(
   (response) => response,
   async (requestError) => {
     const originalRequest = requestError.config;
-    const ignoreRoutes = [
-      endpoints.account.token(),
-      endpoints.account.tokenRefresh(),
-      endpoints.account.signOut(),
-    ];
 
     if (
-      !ignoreRoutes.includes(originalRequest.url) &&
+      !originalRequest.url.startsWith(endpoints.account.token()) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
 
       try {
-        const refreshAccessTokenResult = await api.post<{
-          access: string;
-        }>(endpoints.account.tokenRefresh());
+        const refreshTokenResponse = await accountApi.tokenRefresh();
 
-        if (refreshAccessTokenResult.status !== 200)
-          throw new Error("Token refresh failed");
-
-        const newToken = refreshAccessTokenResult.data.access;
-        authUtils.setAccessToken(newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        authUtils.setAccessToken(refreshTokenResponse.data.access);
+        originalRequest.headers.Authorization = `Bearer ${refreshTokenResponse.data.access}`;
 
         return api(originalRequest);
       } catch (refreshErr) {

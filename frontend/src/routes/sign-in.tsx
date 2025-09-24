@@ -1,9 +1,9 @@
-import { type ComponentProps } from "react";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, Stack } from "@mui/material";
 import useAuth from "@/store/hooks/useAuth";
 import SignInForm from "@/containers/forms/SignInForm";
 import FullScreen from "@/components/layout/FullScreen";
+import StatusCard from "@/components/cards/StatusCard";
 
 export const Route = createFileRoute("/sign-in")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
@@ -14,6 +14,11 @@ export const Route = createFileRoute("/sign-in")({
       throw redirect({ to: search.redirect ?? "/", replace: true });
   },
   component: RouteComponent,
+  pendingComponent: () => (
+    <FullScreen>
+      <StatusCard loading="Loading sign in..." />
+    </FullScreen>
+  ),
 });
 
 function RouteComponent() {
@@ -22,17 +27,15 @@ function RouteComponent() {
   const auth = useAuth();
   const router = useRouter();
 
-  /** Callbacks */
-
-  const handleSignIn: ComponentProps<typeof SignInForm>["onSubmit"] = (data) =>
-    auth.signIn(data).then(() => router.invalidate());
-
   return (
-    <FullScreen>
-      <Stack component={Card} width="100%" maxWidth={600}>
+    <FullScreen maxWidth="sm">
+      <Stack component={Card}>
         <CardHeader title="Sign In" />
         <CardContent>
-          <SignInForm spacing={2} onSubmit={handleSignIn} />
+          <SignInForm
+            onSubmit={auth.signIn}
+            onSuccess={() => router.invalidate()}
+          />
         </CardContent>
       </Stack>
     </FullScreen>

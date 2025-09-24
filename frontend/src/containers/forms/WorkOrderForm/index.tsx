@@ -1,5 +1,4 @@
 import { type ComponentProps } from "react";
-import { type AxiosResponse } from "axios";
 import Form from "@/components/forms/Form";
 import WorkOrderFormLabelField from "./fields/WorkOrderFormLabelField";
 import WorkOrderFormDescriptionField from "./fields/WorkOrderFormDescriptionField";
@@ -7,17 +6,25 @@ import WorkOrderFormCostField from "./fields/WorkOrderFormCostField";
 import WorkOrderFormStatusField from "./fields/WorkOrderFormStatusField";
 import WorkOrderFormClientField from "./fields/WorkOrderFormClientField";
 import WorkOrderFormPlaceField from "./fields/WorkOrderFormPlaceField";
-import type { WorkOrder, WorkOrderWriteable } from "@/store/types/work-orders";
+import { WorkOrderStatus } from "@/store/enums/work-orders";
+import type { WorkOrder } from "@/store/types/work-orders";
 
 export type WorkOrderFormValues = Omit<WorkOrder, "id">;
 
-const WorkOrderForm = (
-  props: ComponentProps<
-    typeof Form<WorkOrderFormValues, AxiosResponse<WorkOrderWriteable>>
-  >
-) => {
+type WorkOrderFormProps<T = void> = Omit<
+  ComponentProps<typeof Form<WorkOrderFormValues, T>>,
+  "children"
+>;
+
+const WorkOrderForm = <T,>({
+  defaultValues,
+  ...props
+}: WorkOrderFormProps<T>) => {
   return (
-    <Form {...props}>
+    <Form
+      defaultValues={{ status: WorkOrderStatus.New, ...defaultValues }}
+      {...props}
+    >
       <WorkOrderFormLabelField />
       <WorkOrderFormDescriptionField />
       <WorkOrderFormCostField />

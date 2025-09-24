@@ -40,7 +40,6 @@ const PaginatedQueryListParamsFormDrawer = <
   return (
     <Drawer title="List Options" fullHeight {...props}>
       <FormComponent
-        flexGrow={1}
         values={params}
         defaultValues={(baseParams ?? {}) as DefaultValues<Params>}
         disabled={query.isLoading}
@@ -50,6 +49,7 @@ const PaginatedQueryListParamsFormDrawer = <
         onReset={props.onClose}
         onSuccess={props.onClose}
         slotProps={{
+          container: { flexGrow: 1 },
           fieldset: { flexGrow: 1, mx: 2, pb: 2 },
           actions: {
             direction: "column-reverse",

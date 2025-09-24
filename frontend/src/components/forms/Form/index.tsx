@@ -1,45 +1,72 @@
-import { type ReactNode, type FormEventHandler, useState } from "react";
+import {
+  type ReactNode,
+  type FormEventHandler,
+  useState,
+  PropsWithChildren,
+} from "react";
 import {
   FormProvider,
   useForm,
   type UseFormProps,
   type FieldValues,
+  type UseFormReturn,
 } from "react-hook-form";
-import { Button, FormHelperText, Stack, type StackProps } from "@mui/material";
+import {
+  Button,
+  type ButtonProps,
+  FormHelperText,
+  Stack,
+  type StackProps,
+} from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
 
-interface FormProps<TValues extends FieldValues, TResult = void>
-  extends Omit<StackProps<"form">, "onSubmit" | "onReset">,
-    UseFormProps<TValues> {
+interface FormProps<T extends FieldValues, R = void>
+  extends PropsWithChildren,
+    UseFormProps<T> {
   submitLabel?: ReactNode;
   resetLabel?: ReactNode;
-  onSubmit: (data: TValues) => TResult | Promise<TResult>;
-  onSuccess?: (result: TResult) => void;
-  onReset?: VoidFunction | true;
-  slotProps?: { fieldset?: StackProps; actions?: StackProps };
+  hideReset?: boolean;
+  hideRootError?: boolean;
+  onSubmit: (data: T) => R;
+  onSuccess?: (response: R extends Promise<infer U> ? U : R) => void;
+  onReset?: (methods: UseFormReturn<T>) => void;
+  slotProps?: {
+    container?: StackProps;
+    fieldset?: StackProps;
+    actions?: StackProps;
+    resetButton?: ButtonProps;
+    submitButton?: ButtonProps;
+  };
 }
 
-const Form = <TValues extends FieldValues, TResult = void>({
+const Form = <T extends FieldValues, R = void>({
+  /** Form */
   values,
   defaultValues,
+  disabled,
+  resetOptions,
+
+  /** Component */
   children,
   submitLabel = "Submit",
   resetLabel = "Reset",
-  resetOptions,
+  hideReset,
+  hideRootError,
   onSubmit,
   onSuccess,
   onReset,
   slotProps,
   ...props
-}: FormProps<TValues, TResult>) => {
+}: FormProps<T, R>) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /** Values */
 
-  const methods = useForm<TValues>({
+  const methods = useForm<T>({
     values,
     defaultValues,
     resetOptions,
+    disabled: disabled || isSubmitting,
     ...props,
   });
 
@@ -47,28 +74,32 @@ const Form = <TValues extends FieldValues, TResult = void>({
 
   const handleSubmit = methods.handleSubmit((data) => {
     try {
-      setIsSubmitting(true);
+      methods.clearErrors("root");
       const res = onSubmit(data);
-      Promise.resolve(res)
-        .then(onSuccess)
-        .catch((error) => handleRootError(error));
+      if (res instanceof Promise) {
+        setIsSubmitting(true);
+        res
+          .then(onSuccess)
+          .catch(handleRootError)
+          .finally(() => setIsSubmitting(false));
+      } else onSuccess?.(res as R extends Promise<infer U> ? U : R);
     } catch (error) {
       handleRootError(error);
-    } finally {
-      setIsSubmitting(false);
     }
   });
-
-  const handleRootError = (error: unknown) =>
-    methods.setError("root", {
-      message: errorUtils.getErrorMessage(error),
-    });
 
   const handleReset: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    if (onReset !== true) onReset?.();
+    if (onReset) onReset(methods);
     else methods.reset();
+  };
+
+  const handleRootError = (error: unknown) => {
+    if (hideRootError) return;
+    methods.setError("root", {
+      message: errorUtils.getErrorMessage(error),
+    });
   };
 
   return (
@@ -78,9 +109,9 @@ const Form = <TValues extends FieldValues, TResult = void>({
         noValidate
         onSubmit={handleSubmit}
         onReset={handleReset}
-        {...props}
+        {...slotProps?.container}
       >
-        <Stack spacing={2} {...slotProps?.fieldset}>
+        <Stack spacing={2} pb={2} {...slotProps?.fieldset}>
           {children}
           {!!methods.formState.errors.root && (
             <FormHelperText error>
@@ -94,8 +125,13 @@ const Form = <TValues extends FieldValues, TResult = void>({
           justifyContent="end"
           {...slotProps?.actions}
         >
-          {!!onReset && (
-            <Button type="reset" color="error">
+          {!hideReset && (
+            <Button
+              type="reset"
+              color="error"
+              disabled={methods.formState.disabled}
+              {...slotProps?.resetButton}
+            >
               {resetLabel}
             </Button>
           )}
@@ -103,6 +139,7 @@ const Form = <TValues extends FieldValues, TResult = void>({
             type="submit"
             disabled={methods.formState.disabled}
             loading={isSubmitting}
+            {...slotProps?.submitButton}
           >
             {submitLabel}
           </Button>

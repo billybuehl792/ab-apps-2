@@ -1,8 +1,26 @@
-import { Stack, type StackProps } from "@mui/material";
+import {
+  Container,
+  type ContainerProps,
+  Stack,
+  type StackProps,
+} from "@mui/material";
 
-const FullScreen = (props: StackProps) => {
+interface FullScreenProps extends Omit<StackProps, "maxWidth"> {
+  maxWidth?: ContainerProps["maxWidth"];
+  slotProps?: {
+    container?: ContainerProps;
+  };
+}
+
+const FullScreen = ({
+  children,
+  maxWidth = "xs",
+  slotProps,
+  ...props
+}: FullScreenProps) => {
   return (
     <Stack
+      component="main"
       position="absolute"
       top={0}
       left={0}
@@ -11,10 +29,14 @@ const FullScreen = (props: StackProps) => {
       alignItems="center"
       justifyContent="center"
       p={2}
-      bgcolor={(theme) => theme.palette.primary.main}
-      color={(theme) => theme.palette.primary.contrastText}
+      bgcolor="primary.main"
+      color="primary.contrastText"
       {...props}
-    />
+    >
+      <Container maxWidth={maxWidth} {...slotProps?.container}>
+        {children}
+      </Container>
+    </Stack>
   );
 };
 

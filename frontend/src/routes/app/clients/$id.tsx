@@ -1,4 +1,4 @@
-import { useState, type ComponentProps } from "react";
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
@@ -12,6 +12,7 @@ import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import type { ClientFormValues } from "@/containers/forms/ClientForm";
 
 export const Route = createFileRoute("/app/clients/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
@@ -56,17 +57,12 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleUpdateClient: ComponentProps<
-    typeof ClientFormDrawer
-  >["form"]["onSubmit"] = (values) =>
-    updateClientMutation.mutateAsync(
-      {
-        ...values,
-        id: client.id,
-        place: values.place?.google_place_id ?? null,
-      },
-      { onSuccess: handleOnClose }
-    );
+  const handleUpdateClient = (values: ClientFormValues) =>
+    updateClientMutation.mutateAsync({
+      ...values,
+      id: client.id,
+      place: values.place?.google_place_id ?? null,
+    });
 
   const handleOnClose = () =>
     navigate({
@@ -104,7 +100,11 @@ function RouteComponent() {
       {/* Modals */}
       <ClientFormDrawer
         open={isEditing}
-        form={{ values: client, onSubmit: handleUpdateClient }}
+        form={{
+          values: client,
+          onSubmit: handleUpdateClient,
+          onSuccess: handleOnClose,
+        }}
         onClose={handleOnClose}
       />
     </Stack>

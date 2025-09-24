@@ -1,4 +1,4 @@
-import { useState, type ComponentProps } from "react";
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
@@ -7,6 +7,7 @@ import { workOrderQueries } from "@/store/queries/work-orders";
 import StatusCard from "@/components/cards/StatusCard";
 import WorkOrderDetailCard from "@/containers/cards/WorkOrderDetailCard";
 import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
+import type { WorkOrderFormValues } from "@/containers/forms/WorkOrderForm";
 
 export const Route = createFileRoute("/app/work-orders/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
@@ -41,20 +42,14 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleUpdateWorkOrder: ComponentProps<
-    typeof WorkOrderFormDrawer
-  >["form"]["onSubmit"] = (data) => {
-    return updateWorkOrderMutation.mutateAsync(
-      {
-        ...data,
-        id: workOrder.id,
-        client: data.client?.id ?? null,
-        place: data.place?.google_place_id ?? null,
-        cost: Number(data.cost),
-      },
-      { onSuccess: handleOnClose }
-    );
-  };
+  const handleUpdateWorkOrder = (data: WorkOrderFormValues) =>
+    updateWorkOrderMutation.mutateAsync({
+      ...data,
+      id: workOrder.id,
+      client: data.client?.id ?? null,
+      place: data.place?.google_place_id ?? null,
+      cost: Number(data.cost),
+    });
 
   const handleOnClose = () =>
     navigate({
@@ -82,6 +77,7 @@ function RouteComponent() {
         form={{
           values: workOrder,
           onSubmit: handleUpdateWorkOrder,
+          onSuccess: handleOnClose,
         }}
         onClose={handleOnClose}
       />

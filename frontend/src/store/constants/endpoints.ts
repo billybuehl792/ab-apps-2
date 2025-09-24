@@ -3,10 +3,11 @@ const API_URL = BASE_URL + "/api";
 
 const endpoints = {
   account: Object.assign(() => `${API_URL}/account/`, {
-    token: () => `${endpoints.account()}token/`,
-    tokenRefresh: () => `${endpoints.account()}token/refresh/`,
-    signOut: () => `${endpoints.account()}sign-out/`,
     me: () => `${endpoints.account()}me/`,
+    token: Object.assign(() => `${endpoints.account()}token/`, {
+      refresh: () => `${endpoints.account.token()}refresh/`,
+      revoke: () => `${endpoints.account.token()}revoke/`,
+    }),
     users: Object.assign(() => `${endpoints.account()}users/`, {
       detail: (id: number) => `${endpoints.account.users()}${id}/`,
       count: () => `${endpoints.account.users()}count/`,

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from typing import Dict, Any
 
 from .models import CustomUser
@@ -52,3 +53,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         user.groups.set(groups)
         return user
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        if not self.user or not getattr(self.user, "is_active", False):
+            raise serializers.ValidationError("User account is disabled.")
+
+        data['user_id'] = self.user.id  # type: ignore
+        return data

@@ -7,24 +7,15 @@ interface WorkOrderFormDrawerProps extends ComponentProps<typeof Drawer> {
 }
 
 const WorkOrderFormDrawer = ({ form, ...props }: WorkOrderFormDrawerProps) => {
-  /** Values */
-
-  const isUpdateForm = Boolean(form.values);
-
   return (
-    <Drawer
-      title={isUpdateForm ? "Edit Work Order" : "Create Work Order"}
-      fullHeight
-      {...props}
-    >
+    <Drawer title="Work Order Form" fullHeight {...props}>
       <WorkOrderForm
-        flexGrow={1}
-        submitLabel={isUpdateForm ? "Update" : "Create"}
         resetLabel="Cancel"
         onReset={props.onClose}
         {...form}
         slotProps={{
           ...form.slotProps,
+          container: { flexGrow: 1, ...form.slotProps?.container },
           fieldset: { flexGrow: 1, p: 2, ...form.slotProps?.fieldset },
           actions: {
             direction: "column-reverse",

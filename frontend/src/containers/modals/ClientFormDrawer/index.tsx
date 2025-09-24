@@ -7,24 +7,15 @@ interface ClientFormDrawerProps extends ComponentProps<typeof Drawer> {
 }
 
 const ClientFormDrawer = ({ form, ...props }: ClientFormDrawerProps) => {
-  /** Values */
-
-  const isUpdateForm = Boolean(form.values);
-
   return (
-    <Drawer
-      title={isUpdateForm ? "Edit Client" : "Create Client"}
-      fullHeight
-      {...props}
-    >
+    <Drawer title="Client Form" fullHeight {...props}>
       <ClientForm
-        flexGrow={1}
-        submitLabel={isUpdateForm ? "Update" : "Create"}
         resetLabel="Cancel"
         onReset={props.onClose}
         {...form}
         slotProps={{
           ...form.slotProps,
+          container: { flexGrow: 1, ...form.slotProps?.container },
           fieldset: { flexGrow: 1, p: 2, ...form.slotProps?.fieldset },
           actions: {
             direction: "column-reverse",

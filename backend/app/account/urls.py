@@ -11,7 +11,8 @@ urlpatterns = [
          name="token_obtain_pair"),
     path("token/refresh/", views.CookieTokenRefreshView.as_view(),
          name="token_refresh"),
-    path("sign-out/", views.SignOutView.as_view(), name="sign_out"),
+    path("token/revoke/", views.CookieTokenRevokeView.as_view(), name="token_revoke"),
     path("me/", views.me, name="me"),
+
     path("", include(router.urls)),
 ]

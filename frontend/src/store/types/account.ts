@@ -37,3 +37,8 @@ export interface WriteableUser {
 /** API */
 
 export type UserApiListRequest = ApiListRequest;
+
+export interface AccessTokenApiResponse {
+  access: string;
+  me: User;
+}

@@ -1,10 +1,10 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Box, useMediaQuery } from "@mui/material";
-import FullScreen from "@/components/layout/FullScreen";
-import StatusCard from "@/components/cards/StatusCard";
 import NavBar from "@/containers/layout/NavBar";
 import NavPanel from "@/containers/layout/NavPanel";
 import { NAV_HEIGHT, NAV_PANEL_WIDTH } from "@/store/constants/layout";
+import FullScreen from "@/components/layout/FullScreen";
+import StatusCard from "@/components/cards/StatusCard";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {

@@ -1,4 +1,3 @@
-import { type ComponentProps } from "react";
 import {
   createFileRoute,
   useNavigate,
@@ -6,7 +5,9 @@ import {
 } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { clientMutations } from "@/store/mutations/clients";
-import ClientForm from "@/containers/forms/ClientForm";
+import ClientForm, {
+  type ClientFormValues,
+} from "@/containers/forms/ClientForm";
 
 export const Route = createFileRoute("/app/clients/create")({
   loader: () => ({ crumb: "Create Client" }),
@@ -25,19 +26,21 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleSubmit: ComponentProps<typeof ClientForm>["onSubmit"] = (data) =>
-    createClientMutation.mutateAsync(
-      { ...data, place: data.place?.id ?? null },
-      { onSuccess: (res) => navigate({ to: `/app/clients/${res.data.id}` }) }
-    );
+  const handleSubmit = (data: ClientFormValues) =>
+    createClientMutation.mutateAsync({
+      ...data,
+      place: data.place?.id ?? null,
+    });
+
+  const handleNavigateClient = (id: number) =>
+    navigate({ to: "/app/clients/$id", params: { id: String(id) } });
 
   return (
     <ClientForm
-      spacing={2}
       resetLabel="Cancel"
       onSubmit={handleSubmit}
-      onReset={router.history.back}
-      slotProps={{ fieldset: { spacing: 2 } }}
+      onReset={() => router.history.back()}
+      onSuccess={(res) => handleNavigateClient(res.data.id)}
     />
   );
 }
