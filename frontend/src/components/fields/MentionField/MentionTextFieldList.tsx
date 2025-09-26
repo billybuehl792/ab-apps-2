@@ -9,7 +9,7 @@ import { type MentionNodeAttrs } from "@tiptap/extension-mention";
 import { MenuItem, MenuList, Paper, Popper } from "@mui/material";
 import { clientQueries } from "@/store/queries/clients";
 import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
-import { ClientBasic } from "@/store/types/clients";
+import type { ClientBasic } from "@/store/types/clients";
 
 export interface MentionListHandle {
   onKeyDown: (props: SuggestionKeyDownProps) => void;

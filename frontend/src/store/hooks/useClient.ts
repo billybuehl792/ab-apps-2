@@ -45,7 +45,7 @@ const useClient = (client: ClientBasic | number) => {
     deleteClientMutation.mutate(clientId, {
       onSuccess: () => {
         queryClient.invalidateQueries(clientQueries.list());
-        navigate({ to: "/app/clients" });
+        navigate({ to: "/app/dashboard/clients" });
       },
     });
   };
@@ -58,7 +58,10 @@ const useClient = (client: ClientBasic | number) => {
       label: "Detail",
       Icon: Info,
       onClick: () =>
-        navigate({ to: "/app/clients/$id", params: { id: String(clientId) } }),
+        navigate({
+          to: "/app/dashboard/clients/$id",
+          params: { id: String(clientId) },
+        }),
     },
     {
       id: ClientMenuOptionId.edit,
@@ -66,7 +69,7 @@ const useClient = (client: ClientBasic | number) => {
       Icon: Edit,
       onClick: () =>
         navigate({
-          to: "/app/clients/$id",
+          to: "/app/dashboard/clients/$id",
           params: { id: String(clientId) },
           search: { edit: true },
         }),
@@ -77,7 +80,7 @@ const useClient = (client: ClientBasic | number) => {
       Icon: Work,
       onClick: () =>
         navigate({
-          to: "/app/work-orders/create",
+          to: "/app/dashboard/work-orders/create",
           search: { client: clientId },
         }),
     },

@@ -8,9 +8,13 @@ import { clientMutations } from "@/store/mutations/clients";
 import ClientForm, {
   type ClientFormValues,
 } from "@/containers/forms/ClientForm";
+import { CLIENT_CREATE_ICON } from "@/store/constants/clients";
 
-export const Route = createFileRoute("/app/clients/create")({
-  loader: () => ({ crumb: "Create Client" }),
+export const Route = createFileRoute("/app/dashboard/clients/create")({
+  loader: () => {
+    const crumb: Crumb = { label: "Create Client", Icon: CLIENT_CREATE_ICON };
+    return { crumb };
+  },
   component: RouteComponent,
 });
 
@@ -33,7 +37,7 @@ function RouteComponent() {
     });
 
   const handleNavigateClient = (id: number) =>
-    navigate({ to: "/app/clients/$id", params: { id: String(id) } });
+    navigate({ to: "/app/dashboard/clients/$id", params: { id: String(id) } });
 
   return (
     <ClientForm

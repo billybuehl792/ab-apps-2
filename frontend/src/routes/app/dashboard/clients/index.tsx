@@ -1,24 +1,23 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { workOrderQueries } from "@/store/queries/work-orders";
+import { clientQueries } from "@/store/queries/clients";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
-import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
-import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
+import ClientListCard from "@/containers/cards/ClientListCard";
+import ClientListParamsForm from "@/containers/forms/ClientListParamsForm";
 import { paramUtils } from "@/store/utils/params";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
-import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import type { ClientApiListRequest } from "@/store/types/clients";
 
 const cleanParams = (params: Record<string, unknown>) => {
-  const status = params.status;
-  const client = params.client;
   const city = params.place__city;
-  if (status && !(status instanceof Array)) params.status = [status];
-  if (client && !(client instanceof Array)) params.client = [client];
+  const workOrdersStatus = params.work_orders__status;
   if (city && !(city instanceof Array)) params.place__city = [city];
+  if (workOrdersStatus && !(workOrdersStatus instanceof Array))
+    params.work_orders__status = [workOrdersStatus];
 
-  return paramUtils.cleanApiListRequestParams<WorkOrderApiListRequest>(params);
+  return paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params);
 };
 
-export const Route = createFileRoute("/app/work-orders/")({
+export const Route = createFileRoute("/app/dashboard/clients/")({
   validateSearch: cleanParams,
   component: RouteComponent,
 });
@@ -29,21 +28,19 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
-  /** Values */
-
-  const queryOptions = workOrderQueries.list(params);
+  const queryOptions = clientQueries.list(params);
 
   /** Callbacks */
 
-  const handleParamsChange = (newParams: WorkOrderApiListRequest) =>
-    navigate({ to: "/app/work-orders", search: cleanParams(newParams) });
+  const handleParamsChange = (newParams: ClientApiListRequest) =>
+    navigate({ to: "/app/dashboard/clients", search: cleanParams(newParams) });
 
   return (
     <PaginatedQueryList
       queryOptions={queryOptions}
-      ParamsFormComponent={WorkOrderListParamsForm}
-      renderItem={(workOrder) => (
-        <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
+      ParamsFormComponent={ClientListParamsForm}
+      renderItem={(client) => (
+        <ClientListCard key={client.id} client={client} />
       )}
       onParamsChange={handleParamsChange}
       slotProps={{

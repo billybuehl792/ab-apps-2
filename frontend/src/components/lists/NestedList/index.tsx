@@ -13,7 +13,18 @@ import {
 } from "@mui/material";
 import ExpandIconButton from "@/components/buttons/ExpandIconButton";
 
-const NestedList = ({ items, ...props }: ListProps & { items: ListItem[] }) => {
+interface NestedListProps extends ListProps {
+  items: ListItem[];
+  slotProps?: {
+    item?: Partial<Omit<NestedListItemProps, "item">>;
+  };
+}
+
+interface NestedListItemProps extends ListItemProps {
+  item: ListItem;
+}
+
+const NestedList = ({ items, ...props }: NestedListProps) => {
   return (
     <List disablePadding dense {...props}>
       {items
@@ -25,10 +36,7 @@ const NestedList = ({ items, ...props }: ListProps & { items: ListItem[] }) => {
   );
 };
 
-const NestedListItem = ({
-  item,
-  ...props
-}: ListItemProps & { item: ListItem }) => {
+const NestedListItem = ({ item, ...props }: NestedListItemProps) => {
   const [expanded, setExpanded] = useState(false);
 
   /** Values */
@@ -61,16 +69,18 @@ const NestedListItem = ({
           disabled={item.disabled}
           {...(item.link && { LinkComponent: Link, ...item.link })}
           onClick={item.onClick}
+          sx={{
+            '&[data-status="active"]': {
+              backgroundColor: "action.selected",
+              "> *": { fontWeight: "bold", color: "text.primary" },
+            },
+          }}
         >
-          {!!item.icon && (
-            <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
+          {!!item.Icon && (
+            <ListItemIcon sx={{ minWidth: 36 }}>{<item.Icon />}</ListItemIcon>
           )}
           <ListItemText>
-            <Typography
-              variant="body2"
-              fontWeight={item.selected ? 600 : 500}
-              noWrap
-            >
+            <Typography variant="body2" fontWeight="inherit" noWrap>
               {item.label}
             </Typography>
           </ListItemText>

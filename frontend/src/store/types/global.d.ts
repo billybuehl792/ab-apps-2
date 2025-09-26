@@ -55,11 +55,16 @@ declare global {
     onClick?: C;
   }
 
-  interface ListItem<T = string, I = ReactNode, C = VoidFunction>
-    extends Omit<MenuOption<T, I, C>, "color" | "disableCloseOnSelect"> {
+  interface ListItem<T = string, C = VoidFunction>
+    extends Omit<MenuOption<T, C>, "color" | "disableCloseOnSelect"> {
     link?: LinkOptions;
     expanded?: boolean;
-    items?: ListItem<T, I, C>[];
+    items?: ListItem<T, C>[];
+  }
+
+  interface Crumb {
+    label: string;
+    Icon?: SvgIconComponent;
   }
 
   interface String {

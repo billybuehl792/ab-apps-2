@@ -1,27 +1,44 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 import { workOrderMutations } from "@/store/mutations/work-orders";
 import { workOrderQueries } from "@/store/queries/work-orders";
+import CustomLink from "@/components/links/CustomLink";
 import StatusCard from "@/components/cards/StatusCard";
 import WorkOrderDetailCard from "@/containers/cards/WorkOrderDetailCard";
 import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
+import { errorUtils } from "@/store/utils/error";
+import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
 import type { WorkOrderFormValues } from "@/containers/forms/WorkOrderForm";
 
-export const Route = createFileRoute("/app/work-orders/$id")({
+export const Route = createFileRoute("/app/dashboard/work-orders/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
   }),
   loader: async ({ context, params }) => {
-    const workOrder = await context.queryClient.fetchQuery(
-      workOrderQueries.detail(Number(params.id))
-    );
+    try {
+      if (isNaN(Number(params.id))) throw new Error("Invalid work order ID");
 
-    return { workOrder, crumb: workOrder.label };
+      const workOrder = await context.queryClient.fetchQuery(
+        workOrderQueries.detail(Number(params.id))
+      );
+      const crumb: Crumb = { label: workOrder.label, Icon: WORK_ORDER_ICON };
+
+      return { crumb, workOrder };
+    } catch (error) {
+      throw notFound({ data: errorUtils.getErrorMessage(error) });
+    }
   },
   component: RouteComponent,
   pendingComponent: () => <StatusCard loading="loading work order..." />,
+  notFoundComponent: () => (
+    <StatusCard
+      error={"Work order not found :("}
+      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    />
+  ),
 });
 
 function RouteComponent() {
@@ -53,7 +70,7 @@ function RouteComponent() {
 
   const handleOnClose = () =>
     navigate({
-      to: "/app/work-orders/$id",
+      to: "/app/dashboard/work-orders/$id",
       params: { id: String(workOrder.id) },
       search: { edit: false },
     });

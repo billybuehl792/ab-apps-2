@@ -32,7 +32,7 @@ const WorkOrderDetailCard = ({
   const handleNavigateClient = () => {
     if (!workOrder.client) return;
     navigate({
-      to: "/app/clients/$id",
+      to: "/app/dashboard/clients/$id",
       params: { id: String(workOrder.client.id) },
     });
   };

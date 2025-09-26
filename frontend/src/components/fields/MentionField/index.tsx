@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import {
   Editor,
   EditorContent,
@@ -8,12 +9,12 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { Box, Stack, styled } from "@mui/material";
+import { Box, BoxProps, styled } from "@mui/material";
 import MentionTextFieldList, {
   type MentionListHandle,
 } from "./MentionTextFieldList";
 
-interface MentionFieldProps {
+interface MentionFieldProps extends Omit<BoxProps, "value" | "onChange"> {
   value?: string;
   onChange?: (text: string, editor: Editor) => void;
 }
@@ -27,14 +28,16 @@ const MentionContainer = styled(Box)(({ theme }) => ({
   },
   "& .ProseMirror": {
     width: "100%",
+    height: "auto",
     minHeight: "100px",
     maxHeight: "300px",
     overflowY: "auto",
-    padding: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
+    padding: theme.spacing(1),
+    fontSize: theme.typography.body1.fontSize,
+    fontFamily: theme.typography.fontFamily,
+    color: theme.palette.text.primary,
     border: `1px solid ${theme.palette.grey[300]}`,
-    borderRadius: 1,
+    borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
     boxSizing: "border-box",
     whiteSpace: "pre-wrap",
@@ -42,14 +45,14 @@ const MentionContainer = styled(Box)(({ theme }) => ({
     resize: "vertical",
     ...theme.typography.body1,
     "&:hover": {
-      borderColor: "primary.main",
+      borderColor: theme.palette.primary.main,
     },
     "&:focus-visible": {
       outline: `${theme.palette.primary.main} auto 1px`,
     },
     "& .mention-tag": {
       color: theme.palette.primary.main,
-      fontWeight: 600,
+      fontWeight: theme.typography.fontWeightBold,
     },
     "p.is-editor-empty:first-of-type::before": {
       content: "attr(data-placeholder)",
@@ -63,6 +66,8 @@ const MentionContainer = styled(Box)(({ theme }) => ({
 
 const MentionField = ({ value, onChange }: MentionFieldProps) => {
   /** Values */
+
+  const suggestionOpenRef = useRef(false);
 
   const editor = useEditor({
     content: value ?? "",
@@ -89,6 +94,7 @@ const MentionField = ({ value, onChange }: MentionFieldProps) => {
 
             return {
               onStart: (props) => {
+                suggestionOpenRef.current = true;
                 component = new ReactRenderer(MentionTextFieldList, {
                   editor: props.editor,
                   props,
@@ -104,24 +110,44 @@ const MentionField = ({ value, onChange }: MentionFieldProps) => {
                 return component.ref?.onKeyDown(props) ?? false;
               },
               onUpdate: (props) => component.updateProps(props),
-              onExit: () => component.destroy(),
+              onExit: () => {
+                component.destroy();
+                suggestionOpenRef.current = false;
+              },
             };
           },
         },
       }),
     ],
+    editorProps: {
+      handleKeyDown: (view, event) => {
+        if (!suggestionOpenRef.current && event.key === "Escape") {
+          view.dom.blur();
+          return true;
+        }
+
+        return false;
+      },
+    },
     onUpdate: (props) => {
       onChange?.(props.editor.getText(), props.editor);
     },
   });
 
+  /** Effects */
+
+  useEffect(() => {
+    if (editor && value !== undefined) {
+      const currentContent = editor.getText();
+      if (currentContent !== value) editor.commands.setContent(value);
+    }
+  }, [editor, value]);
+
   if (!editor) return null;
   return (
-    <Stack spacing={1}>
-      <MentionContainer>
-        <EditorContent editor={editor} />
-      </MentionContainer>
-    </Stack>
+    <MentionContainer>
+      <EditorContent editor={editor} />
+    </MentionContainer>
   );
 };
 

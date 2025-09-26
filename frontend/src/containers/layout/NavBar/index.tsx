@@ -7,7 +7,7 @@ import {
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
-import Link from "@/components/elements/Link";
+import Link from "@/components/links/CustomLink";
 import MeMenuOptionIconButton from "@/containers/buttons/MeMenuOptionIconButton";
 import MenuIconButton from "@/components/buttons/MenuIconButton";
 import Drawer from "@/components/modals/Drawer";
@@ -54,8 +54,8 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
               />
             )}
             <Link
-              to="/"
               label="AB Sandbox App"
+              to="/app/dashboard"
               variant="h6"
               color="primary.contrastText"
               underline="none"

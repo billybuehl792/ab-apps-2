@@ -20,6 +20,7 @@ const PaginatedQueryListParamsChipList = <
   queryOptions,
   baseParams = {},
   onParamsChange,
+  renderParamsChips,
   ...props
 }: PaginatedQueryListParamsChipListProps<Params, Data>) => {
   /** Values */

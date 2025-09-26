@@ -1,8 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Button, Stack, Typography } from "@mui/material";
 import StatusCard from "@/components/cards/StatusCard";
 import FullScreen from "@/components/layout/FullScreen";
-import Button from "@mui/material/Button";
-import { Stack, Typography } from "@mui/material";
 
 export const Route = createFileRoute("/sign-out")({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({

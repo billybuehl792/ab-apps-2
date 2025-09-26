@@ -7,8 +7,8 @@ import {
   type CardProps,
 } from "@mui/material";
 import Metadata from "@/components/lists/Metadata";
-import type { User } from "@/store/types/account";
 import UserGroupChip from "@/containers/chips/UserGroupChip";
+import type { User } from "@/store/types/account";
 
 interface UserDetailCardProps extends CardProps {
   user: User;
@@ -51,11 +51,16 @@ const UserDetailCard = ({ user, ...props }: UserDetailCardProps) => {
       <CardContent component={Stack} spacing={1}>
         <Stack>
           <Typography variant="h6">{user.username}</Typography>
-          {fullName && (
-            <Typography variant="caption" color="text.secondary">
-              {fullName}
-            </Typography>
-          )}
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            {...(!fullName && {
+              fontStyle: "italic",
+              color: "text.disabled",
+            })}
+          >
+            {fullName ?? "No Name"}
+          </Typography>
         </Stack>
         <Metadata items={metadata} />
       </CardContent>

@@ -27,7 +27,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
       selected: location.pathname.startsWith("/app/profile"),
       onClick: () =>
         navigate({
-          to: "/app/profile/$id",
+          to: "/app/dashboard/profile/$id",
           params: { id: String(auth.me?.id ?? 0) },
         }),
     },

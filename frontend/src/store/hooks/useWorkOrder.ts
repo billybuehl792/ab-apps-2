@@ -38,7 +38,7 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
     deleteWorkOrderMutation.mutate(workOrderId, {
       onSuccess: () => {
         queryClient.invalidateQueries(workOrderQueries.list());
-        navigate({ to: "/app/work-orders" });
+        navigate({ to: "/app/dashboard/work-orders" });
       },
     });
   };
@@ -54,7 +54,7 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
       Icon: Info,
       onClick: () =>
         navigate({
-          to: "/app/work-orders/$id",
+          to: "/app/dashboard/work-orders/$id",
           params: { id: String(workOrderId) },
         }),
     },
@@ -64,7 +64,7 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
       Icon: Edit,
       onClick: () =>
         navigate({
-          to: "/app/work-orders/$id",
+          to: "/app/dashboard/work-orders/$id",
           params: { id: String(workOrderId) },
           search: { edit: true },
         }),

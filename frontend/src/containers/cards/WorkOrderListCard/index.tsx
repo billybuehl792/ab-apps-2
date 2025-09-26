@@ -1,19 +1,18 @@
 import { type ComponentProps } from "react";
-import { Link } from "@tanstack/react-router";
 import {
   Card,
-  CardActionArea,
   CardActions,
   CardContent,
   Stack,
   Typography,
   type CardProps,
 } from "@mui/material";
-import { Work } from "@mui/icons-material";
+import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import Metadata from "@/components/lists/Metadata";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import ClientChip from "@/containers/chips/ClientChip";
+import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
 import type { WorkOrder } from "@/store/types/work-orders";
 
 interface WorkOrderListCardProps extends CardProps {
@@ -42,37 +41,34 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
 
   return (
     <Stack component={Card} position="relative" {...props}>
-      <Link
-        to="/app/work-orders/$id"
+      <CardActionAreaLink
+        to="/app/dashboard/work-orders/$id"
         params={{ id: String(workOrder.id) }}
-        style={{ textDecoration: "none", color: "inherit" }}
       >
-        <CardActionArea>
-          <CardContent
-            component={Stack}
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            mr={6}
-          >
-            <Work fontSize="large" color="disabled" />
-            <Stack spacing={0.5} overflow="hidden">
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                overflow="hidden"
-              >
-                <Typography variant="body1" noWrap>
-                  {workOrder.label}
-                </Typography>
-                <WorkOrderStatusChip workOrder={workOrder} size="small" />
-              </Stack>
-              <Metadata items={items} />
+        <CardContent
+          component={Stack}
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          mr={6}
+        >
+          <WORK_ORDER_ICON fontSize="large" color="disabled" />
+          <Stack spacing={0.5} overflow="hidden">
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              overflow="hidden"
+            >
+              <Typography variant="body1" noWrap>
+                {workOrder.label}
+              </Typography>
+              <WorkOrderStatusChip workOrder={workOrder} size="small" />
             </Stack>
-          </CardContent>
-        </CardActionArea>
-      </Link>
+            <Metadata items={items} />
+          </Stack>
+        </CardContent>
+      </CardActionAreaLink>
       <CardActions
         sx={{
           position: "absolute",

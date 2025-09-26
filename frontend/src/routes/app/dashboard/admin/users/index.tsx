@@ -9,7 +9,7 @@ import type { UserApiListRequest } from "@/store/types/account";
 const cleanParams = (params: Record<string, unknown>) =>
   paramUtils.cleanApiListRequestParams<UserApiListRequest>(params);
 
-export const Route = createFileRoute("/app/admin/users/")({
+export const Route = createFileRoute("/app/dashboard/admin/users/")({
   validateSearch: cleanParams,
   component: RouteComponent,
 });
@@ -25,7 +25,10 @@ function RouteComponent() {
   /** Callbacks */
 
   const handleParamsChange = (newParams: UserApiListRequest) =>
-    navigate({ to: "/app/admin/users", search: cleanParams(newParams) });
+    navigate({
+      to: "/app/dashboard/admin/users",
+      search: cleanParams(newParams),
+    });
 
   return (
     <PaginatedQueryList

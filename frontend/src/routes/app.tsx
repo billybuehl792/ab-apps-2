@@ -1,26 +1,39 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Container, useMediaQuery } from "@mui/material";
+import { Home } from "@mui/icons-material";
 import NavBar from "@/containers/layout/NavBar";
 import NavPanel from "@/containers/layout/NavPanel";
-import { NAV_HEIGHT, NAV_PANEL_WIDTH } from "@/store/constants/layout";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusCard from "@/components/cards/StatusCard";
+import CustomLink from "@/components/links/CustomLink";
+import { NAV_HEIGHT, NAV_PANEL_WIDTH } from "@/store/constants/layout";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.me)
+    const isAuthenticated = !!context.auth.me;
+    if (!isAuthenticated)
       throw redirect({
         to: "/sign-in",
         search: { redirect: location.href },
         replace: true,
       });
   },
-  loader: () => ({ crumb: "Home" }),
   component: RouteComponent,
   pendingComponent: () => (
     <FullScreen>
       <StatusCard loading="Loading app..." />
     </FullScreen>
+  ),
+  notFoundComponent: () => (
+    <Container maxWidth="lg">
+      <StatusCard
+        error="Page not found :("
+        description={
+          <CustomLink label="Dashboard" Icon={Home} to="/app/dashboard" />
+        }
+        my={2}
+      />
+    </Container>
   ),
 });
 

@@ -1,18 +1,17 @@
 import { type ComponentProps } from "react";
-import { Link } from "@tanstack/react-router";
 import {
   Card,
-  CardActionArea,
   CardActions,
   CardContent,
   Stack,
   Typography,
   type CardProps,
 } from "@mui/material";
-import { Person } from "@mui/icons-material";
+import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import Metadata from "@/components/lists/Metadata";
 import WorkOrderChip from "@/containers/chips/WorkOrderChip";
+import { CLIENT_ICON } from "@/store/constants/clients";
 import type { Client } from "@/store/types/clients";
 
 interface ClientListCardProps extends CardProps {
@@ -54,29 +53,26 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
 
   return (
     <Stack component={Card} position="relative" {...props}>
-      <Link
-        to="/app/clients/$id"
+      <CardActionAreaLink
+        to="/app/dashboard/clients/$id"
         params={{ id: String(client.id) }}
-        style={{ textDecoration: "none", color: "inherit" }}
       >
-        <CardActionArea>
-          <CardContent
-            component={Stack}
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            mr={6}
-          >
-            <Person fontSize="large" color="disabled" />
-            <Stack spacing={0.5} overflow="hidden">
-              <Typography variant="body1" noWrap>
-                {client.full_name}
-              </Typography>
-              <Metadata items={items} />
-            </Stack>
-          </CardContent>
-        </CardActionArea>
-      </Link>
+        <CardContent
+          component={Stack}
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          mr={6}
+        >
+          <CLIENT_ICON fontSize="large" color="disabled" />
+          <Stack spacing={0.5} overflow="hidden">
+            <Typography variant="body1" noWrap>
+              {client.full_name}
+            </Typography>
+            <Metadata items={items} />
+          </Stack>
+        </CardContent>
+      </CardActionAreaLink>
       <CardActions
         sx={{
           position: "absolute",

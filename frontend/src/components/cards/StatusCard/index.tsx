@@ -75,6 +75,7 @@ const StatusCard = ({
         spacing={2}
         alignItems="center"
         justifyContent="center"
+        minHeight={120}
       >
         {children ?? (
           <>

@@ -9,10 +9,11 @@ import { workOrderMutations } from "@/store/mutations/work-orders";
 import WorkOrderForm, {
   type WorkOrderFormValues,
 } from "@/containers/forms/WorkOrderForm";
+import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
 
 type SearchParams = { client?: number };
 
-export const Route = createFileRoute("/app/work-orders/create")({
+export const Route = createFileRoute("/app/dashboard/work-orders/create")({
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     client: search.client ? Number(search.client) : undefined,
   }),
@@ -24,7 +25,9 @@ export const Route = createFileRoute("/app/work-orders/create")({
         clientQueries.detail(Number(search.client))
       );
 
-    return { crumb: "Create", client };
+    const crumb: Crumb = { label: "Create", Icon: WORK_ORDER_ICON };
+
+    return { crumb, client };
   },
   loaderDeps: ({ search }) => [search.client],
   component: RouteComponent,
@@ -52,7 +55,10 @@ function RouteComponent() {
     });
 
   const handleNavigateWorkOrder = (id: number) =>
-    navigate({ to: "/app/work-orders/$id", params: { id: String(id) } });
+    navigate({
+      to: "/app/dashboard/work-orders/$id",
+      params: { id: String(id) },
+    });
 
   return (
     <WorkOrderForm

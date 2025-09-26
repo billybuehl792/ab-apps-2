@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
@@ -11,22 +12,39 @@ import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
+import CustomLink from "@/components/links/CustomLink";
+import { errorUtils } from "@/store/utils/error";
+import { CLIENT_ICON } from "@/store/constants/clients";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
 
-export const Route = createFileRoute("/app/clients/$id")({
+export const Route = createFileRoute("/app/dashboard/clients/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
   }),
   loader: async ({ context, params }) => {
-    const client = await context.queryClient.fetchQuery(
-      clientQueries.detail(Number(params.id))
-    );
+    try {
+      if (isNaN(Number(params.id))) throw new Error("Invalid client ID");
 
-    return { client, crumb: client.full_name };
+      const client = await context.queryClient.fetchQuery(
+        clientQueries.detail(Number(params.id))
+      );
+
+      const crumb: Crumb = { label: client.full_name, Icon: CLIENT_ICON };
+
+      return { crumb, client };
+    } catch (error) {
+      throw notFound({ data: errorUtils.getErrorMessage(error) });
+    }
   },
   component: RouteComponent,
   pendingComponent: () => <StatusCard loading="loading client..." />,
+  notFoundComponent: () => (
+    <StatusCard
+      error={"Client not found :("}
+      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    />
+  ),
 });
 
 function RouteComponent() {
@@ -66,7 +84,7 @@ function RouteComponent() {
 
   const handleOnClose = () =>
     navigate({
-      to: "/app/clients/$id",
+      to: "/app/dashboard/clients/$id",
       params: { id: String(client.id) },
       search: { edit: false },
     });
