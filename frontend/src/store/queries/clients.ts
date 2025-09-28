@@ -9,7 +9,7 @@ const detail = (id: number) =>
     queryKey: queryUtils.getQueryKey(["clients", "detail"], { id }),
     queryFn: ({ queryKey: [_, { id }] }) =>
       clientApi.detail(id).then((res) => res.data),
-    enabled: Boolean(id),
+    enabled: Boolean(id) && !isNaN(id),
   });
 
 const list = (params?: ClientApiListRequest) =>

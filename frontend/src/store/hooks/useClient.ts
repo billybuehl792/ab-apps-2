@@ -4,14 +4,8 @@ import { Delete, Edit, Info, Work } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { clientMutations } from "../mutations/clients";
 import { clientQueries } from "../queries/clients";
+import { ClientOptionId } from "../enums/clients";
 import type { ClientBasic } from "../types/clients";
-
-enum ClientMenuOptionId {
-  detail = "detail",
-  edit = "edit",
-  createWorkOrder = "createWorkOrder",
-  delete = "delete",
-}
 
 const useClient = (client: ClientBasic | number) => {
   /** Values */
@@ -27,7 +21,7 @@ const useClient = (client: ClientBasic | number) => {
 
   const clientQuery = useQuery({
     ...clientQueries.detail(clientId),
-    enabled: isId,
+    enabled: isId && !isNaN(clientId),
   });
 
   /** Data */
@@ -52,9 +46,9 @@ const useClient = (client: ClientBasic | number) => {
 
   /** Options */
 
-  const options: MenuOption<ClientMenuOptionId>[] = [
+  const options: MenuOption<ClientOptionId>[] = [
     {
-      id: ClientMenuOptionId.detail,
+      id: ClientOptionId.Detail,
       label: "Detail",
       Icon: Info,
       onClick: () =>
@@ -64,7 +58,7 @@ const useClient = (client: ClientBasic | number) => {
         }),
     },
     {
-      id: ClientMenuOptionId.edit,
+      id: ClientOptionId.Edit,
       label: "Edit",
       Icon: Edit,
       onClick: () =>
@@ -75,7 +69,7 @@ const useClient = (client: ClientBasic | number) => {
         }),
     },
     {
-      id: ClientMenuOptionId.createWorkOrder,
+      id: ClientOptionId.CreateWorkOrder,
       label: "Create Work Order",
       Icon: Work,
       onClick: () =>
@@ -85,7 +79,7 @@ const useClient = (client: ClientBasic | number) => {
         }),
     },
     {
-      id: ClientMenuOptionId.delete,
+      id: ClientOptionId.Delete,
       label: "Delete",
       Icon: Delete,
       color: "error",

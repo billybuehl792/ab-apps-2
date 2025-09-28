@@ -12,10 +12,24 @@ import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
 import { errorUtils } from "@/store/utils/error";
 import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
 import type { WorkOrderFormValues } from "@/containers/forms/WorkOrderForm";
+import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
+import { WorkOrderOptionId } from "@/store/enums/work-orders";
 
 export const Route = createFileRoute("/app/dashboard/work-orders/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
+  }),
+  beforeLoad: ({ params }) => ({
+    slotProps: {
+      pageHeader: {
+        endContent: (
+          <WorkOrderMenuOptionIconButton
+            workOrder={Number(params.id)}
+            hideOptions={[WorkOrderOptionId.Detail]}
+          />
+        ),
+      },
+    },
   }),
   loader: async ({ context, params }) => {
     try {

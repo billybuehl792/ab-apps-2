@@ -4,6 +4,7 @@ import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { workOrderQueries } from "../queries/work-orders";
 import { workOrderMutations } from "../mutations/work-orders";
+import { WorkOrderOptionId } from "../enums/work-orders";
 import type { WorkOrderBasic } from "../types/work-orders";
 
 const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
@@ -45,11 +46,9 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
 
   /** Options */
 
-  const options: MenuOption<
-    "detail" | "edit" | "createWorkOrder" | "delete"
-  >[] = [
+  const options: MenuOption<WorkOrderOptionId>[] = [
     {
-      id: "detail",
+      id: WorkOrderOptionId.Detail,
       label: "Detail",
       Icon: Info,
       onClick: () =>
@@ -59,7 +58,7 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
         }),
     },
     {
-      id: "edit",
+      id: WorkOrderOptionId.Edit,
       label: "Edit",
       Icon: Edit,
       onClick: () =>
@@ -70,7 +69,7 @@ const useWorkOrder = (workOrder: WorkOrderBasic | number) => {
         }),
     },
     {
-      id: "delete",
+      id: WorkOrderOptionId.Delete,
       label: "Delete",
       Icon: Delete,
       color: "error",

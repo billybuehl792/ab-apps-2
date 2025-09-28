@@ -1,3 +1,9 @@
+export enum WorkOrderOptionId {
+  Detail = "detail",
+  Edit = "edit",
+  Delete = "delete",
+}
+
 export enum WorkOrderStatus {
   New = "new",
   InProgress = "in_progress",

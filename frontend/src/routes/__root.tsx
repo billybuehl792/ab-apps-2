@@ -1,15 +1,10 @@
-import { type ContextType } from "react";
 import { createRootRouteWithContext } from "@tanstack/react-router";
-import { QueryClient } from "@tanstack/react-query";
 import { Button } from "@mui/material";
-import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusCard from "@/components/cards/StatusCard";
+import type { GlobalRouterContext } from "@/store/types/router";
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-  auth: ContextType<typeof AuthContext>;
-}>()({
+export const Route = createRootRouteWithContext<GlobalRouterContext>()({
   pendingComponent: () => (
     <FullScreen>
       <StatusCard

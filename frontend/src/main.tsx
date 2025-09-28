@@ -13,6 +13,7 @@ import "./store/utils/number";
 import "./store/utils/dayjs";
 import FullScreen from "./components/layout/FullScreen";
 import CustomLink from "./components/links/CustomLink";
+import type { GlobalRouterContext } from "./store/types/router";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -23,7 +24,7 @@ declare module "@tanstack/react-router" {
 export const router = createRouter({
   routeTree,
   defaultPendingMs: 0,
-  context: { queryClient: undefined!, auth: undefined! },
+  context: {} as GlobalRouterContext,
   parseSearch: (searchStr) => qs.parse(searchStr, { ignoreQueryPrefix: true }),
   stringifySearch: (searchObj) => {
     const str = qs.stringify(searchObj, { arrayFormat: "repeat" });

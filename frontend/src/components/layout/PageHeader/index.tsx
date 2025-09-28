@@ -1,11 +1,20 @@
+import { type ReactNode } from "react";
 import { Stack, type StackProps } from "@mui/material";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 
-const PageHeader = (props: StackProps) => {
+interface PageHeaderProps extends Omit<StackProps, "title"> {
+  title: ReactNode;
+  endContent?: ReactNode;
+}
+
+const PageHeader = ({ title, endContent, ...props }: PageHeaderProps) => {
   return (
     <Stack
-      position="sticky"
+      direction="row"
       spacing={2}
+      position="sticky"
+      justifyContent="space-between"
+      alignItems="center"
       height={PAGE_HEADER_HEIGHT}
       boxSizing="border-box"
       top={0}
@@ -14,7 +23,10 @@ const PageHeader = (props: StackProps) => {
       zIndex={2}
       borderBottom={(theme) => `1px solid ${theme.palette.divider}`}
       {...props}
-    />
+    >
+      {title}
+      {endContent}
+    </Stack>
   );
 };
 

@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router";
 import {
   AppBar,
   type AppBarProps,
+  Container,
   Stack,
   Toolbar,
   useMediaQuery,
@@ -38,33 +39,36 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
   return (
     <>
       <AppBar variant="outlined" sx={{ height }} {...props}>
-        <Stack
-          component={Toolbar}
-          direction="row"
-          flexGrow={1}
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Stack spacing={2} direction="row" alignItems="center">
-            {isMobile && (
-              <MenuIconButton
-                open={open}
-                color="inherit"
-                onClick={handleToggleNavDrawerOpen}
+        <Container maxWidth="lg" sx={{ width: "100%", height: "100%" }}>
+          <Stack
+            component={Toolbar}
+            direction="row"
+            disableGutters
+            flexGrow={1}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Stack spacing={2} direction="row" alignItems="center">
+              {isMobile && (
+                <MenuIconButton
+                  open={open}
+                  color="inherit"
+                  onClick={handleToggleNavDrawerOpen}
+                />
+              )}
+              <Link
+                label="AB Sandbox App"
+                to="/app/dashboard"
+                variant="h6"
+                color="primary.contrastText"
+                underline="none"
+                fontWeight={600}
+                noWrap
               />
-            )}
-            <Link
-              label="AB Sandbox App"
-              to="/app/dashboard"
-              variant="h6"
-              color="primary.contrastText"
-              underline="none"
-              fontWeight={600}
-              noWrap
-            />
+            </Stack>
+            <MeMenuOptionIconButton />
           </Stack>
-          <MeMenuOptionIconButton />
-        </Stack>
+        </Container>
       </AppBar>
 
       {/* Modals */}

@@ -1,9 +1,10 @@
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { Box, Breadcrumbs, Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { ArrowBack, Home } from "@mui/icons-material";
 import PageHeader from "@/components/layout/PageHeader";
 import CustomLink from "@/components/links/CustomLink";
 import StatusCard from "@/components/cards/StatusCard";
+import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
 
 export const Route = createFileRoute("/app/dashboard")({
   loader: () => {
@@ -23,39 +24,14 @@ function RouteComponent() {
   /** Values */
 
   const matches = useMatches();
+  const currentMatch = matches[matches.length - 1];
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <PageHeader
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Breadcrumbs>
-          {matches.map(
-            (match) =>
-              !!match.loaderData?.crumb && (
-                <CustomLink
-                  key={match.id}
-                  label={match.loaderData.crumb.label}
-                  Icon={match.loaderData.crumb.Icon}
-                  to={match.pathname}
-                  activeOptions={{ exact: true, includeSearch: false }}
-                  color="text.secondary"
-                  sx={{
-                    "&[data-status='active']": {
-                      color: "text.primary",
-                      fontWeight: "bold",
-                      pointerEvents: "none",
-                      cursor: "default",
-                    },
-                  }}
-                />
-              )
-          )}
-        </Breadcrumbs>
-      </PageHeader>
-
+        title={<NavBreadcrumbs />}
+        {...currentMatch.context?.slotProps?.pageHeader}
+      />
       <Box my={2}>
         <Outlet />
       </Box>

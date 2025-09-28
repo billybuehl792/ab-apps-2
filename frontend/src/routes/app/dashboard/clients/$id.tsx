@@ -13,14 +13,28 @@ import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
 import CustomLink from "@/components/links/CustomLink";
+import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import { errorUtils } from "@/store/utils/error";
 import { CLIENT_ICON } from "@/store/constants/clients";
+import { ClientOptionId } from "@/store/enums/clients";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
 
 export const Route = createFileRoute("/app/dashboard/clients/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
+  }),
+  beforeLoad: ({ params }) => ({
+    slotProps: {
+      pageHeader: {
+        endContent: (
+          <ClientMenuOptionIconButton
+            client={Number(params.id)}
+            hideOptions={[ClientOptionId.Detail]}
+          />
+        ),
+      },
+    },
   }),
   loader: async ({ context, params }) => {
     try {
@@ -118,6 +132,7 @@ function RouteComponent() {
       {/* Modals */}
       <ClientFormDrawer
         open={isEditing}
+        title={client.full_name}
         form={{
           values: client,
           onSubmit: handleUpdateClient,

@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Add } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import ClientListCard from "@/containers/cards/ClientListCard";
 import ClientListParamsForm from "@/containers/forms/ClientListParamsForm";
+import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { ClientApiListRequest } from "@/store/types/clients";
@@ -20,6 +22,19 @@ const cleanParams = (params: Record<string, unknown>) => {
 export const Route = createFileRoute("/app/dashboard/clients/")({
   validateSearch: cleanParams,
   component: RouteComponent,
+  beforeLoad: () => ({
+    slotProps: {
+      pageHeader: {
+        endContent: (
+          <CustomLink
+            label="Create"
+            Icon={Add}
+            to="/app/dashboard/clients/create"
+          />
+        ),
+      },
+    },
+  }),
 });
 
 function RouteComponent() {

@@ -6,6 +6,8 @@ import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import { paramUtils } from "@/store/utils/params";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import CustomLink from "@/components/links/CustomLink";
+import { Add } from "@mui/icons-material";
 
 const cleanParams = (params: Record<string, unknown>) => {
   const status = params.status;
@@ -20,6 +22,19 @@ const cleanParams = (params: Record<string, unknown>) => {
 
 export const Route = createFileRoute("/app/dashboard/work-orders/")({
   validateSearch: cleanParams,
+  beforeLoad: () => ({
+    slotProps: {
+      pageHeader: {
+        endContent: (
+          <CustomLink
+            label="Create"
+            Icon={Add}
+            to="/app/dashboard/work-orders/create"
+          />
+        ),
+      },
+    },
+  }),
   component: RouteComponent,
 });
 
