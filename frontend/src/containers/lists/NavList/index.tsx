@@ -14,8 +14,8 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
 
   const items: ListItem[] = [
     {
-      id: "dashboard",
-      label: "Dashboard",
+      id: "home",
+      label: "Home",
       Icon: Home,
       link: { to: "/app/dashboard", activeOptions: { exact: true } },
     },

@@ -9,12 +9,12 @@ import ClientForm, {
   type ClientFormValues,
 } from "@/containers/forms/ClientForm";
 import { CLIENT_CREATE_ICON } from "@/store/constants/clients";
+import { RouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/clients/create")({
-  loader: () => {
-    const crumb: Crumb = { label: "Create Client", Icon: CLIENT_CREATE_ICON };
-    return { crumb };
-  },
+  loader: (): RouteLoaderData => ({
+    crumb: { label: "Create Client", Icon: CLIENT_CREATE_ICON },
+  }),
   component: RouteComponent,
 });
 

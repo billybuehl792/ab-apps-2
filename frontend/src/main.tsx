@@ -37,7 +37,7 @@ export const router = createRouter({
       <StatusCard
         error="Page not found :("
         description={
-          <CustomLink label="Dashboard" Icon={Home} to="/app/dashboard" />
+          <CustomLink label="Home" Icon={Home} to="/app/dashboard" />
         }
       />
     </FullScreen>

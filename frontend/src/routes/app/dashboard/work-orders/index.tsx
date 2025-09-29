@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Add } from "@mui/icons-material";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
 import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
+import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
-import CustomLink from "@/components/links/CustomLink";
-import { Add } from "@mui/icons-material";
+import type { RouteLoaderData } from "@/store/types/router";
 
 const cleanParams = (params: Record<string, unknown>) => {
   const status = params.status;
@@ -22,14 +23,14 @@ const cleanParams = (params: Record<string, unknown>) => {
 
 export const Route = createFileRoute("/app/dashboard/work-orders/")({
   validateSearch: cleanParams,
-  beforeLoad: () => ({
+  loader: (): RouteLoaderData => ({
     slotProps: {
       pageHeader: {
         endContent: (
           <CustomLink
             label="Create"
-            Icon={Add}
             to="/app/dashboard/work-orders/create"
+            Icon={Add}
           />
         ),
       },

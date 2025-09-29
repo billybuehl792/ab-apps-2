@@ -10,6 +10,8 @@ import WorkOrderForm, {
   type WorkOrderFormValues,
 } from "@/containers/forms/WorkOrderForm";
 import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
+import type { RouteLoaderData } from "@/store/types/router";
+import type { Client } from "@/store/types/clients";
 
 type SearchParams = { client?: number };
 
@@ -17,7 +19,10 @@ export const Route = createFileRoute("/app/dashboard/work-orders/create")({
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     client: search.client ? Number(search.client) : undefined,
   }),
-  loader: async ({ context, location }) => {
+  loader: async ({
+    context,
+    location,
+  }): Promise<RouteLoaderData<Client | null>> => {
     const search = location.search as SearchParams;
     let client = null;
     if (search.client)
@@ -25,9 +30,7 @@ export const Route = createFileRoute("/app/dashboard/work-orders/create")({
         clientQueries.detail(Number(search.client))
       );
 
-    const crumb: Crumb = { label: "Create", Icon: WORK_ORDER_ICON };
-
-    return { crumb, client };
+    return { data: client, crumb: { label: "Create", Icon: WORK_ORDER_ICON } };
   },
   loaderDeps: ({ search }) => [search.client],
   component: RouteComponent,
@@ -39,6 +42,8 @@ function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
   const loaderData = Route.useLoaderData();
+
+  const client = loaderData?.data ?? null;
 
   /** Mutations */
 
@@ -63,8 +68,8 @@ function RouteComponent() {
   return (
     <WorkOrderForm
       defaultValues={{
-        client: loaderData?.client ?? undefined,
-        place: loaderData?.client?.place ?? undefined,
+        client: client,
+        place: client?.place ?? undefined,
       }}
       resetLabel="Cancel"
       onSubmit={handleSubmit}

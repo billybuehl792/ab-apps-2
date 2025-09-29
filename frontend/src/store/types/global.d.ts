@@ -62,11 +62,6 @@ declare global {
     items?: ListItem<T, C>[];
   }
 
-  interface Crumb {
-    label: string;
-    Icon?: SvgIconComponent;
-  }
-
   interface String {
     /**
      * Capitalizes the first character of a string.

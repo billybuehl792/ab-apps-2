@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AdminPanelSettings } from "@mui/icons-material";
 import StatusCard from "@/components/cards/StatusCard";
 import { UserGroup } from "@/store/enums/account";
+import { RouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/admin")({
   beforeLoad: ({ context }) => {
@@ -12,10 +13,9 @@ export const Route = createFileRoute("/app/dashboard/admin")({
     if (!isAdmin)
       throw new Error("Insufficient permissions to access this content.");
   },
-  loader: () => {
-    const crumb: Crumb = { label: "Admin", Icon: AdminPanelSettings };
-    return { crumb };
-  },
+  loader: (): RouteLoaderData => ({
+    crumb: { label: "Admin", Icon: AdminPanelSettings },
+  }),
   errorComponent: ({ error }) => <StatusCard error={error} />,
   notFoundComponent: () => <StatusCard error="Page not found" />,
 });

@@ -19,24 +19,14 @@ import { CLIENT_ICON } from "@/store/constants/clients";
 import { ClientOptionId } from "@/store/enums/clients";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
+import type { RouteLoaderData } from "@/store/types/router";
+import type { Client } from "@/store/types/clients";
 
 export const Route = createFileRoute("/app/dashboard/clients/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
   }),
-  beforeLoad: ({ params }) => ({
-    slotProps: {
-      pageHeader: {
-        endContent: (
-          <ClientMenuOptionIconButton
-            client={Number(params.id)}
-            hideOptions={[ClientOptionId.Detail]}
-          />
-        ),
-      },
-    },
-  }),
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params }): Promise<RouteLoaderData<Client>> => {
     try {
       if (isNaN(Number(params.id))) throw new Error("Invalid client ID");
 
@@ -44,9 +34,20 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
         clientQueries.detail(Number(params.id))
       );
 
-      const crumb: Crumb = { label: client.full_name, Icon: CLIENT_ICON };
-
-      return { crumb, client };
+      return {
+        data: client,
+        crumb: { label: client.full_name, Icon: CLIENT_ICON },
+        slotProps: {
+          pageHeader: {
+            endContent: (
+              <ClientMenuOptionIconButton
+                client={client}
+                hideOptions={[ClientOptionId.Detail]}
+              />
+            ),
+          },
+        },
+      };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
@@ -72,7 +73,7 @@ function RouteComponent() {
   const search = Route.useSearch();
   const navigate = useNavigate();
 
-  const client = loaderData.client;
+  const client = loaderData.data;
   const isEditing = search.edit;
 
   /** Queries */

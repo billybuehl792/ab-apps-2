@@ -5,12 +5,10 @@ import PageHeader from "@/components/layout/PageHeader";
 import CustomLink from "@/components/links/CustomLink";
 import StatusCard from "@/components/cards/StatusCard";
 import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
+import type { RouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard")({
-  loader: () => {
-    const crumb: Crumb = { label: "Home", Icon: Home };
-    return { crumb };
-  },
+  loader: (): RouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
   component: RouteComponent,
   notFoundComponent: () => (
     <StatusCard
@@ -30,7 +28,7 @@ function RouteComponent() {
     <Container maxWidth="md">
       <PageHeader
         title={<NavBreadcrumbs />}
-        {...currentMatch.context?.slotProps?.pageHeader}
+        {...currentMatch.loaderData?.slotProps?.pageHeader}
       />
       <Box my={2}>
         <Outlet />

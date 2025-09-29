@@ -9,38 +9,40 @@ import CustomLink from "@/components/links/CustomLink";
 import StatusCard from "@/components/cards/StatusCard";
 import WorkOrderDetailCard from "@/containers/cards/WorkOrderDetailCard";
 import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
+import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import { errorUtils } from "@/store/utils/error";
+import { WorkOrderOptionId } from "@/store/enums/work-orders";
 import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
 import type { WorkOrderFormValues } from "@/containers/forms/WorkOrderForm";
-import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
-import { WorkOrderOptionId } from "@/store/enums/work-orders";
+import type { RouteLoaderData } from "@/store/types/router";
+import type { WorkOrder } from "@/store/types/work-orders";
 
 export const Route = createFileRoute("/app/dashboard/work-orders/$id")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
     edit: Boolean(search.edit) || undefined,
   }),
-  beforeLoad: ({ params }) => ({
-    slotProps: {
-      pageHeader: {
-        endContent: (
-          <WorkOrderMenuOptionIconButton
-            workOrder={Number(params.id)}
-            hideOptions={[WorkOrderOptionId.Detail]}
-          />
-        ),
-      },
-    },
-  }),
-  loader: async ({ context, params }) => {
+  loader: async ({ context, params }): Promise<RouteLoaderData<WorkOrder>> => {
     try {
       if (isNaN(Number(params.id))) throw new Error("Invalid work order ID");
 
       const workOrder = await context.queryClient.fetchQuery(
         workOrderQueries.detail(Number(params.id))
       );
-      const crumb: Crumb = { label: workOrder.label, Icon: WORK_ORDER_ICON };
 
-      return { crumb, workOrder };
+      return {
+        data: workOrder,
+        crumb: { label: workOrder.label, Icon: WORK_ORDER_ICON },
+        slotProps: {
+          pageHeader: {
+            endContent: (
+              <WorkOrderMenuOptionIconButton
+                workOrder={workOrder}
+                hideOptions={[WorkOrderOptionId.Detail]}
+              />
+            ),
+          },
+        },
+      };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
@@ -64,7 +66,7 @@ function RouteComponent() {
   const search = Route.useSearch();
   const navigate = useNavigate();
 
-  const workOrder = loaderData.workOrder;
+  const workOrder = loaderData.data;
   const isEditing = search.edit;
 
   /** Mutations */

@@ -8,6 +8,7 @@ import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
 import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
 import type { ClientApiListRequest } from "@/store/types/clients";
+import type { RouteLoaderData } from "@/store/types/router";
 
 const cleanParams = (params: Record<string, unknown>) => {
   const city = params.place__city;
@@ -21,20 +22,20 @@ const cleanParams = (params: Record<string, unknown>) => {
 
 export const Route = createFileRoute("/app/dashboard/clients/")({
   validateSearch: cleanParams,
-  component: RouteComponent,
-  beforeLoad: () => ({
+  loader: (): RouteLoaderData => ({
     slotProps: {
       pageHeader: {
         endContent: (
           <CustomLink
             label="Create"
-            Icon={Add}
             to="/app/dashboard/clients/create"
+            Icon={Add}
           />
         ),
       },
     },
   }),
+  component: RouteComponent,
 });
 
 function RouteComponent() {
