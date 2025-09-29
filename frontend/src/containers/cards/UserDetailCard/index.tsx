@@ -15,13 +15,6 @@ interface UserDetailCardProps extends CardProps {
 }
 
 const UserDetailCard = ({ user, ...props }: UserDetailCardProps) => {
-  /** Values */
-
-  const fullName =
-    user.first_name && user.last_name
-      ? `${user.first_name} ${user.last_name}`
-      : user.first_name || user.last_name || null;
-
   const metadata: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "id",
@@ -54,12 +47,12 @@ const UserDetailCard = ({ user, ...props }: UserDetailCardProps) => {
           <Typography
             variant="caption"
             color="text.secondary"
-            {...(!fullName && {
+            {...(!user.full_name && {
               fontStyle: "italic",
               color: "text.disabled",
             })}
           >
-            {fullName ?? "No Name"}
+            {user.full_name || "No Name"}
           </Typography>
         </Stack>
         <Metadata items={metadata} />

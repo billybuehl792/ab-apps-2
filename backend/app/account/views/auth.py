@@ -1,29 +1,20 @@
 import os
 import logging
 
-from rest_framework import generics, permissions, status
-from rest_framework.decorators import api_view, action, permission_classes
-from rest_framework.request import Request
+from rest_framework import permissions, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter, SearchFilter
-
-from config.pagination import AdjustableSizePagination
-from .serializers import CustomUserSerializer, MyTokenObtainPairSerializer, RegisterSerializer
-from app.common.views import CompanyScopedViewSet
 from app.account.models import CustomUser
+from app.account.serializers.auth import MyTokenObtainPairSerializer
+from app.account.serializers.auth import ChangePasswordSerializer
+from app.account.serializers.users import CustomUserSerializer
 
 REFRESH_TOKEN_COOKIE_NAME = "ab_refresh_token"
 
 logger = logging.getLogger(__name__)
-
-
-class RegisterView(generics.CreateAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = RegisterSerializer
 
 
 class CookieTokenObtainPairView(TokenObtainPairView):
@@ -137,20 +128,38 @@ class CookieTokenRevokeView(APIView):
         return response
 
 
-class CustomUserViewSet(CompanyScopedViewSet):
-    queryset = CustomUser.objects.all().order_by("-username")
-    serializer_class = CustomUserSerializer
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    filterset_fields = ["groups"]
-    search_fields = ["username", "email"]
-    ordering_fields = ["username"]
-    pagination_class = AdjustableSizePagination
+class ChangePasswordView(APIView):
+    """
+    Change password view:
+    - Requires authentication
+    - Validates current password
+    - Updates user password
+    """
 
-    @action(detail=False, methods=("get",))
-    def count(self, request: Request) -> Response:
-        """Return the total count of users in the filtered queryset."""
-        count = self.get_queryset().count()
-        return Response({"count": count})
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(
+            data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                logger.info(
+                    f"Password changed successfully for user {request.user.username}")
+                return Response(
+                    {"detail": "Password changed successfully."},
+                    status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                logger.error(
+                    f"Error changing password for user {request.user.username}: {e}")
+                return Response(
+                    {"detail": "An error occurred while changing password."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

@@ -1,35 +1,36 @@
 import api from "../config/api";
-import endpoints from "../constants/endpoints";
+import { placeEndpoints } from "../constants/places";
 import type { ApiListResponse } from "../types/api";
 import type { Place, PlaceApiListRequest } from "../types/places";
 
 const list = (params?: PlaceApiListRequest) =>
-  api.get<ApiListResponse<Place>>(endpoints.places(), { params });
+  api.get<ApiListResponse<Place>>(placeEndpoints.places(), { params });
 
-const detail = (id: Place["id"]) => api.get<Place>(endpoints.places.detail(id));
+const detail = (id: Place["id"]) =>
+  api.get<Place>(placeEndpoints.places.detail(id));
 
 const create = (body: Omit<Place, "id">) =>
-  api.post<Place>(endpoints.places(), body);
+  api.post<Place>(placeEndpoints.places(), body);
 
 const update = (body: Pick<Place, "id"> & Partial<Omit<Place, "id">>) =>
-  api.patch<Place>(endpoints.places.detail(body.id), body);
+  api.patch<Place>(placeEndpoints.places.detail(body.id), body);
 
 const _delete = (body: Place["id"]) =>
-  api.delete(endpoints.places.detail(body));
+  api.delete(placeEndpoints.places.detail(body));
 
 /** Other */
 
-const cities = () => api.get<string[]>(endpoints.places.cities());
+const cities = () => api.get<string[]>(placeEndpoints.places.cities());
 
 /** Google */
 
 const googlePlace = (id: string, sessionToken?: string) =>
-  api.get<Place>(endpoints.places.googlePlace(), {
+  api.get<Place>(placeEndpoints.places.googlePlace(), {
     params: { id, sessionToken },
   });
 
 const googleAutocompleteSuggestions = (input: string, sessionToken?: string) =>
-  api.get<Place[]>(endpoints.places.googleAutocompleteSuggestions(), {
+  api.get<Place[]>(placeEndpoints.places.googleAutocompleteSuggestions(), {
     params: { input, sessionToken },
   });
 

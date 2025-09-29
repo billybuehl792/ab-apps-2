@@ -9,7 +9,7 @@ import { paramUtils } from "../utils/params";
 const me = () =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(["account", "me"]),
-    queryFn: () => accountApi.me().then((res) => res.data),
+    queryFn: () => accountApi.auth.me().then((res) => res.data),
   });
 
 /** Users  */

@@ -22,9 +22,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   /** Mutations */
 
-  const tokenMutation = useMutation(accountMutations.token());
-  const tokenRefreshMutation = useMutation(accountMutations.tokenRefresh());
-  const tokenRevokeMutation = useMutation(accountMutations.tokenRevoke());
+  const tokenMutation = useMutation(accountMutations.auth.token());
+  const tokenRefreshMutation = useMutation(
+    accountMutations.auth.tokenRefresh()
+  );
+  const tokenRevokeMutation = useMutation(accountMutations.auth.tokenRevoke());
 
   /** Callbacks */
 

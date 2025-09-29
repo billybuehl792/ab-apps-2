@@ -24,7 +24,7 @@ const ClientFormEmailField = (props: ComponentProps<typeof EmailField>) => {
           message: `Max length is ${String(MAX_LENGTH)}`,
         },
         pattern: {
-          value: RegexPattern.EMAIL,
+          value: RegexPattern.Email,
           message: "Invalid email",
         },
       })}

@@ -1,5 +1,5 @@
 import api from "../config/api";
-import endpoints from "../constants/endpoints";
+import { accountEndpoints } from "../constants/account";
 import type { ApiListResponse } from "../types/api";
 import type {
   AccessTokenApiResponse,
@@ -11,37 +11,35 @@ import type {
 /** Auth */
 
 const token = (credentials: Credentials) =>
-  api.post<AccessTokenApiResponse>(endpoints.account.token(), credentials);
+  api.post<AccessTokenApiResponse>(
+    accountEndpoints.account.auth.token(),
+    credentials
+  );
 
 const tokenRefresh = () =>
-  api.post<AccessTokenApiResponse>(endpoints.account.token.refresh());
+  api.post<AccessTokenApiResponse>(
+    accountEndpoints.account.auth.token.refresh()
+  );
 
 const tokenRevoke = () =>
-  api.post<{ detail: string }>(endpoints.account.token.revoke());
+  api.post<{ detail: string }>(accountEndpoints.account.auth.token.revoke());
 
-const me = () => api.get<User>(endpoints.account.me());
+const me = () => api.get<User>(accountEndpoints.account.auth.me());
 
 /** Users */
 
 const list = (params?: UserApiListRequest) =>
-  api.get<ApiListResponse<User>>(endpoints.account.users(), { params });
+  api.get<ApiListResponse<User>>(accountEndpoints.account.users(), { params });
 
 const count = (params?: UserApiListRequest) =>
-  api.get<ApiListResponse<User>>(endpoints.account.users.count(), { params });
+  api.get<ApiListResponse<User>>(accountEndpoints.account.users.count(), {
+    params,
+  });
 
 const detail = (id: User["id"]) =>
-  api.get<User>(endpoints.account.users.detail(id));
-
-const users = {
-  list,
-  count,
-  detail,
-};
+  api.get<User>(accountEndpoints.account.users.detail(id));
 
 export const accountApi = {
-  token,
-  tokenRefresh,
-  tokenRevoke,
-  me,
-  users,
+  auth: { token, tokenRefresh, tokenRevoke, me },
+  users: { list, count, detail },
 };

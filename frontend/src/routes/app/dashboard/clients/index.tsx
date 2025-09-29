@@ -6,7 +6,7 @@ import ClientListCard from "@/containers/cards/ClientListCard";
 import ClientListParamsForm from "@/containers/forms/ClientListParamsForm";
 import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
-import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { page } from "@/store/constants/layout";
 import type { ClientApiListRequest } from "@/store/types/clients";
 import type { RouteLoaderData } from "@/store/types/router";
 
@@ -62,11 +62,11 @@ function RouteComponent() {
       slotProps={{
         header: {
           position: "sticky",
-          top: PAGE_HEADER_HEIGHT + 16,
+          top: page.header.height + 16,
           zIndex: 2,
           bgcolor: "background.paper",
           boxShadow: (theme) =>
-            `0px -${PAGE_HEADER_HEIGHT / 4}px ${theme.palette.background.paper}`,
+            `0px -${page.header.height / 4}px ${theme.palette.background.paper}`,
         },
       }}
     />

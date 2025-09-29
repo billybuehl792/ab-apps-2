@@ -12,7 +12,7 @@ import WorkOrderFormDrawer from "@/containers/modals/WorkOrderFormDrawer";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import { errorUtils } from "@/store/utils/error";
 import { WorkOrderOptionId } from "@/store/enums/work-orders";
-import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
+import { WorkOrderIcons } from "@/store/constants/work-orders";
 import type { WorkOrderFormValues } from "@/containers/forms/WorkOrderForm";
 import type { RouteLoaderData } from "@/store/types/router";
 import type { WorkOrder } from "@/store/types/work-orders";
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/app/dashboard/work-orders/$id")({
 
       return {
         data: workOrder,
-        crumb: { label: workOrder.label, Icon: WORK_ORDER_ICON },
+        crumb: { label: workOrder.label, Icon: WorkOrderIcons.Detail },
         slotProps: {
           pageHeader: {
             endContent: (

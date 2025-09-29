@@ -8,7 +8,7 @@ import {
 import { ArrowForwardIos } from "@mui/icons-material";
 import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import UserGroupChip from "@/containers/chips/UserGroupChip";
-import { ADMIN_USER_ICON } from "@/store/constants/admin";
+import { AdminIcons } from "@/store/constants/admin";
 import type { User } from "@/store/types/account";
 
 interface UserListCardProps extends CardProps {
@@ -16,13 +16,6 @@ interface UserListCardProps extends CardProps {
 }
 
 const UserListCard = ({ user, ...props }: UserListCardProps) => {
-  /** Values */
-
-  const fullName =
-    user.first_name && user.last_name
-      ? `${user.first_name} ${user.last_name}`
-      : user.first_name || user.last_name || null;
-
   return (
     <Stack component={Card} position="relative" {...props}>
       <CardActionAreaLink
@@ -42,7 +35,7 @@ const UserListCard = ({ user, ...props }: UserListCardProps) => {
             flexGrow={1}
             overflow="hidden"
           >
-            <ADMIN_USER_ICON fontSize="large" color="disabled" />
+            <AdminIcons.Users.Detail fontSize="large" color="disabled" />
             <Stack overflow="hidden">
               <Typography variant="body1" noWrap>
                 {user.username}
@@ -50,12 +43,12 @@ const UserListCard = ({ user, ...props }: UserListCardProps) => {
               <Typography
                 variant="caption"
                 noWrap
-                {...(!fullName && {
+                {...(!user.full_name && {
                   fontStyle: "italic",
                   color: "text.disabled",
                 })}
               >
-                {fullName ?? "No Name"}
+                {user.full_name || "No Name"}
               </Typography>
             </Stack>
           </Stack>

@@ -4,8 +4,8 @@ import { Stack } from "@mui/material";
 import { clientQueries } from "@/store/queries/clients";
 import { workOrderQueries } from "@/store/queries/work-orders";
 import LinkCard from "@/components/cards/LinkCard";
-import { CLIENTS_ICON } from "@/store/constants/clients";
-import { WORK_ORDERS_ICON } from "@/store/constants/work-orders";
+import { ClientIcons } from "@/store/constants/clients";
+import { WorkOrderIcons } from "@/store/constants/work-orders";
 
 export const Route = createFileRoute("/app/dashboard/")({
   component: RouteComponent,
@@ -22,13 +22,13 @@ function RouteComponent() {
       <LinkCard
         title="Clients"
         subtitle={`Total: ${clientCountQuery.data?.count ?? "-"}`}
-        Icon={CLIENTS_ICON}
+        Icon={ClientIcons.List}
         linkOptions={{ to: "/app/dashboard/clients" }}
       />
       <LinkCard
         title="Work Orders"
         subtitle={`Total: ${workOrderCountQuery.data?.count ?? "-"}`}
-        Icon={WORK_ORDERS_ICON}
+        Icon={WorkOrderIcons.List}
         linkOptions={{ to: "/app/dashboard/work-orders" }}
       />
     </Stack>

@@ -12,7 +12,7 @@ import Metadata from "@/components/lists/Metadata";
 import WorkOrderMenuOptionIconButton from "@/containers/buttons/WorkOrderMenuOptionIconButton";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import ClientChip from "@/containers/chips/ClientChip";
-import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
+import { WorkOrderIcons } from "@/store/constants/work-orders";
 import type { WorkOrder } from "@/store/types/work-orders";
 
 interface WorkOrderListCardProps extends CardProps {
@@ -52,7 +52,7 @@ const WorkOrderListCard = ({ workOrder, ...props }: WorkOrderListCardProps) => {
           alignItems="center"
           mr={6}
         >
-          <WORK_ORDER_ICON fontSize="large" color="disabled" />
+          <WorkOrderIcons.Detail fontSize="large" color="disabled" />
           <Stack spacing={0.5} overflow="hidden">
             <Stack
               direction="row"

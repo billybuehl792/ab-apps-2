@@ -19,7 +19,7 @@ const ClientFormPhoneSecondaryField = (
         validate: {
           isTel: (value) =>
             !value ||
-            !!value.match(RegexPattern.PHONE) ||
+            !!value.match(RegexPattern.Phone) ||
             "Must be a valid phone number",
         },
       }}

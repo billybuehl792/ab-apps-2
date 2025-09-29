@@ -11,7 +11,7 @@ import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import Metadata from "@/components/lists/Metadata";
 import WorkOrderChip from "@/containers/chips/WorkOrderChip";
-import { CLIENT_ICON } from "@/store/constants/clients";
+import { ClientIcons } from "@/store/constants/clients";
 import type { Client } from "@/store/types/clients";
 
 interface ClientListCardProps extends CardProps {
@@ -64,7 +64,7 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
           alignItems="center"
           mr={6}
         >
-          <CLIENT_ICON fontSize="large" color="disabled" />
+          <ClientIcons.Detail fontSize="large" color="disabled" />
           <Stack spacing={0.5} overflow="hidden">
             <Typography variant="body1" noWrap>
               {client.full_name}

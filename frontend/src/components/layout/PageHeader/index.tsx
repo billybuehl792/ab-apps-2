@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Stack, type StackProps } from "@mui/material";
-import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { page } from "@/store/constants/layout";
 
 interface PageHeaderProps extends Omit<StackProps, "title"> {
   title: ReactNode;
@@ -15,7 +15,7 @@ const PageHeader = ({ title, endContent, ...props }: PageHeaderProps) => {
       position="sticky"
       justifyContent="space-between"
       alignItems="center"
-      height={PAGE_HEADER_HEIGHT}
+      height={page.header.height}
       boxSizing="border-box"
       top={0}
       py={2}

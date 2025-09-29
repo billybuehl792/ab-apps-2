@@ -3,10 +3,10 @@ import { placeApi } from "../api/places";
 import { queryUtils } from "../utils/queries";
 import { paramUtils } from "../utils/params";
 import {
-  DEFAULT_AUTOCOMPLETE_FIELDS,
-  DEFAULT_AUTOCOMPLETE_OPTIONS,
-  DEFAULT_PLACE_FIELDS,
-} from "../constants/maps";
+  defaultGoogleAutocompleteFields,
+  defaultGoogleAutocompleteOptions,
+  defaultGooglePlaceFields,
+} from "../constants/places";
 import type {
   GooglePlacesAutocompleteResponse,
   GooglePlacesPlace,
@@ -82,7 +82,7 @@ const googlePlacesPlaceDetail = (placeId: string) =>
           headers: {
             "X-Goog-Api-Key": import.meta.env
               .VITE_GOOGLE_MAPS_API_KEY as string,
-            "X-Goog-FieldMask": DEFAULT_PLACE_FIELDS.join(","),
+            "X-Goog-FieldMask": defaultGooglePlaceFields.join(","),
           },
         }
       );
@@ -115,10 +115,10 @@ const googlePlacesAutocompleteSuggestionList = (
             "Content-Type": "application/json",
             "X-Goog-Api-Key": import.meta.env
               .VITE_GOOGLE_MAPS_API_KEY as string,
-            "X-Goog-FieldMask": DEFAULT_AUTOCOMPLETE_FIELDS.join(","),
+            "X-Goog-FieldMask": defaultGoogleAutocompleteFields.join(","),
           },
           body: JSON.stringify({
-            ...DEFAULT_AUTOCOMPLETE_OPTIONS,
+            ...defaultGoogleAutocompleteOptions,
             input,
             sessionToken,
           }),

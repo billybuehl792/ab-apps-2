@@ -5,23 +5,25 @@ import { queryUtils } from "../utils/queries";
 const token = () =>
   mutationOptions({
     mutationKey: queryUtils.getQueryKey(["account", "signIn"]),
-    mutationFn: accountApi.token,
+    mutationFn: accountApi.auth.token,
   });
 
 const tokenRefresh = () =>
   mutationOptions({
     mutationKey: queryUtils.getQueryKey(["account", "refreshToken"]),
-    mutationFn: accountApi.tokenRefresh,
+    mutationFn: accountApi.auth.tokenRefresh,
   });
 
 const tokenRevoke = () =>
   mutationOptions({
     mutationKey: queryUtils.getQueryKey(["account", "signOut"]),
-    mutationFn: accountApi.tokenRevoke,
+    mutationFn: accountApi.auth.tokenRevoke,
   });
 
 export const accountMutations = {
-  token,
-  tokenRefresh,
-  tokenRevoke,
+  auth: {
+    token,
+    tokenRefresh,
+    tokenRevoke,
+  },
 };

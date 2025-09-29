@@ -1,5 +1,5 @@
 import api from "../config/api";
-import endpoints from "../constants/endpoints";
+import { clientEndpoints } from "../constants/clients";
 import type { ApiListResponse } from "../types/api";
 import type {
   Client,
@@ -8,22 +8,22 @@ import type {
 } from "../types/clients";
 
 const list = (params?: ClientApiListRequest) =>
-  api.get<ApiListResponse<Client>>(endpoints.clients(), { params });
+  api.get<ApiListResponse<Client>>(clientEndpoints.clients(), { params });
 
 const count = (params?: ClientApiListRequest) =>
-  api.get<{ count: number }>(endpoints.clients.count(), { params });
+  api.get<{ count: number }>(clientEndpoints.clients.count(), { params });
 
 const detail = (id: Client["id"]) =>
-  api.get<Client>(endpoints.clients.detail(id));
+  api.get<Client>(clientEndpoints.clients.detail(id));
 
 const create = (body: Omit<ClientWriteable, "id">) =>
-  api.post<ClientWriteable>(endpoints.clients(), body);
+  api.post<ClientWriteable>(clientEndpoints.clients(), body);
 
 const update = ({ id, ...body }: ClientWriteable) =>
-  api.patch<ClientWriteable>(endpoints.clients.detail(id), body);
+  api.patch<ClientWriteable>(clientEndpoints.clients.detail(id), body);
 
 const _delete = (body: Client["id"]) =>
-  api.delete(endpoints.clients.detail(body));
+  api.delete(clientEndpoints.clients.detail(body));
 
 export const clientApi = {
   list,

@@ -3,7 +3,7 @@ import { Stack } from "@mui/material";
 import LinkCard from "@/components/cards/LinkCard";
 import { useQuery } from "@tanstack/react-query";
 import { accountQueries } from "@/store/queries/account";
-import { ADMIN_USERS_ICON } from "@/store/constants/admin";
+import { AdminIcons } from "@/store/constants/admin";
 
 export const Route = createFileRoute("/app/dashboard/admin/")({
   component: RouteComponent,
@@ -19,7 +19,7 @@ function RouteComponent() {
       <LinkCard
         title="Users"
         subtitle={`Total: ${userCountQuery.data?.count ?? "-"}`}
-        Icon={ADMIN_USERS_ICON}
+        Icon={AdminIcons.Users.List}
         linkOptions={{ to: "/app/dashboard/admin/users" }}
       />
     </Stack>

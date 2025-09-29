@@ -1,9 +1,9 @@
 import axios from "axios";
 import qs from "qs";
-import endpoints from "../constants/endpoints";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
 import { accountApi } from "../api/account";
+import { accountEndpoints } from "../constants/account";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -24,14 +24,14 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
 
     if (
-      !originalRequest.url.startsWith(endpoints.account.token()) &&
+      !originalRequest.url.startsWith(accountEndpoints.account.auth.token()) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
 
       try {
-        const refreshTokenResponse = await accountApi.tokenRefresh();
+        const refreshTokenResponse = await accountApi.auth.tokenRefresh();
 
         authUtils.setAccessToken(refreshTokenResponse.data.access);
         originalRequest.headers.Authorization = `Bearer ${refreshTokenResponse.data.access}`;

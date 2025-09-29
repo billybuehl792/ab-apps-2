@@ -9,7 +9,7 @@ import { workOrderMutations } from "@/store/mutations/work-orders";
 import WorkOrderForm, {
   type WorkOrderFormValues,
 } from "@/containers/forms/WorkOrderForm";
-import { WORK_ORDER_ICON } from "@/store/constants/work-orders";
+import { WorkOrderIcons } from "@/store/constants/work-orders";
 import type { RouteLoaderData } from "@/store/types/router";
 import type { Client } from "@/store/types/clients";
 
@@ -30,7 +30,10 @@ export const Route = createFileRoute("/app/dashboard/work-orders/create")({
         clientQueries.detail(Number(search.client))
       );
 
-    return { data: client, crumb: { label: "Create", Icon: WORK_ORDER_ICON } };
+    return {
+      data: client,
+      crumb: { label: "Create", Icon: WorkOrderIcons.Create },
+    };
   },
   loaderDeps: ({ search }) => [search.client],
   component: RouteComponent,

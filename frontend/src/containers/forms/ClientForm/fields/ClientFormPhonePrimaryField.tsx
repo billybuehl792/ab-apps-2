@@ -19,7 +19,7 @@ const ClientFormPhonePrimaryField = (
         required: "Phone number is required",
         validate: {
           isTel: (value) =>
-            !!value.match(RegexPattern.PHONE) || "Must be a valid phone number",
+            !!value.match(RegexPattern.Phone) || "Must be a valid phone number",
         },
       }}
       render={({ field: { value, ...field }, formState }) => (

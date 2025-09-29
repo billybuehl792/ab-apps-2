@@ -3,7 +3,7 @@ import { accountQueries } from "@/store/queries/account";
 import UserListCard from "@/containers/cards/UserListCard";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import { paramUtils } from "@/store/utils/params";
-import { PAGE_HEADER_HEIGHT } from "@/store/constants/layout";
+import { page } from "@/store/constants/layout";
 import type { UserApiListRequest } from "@/store/types/account";
 
 const cleanParams = (params: Record<string, unknown>) =>
@@ -38,11 +38,11 @@ function RouteComponent() {
       slotProps={{
         header: {
           position: "sticky",
-          top: PAGE_HEADER_HEIGHT + 16,
+          top: page.header.height + 16,
           zIndex: 2,
           bgcolor: "background.paper",
           boxShadow: (theme) =>
-            `0px -${PAGE_HEADER_HEIGHT / 4}px ${theme.palette.background.paper}`,
+            `0px -${page.header.height / 4}px ${theme.palette.background.paper}`,
         },
       }}
     />

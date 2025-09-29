@@ -15,7 +15,7 @@ import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm"
 import CustomLink from "@/components/links/CustomLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import { errorUtils } from "@/store/utils/error";
-import { CLIENT_ICON } from "@/store/constants/clients";
+import { ClientIcons } from "@/store/constants/clients";
 import { ClientOptionId } from "@/store/enums/clients";
 import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
 
       return {
         data: client,
-        crumb: { label: client.full_name, Icon: CLIENT_ICON },
+        crumb: { label: client.full_name, Icon: ClientIcons.Detail },
         slotProps: {
           pageHeader: {
             endContent: (

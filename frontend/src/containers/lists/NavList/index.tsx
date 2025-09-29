@@ -2,10 +2,10 @@ import { type ComponentProps } from "react";
 import { Home } from "@mui/icons-material";
 import NestedList from "@/components/lists/NestedList";
 import useAuth from "@/store/hooks/useAuth";
-import { CLIENTS_ICON } from "@/store/constants/clients";
-import { WORK_ORDERS_ICON } from "@/store/constants/work-orders";
-import { ACCOUNT_ICON } from "@/store/constants/account";
-import { ADMIN_ICON } from "@/store/constants/admin";
+import { ClientIcons } from "@/store/constants/clients";
+import { WorkOrderIcons } from "@/store/constants/work-orders";
+import { AccountIcons } from "@/store/constants/account";
+import { AdminIcons } from "@/store/constants/admin";
 
 const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
   /** Values */
@@ -22,19 +22,19 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
     {
       id: "clients",
       label: "Clients",
-      Icon: CLIENTS_ICON,
+      Icon: ClientIcons.List,
       link: { to: "/app/dashboard/clients" },
     },
     {
       id: "workOrders",
       label: "Work Orders",
-      Icon: WORK_ORDERS_ICON,
+      Icon: WorkOrderIcons.List,
       link: { to: "/app/dashboard/work-orders" },
     },
     {
       id: "profile",
       label: "Profile",
-      Icon: ACCOUNT_ICON,
+      Icon: AccountIcons.Detail,
       link: {
         to: "/app/dashboard/profile/$id",
         params: { id: String(auth.me?.id) },
@@ -43,7 +43,7 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
     {
       id: "admin",
       label: "Admin",
-      Icon: ADMIN_ICON,
+      Icon: AdminIcons.Detail,
       link: { to: "/app/dashboard/admin" },
     },
   ];

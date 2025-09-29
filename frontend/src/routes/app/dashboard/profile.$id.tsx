@@ -5,7 +5,7 @@ import StatusCard from "@/components/cards/StatusCard";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import CustomLink from "@/components/links/CustomLink";
 import { errorUtils } from "@/store/utils/error";
-import { ACCOUNT_ICON } from "@/store/constants/account";
+import { AccountIcons } from "@/store/constants/account";
 import type { RouteLoaderData } from "@/store/types/router";
 import type { User } from "@/store/types/account";
 
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app/dashboard/profile/$id")({
 
       return {
         data: user,
-        crumb: { label: user.username, Icon: ACCOUNT_ICON },
+        crumb: { label: user.username, Icon: AccountIcons.Detail },
       };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });

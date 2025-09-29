@@ -6,7 +6,7 @@ import NavPanel from "@/containers/layout/NavPanel";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusCard from "@/components/cards/StatusCard";
 import CustomLink from "@/components/links/CustomLink";
-import { NAV_HEIGHT, NAV_PANEL_WIDTH } from "@/store/constants/layout";
+import { nav } from "@/store/constants/layout";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -44,23 +44,18 @@ function RouteComponent() {
 
   return (
     <>
-      <NavBar height={NAV_HEIGHT} />
+      <NavBar height={nav.height} />
       {isDesktop && (
-        <NavPanel
-          width={NAV_PANEL_WIDTH}
-          top={NAV_HEIGHT}
-          left={0}
-          bottom={0}
-        />
+        <NavPanel width={nav.panelWidth} top={nav.height} left={0} bottom={0} />
       )}
       <Box
         component="main"
         sx={{
           position: "absolute",
-          top: NAV_HEIGHT,
-          height: `calc(100vh - ${NAV_HEIGHT}px)`,
-          width: `calc(100% - ${isDesktop ? NAV_PANEL_WIDTH : 0}px)`,
-          left: isDesktop ? NAV_PANEL_WIDTH : 0,
+          top: nav.height,
+          height: `calc(100vh - ${nav.height}px)`,
+          width: `calc(100% - ${isDesktop ? nav.panelWidth : 0}px)`,
+          left: isDesktop ? nav.panelWidth : 0,
           overflow: "auto",
         }}
       >
