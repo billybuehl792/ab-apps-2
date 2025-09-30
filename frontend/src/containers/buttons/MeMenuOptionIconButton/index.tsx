@@ -24,7 +24,7 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
       id: "profile",
       label: "Profile",
       Icon: Person,
-      selected: location.pathname.startsWith("/app/profile"),
+      selected: location.pathname.startsWith("/app/dashboard/profile"),
       onClick: () =>
         navigate({
           to: "/app/dashboard/profile/$id",
