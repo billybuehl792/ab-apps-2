@@ -1,11 +1,11 @@
-export type ApiListRequest<O extends string = string> = {
+export type ListRequestParams<O extends string = string> = {
   ordering?: O | null;
   page_size?: number;
   page?: number;
   search?: string;
 };
 
-export interface ApiListResponse<T> {
+export interface ListResponse<T> {
   count: number;
   next: string | null;
   previous: string | null;

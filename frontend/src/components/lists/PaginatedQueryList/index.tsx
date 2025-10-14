@@ -4,16 +4,16 @@ import { Stack, type StackProps } from "@mui/material";
 import PaginatedQueryListHeader from "./components/layout/PaginatedQueryListHeader";
 import PaginatedQueryListList from "./components/lists/PaginatedQueryListList";
 import type { QueryKey } from "@/store/types/queries";
-import type { ApiListRequest, ApiListResponse } from "@/store/types/api";
+import type { ListRequestParams, ListResponse } from "@/store/types/api";
 
 export interface PaginatedQueryListBaseProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > {
   queryOptions: UseQueryOptions<
-    ApiListResponse<Data>,
+    ListResponse<Data>,
     Error,
-    ApiListResponse<Data>,
+    ListResponse<Data>,
     QueryKey<Params>
   >;
   /** If provided, these will be merged into the current query params and cannot be changed by the user. */
@@ -21,8 +21,10 @@ export interface PaginatedQueryListBaseProps<
   onParamsChange: (params: Params) => void;
 }
 
-interface PaginatedQueryListProps<Params extends ApiListRequest, Data = unknown>
-  extends Omit<StackProps, "children">,
+interface PaginatedQueryListProps<
+  Params extends ListRequestParams,
+  Data = unknown,
+> extends Omit<StackProps, "children">,
     PaginatedQueryListBaseProps<Params, Data>,
     Pick<
       ComponentProps<typeof PaginatedQueryListList<Params, Data>>,
@@ -48,7 +50,7 @@ interface PaginatedQueryListProps<Params extends ApiListRequest, Data = unknown>
   };
 }
 
-const PaginatedQueryList = <Params extends ApiListRequest, Data = unknown>({
+const PaginatedQueryList = <Params extends ListRequestParams, Data = unknown>({
   queryOptions,
   baseParams,
   ParamsFormComponent,

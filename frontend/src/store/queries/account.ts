@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { queryUtils } from "../utils/queries";
 import { accountApi } from "../api/account";
-import { UserApiListRequest } from "../types/account";
+import { UserListRequestParams } from "../types/account";
 import { paramUtils } from "../utils/params";
 
 /** Account */
@@ -22,21 +22,21 @@ const detail = (id: number) =>
       accountApi.users.detail(id).then((res) => res.data),
   });
 
-const list = (params?: UserApiListRequest) =>
+const list = (params?: UserListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["account", "users", "list"],
-      paramUtils.cleanApiListRequestParams<UserApiListRequest>(params)
+      paramUtils.cleanListRequestParamsParams<UserListRequestParams>(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       accountApi.users.list(params).then((res) => res.data),
   });
 
-const count = (params?: UserApiListRequest) =>
+const count = (params?: UserListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["account", "users", "count"],
-      paramUtils.cleanApiListRequestParams<UserApiListRequest>(params)
+      paramUtils.cleanListRequestParamsParams<UserListRequestParams>(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       accountApi.users.count(params).then((res) => res.data),

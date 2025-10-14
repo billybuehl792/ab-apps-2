@@ -1,5 +1,5 @@
 import { UserGroup } from "../enums/account";
-import type { ApiListRequest } from "./api";
+import type { ListRequestParams } from "./api";
 
 export interface Credentials {
   username: string;
@@ -37,7 +37,7 @@ export interface WriteableUser {
 
 /** API */
 
-export type UserApiListRequest = ApiListRequest;
+export type UserListRequestParams = ListRequestParams;
 
 export interface AccessTokenApiResponse {
   access: string;

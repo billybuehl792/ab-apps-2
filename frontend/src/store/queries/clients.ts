@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { clientApi } from "../api/clients";
 import { queryUtils } from "../utils/queries";
 import { paramUtils } from "../utils/params";
-import type { ClientApiListRequest } from "../types/clients";
+import type { ClientListRequestParams } from "../types/clients";
 
 const detail = (id: number) =>
   queryOptions({
@@ -12,21 +12,21 @@ const detail = (id: number) =>
     enabled: Boolean(id) && !isNaN(id),
   });
 
-const list = (params?: ClientApiListRequest) =>
+const list = (params?: ClientListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["clients", "list"],
-      paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params)
+      paramUtils.cleanListRequestParamsParams<ClientListRequestParams>(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       clientApi.list(params).then((res) => res.data),
   });
 
-const count = (params?: ClientApiListRequest) =>
+const count = (params?: ClientListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["clients", "count"],
-      paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params)
+      paramUtils.cleanListRequestParamsParams<ClientListRequestParams>(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       clientApi.count(params).then((res) => res.data),

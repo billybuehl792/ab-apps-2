@@ -1,4 +1,4 @@
-import type { ApiListRequest } from "../types/api";
+import type { ListRequestParams } from "../types/api";
 
 /**
  * Sanitize parameters API list request parameters.
@@ -6,7 +6,9 @@ import type { ApiListRequest } from "../types/api";
  * @param params - The search parameters from the URL.
  * @returns The parameters for the API list request.
  */
-const cleanApiListRequestParams = <P extends ApiListRequest = ApiListRequest>(
+const cleanListRequestParamsParams = <
+  P extends ListRequestParams = ListRequestParams,
+>(
   params?: Record<string, unknown>
 ): P => {
   const formatted = {
@@ -34,5 +36,5 @@ const cleanApiListRequestParams = <P extends ApiListRequest = ApiListRequest>(
 };
 
 export const paramUtils = {
-  cleanApiListRequestParams,
+  cleanListRequestParamsParams,
 };

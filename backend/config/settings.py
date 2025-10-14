@@ -17,6 +17,8 @@ import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 
 env = environ.Env()
 environ.Env.read_env(str(BASE_DIR / ".env"))
@@ -59,6 +61,7 @@ INSTALLED_APPS = [
     "app.common",
     "app.companies",
     "app.account",
+    "app.documents",
     "app.places",
     "app.clients",
     "app.work_orders",
@@ -139,7 +142,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.OrderingFilter",
         "rest_framework.filters.SearchFilter",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "config.pagination.AdjustableSizePagination",
     "PAGE_SIZE": 20,
 }
 

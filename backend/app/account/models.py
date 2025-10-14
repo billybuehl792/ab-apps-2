@@ -7,12 +7,7 @@ from app.companies.models import Company
 
 class CustomUser(AbstractUser):
     company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        related_name="users",
-        null=True,
-        blank=True,
-    )
+        Company, on_delete=models.CASCADE, related_name="users")
     full_name = models.CharField(max_length=511, editable=False)
 
     class Meta:

@@ -1,18 +1,18 @@
 import api from "../config/api";
 import { workOrderEndpoints } from "../constants/work-orders";
-import type { ApiListResponse } from "../types/api";
+import type { ListResponse } from "../types/api";
 import type {
   WorkOrder,
-  WorkOrderApiListRequest,
+  WorkOrderListRequestParams,
   WorkOrderWriteable,
 } from "../types/work-orders";
 
-const list = (params?: WorkOrderApiListRequest) =>
-  api.get<ApiListResponse<WorkOrder>>(workOrderEndpoints.workOrders(), {
+const list = (params?: WorkOrderListRequestParams) =>
+  api.get<ListResponse<WorkOrder>>(workOrderEndpoints.workOrders(), {
     params,
   });
 
-const count = (params?: WorkOrderApiListRequest) =>
+const count = (params?: WorkOrderListRequestParams) =>
   api.get<{ count: number }>(workOrderEndpoints.workOrders.count(), { params });
 
 const detail = (id: WorkOrder["id"]) =>

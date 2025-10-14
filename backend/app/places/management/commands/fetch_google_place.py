@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from app.places.services.google_places import GooglePlacesClient, GooglePlacesError
+from app.places.services.google_places_service import GooglePlacesClient, GooglePlacesError
 
 
 class Command(BaseCommand):

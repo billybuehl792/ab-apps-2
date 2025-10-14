@@ -6,11 +6,7 @@ from app.companies.models import Company
 
 class Place(TimeStampedModel):
     company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        related_name="places",
-        editable=False,
-    )
+        Company, on_delete=models.CASCADE, related_name="places")
     google_place_id = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255, blank=True, default="")
     country = models.CharField(max_length=10, editable=False)
@@ -21,6 +17,11 @@ class Place(TimeStampedModel):
     address_short = models.TextField(max_length=255, editable=False)
     latitude = models.FloatField(editable=False)
     longitude = models.FloatField(editable=False)
+
+    class Meta:  # type: ignore
+        verbose_name = "Place"
+        verbose_name_plural = "Places"
+        unique_together = ('company', 'google_place_id')
 
     def __str__(self):
         return self.address_full

@@ -1,5 +1,5 @@
 import { UserGroup } from "../enums/account";
-import type { ApiListRequest } from "./api";
+import type { ListRequestParams } from "./api";
 import type { Company } from "./account";
 
 export interface Profile {
@@ -24,4 +24,4 @@ export interface WriteableProfile {
 
 /** API */
 
-export type ProfileApiListRequest = ApiListRequest;
+export type ProfileListRequestParams = ListRequestParams;

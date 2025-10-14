@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import type { WorkOrderListParamsFormValues } from "..";
-import { WorkOrderApiListRequestOrdering } from "@/store/enums/work-orders";
+import { WorkOrderListRequestParamsOrdering } from "@/store/enums/work-orders";
 
 const WorkOrderListParamsFormOrderingField = () => {
   /** Values */
@@ -26,7 +26,7 @@ const WorkOrderListParamsFormOrderingField = () => {
             control={<Radio />}
             sx={{ color: "text.disabled" }}
           />
-          {Object.entries(WorkOrderApiListRequestOrdering).map(
+          {Object.entries(WorkOrderListRequestParamsOrdering).map(
             ([key, value]) => (
               <FormControlLabel
                 key={key}

@@ -1,10 +1,12 @@
 from django.db import models
 from decimal import Decimal
+from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.models import TimeStampedModel
 from app.companies.models import Company
-from app.places.models import Place
 from app.clients.models import Client
+from app.documents.models import Document
+from app.places.models import Place
 
 
 class WorkOrderStatus(models.TextChoices):
@@ -16,12 +18,8 @@ class WorkOrderStatus(models.TextChoices):
 
 class WorkOrder(TimeStampedModel):
     company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        related_name="work_orders",
-        editable=False,
-    )
-    label = models.CharField(max_length=255, unique=True)
+        Company, on_delete=models.CASCADE, related_name="work_orders")
+    label = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
     status = models.CharField(
         max_length=20,
@@ -49,10 +47,20 @@ class WorkOrder(TimeStampedModel):
         blank=True,
         related_name="work_orders",
     )
+    documents = GenericRelation(Document, related_query_name='client')
 
     class Meta:  # type: ignore
         verbose_name = "Work Order"
         verbose_name_plural = "Work Orders"
+        unique_together = ('company', 'label')
 
     def __str__(self):
         return self.label
+
+    def add_document(self, **kwargs):
+        """Helper method to create a document for this client."""
+        return Document.objects.create(
+            company=self.company,
+            content_object=self,
+            **kwargs
+        )

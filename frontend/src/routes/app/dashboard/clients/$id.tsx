@@ -17,7 +17,7 @@ import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIco
 import { errorUtils } from "@/store/utils/error";
 import { ClientIcons } from "@/store/constants/clients";
 import { ClientOptionId } from "@/store/enums/clients";
-import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
 import type { RouteLoaderData } from "@/store/types/router";
 import type { Client } from "@/store/types/clients";
@@ -65,7 +65,7 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
 function RouteComponent() {
   const [tabValue, setTabValue] = useState(0);
   const [workOrderListParams, setWorkOrderListParams] =
-    useState<WorkOrderApiListRequest>({});
+    useState<WorkOrderListRequestParams>({});
 
   /** Values */
 

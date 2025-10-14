@@ -10,7 +10,7 @@ import {
 import type {
   GooglePlacesAutocompleteResponse,
   GooglePlacesPlace,
-  PlaceApiListRequest,
+  PlaceListRequestParams,
 } from "../types/places";
 
 const detail = (id: number) =>
@@ -20,11 +20,11 @@ const detail = (id: number) =>
     queryFn: ({ queryKey: [_, { id }] }) => placeApi.detail(id),
   });
 
-const list = (params?: PlaceApiListRequest) =>
+const list = (params?: PlaceListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["places", "list"],
-      paramUtils.cleanApiListRequestParams<PlaceApiListRequest>(params)
+      paramUtils.cleanListRequestParamsParams<PlaceListRequestParams>(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       placeApi.list(params).then((res) => res.data),

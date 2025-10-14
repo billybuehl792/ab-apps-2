@@ -1,11 +1,11 @@
 import api from "../config/api";
 import { accountEndpoints } from "../constants/account";
-import type { ApiListResponse } from "../types/api";
+import type { ListResponse } from "../types/api";
 import type {
   AccessTokenApiResponse,
   Credentials,
   User,
-  UserApiListRequest,
+  UserListRequestParams,
 } from "../types/account";
 
 /** Auth */
@@ -28,11 +28,11 @@ const me = () => api.get<User>(accountEndpoints.account.auth.me());
 
 /** Users */
 
-const list = (params?: UserApiListRequest) =>
-  api.get<ApiListResponse<User>>(accountEndpoints.account.users(), { params });
+const list = (params?: UserListRequestParams) =>
+  api.get<ListResponse<User>>(accountEndpoints.account.users(), { params });
 
-const count = (params?: UserApiListRequest) =>
-  api.get<ApiListResponse<User>>(accountEndpoints.account.users.count(), {
+const count = (params?: UserListRequestParams) =>
+  api.get<ListResponse<User>>(accountEndpoints.account.users.count(), {
     params,
   });
 

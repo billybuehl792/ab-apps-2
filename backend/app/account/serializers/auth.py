@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
 from django.contrib.auth.models import Group
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, Serializer, CharField, PrimaryKeyRelatedField, ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from app.account.models import CustomUser
@@ -9,12 +9,12 @@ from app.companies.models import Company
 from app.account.services.auth_utils import validate_password_change, validate_password_strength
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    company = serializers.PrimaryKeyRelatedField(
+class RegisterSerializer(ModelSerializer):
+    password = CharField(write_only=True)
+    company = PrimaryKeyRelatedField(
         queryset=Company.objects.all(), required=True
     )
-    groups = serializers.PrimaryKeyRelatedField(
+    groups = PrimaryKeyRelatedField(
         queryset=Group.objects.all(), many=True, required=True
     )
 
@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_groups(self, value):
         if not value:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 "At least one group must be assigned.")
         return value
 
@@ -52,16 +52,16 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
 
         if not self.user or not getattr(self.user, "is_active", False):
-            raise serializers.ValidationError("User account is disabled.")
+            raise ValidationError("User account is disabled.")
 
         data['user_id'] = self.user.id  # type: ignore
         return data
 
 
-class ChangePasswordSerializer(serializers.Serializer):
-    current_password = serializers.CharField(required=True, write_only=True)
-    new_password = serializers.CharField(required=True, write_only=True)
-    confirm_password = serializers.CharField(required=True, write_only=True)
+class ChangePasswordSerializer(Serializer):
+    current_password = CharField(required=True, write_only=True)
+    new_password = CharField(required=True, write_only=True)
+    confirm_password = CharField(required=True, write_only=True)
 
     @property
     def user(self):
@@ -69,12 +69,12 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not hasattr(self, '_user'):
             request = self.context.get('request')
             if not request:
-                raise serializers.ValidationError(
+                raise ValidationError(
                     {"non_field_errors": ["Request context is required."]}
                 )
 
             if not hasattr(request, 'user') or not request.user.is_authenticated:
-                raise serializers.ValidationError(
+                raise ValidationError(
                     {"non_field_errors": ["Authentication required."]}
                 )
 
@@ -83,20 +83,20 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate_current_password(self, value):
         if not self.user.check_password(value):
-            raise serializers.ValidationError("Current password is incorrect.")
+            raise ValidationError("Current password is incorrect.")
         return value
 
     def validate_new_password(self, value):
         try:
             return validate_password_change(value, self.user)
-        except serializers.ValidationError:
+        except ValidationError:
             raise
         except Exception as e:
-            raise serializers.ValidationError(str(e))
+            raise ValidationError(str(e))
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 {"confirm_password": "Passwords don't match."}
             )
 

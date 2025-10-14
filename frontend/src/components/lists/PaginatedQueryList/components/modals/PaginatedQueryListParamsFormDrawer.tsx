@@ -3,11 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { type DefaultValues } from "react-hook-form";
 import Drawer from "@/components/modals/Drawer";
 import type Form from "@/components/forms/Form";
-import type { ApiListRequest } from "@/store/types/api";
+import type { ListRequestParams } from "@/store/types/api";
 import type { PaginatedQueryListBaseProps } from "../..";
 
 interface PaginatedQueryListParamsFormDrawerProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > extends ComponentProps<typeof Drawer>,
     PaginatedQueryListBaseProps<Params, Data> {
@@ -15,7 +15,7 @@ interface PaginatedQueryListParamsFormDrawerProps<
 }
 
 const PaginatedQueryListParamsFormDrawer = <
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 >({
   queryOptions,

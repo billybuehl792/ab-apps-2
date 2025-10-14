@@ -1,63 +1,51 @@
-import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from app.common.filters import CaseInsensitiveListInFilter, ListInFilter
-from app.common.views import CompanyScopedViewSet
-from config.pagination import AdjustableSizePagination
-
+from app.common.permissions import IsFromCompany
+from app.common.services.utils import get_user_company_from_request_or_raise
 from .models import WorkOrder
-from .serializers import WorkOrderReadSerializer, WorkOrderWriteSerializer
+from .serializers import WorkOrderSerializer, WorkOrderCreateSerializer, WorkOrderUpdateSerializer
+from .filters import WorkOrderFilter
 
 
-class WorkOrderFilter(django_filters.FilterSet):
-    """Filter set for WorkOrder model with client, status, and city filtering."""
+class WorkOrderViewSet(ModelViewSet):
+    """ViewSet for managing `WorkOrder` resources with filtering, search, and ordering."""
 
-    client = ListInFilter(
-        field_name="client",
-        lookup_expr="in",
-        help_text="Filter by client IDs"
-    )
-    status = ListInFilter(
-        field_name="status",
-        lookup_expr="in",
-        help_text="Filter by work order status"
-    )
-    place__city = CaseInsensitiveListInFilter(
-        field_name="place__city",
-        lookup_expr="in",
-        help_text="Filter by city names (case insensitive)"
-    )
-
-    class Meta:
-        model = WorkOrder
-        fields = ("status", "client", "place__city")
-
-
-class WorkOrderViewSet(CompanyScopedViewSet):
-    """ViewSet for managing WorkOrder resources with filtering, search, and ordering."""
-
-    queryset = WorkOrder.objects.select_related(
-        "client", "place").order_by("-created_at")
+    permission_classes = (IsAuthenticated, IsFromCompany)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = WorkOrderFilter
     search_fields = ("label", "client__first_name", "client__last_name",
                      "client__email", "place__address_short", "place__city")
     ordering_fields = ("created_at", "scheduled_date",
                        "completed_date", "cost")
-    pagination_class = AdjustableSizePagination
+
+    def get_queryset(self):  # type: ignore
+        company = get_user_company_from_request_or_raise(self.request)
+        return WorkOrder.objects.filter(
+            company=company).select_related('place').order_by("-created_at")
 
     def get_serializer_class(self):  # type: ignore
         """Return appropriate serializer class based on action."""
-        if self.action in ("list", "retrieve"):
-            return WorkOrderReadSerializer
-        return WorkOrderWriteSerializer
+        if self.action == "create":
+            return WorkOrderCreateSerializer
+        elif self.action in ("update", "partial_update"):
+            return WorkOrderUpdateSerializer
+        return WorkOrderSerializer
 
     @action(detail=False, methods=("get",))
-    def count(self, request: Request) -> Response:
-        """Return the total count of work orders in the filtered queryset."""
-        count = self.get_queryset().count()
-        return Response({"count": count})
+    def count(self, request):
+        """Return the total count of the filtered queryset."""
+        try:
+            filtered_queryset = self.filter_queryset(self.get_queryset())
+            count = filtered_queryset.count()
+            return Response({"count": count})
+        except Exception as e:
+            return Response(
+                {"error": "Failed to get count"},
+                status=HTTP_400_BAD_REQUEST
+            )

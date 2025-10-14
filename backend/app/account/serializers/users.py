@@ -1,11 +1,11 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from app.companies.serializers import CompanySerializer
 from app.account.models import CustomUser
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    groups = serializers.SerializerMethodField()
+class CustomUserSerializer(ModelSerializer):
+    groups = SerializerMethodField()
     company = CompanySerializer(read_only=True)
 
     class Meta:

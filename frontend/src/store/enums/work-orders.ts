@@ -13,7 +13,7 @@ export enum WorkOrderStatus {
 
 /** API */
 
-export enum WorkOrderApiListRequestOrdering {
+export enum WorkOrderListRequestParamsOrdering {
   Cost = "cost",
   Created = "created_at",
   ScheduledDate = "scheduled_date",

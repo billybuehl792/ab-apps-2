@@ -6,9 +6,9 @@ import ClientListParamsFormFiltersHead from "./layout/ClientListParamsFormFilter
 import ClientListParamsFormOrderingField from "./fields/ClientListParamsFormOrderingField";
 import ClientListParamsFormWorkOrdersStatusField from "./fields/ClientListParamsFormWorkOrdersStatusField";
 import ClientListParamsFormCityField from "./fields/ClientListParamsFormCityField";
-import type { ClientApiListRequest } from "@/store/types/clients";
+import type { ClientListRequestParams } from "@/store/types/clients";
 
-export type ClientListParamsFormValues = ClientApiListRequest;
+export type ClientListParamsFormValues = ClientListRequestParams;
 
 const ClientListParamsForm = (
   props: ComponentProps<typeof Form<ClientListParamsFormValues>>

@@ -4,10 +4,10 @@ import UserListCard from "@/containers/cards/UserListCard";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import { paramUtils } from "@/store/utils/params";
 import { page } from "@/store/constants/layout";
-import type { UserApiListRequest } from "@/store/types/account";
+import type { UserListRequestParams } from "@/store/types/account";
 
 const cleanParams = (params: Record<string, unknown>) =>
-  paramUtils.cleanApiListRequestParams<UserApiListRequest>(params);
+  paramUtils.cleanListRequestParamsParams<UserListRequestParams>(params);
 
 export const Route = createFileRoute("/app/dashboard/admin/users/")({
   validateSearch: cleanParams,
@@ -24,7 +24,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleParamsChange = (newParams: UserApiListRequest) =>
+  const handleParamsChange = (newParams: UserListRequestParams) =>
     navigate({
       to: "/app/dashboard/admin/users",
       search: cleanParams(newParams),

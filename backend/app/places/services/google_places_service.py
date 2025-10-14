@@ -25,6 +25,9 @@ class PlaceData:
     latitude: Optional[float] = None
     longitude: Optional[float] = None
 
+    def data(self) -> dict[str, Any]:
+        return self.__dict__
+
 
 @dataclass
 class AutocompleteSuggestionData:
@@ -33,6 +36,9 @@ class AutocompleteSuggestionData:
     address_short: str = ""
     city: str = ""
     state: str = ""
+
+    def data(self) -> dict[str, Any]:
+        return self.__dict__
 
 
 @dataclass

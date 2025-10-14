@@ -2,11 +2,11 @@ import { type JSX } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Chip, Stack, type StackProps } from "@mui/material";
 import { FilterAlt, Search, Sort } from "@mui/icons-material";
-import type { ApiListRequest } from "@/store/types/api";
+import type { ListRequestParams } from "@/store/types/api";
 import type { PaginatedQueryListBaseProps } from "../..";
 
 interface PaginatedQueryListParamsChipListProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > extends PaginatedQueryListBaseProps<Params, Data>,
     Omit<StackProps, "children"> {
@@ -14,7 +14,7 @@ interface PaginatedQueryListParamsChipListProps<
 }
 
 const PaginatedQueryListParamsChipList = <
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 >({
   queryOptions,

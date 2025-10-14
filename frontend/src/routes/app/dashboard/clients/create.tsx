@@ -5,10 +5,10 @@ import {
 } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { clientMutations } from "@/store/mutations/clients";
-import ClientForm, {
-  type ClientFormValues,
-} from "@/containers/forms/ClientForm";
 import { ClientIcons } from "@/store/constants/clients";
+import ClientCreateForm, {
+  type ClientCreateFormValues,
+} from "@/containers/forms/ClientCreateForm";
 import type { RouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/clients/create")({
@@ -30,7 +30,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleSubmit = (data: ClientFormValues) =>
+  const handleSubmit = (data: ClientCreateFormValues) =>
     createClientMutation.mutateAsync({
       ...data,
       place: data.place?.id ?? null,
@@ -40,7 +40,7 @@ function RouteComponent() {
     navigate({ to: "/app/dashboard/clients/$id", params: { id: String(id) } });
 
   return (
-    <ClientForm
+    <ClientCreateForm
       resetLabel="Cancel"
       onSubmit={handleSubmit}
       onReset={() => router.history.back()}

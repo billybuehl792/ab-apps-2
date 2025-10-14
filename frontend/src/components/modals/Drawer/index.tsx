@@ -77,7 +77,8 @@ const Drawer = ({
     <StyledDrawer
       anchor={anchor}
       disableSwipeToOpen
-      disableBackdropTransition={!iOS}
+      disableBackdropTransition={!iOS} // iOS is hosted on high-end devices. The backdrop transition can be enabled without dropping frames. The performance will be good enough.
+      disableDiscovery={iOS} // iOS has a "swipe to go back" feature that interferes with the discovery feature, so discovery has to be disabled.
       onOpen={() => onOpen?.()}
       onClose={() => onClose?.()}
       ModalProps={{ keepMounted: false }}

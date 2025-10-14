@@ -7,7 +7,7 @@ import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
 import { page } from "@/store/constants/layout";
-import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 import type { RouteLoaderData } from "@/store/types/router";
 
 const cleanParams = (params: Record<string, unknown>) => {
@@ -18,7 +18,9 @@ const cleanParams = (params: Record<string, unknown>) => {
   if (client && !(client instanceof Array)) params.client = [client];
   if (city && !(city instanceof Array)) params.place__city = [city];
 
-  return paramUtils.cleanApiListRequestParams<WorkOrderApiListRequest>(params);
+  return paramUtils.cleanListRequestParamsParams<WorkOrderListRequestParams>(
+    params
+  );
 };
 
 export const Route = createFileRoute("/app/dashboard/work-orders/")({
@@ -51,7 +53,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleParamsChange = (newParams: WorkOrderApiListRequest) =>
+  const handleParamsChange = (newParams: WorkOrderListRequestParams) =>
     navigate({
       to: "/app/dashboard/work-orders",
       search: cleanParams(newParams),

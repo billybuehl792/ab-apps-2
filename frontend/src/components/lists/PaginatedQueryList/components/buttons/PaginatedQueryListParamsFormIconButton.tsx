@@ -9,11 +9,11 @@ import {
 import { Tune } from "@mui/icons-material";
 import PaginatedQueryListParamsFormDrawer from "../modals/PaginatedQueryListParamsFormDrawer";
 import type { PaginatedQueryListBaseProps } from "../..";
-import type { ApiListRequest } from "@/store/types/api";
+import type { ListRequestParams } from "@/store/types/api";
 import { useQuery } from "@tanstack/react-query";
 
 type PaginatedQueryListParamsFormIconButtonProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > = Omit<IconButtonProps, "onClick"> &
   PaginatedQueryListBaseProps<Params, Data> &
@@ -23,7 +23,7 @@ type PaginatedQueryListParamsFormIconButtonProps<
   >;
 
 const PaginatedQueryListParamsFormIconButton = <
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 >({
   queryOptions,

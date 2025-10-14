@@ -1,4 +1,4 @@
-import type { ApiListRequest } from "./api";
+import type { ListRequestParams } from "./api";
 
 export interface Place {
   id: number;
@@ -31,7 +31,7 @@ export interface PlaceBasic {
 
 /** API */
 
-export type PlaceApiListRequest = ApiListRequest;
+export type PlaceListRequestParams = ListRequestParams;
 
 /** Google Places API */
 

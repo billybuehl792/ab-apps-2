@@ -7,7 +7,7 @@ export enum ClientOptionId {
 
 /** API */
 
-export enum ClientApiListRequestOrdering {
+export enum ClientListRequestParamsOrdering {
   FirstName = "first_name",
   LastName = "last_name",
 }

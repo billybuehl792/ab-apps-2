@@ -27,9 +27,15 @@ interface FormProps<T extends FieldValues, R = void>
   resetLabel?: ReactNode;
   hideReset?: boolean;
   hideRootError?: boolean;
-  onSubmit: (data: T) => R;
-  onSuccess?: (response: R extends Promise<infer U> ? U : R) => void;
+  renderFieldset?: (methods: UseFormReturn<T>) => ReactNode;
+  renderActions?: (methods: UseFormReturn<T>) => ReactNode;
+  onSubmit: (data: T, methods: UseFormReturn<T>) => R;
+  onSuccess?: (
+    res: R extends Promise<infer U> ? U : R,
+    methods: UseFormReturn<T>
+  ) => void;
   onReset?: (methods: UseFormReturn<T>) => void;
+  onError?: (error: unknown, methods: UseFormReturn<T>) => void;
   slotProps?: {
     container?: StackProps;
     fieldset?: StackProps;
@@ -52,9 +58,12 @@ const Form = <T extends FieldValues, R = void>({
   resetLabel = "Reset",
   hideReset,
   hideRootError,
+  renderFieldset,
+  renderActions,
   onSubmit,
   onSuccess,
   onReset,
+  onError,
   slotProps,
   ...props
 }: FormProps<T, R>) => {
@@ -75,15 +84,16 @@ const Form = <T extends FieldValues, R = void>({
   const handleSubmit = methods.handleSubmit((data) => {
     try {
       methods.clearErrors("root");
-      const res = onSubmit(data);
+      const res = onSubmit(data, methods);
       if (res instanceof Promise) {
         setIsSubmitting(true);
         res
-          .then(onSuccess)
+          .then((res) => onSuccess?.(res, methods))
           .catch(handleRootError)
           .finally(() => setIsSubmitting(false));
-      } else onSuccess?.(res as R extends Promise<infer U> ? U : R);
+      } else onSuccess?.(res as R extends Promise<infer U> ? U : R, methods);
     } catch (error) {
+      onError?.(error, methods);
       handleRootError(error);
     }
   });
@@ -111,39 +121,47 @@ const Form = <T extends FieldValues, R = void>({
         onReset={handleReset}
         {...slotProps?.container}
       >
-        <Stack spacing={2} pb={2} {...slotProps?.fieldset}>
-          {children}
-          {!!methods.formState.errors.root && (
-            <FormHelperText error>
-              {methods.formState.errors.root?.message}
-            </FormHelperText>
-          )}
-        </Stack>
-        <Stack
-          direction="row"
-          spacing={1}
-          justifyContent="end"
-          {...slotProps?.actions}
-        >
-          {!hideReset && (
-            <Button
-              type="reset"
-              color="error"
-              disabled={methods.formState.disabled}
-              {...slotProps?.resetButton}
-            >
-              {resetLabel}
-            </Button>
-          )}
-          <Button
-            type="submit"
-            disabled={methods.formState.disabled}
-            loading={isSubmitting}
-            {...slotProps?.submitButton}
+        {renderFieldset ? (
+          renderFieldset(methods)
+        ) : (
+          <Stack spacing={2} pb={2} {...slotProps?.fieldset}>
+            {children}
+            {!!methods.formState.errors.root && (
+              <FormHelperText error>
+                {methods.formState.errors.root?.message}
+              </FormHelperText>
+            )}
+          </Stack>
+        )}
+        {renderActions ? (
+          renderActions(methods)
+        ) : (
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="end"
+            {...slotProps?.actions}
           >
-            {submitLabel}
-          </Button>
-        </Stack>
+            {!hideReset && (
+              <Button
+                type="reset"
+                color="error"
+                disabled={methods.formState.disabled}
+                {...slotProps?.resetButton}
+              >
+                {resetLabel}
+              </Button>
+            )}
+            <Button
+              type="submit"
+              disabled={methods.formState.disabled}
+              loading={isSubmitting}
+              {...slotProps?.submitButton}
+            >
+              {submitLabel}
+            </Button>
+          </Stack>
+        )}
       </Stack>
     </FormProvider>
   );

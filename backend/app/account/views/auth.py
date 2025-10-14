@@ -1,12 +1,14 @@
 import os
 import logging
 
-from rest_framework import permissions, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+
 from app.account.models import CustomUser
 from app.account.serializers.auth import MyTokenObtainPairSerializer
 from app.account.serializers.auth import ChangePasswordSerializer
@@ -31,8 +33,8 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
         if not isinstance(response.data, dict):
             response.data = {'detail': 'Invalid response format.'}
-            response.status_code = status.HTTP_400_BAD_REQUEST
-        elif response.status_code == status.HTTP_200_OK:
+            response.status_code = HTTP_400_BAD_REQUEST
+        elif response.status_code == HTTP_200_OK:
             access_token = str(response.data.get("access"))
             refresh_token = str(response.data.get("refresh"))
             cookie_secure = os.environ.get("COOKIE_SECURE", "False") == "True"
@@ -42,7 +44,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 if not me_id:
                     response.data = {
                         'detail': 'User ID not found in response.'}
-                    response.status_code = status.HTTP_400_BAD_REQUEST
+                    response.status_code = HTTP_400_BAD_REQUEST
                     return response
 
                 me = CustomUser.objects.get(id=me_id)
@@ -63,11 +65,11 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             except CustomUser.DoesNotExist:
                 logger.warning(f"User with ID {me_id} not found during login")
                 response.data = {'detail': 'User not found.'}
-                response.status_code = status.HTTP_400_BAD_REQUEST
+                response.status_code = HTTP_400_BAD_REQUEST
             except Exception as e:
                 logger.error(f"Error occurred during login: {e}")
                 response.data = {'detail': 'An error occurred during login.'}
-                response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+                response.status_code = HTTP_500_INTERNAL_SERVER_ERROR
 
         return response
 
@@ -80,20 +82,20 @@ class CookieTokenRefreshView(APIView):
     """
 
     authentication_classes = []
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         refresh_token = request.COOKIES.get(REFRESH_TOKEN_COOKIE_NAME)
 
         if not refresh_token:
-            return Response({"detail": "Refresh token missing."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "Refresh token missing."}, status=HTTP_401_UNAUTHORIZED)
 
         try:
             refresh = RefreshToken(refresh_token)
             user_id = refresh.payload.get('user_id')
 
             if not user_id:
-                return Response({"detail": "Invalid token payload."}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"detail": "Invalid token payload."}, status=HTTP_401_UNAUTHORIZED)
 
             try:
                 me = CustomUser.objects.get(id=user_id)
@@ -104,11 +106,11 @@ class CookieTokenRefreshView(APIView):
             except CustomUser.DoesNotExist:
                 logger.warning(
                     f"User with ID {user_id} not found during token refresh")
-                return Response({"detail": "User not found."}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"detail": "User not found."}, status=HTTP_401_UNAUTHORIZED)
 
         except Exception as e:
             logger.error(f"Error during token refresh: {e}")
-            return Response({"detail": "Invalid refresh token."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "Invalid refresh token."}, status=HTTP_401_UNAUTHORIZED)
 
 
 class CookieTokenRevokeView(APIView):
@@ -118,11 +120,11 @@ class CookieTokenRevokeView(APIView):
     """
 
     authentication_classes = []
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         response = Response({"detail": "Signed out"},
-                            status=status.HTTP_200_OK)
+                            status=HTTP_200_OK)
         response.delete_cookie(REFRESH_TOKEN_COOKIE_NAME)
 
         return response
@@ -136,7 +138,7 @@ class ChangePasswordView(APIView):
     - Updates user password
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(
@@ -149,20 +151,20 @@ class ChangePasswordView(APIView):
                     f"Password changed successfully for user {request.user.username}")
                 return Response(
                     {"detail": "Password changed successfully."},
-                    status=status.HTTP_200_OK
+                    status=HTTP_200_OK
                 )
             except Exception as e:
                 logger.error(
                     f"Error changing password for user {request.user.username}: {e}")
                 return Response(
                     {"detail": "An error occurred while changing password."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    status=HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def me(request):
     return Response(CustomUserSerializer(request.user).data)

@@ -7,7 +7,7 @@ import ClientListParamsForm from "@/containers/forms/ClientListParamsForm";
 import CustomLink from "@/components/links/CustomLink";
 import { paramUtils } from "@/store/utils/params";
 import { page } from "@/store/constants/layout";
-import type { ClientApiListRequest } from "@/store/types/clients";
+import type { ClientListRequestParams } from "@/store/types/clients";
 import type { RouteLoaderData } from "@/store/types/router";
 
 const cleanParams = (params: Record<string, unknown>) => {
@@ -17,7 +17,9 @@ const cleanParams = (params: Record<string, unknown>) => {
   if (workOrdersStatus && !(workOrdersStatus instanceof Array))
     params.work_orders__status = [workOrdersStatus];
 
-  return paramUtils.cleanApiListRequestParams<ClientApiListRequest>(params);
+  return paramUtils.cleanListRequestParamsParams<ClientListRequestParams>(
+    params
+  );
 };
 
 export const Route = createFileRoute("/app/dashboard/clients/")({
@@ -48,7 +50,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleParamsChange = (newParams: ClientApiListRequest) =>
+  const handleParamsChange = (newParams: ClientListRequestParams) =>
     navigate({ to: "/app/dashboard/clients", search: cleanParams(newParams) });
 
   return (

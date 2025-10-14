@@ -1,18 +1,16 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.models import TimeStampedModel
+from app.documents.models import Document
 from app.places.models import Place
 from app.companies.models import Company
 
 
 class Client(TimeStampedModel):
     company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        related_name="clients",
-        editable=False,
-    )
+        Company, on_delete=models.CASCADE, related_name="clients")
     full_name = models.CharField(max_length=511, editable=False)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -26,6 +24,7 @@ class Client(TimeStampedModel):
         blank=True,
         related_name="clients",
     )
+    documents = GenericRelation(Document, related_query_name='client')
 
     class Meta:  # type: ignore
         constraints = [
@@ -36,12 +35,7 @@ class Client(TimeStampedModel):
         ]
         verbose_name = 'Client'
         verbose_name_plural = 'Clients'
-        ordering = ['last_name', 'first_name']
-
-    def clean(self):
-        """Validate model data before saving."""
-        super().clean()
-        self._clean_names()
+        ordering = ('last_name', 'first_name')
 
     def _clean_names(self):
         """Clean and validate name fields."""
@@ -55,13 +49,6 @@ class Client(TimeStampedModel):
                     })
                 setattr(self, field_name, cleaned_value)
 
-    def save(self, *args, **kwargs):
-        """Override save to auto-populate computed fields."""
-        self.full_clean()
-        self._normalize_names()
-        self._generate_full_name()
-        super().save(*args, **kwargs)
-
     def _normalize_names(self):
         """Normalize names to title case."""
         for field_name in ['first_name', 'last_name']:
@@ -73,6 +60,26 @@ class Client(TimeStampedModel):
         """Generate full name from first and last name."""
         names = [name for name in [self.first_name, self.last_name] if name]
         self.full_name = ' '.join(names)
+
+    def clean(self):
+        """Validate model data before saving."""
+        super().clean()
+        self._clean_names()
+
+    def save(self, *args, **kwargs):
+        """Override save to auto-populate computed fields."""
+        self.full_clean()
+        self._normalize_names()
+        self._generate_full_name()
+        super().save(*args, **kwargs)
+
+    def add_document(self, **kwargs):
+        """Helper method to create a document for this client."""
+        return Document.objects.create(
+            company=self.company,
+            content_object=self,
+            **kwargs
+        )
 
     def __str__(self):
         return f"{self.full_name} <{self.email}>"

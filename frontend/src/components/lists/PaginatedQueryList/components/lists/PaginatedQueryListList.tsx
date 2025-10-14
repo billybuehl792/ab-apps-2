@@ -10,10 +10,10 @@ import {
 import StatusCard from "@/components/cards/StatusCard";
 import { sxUtils } from "@/store/utils/sx";
 import type { PaginatedQueryListBaseProps } from "../..";
-import type { ApiListRequest, ApiListResponse } from "@/store/types/api";
+import type { ListRequestParams, ListResponse } from "@/store/types/api";
 
 interface PaginatedQueryListListProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > extends PaginatedQueryListBaseProps<Params, Data>,
     Omit<StackProps, "children"> {
@@ -23,7 +23,7 @@ interface PaginatedQueryListListProps<
     statusCard?:
       | ComponentProps<typeof StatusCard>
       | ((
-          query: UseQueryResult<ApiListResponse<Data>, Error>
+          query: UseQueryResult<ListResponse<Data>, Error>
         ) => ComponentProps<typeof StatusCard>);
     pagination?: Omit<
       PaginationProps,
@@ -34,7 +34,10 @@ interface PaginatedQueryListListProps<
 
 const DEFAULT_PAGE_SIZE = 20;
 
-const PaginatedQueryListList = <Params extends ApiListRequest, Data = unknown>({
+const PaginatedQueryListList = <
+  Params extends ListRequestParams,
+  Data = unknown,
+>({
   queryOptions,
   baseParams,
   onParamsChange,

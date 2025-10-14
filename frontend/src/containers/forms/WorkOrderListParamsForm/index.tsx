@@ -7,9 +7,9 @@ import WorkOrderListParamsFormOrderingField from "./fields/WorkOrderListParamsFo
 import WorkOrderListParamsFormStatusField from "./fields/WorkOrderListParamsFormStatusField";
 import WorkOrderListParamsFormClientField from "./fields/WorkOrderListParamsFormClientField";
 import WorkOrderListParamsFormCityField from "./fields/WorkOrderListParamsFormCityField";
-import type { WorkOrderApiListRequest } from "@/store/types/work-orders";
+import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 
-export type WorkOrderListParamsFormValues = WorkOrderApiListRequest;
+export type WorkOrderListParamsFormValues = WorkOrderListRequestParams;
 
 const WorkOrderListParamsForm = (
   props: ComponentProps<typeof Form<WorkOrderListParamsFormValues>>

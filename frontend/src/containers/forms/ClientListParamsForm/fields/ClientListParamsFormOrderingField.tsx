@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import { ClientApiListRequestOrdering } from "@/store/enums/clients";
+import { ClientListRequestParamsOrdering } from "@/store/enums/clients";
 import type { ClientListParamsFormValues } from "..";
 
 const ClientListParamsFormOrderingField = () => {
@@ -26,14 +26,16 @@ const ClientListParamsFormOrderingField = () => {
             control={<Radio />}
             sx={{ color: "text.disabled" }}
           />
-          {Object.entries(ClientApiListRequestOrdering).map(([key, value]) => (
-            <FormControlLabel
-              key={key}
-              value={value}
-              label={value.snakeCaseToTitleCase()}
-              control={<Radio />}
-            />
-          ))}
+          {Object.entries(ClientListRequestParamsOrdering).map(
+            ([key, value]) => (
+              <FormControlLabel
+                key={key}
+                value={value}
+                label={value.snakeCaseToTitleCase()}
+                control={<Radio />}
+              />
+            )
+          )}
         </RadioGroup>
       )}
     />

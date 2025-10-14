@@ -4,10 +4,10 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import PaginatedQueryListParamsChipList from "../lists/PaginatedQueryListParamsChipList";
 import PaginatedQueryListParamsFormIconButton from "../buttons/PaginatedQueryListParamsFormIconButton";
 import type { PaginatedQueryListBaseProps } from "../..";
-import type { ApiListRequest } from "@/store/types/api";
+import type { ListRequestParams } from "@/store/types/api";
 
 interface PaginatedQueryListHeaderProps<
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 > extends PaginatedQueryListBaseProps<Params, Data>,
     Omit<StackProps, "children"> {
@@ -34,7 +34,7 @@ interface PaginatedQueryListHeaderProps<
 }
 
 const PaginatedQueryListHeader = <
-  Params extends ApiListRequest,
+  Params extends ListRequestParams,
   Data = unknown,
 >({
   queryOptions,

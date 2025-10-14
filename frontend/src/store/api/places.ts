@@ -1,10 +1,10 @@
 import api from "../config/api";
 import { placeEndpoints } from "../constants/places";
-import type { ApiListResponse } from "../types/api";
-import type { Place, PlaceApiListRequest } from "../types/places";
+import type { ListResponse } from "../types/api";
+import type { Place, PlaceListRequestParams } from "../types/places";
 
-const list = (params?: PlaceApiListRequest) =>
-  api.get<ApiListResponse<Place>>(placeEndpoints.places(), { params });
+const list = (params?: PlaceListRequestParams) =>
+  api.get<ListResponse<Place>>(placeEndpoints.places(), { params });
 
 const detail = (id: Place["id"]) =>
   api.get<Place>(placeEndpoints.places.detail(id));

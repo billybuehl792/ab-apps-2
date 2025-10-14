@@ -1,10 +1,10 @@
 from typing import Any, List
 
-import django_filters
+from django_filters import BaseInFilter, CharFilter
 from django.db.models import Q, QuerySet
 
 
-class ListInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+class ListInFilter(BaseInFilter, CharFilter):
     """Filter that accepts multiple values for a field via query parameters."""
 
     def filter(self, qs: QuerySet, value: Any) -> QuerySet:
