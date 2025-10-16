@@ -11,13 +11,13 @@ import logging
 from app.places.services.place_service import PlaceService
 from app.common.services.utils import get_user_company_from_request_or_raise
 from .models import Place
-from .serializers import PlaceSerializer
+from .serializers import PlaceReadSerializer
 
 logger = logging.getLogger(__name__)
 
 
 class PlaceViewSet(ModelViewSet):
-    serializer_class = PlaceSerializer
+    serializer_class = PlaceReadSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("country", "state", "city", "postal_code")
     search_fields = ("address_full", "address_short", "place_id")

@@ -90,11 +90,15 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleUpdateClient = (values: ClientFormValues) =>
+  const handleUpdateClient = (data: ClientFormValues) =>
     updateClientMutation.mutateAsync({
-      ...values,
       id: client.id,
-      place: values.place?.google_place_id ?? null,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      phone_primary: data.phonePrimary,
+      phone_secondary: data.phoneSecondary,
+      place: data.place,
     });
 
   const handleOnClose = () =>
@@ -135,7 +139,14 @@ function RouteComponent() {
         open={isEditing}
         title={client.full_name}
         form={{
-          values: client,
+          values: {
+            firstName: client.first_name,
+            lastName: client.last_name,
+            email: client.email,
+            phonePrimary: client.phone_primary,
+            phoneSecondary: client.phone_secondary,
+            place: client.place,
+          },
           onSubmit: handleUpdateClient,
           onSuccess: handleOnClose,
         }}

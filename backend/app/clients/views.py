@@ -1,18 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from .models import Client
-from .serializers import ClientSerializer, ClientCreateSerializer, ClientUpdateSerializer
-from .filters import ClientFilter
 from app.common.permissions import IsFromCompany
 from app.common.services.utils import get_user_company_from_request_or_raise
+from .models import Client
+from .serializers import ClientReadSerializer, ClientWriteSerializer
+from .filters import ClientFilter
 
 
 class ClientViewSet(ModelViewSet):
@@ -31,56 +29,9 @@ class ClientViewSet(ModelViewSet):
             company=company).select_related('place').order_by("-created_at")
 
     def get_serializer_class(self):  # type: ignore[override]
-        if self.action == 'create':
-            return ClientCreateSerializer
-        elif self.action in ('update', 'partial_update'):
-            return ClientUpdateSerializer
-        return ClientSerializer
-
-    @action(detail=True, methods=("post",), url_path="assign-work-order")
-    def assign_work_order(self, request: Request, pk=None):
-        """Assign a `WorkOrder` to this `Client`."""
-        from app.work_orders.models import WorkOrder
-        from app.work_orders.serializers import WorkOrderSerializer
-
-        client = self.get_object()
-        work_order_id = request.data.get('work_order_id')
-
-        if not work_order_id:
-            return Response(
-                {"error": "work_order_id is required"},
-                status=HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            work_order = get_object_or_404(
-                WorkOrder.objects.filter(company=client.company),
-                id=work_order_id
-            )
-
-            if work_order.client and work_order.client != client:
-                return Response(
-                    {"error": f"Work order is already assigned to {work_order.client}"},
-                    status=HTTP_400_BAD_REQUEST
-                )
-
-            work_order.client = client
-            work_order.save(update_fields=['client'])
-
-            return Response(
-                {
-                    "message": "Work order assigned successfully",
-                    "client_id": client.id,
-                    "work_order": WorkOrderSerializer(work_order).data
-                },
-                status=HTTP_200_OK
-            )
-
-        except ValueError:
-            return Response(
-                {"error": "Invalid work_order_id format"},
-                status=HTTP_400_BAD_REQUEST
-            )
+        if self.action in ("list", "retrieve", "count"):
+            return ClientReadSerializer
+        return ClientWriteSerializer
 
     @action(detail=False, methods=("get",))
     def count(self, request):

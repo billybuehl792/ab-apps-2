@@ -6,12 +6,18 @@ import {
   CircularProgress,
   TextField,
   type TextFieldProps,
+  Typography,
 } from "@mui/material";
 import { placeQueries } from "@/store/queries/places";
 import PlaceMenuItem from "@/containers/menu-items/PlaceMenuItem";
-import type { Place } from "@/store/types/places";
+import type { PlaceBasic } from "@/store/types/places";
 
-type PlaceAutocompleteBaseProps = AutocompleteProps<Place, false, false, false>;
+type PlaceAutocompleteBaseProps = AutocompleteProps<
+  PlaceBasic,
+  false,
+  false,
+  false
+>;
 
 interface PlaceAutocompleteFieldProps
   extends Omit<
@@ -23,6 +29,7 @@ interface PlaceAutocompleteFieldProps
     | "isOptionEqualToValue"
     | "getOptionKey"
     | "slotProps"
+    | "onChange"
   > {
   inputRef?: TextFieldProps["inputRef"];
   name?: string;
@@ -31,6 +38,7 @@ interface PlaceAutocompleteFieldProps
   error?: boolean;
   helperText?: string;
   required?: boolean;
+  onChange: (place: PlaceBasic | null) => void;
   slotProps?: {
     input?: TextFieldProps;
   } & PlaceAutocompleteBaseProps["slotProps"];
@@ -44,6 +52,7 @@ const PlaceAutocompleteField = ({
   error,
   helperText,
   required,
+  onChange,
   slotProps: { input: inputProps, ...slotProps } = {},
   ...props
 }: PlaceAutocompleteFieldProps) => {
@@ -66,6 +75,13 @@ const PlaceAutocompleteField = ({
       isOptionEqualToValue={(option, value) =>
         option.google_place_id === value.google_place_id
       }
+      noOptionsText={
+        placeListQuery.isError ? (
+          <Typography color="error">Error retrieving places</Typography>
+        ) : (
+          "No places found"
+        )
+      }
       slotProps={slotProps}
       {...props}
       renderInput={(params) => (
@@ -75,7 +91,7 @@ const PlaceAutocompleteField = ({
           inputRef={inputRef}
           placeholder={placeholder}
           required={required}
-          error={error}
+          error={error || placeListQuery.isError}
           helperText={helperText}
           {...inputProps}
           {...params}
@@ -99,6 +115,7 @@ const PlaceAutocompleteField = ({
       renderOption={({ key, ...props }, option) => (
         <PlaceMenuItem key={key} place={option} {...props} />
       )}
+      onChange={(_, newValue) => onChange(newValue)}
     />
   );
 };

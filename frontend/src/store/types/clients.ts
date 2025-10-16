@@ -1,24 +1,9 @@
 import { ClientListRequestParamsOrdering } from "../enums/clients";
 import { WorkOrderStatus } from "../enums/work-orders";
 import type { ListRequestParams } from "./api";
-import type { Place, PlaceBasic } from "./places";
+import type { PlaceBasic, PlaceWriteable } from "./places";
 
 export interface Client {
-  id: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_primary: string;
-  phone_secondary: string | null;
-  place: Place | null;
-  work_orders_count: number;
-  documents_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ClientDetail {
   id: number;
   full_name: string;
   first_name: string;
@@ -38,46 +23,28 @@ export interface ClientBasic {
   full_name: string;
   email: string;
   phone_primary: string;
+  place: PlaceBasic | null;
 }
 
 export interface ClientWriteable {
   id: number;
   first_name: string;
   last_name: string;
+  full_name: string;
   email: string;
   phone_primary: string;
   phone_secondary?: string | null;
-  place: number | string | null;
+  place?: PlaceWriteable | null;
 }
 
 /** API */
 
-export interface ClientCreateBody {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_primary: string;
-  phone_secondary?: string | null;
-  place?: string | null;
-  work_orders?: number[];
-  documents?: number[];
-}
+export type ClientCreateBody = Omit<ClientWriteable, "id" | "full_name">;
 
-export interface ClientUpdateBody {
-  id: number;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  phone_primary?: string;
-  phone_secondary?: string | null;
-  place?: string | null;
-}
-
-type ClientListRequestParamsFilters = {
-  work_orders__status?: WorkOrderStatus[];
-  place__city?: string[];
-};
+export type ClientUpdateBody = Partial<ClientCreateBody> & { id: number };
 
 export type ClientListRequestParams =
-  ListRequestParams<ClientListRequestParamsOrdering> &
-    ClientListRequestParamsFilters;
+  ListRequestParams<ClientListRequestParamsOrdering> & {
+    work_orders__status?: WorkOrderStatus[];
+    place__city?: string[];
+  };

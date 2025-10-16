@@ -1,33 +1,129 @@
 import { type ComponentProps } from "react";
-import { Stack } from "@mui/material";
+import { Controller } from "react-hook-form";
+import { Stack, TextField } from "@mui/material";
 import Form from "@/components/forms/Form";
-import ClientFormFirstNameField from "./fields/ClientFormFirstNameField";
-import ClientFormLastNameField from "./fields/ClientFormLastNameField";
-import ClientFormEmailField from "./fields/ClientFormEmailField";
-import ClientFormPhonePrimaryField from "./fields/ClientFormPhonePrimaryField";
-import ClientFormPhoneSecondaryField from "./fields/ClientFormPhoneSecondaryField";
-import ClientFormPlaceField from "./fields/ClientFormPlaceField";
-import type { Client } from "@/store/types/clients";
+import EmailField from "@/components/fields/EmailField";
+import PhoneField from "@/components/fields/PhoneField";
+import PlaceAutocompleteField from "@/containers/fields/PlaceAutocompleteField";
+import { RegexPattern } from "@/store/constants/regex";
+import type { PlaceBasic } from "@/store/types/places";
 
-export type ClientFormValues = Omit<Client, "id">;
+export interface ClientFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phonePrimary: string;
+  phoneSecondary: string | null;
+  place: PlaceBasic | null;
+}
 
 type ClientFormProps<T = void> = Omit<
   ComponentProps<typeof Form<ClientFormValues, T>>,
-  "children"
+  "children" | "renderFields"
 >;
+
+const DEFAULT_VALUES: ClientFormValues = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phonePrimary: "",
+  phoneSecondary: "",
+  place: null,
+};
 
 const ClientForm = <T,>(props: ClientFormProps<T>) => {
   return (
-    <Form {...props}>
-      <Stack direction="row" spacing={1}>
-        <ClientFormFirstNameField />
-        <ClientFormLastNameField />
-      </Stack>
-      <ClientFormEmailField />
-      <ClientFormPhonePrimaryField />
-      <ClientFormPhoneSecondaryField />
-      <ClientFormPlaceField />
-    </Form>
+    <Form
+      defaultValues={DEFAULT_VALUES}
+      onReset={(methods) => methods.reset(DEFAULT_VALUES)}
+      renderFieldset={(methods) => (
+        <Stack spacing={2} pb={2} {...props.slotProps?.fieldset}>
+          <Stack direction="row" spacing={1}>
+            <TextField
+              label="First Name"
+              fullWidth
+              required
+              error={!!methods.formState.errors.firstName}
+              helperText={methods.formState.errors.firstName?.message}
+              {...methods.register("firstName", {
+                required: "This field is required",
+                maxLength: {
+                  value: 100,
+                  message: "Max length is 100",
+                },
+              })}
+            />
+            <TextField
+              label="Last Name"
+              fullWidth
+              required
+              error={!!methods.formState.errors.lastName}
+              helperText={methods.formState.errors.lastName?.message}
+              {...methods.register("lastName", {
+                required: "This field is required",
+                maxLength: {
+                  value: 100,
+                  message: "Max length is 100",
+                },
+              })}
+            />
+          </Stack>
+          <EmailField
+            label="Email"
+            fullWidth
+            required
+            error={!!methods.formState.errors.email}
+            helperText={methods.formState.errors.email?.message}
+            {...methods.register("email", {
+              required: "This field is required",
+              pattern: {
+                value: RegexPattern.Email,
+                message: "Invalid email",
+              },
+            })}
+          />
+          <PhoneField
+            label="Phone"
+            fullWidth
+            required
+            error={!!methods.formState.errors.phonePrimary}
+            helperText={methods.formState.errors.phonePrimary?.message}
+            {...methods.register("phonePrimary", {
+              required: "This field is required",
+              pattern: {
+                value: RegexPattern.Phone,
+                message: "Invalid phone number",
+              },
+            })}
+          />
+          <PhoneField
+            label="Phone Secondary"
+            fullWidth
+            error={!!methods.formState.errors.phoneSecondary}
+            helperText={methods.formState.errors.phoneSecondary?.message}
+            {...methods.register("phoneSecondary", {
+              pattern: {
+                value: RegexPattern.Phone,
+                message: "Invalid phone number",
+              },
+            })}
+          />
+          <Controller
+            name="place"
+            control={methods.control}
+            render={({ field, formState }) => (
+              <PlaceAutocompleteField
+                label="Address"
+                error={!!formState.errors.place}
+                helperText={formState.errors.place?.message}
+                {...field}
+              />
+            )}
+          />
+        </Stack>
+      )}
+      {...props}
+    />
   );
 };
 

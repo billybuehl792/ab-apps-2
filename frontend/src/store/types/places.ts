@@ -29,6 +29,11 @@ export interface PlaceBasic {
   state: string;
 }
 
+export interface PlaceWriteable {
+  id: number;
+  google_place_id: string;
+}
+
 /** API */
 
 export type PlaceListRequestParams = ListRequestParams;

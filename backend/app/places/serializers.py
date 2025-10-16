@@ -5,14 +5,24 @@ from .services.place_service import PlaceService
 from app.common.services.utils import get_user_company_from_context_or_raise
 
 
-class PlaceSerializer(ModelSerializer):
-    """Serializer for Place model excluding company field."""
+class PlaceReadSerializer(ModelSerializer):
+    """Serializer for Place model."""
 
     class Meta:
         model = Place
         fields = ("id", "google_place_id", "address_full", "address_short",
                   "country", "state", "city", "postal_code",
                   "latitude", "longitude", "created_at", "updated_at")
+        read_only_fields = fields
+
+
+class PlaceReadBasicSerializer(ModelSerializer):
+    """Serializer for Place model with basic fields."""
+
+    class Meta:
+        model = Place
+        fields = ("id", "google_place_id",
+                  "address_full", "address_short", "city", "state")
         read_only_fields = fields
 
 

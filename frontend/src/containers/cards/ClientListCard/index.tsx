@@ -10,7 +10,6 @@ import {
 import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import Metadata from "@/components/lists/Metadata";
-import WorkOrderChip from "@/containers/chips/WorkOrderChip";
 import { ClientIcons } from "@/store/constants/clients";
 import type { Client } from "@/store/types/clients";
 
@@ -35,19 +34,8 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
     {
       id: "workOrders",
       label: "Work Orders",
-      render: Boolean(client.work_orders.length),
-      value: (
-        <Stack spacing={0.5} direction="row" useFlexGap flexWrap="wrap">
-          {client.work_orders.map((workOrder) => (
-            <WorkOrderChip
-              key={workOrder.id}
-              workOrder={workOrder}
-              size="xxs"
-              variant="outlined"
-            />
-          ))}
-        </Stack>
-      ),
+      render: Boolean(client.work_orders_count),
+      value: String(client.work_orders_count),
     },
   ];
 
