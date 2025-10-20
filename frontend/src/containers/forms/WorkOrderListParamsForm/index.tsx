@@ -7,9 +7,18 @@ import WorkOrderListParamsFormOrderingField from "./fields/WorkOrderListParamsFo
 import WorkOrderListParamsFormStatusField from "./fields/WorkOrderListParamsFormStatusField";
 import WorkOrderListParamsFormClientField from "./fields/WorkOrderListParamsFormClientField";
 import WorkOrderListParamsFormCityField from "./fields/WorkOrderListParamsFormCityField";
-import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
+import {
+  WorkOrderListRequestParamsOrdering,
+  WorkOrderStatus,
+} from "@/store/enums/work-orders";
+import type { Client } from "@/store/types/clients";
 
-export type WorkOrderListParamsFormValues = WorkOrderListRequestParams;
+export type WorkOrderListParamsFormValues = {
+  ordering: WorkOrderListRequestParamsOrdering | null;
+  statuses: WorkOrderStatus[];
+  cities: string[];
+  clients: Array<Client>;
+};
 
 const WorkOrderListParamsForm = (
   props: ComponentProps<typeof Form<WorkOrderListParamsFormValues>>
@@ -18,7 +27,7 @@ const WorkOrderListParamsForm = (
     <Form {...props}>
       {/* Ordering */}
       <WorkOrderListParamsFormOrderingHead />
-      <Stack spacing={2}>
+      <Stack>
         <WorkOrderListParamsFormOrderingField />
       </Stack>
 

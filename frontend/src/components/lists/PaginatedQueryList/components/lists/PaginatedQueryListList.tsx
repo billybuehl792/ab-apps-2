@@ -15,10 +15,11 @@ import type { ListRequestParams, ListResponse } from "@/store/types/api";
 interface PaginatedQueryListListProps<
   Params extends ListRequestParams,
   Data = unknown,
-> extends PaginatedQueryListBaseProps<Params, Data>,
-    Omit<StackProps, "children"> {
+> extends Omit<StackProps, "children"> {
+  queryOptions: PaginatedQueryListBaseProps<Params, Data>["queryOptions"];
   renderItem: (item: Data) => JSX.Element;
   renderSkeletonItem?: (index: number) => JSX.Element;
+  onPageChange: (page: number) => void;
   slotProps?: {
     statusCard?:
       | ComponentProps<typeof StatusCard>
@@ -39,8 +40,7 @@ const PaginatedQueryListList = <
   Data = unknown,
 >({
   queryOptions,
-  baseParams,
-  onParamsChange,
+  onPageChange,
   renderItem,
   renderSkeletonItem,
   slotProps,
@@ -57,11 +57,6 @@ const PaginatedQueryListList = <
 
   const query = useQuery(queryOptions);
 
-  /** Callbacks */
-
-  const handleParamsChange = (newParams: Params) =>
-    onParamsChange({ ...newParams, ...baseParams });
-
   /** Effects */
 
   useEffect(() => {
@@ -69,9 +64,8 @@ const PaginatedQueryListList = <
   }, [query.data, pageSize]);
 
   useEffect(() => {
-    if (query.isError && page > 1)
-      onParamsChange({ ...params, ...baseParams, page: page - 1 });
-  }, [query.isError, onParamsChange, params, baseParams, page]);
+    if (query.isError && page > 1) onPageChange(page - 1);
+  }, [query.isError, onPageChange, params, page]);
 
   return (
     <Stack spacing={1} {...props}>
@@ -102,7 +96,7 @@ const PaginatedQueryListList = <
           })}
           disabled={query.isLoading}
           page={page}
-          onChange={(_event, page) => handleParamsChange({ ...params, page })}
+          onChange={(_event, page) => onPageChange(page)}
           {...slotProps?.pagination}
           sx={[
             { alignSelf: "center" },

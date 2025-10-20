@@ -19,7 +19,7 @@ export interface ClientFormValues {
 
 type ClientFormProps<T = void> = Omit<
   ComponentProps<typeof Form<ClientFormValues, T>>,
-  "children" | "renderFields"
+  "renderFields"
 >;
 
 const DEFAULT_VALUES: ClientFormValues = {
@@ -35,9 +35,8 @@ const ClientForm = <T,>(props: ClientFormProps<T>) => {
   return (
     <Form
       defaultValues={DEFAULT_VALUES}
-      onReset={(methods) => methods.reset(DEFAULT_VALUES)}
-      renderFieldset={(methods) => (
-        <Stack spacing={2} pb={2} {...props.slotProps?.fieldset}>
+      renderFields={(methods) => (
+        <>
           <Stack direction="row" spacing={1}>
             <TextField
               label="First Name"
@@ -47,10 +46,7 @@ const ClientForm = <T,>(props: ClientFormProps<T>) => {
               helperText={methods.formState.errors.firstName?.message}
               {...methods.register("firstName", {
                 required: "This field is required",
-                maxLength: {
-                  value: 100,
-                  message: "Max length is 100",
-                },
+                maxLength: { value: 100, message: "Max length is 100" },
               })}
             />
             <TextField
@@ -61,10 +57,7 @@ const ClientForm = <T,>(props: ClientFormProps<T>) => {
               helperText={methods.formState.errors.lastName?.message}
               {...methods.register("lastName", {
                 required: "This field is required",
-                maxLength: {
-                  value: 100,
-                  message: "Max length is 100",
-                },
+                maxLength: { value: 100, message: "Max length is 100" },
               })}
             />
           </Stack>
@@ -76,10 +69,7 @@ const ClientForm = <T,>(props: ClientFormProps<T>) => {
             helperText={methods.formState.errors.email?.message}
             {...methods.register("email", {
               required: "This field is required",
-              pattern: {
-                value: RegexPattern.Email,
-                message: "Invalid email",
-              },
+              pattern: { value: RegexPattern.Email, message: "Invalid email" },
             })}
           />
           <PhoneField
@@ -120,7 +110,7 @@ const ClientForm = <T,>(props: ClientFormProps<T>) => {
               />
             )}
           />
-        </Stack>
+        </>
       )}
       {...props}
     />

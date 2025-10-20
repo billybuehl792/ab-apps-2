@@ -1,36 +1,43 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Controller, useFormContext } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
 import { clientQueries } from "@/store/queries/clients";
 import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
 import ClientChip from "@/containers/chips/ClientChip";
-import type { WorkOrderFormValues } from "..";
+import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderFormClientField = () => {
+const WorkOrderListParamsFormClientsField = () => {
+  const [enabled, setEnabled] = useState(false);
   const [search, setSearch] = useDebounce("", 600);
 
   /** Values */
 
-  const methods = useFormContext<WorkOrderFormValues>();
+  const methods = useFormContext<WorkOrderListParamsFormValues>();
 
   /** Queries */
 
-  const clientListQuery = useQuery(clientQueries.list({ search }));
+  const clientListQuery = useQuery({
+    ...clientQueries.list({ search }),
+    enabled,
+  });
 
   return (
     <Controller
-      name="client"
+      name="clients"
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value ?? null}
+          value={field.value}
+          multiple
           options={clientListQuery.data?.results ?? []}
           disabled={field.disabled}
           loading={clientListQuery.isLoading}
-          getOptionLabel={(option) => option.full_name}
           getOptionKey={(option) => option.id}
+          getOptionLabel={(option) => String(option)}
           includeInputInList
+          disableCloseOnSelect
           filterOptions={(options) => options}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           onInputChange={(_, value) => setSearch(value)}
@@ -39,9 +46,9 @@ const WorkOrderFormClientField = () => {
               label="Client"
               name={field.name}
               inputRef={field.ref}
-              {...(formState.errors.client && {
+              {...(formState.errors.clients && {
                 error: true,
-                helperText: formState.errors.client.message,
+                helperText: formState.errors.clients.message,
               })}
               {...params}
               onBlur={field.onBlur}
@@ -60,12 +67,24 @@ const WorkOrderFormClientField = () => {
               }}
             />
           )}
-          renderOption={({ key, ...props }, option) => (
-            <ClientMenuItem key={key} client={option} {...props} />
+          renderOption={({ key: _key, ...props }, option) => (
+            <ClientMenuItem key={option.id} client={option} {...props} />
           )}
-          renderValue={(selected, getItemProps) => (
-            <ClientChip client={selected} {...getItemProps()} />
-          )}
+          renderValue={(value, getItemProps) =>
+            value.map((item, index) => {
+              const { key, ...itemProps } = getItemProps({ index });
+              return (
+                <ClientChip
+                  key={key}
+                  client={item}
+                  size="small"
+                  {...itemProps}
+                />
+              );
+            })
+          }
+          onOpen={() => setEnabled(true)}
+          onClose={() => setEnabled(false)}
           onChange={(_, value) => field.onChange(value)}
         />
       )}
@@ -73,4 +92,4 @@ const WorkOrderFormClientField = () => {
   );
 };
 
-export default WorkOrderFormClientField;
+export default WorkOrderListParamsFormClientsField;

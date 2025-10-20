@@ -1,9 +1,4 @@
-import {
-  type ReactNode,
-  type FormEventHandler,
-  useState,
-  PropsWithChildren,
-} from "react";
+import { type ReactNode, type FormEventHandler, useState } from "react";
 import {
   FormProvider,
   useForm,
@@ -20,14 +15,13 @@ import {
 } from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
 
-interface FormProps<T extends FieldValues, R = void>
-  extends PropsWithChildren,
-    UseFormProps<T> {
+interface FormProps<T extends FieldValues, R = void> extends UseFormProps<T> {
   submitLabel?: ReactNode;
   resetLabel?: ReactNode;
   hideReset?: boolean;
   hideRootError?: boolean;
-  renderFieldset?: (methods: UseFormReturn<T>) => ReactNode;
+  renderFields: (methods: UseFormReturn<T>) => ReactNode;
+  /** If provided, renders custom actions instead of the default */
   renderActions?: (methods: UseFormReturn<T>) => ReactNode;
   onSubmit: (data: T, methods: UseFormReturn<T>) => R;
   onSuccess?: (
@@ -37,7 +31,9 @@ interface FormProps<T extends FieldValues, R = void>
   onReset?: (methods: UseFormReturn<T>) => void;
   onError?: (error: unknown, methods: UseFormReturn<T>) => void;
   slotProps?: {
+    /** Props applied to the container `Stack` element */
     container?: StackProps;
+    /** Props applied to the `fieldset` `Stack` element */
     fieldset?: StackProps;
     actions?: StackProps;
     resetButton?: ButtonProps;
@@ -46,19 +42,11 @@ interface FormProps<T extends FieldValues, R = void>
 }
 
 const Form = <T extends FieldValues, R = void>({
-  /** Form */
-  values,
-  defaultValues,
-  disabled,
-  resetOptions,
-
-  /** Component */
-  children,
   submitLabel = "Submit",
   resetLabel = "Reset",
   hideReset,
   hideRootError,
-  renderFieldset,
+  renderFields,
   renderActions,
   onSubmit,
   onSuccess,
@@ -71,13 +59,7 @@ const Form = <T extends FieldValues, R = void>({
 
   /** Values */
 
-  const methods = useForm<T>({
-    values,
-    defaultValues,
-    resetOptions,
-    disabled: disabled || isSubmitting,
-    ...props,
-  });
+  const methods = useForm<T>({ disabled: isSubmitting, ...props });
 
   /** Callbacks */
 
@@ -88,15 +70,20 @@ const Form = <T extends FieldValues, R = void>({
       if (res instanceof Promise) {
         setIsSubmitting(true);
         res
-          .then((res) => onSuccess?.(res, methods))
+          .then(handleSuccess)
           .catch(handleRootError)
           .finally(() => setIsSubmitting(false));
-      } else onSuccess?.(res as R extends Promise<infer U> ? U : R, methods);
+      } else handleSuccess(res);
     } catch (error) {
       onError?.(error, methods);
       handleRootError(error);
     }
   });
+
+  const handleSuccess = (res: unknown) =>
+    setTimeout(() =>
+      onSuccess?.(res as R extends Promise<infer U> ? U : R, methods)
+    );
 
   const handleReset: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -121,18 +108,14 @@ const Form = <T extends FieldValues, R = void>({
         onReset={handleReset}
         {...slotProps?.container}
       >
-        {renderFieldset ? (
-          renderFieldset(methods)
-        ) : (
-          <Stack spacing={2} pb={2} {...slotProps?.fieldset}>
-            {children}
-            {!!methods.formState.errors.root && (
-              <FormHelperText error>
-                {methods.formState.errors.root?.message}
-              </FormHelperText>
-            )}
-          </Stack>
-        )}
+        <Stack spacing={2} pb={2} {...slotProps?.fieldset}>
+          {renderFields(methods)}
+          {!!methods.formState.errors.root && !hideRootError && (
+            <FormHelperText error>
+              {methods.formState.errors.root?.message}
+            </FormHelperText>
+          )}
+        </Stack>
         {renderActions ? (
           renderActions(methods)
         ) : (
@@ -140,6 +123,8 @@ const Form = <T extends FieldValues, R = void>({
             direction="row"
             spacing={1}
             justifyContent="end"
+            useFlexGap
+            flexWrap="wrap"
             {...slotProps?.actions}
           >
             {!hideReset && (

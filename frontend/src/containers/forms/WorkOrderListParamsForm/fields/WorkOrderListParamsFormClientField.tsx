@@ -20,31 +20,29 @@ const WorkOrderListParamsFormClientField = () => {
 
   return (
     <Controller
-      name="client"
+      name="clients"
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
-          value={field.value ?? []}
+          value={field.value}
           multiple
-          options={
-            clientListQuery.data?.results.map((client) => client.id) ?? []
-          }
+          options={clientListQuery.data?.results ?? []}
           disabled={field.disabled}
           loading={clientListQuery.isLoading}
-          getOptionKey={(option) => option}
+          getOptionKey={(option) => option.id}
           getOptionLabel={(option) => String(option)}
           includeInputInList
           filterOptions={(options) => options}
-          isOptionEqualToValue={(option, value) => option === value}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
           onInputChange={(_, value) => setSearch(value)}
           renderInput={(params) => (
             <TextField
               label="Client"
               name={field.name}
               inputRef={field.ref}
-              {...(formState.errors.client && {
+              {...(formState.errors.clients && {
                 error: true,
-                helperText: formState.errors.client.message,
+                helperText: formState.errors.clients.message,
               })}
               {...params}
               onBlur={field.onBlur}
@@ -64,7 +62,7 @@ const WorkOrderListParamsFormClientField = () => {
             />
           )}
           renderOption={(props, option) => (
-            <ClientMenuItem client={option} {...props} key={option} />
+            <ClientMenuItem client={option} {...props} />
           )}
           renderValue={(value, getItemProps) =>
             value.map((item, index) => {

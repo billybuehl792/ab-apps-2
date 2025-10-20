@@ -3,17 +3,14 @@ import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import { workOrderQueries } from "@/store/queries/work-orders";
 import { clientMutations } from "@/store/mutations/clients";
 import { clientQueries } from "@/store/queries/clients";
-import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import StatusCard from "@/components/cards/StatusCard";
 import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
-import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
-import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
 import CustomLink from "@/components/links/CustomLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
+import WorkOrderList from "@/containers/lists/WorkOrderList";
 import { errorUtils } from "@/store/utils/error";
 import { ClientIcons } from "@/store/constants/clients";
 import { ClientOptionId } from "@/store/enums/clients";
@@ -56,7 +53,7 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
   pendingComponent: () => <StatusCard loading="loading client..." />,
   notFoundComponent: () => (
     <StatusCard
-      error={"Client not found :("}
+      error="Client not found :("
       description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
     />
   ),
@@ -75,14 +72,6 @@ function RouteComponent() {
 
   const client = loaderData.data;
   const isEditing = search.edit;
-
-  /** Queries */
-
-  const workOrderListBaseParams = { client: [client.id] };
-  const workOrderListQueryOptions = workOrderQueries.list({
-    ...workOrderListParams,
-    ...workOrderListBaseParams,
-  });
 
   /** Mutations */
 
@@ -123,13 +112,9 @@ function RouteComponent() {
           <Tab label="History" />
         </Tabs>
 
-        <PaginatedQueryList
-          queryOptions={workOrderListQueryOptions}
-          ParamsFormComponent={WorkOrderListParamsForm}
-          baseParams={workOrderListBaseParams}
-          renderItem={(workOrder) => (
-            <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
-          )}
+        <WorkOrderList
+          params={{ ...workOrderListParams, page_size: 1 }}
+          baseParams={{ client: [client.id] }}
           onParamsChange={setWorkOrderListParams}
         />
       </Stack>

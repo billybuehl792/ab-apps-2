@@ -1,17 +1,20 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Controller, useFormContext } from "react-hook-form";
 import { Autocomplete, Chip, CircularProgress, TextField } from "@mui/material";
 import { placeQueries } from "@/store/queries/places";
 import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderListParamsFormCityField = () => {
+const WorkOrderListParamsFormCitiesField = () => {
+  const [enabled, setEnabled] = useState(false);
+
   /** Values */
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
 
   /** Queries */
 
-  const citiesQuery = useQuery(placeQueries.cities());
+  const citiesQuery = useQuery({ ...placeQueries.cities(), enabled });
 
   return (
     <Controller
@@ -27,6 +30,7 @@ const WorkOrderListParamsFormCityField = () => {
           getOptionKey={(option) => option}
           getOptionLabel={(option) => option}
           includeInputInList
+          disableCloseOnSelect
           isOptionEqualToValue={(option, value) => option === value}
           renderInput={(params) => (
             <TextField
@@ -62,6 +66,8 @@ const WorkOrderListParamsFormCityField = () => {
               );
             })
           }
+          onOpen={() => setEnabled(true)}
+          onClose={() => setEnabled(false)}
           onChange={(_, value) => field.onChange(value)}
         />
       )}
@@ -69,4 +75,4 @@ const WorkOrderListParamsFormCityField = () => {
   );
 };
 
-export default WorkOrderListParamsFormCityField;
+export default WorkOrderListParamsFormCitiesField;

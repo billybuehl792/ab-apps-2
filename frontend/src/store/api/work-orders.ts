@@ -3,7 +3,9 @@ import { workOrderEndpoints } from "../constants/work-orders";
 import type { ListResponse } from "../types/api";
 import type {
   WorkOrder,
+  WorkOrderCreateBody,
   WorkOrderListRequestParams,
+  WorkOrderUpdateBody,
   WorkOrderWriteable,
 } from "../types/work-orders";
 
@@ -18,13 +20,10 @@ const count = (params?: WorkOrderListRequestParams) =>
 const detail = (id: WorkOrder["id"]) =>
   api.get<WorkOrder>(workOrderEndpoints.workOrders.detail(id));
 
-const create = (body: Omit<WorkOrderWriteable, "id">) =>
+const create = (body: WorkOrderCreateBody) =>
   api.post<WorkOrderWriteable>(workOrderEndpoints.workOrders(), body);
 
-const update = ({
-  id,
-  ...body
-}: Partial<WorkOrderWriteable> & { id: WorkOrder["id"] }) =>
+const update = ({ id, ...body }: WorkOrderUpdateBody) =>
   api.patch<WorkOrderWriteable>(workOrderEndpoints.workOrders.detail(id), body);
 
 const _delete = (body: WorkOrder["id"]) =>

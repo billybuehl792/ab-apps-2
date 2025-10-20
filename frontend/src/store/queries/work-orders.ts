@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { workOrderApi } from "../api/work-orders";
 import { queryUtils } from "../utils/queries";
-import { paramUtils } from "../utils/params";
+import { objectUtils } from "../utils/object";
 import type { WorkOrderListRequestParams } from "../types/work-orders";
 
 const detail = (id: number) =>
@@ -16,9 +16,7 @@ const list = (params?: WorkOrderListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["work-orders", "list"],
-      paramUtils.cleanListRequestParamsParams<WorkOrderListRequestParams>(
-        params
-      )
+      objectUtils.deepSanitizeObject(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       workOrderApi.list(params).then((res) => res.data),
@@ -28,9 +26,7 @@ const count = (params?: WorkOrderListRequestParams) =>
   queryOptions({
     queryKey: queryUtils.getQueryKey(
       ["work-orders", "count"],
-      paramUtils.cleanListRequestParamsParams<WorkOrderListRequestParams>(
-        params
-      )
+      objectUtils.deepSanitizeObject(params)
     ),
     queryFn: ({ queryKey: [_, params] }) =>
       workOrderApi.count(params).then((res) => res.data),

@@ -26,7 +26,7 @@ class ClientViewSet(ModelViewSet):
     def get_queryset(self):  # type: ignore
         company = get_user_company_from_request_or_raise(self.request)
         return Client.objects.filter(
-            company=company).select_related('place').order_by("-created_at")
+            company=company).select_related('place').order_by("-created_at").distinct()
 
     def get_serializer_class(self):  # type: ignore[override]
         if self.action in ("list", "retrieve", "count"):

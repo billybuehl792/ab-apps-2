@@ -69,16 +69,6 @@ const useClient = (client: ClientBasic | number) => {
         }),
     },
     {
-      id: ClientOptionId.CreateWorkOrder,
-      label: "Create Work Order",
-      Icon: Work,
-      onClick: () =>
-        navigate({
-          to: "/app/dashboard/work-orders/create",
-          search: { client: clientId },
-        }),
-    },
-    {
       id: ClientOptionId.Delete,
       label: "Delete",
       Icon: Delete,

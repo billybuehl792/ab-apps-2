@@ -30,5 +30,5 @@ class WorkOrderWriteSerializer(ModelSerializer):
     class Meta:
         model = WorkOrder
         fields = ("id", "label", "description", "status",
-                  "cost", "scheduled_date", "completed_date")
+                  "cost", "scheduled_date", "completed_date", "place")
         read_only_fields = ("id",)

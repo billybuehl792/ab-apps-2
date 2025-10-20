@@ -1,30 +1,22 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  stripSearchParams,
+  useNavigate,
+} from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { Add } from "@mui/icons-material";
-import { workOrderQueries } from "@/store/queries/work-orders";
-import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
-import WorkOrderListParamsForm from "@/containers/forms/WorkOrderListParamsForm";
-import WorkOrderListCard from "@/containers/cards/WorkOrderListCard";
 import CustomLink from "@/components/links/CustomLink";
-import { paramUtils } from "@/store/utils/params";
+import WorkOrderList from "@/containers/lists/WorkOrderList";
+import StatusCard from "@/components/cards/StatusCard";
+import { workOrderListParamsSchema } from "@/store/schemas/work-orders";
+import { DEFAULT_LIST_PARAMS } from "@/store/constants/api";
 import { page } from "@/store/constants/layout";
 import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 import type { RouteLoaderData } from "@/store/types/router";
 
-const cleanParams = (params: Record<string, unknown>) => {
-  const status = params.status;
-  const client = params.client;
-  const city = params.place__city;
-  if (status && !(status instanceof Array)) params.status = [status];
-  if (client && !(client instanceof Array)) params.client = [client];
-  if (city && !(city instanceof Array)) params.place__city = [city];
-
-  return paramUtils.cleanListRequestParamsParams<WorkOrderListRequestParams>(
-    params
-  );
-};
-
 export const Route = createFileRoute("/app/dashboard/work-orders/")({
-  validateSearch: cleanParams,
+  validateSearch: zodValidator(workOrderListParamsSchema),
+  search: { middlewares: [stripSearchParams(DEFAULT_LIST_PARAMS)] },
   loader: (): RouteLoaderData => ({
     slotProps: {
       pageHeader: {
@@ -39,6 +31,7 @@ export const Route = createFileRoute("/app/dashboard/work-orders/")({
     },
   }),
   component: RouteComponent,
+  errorComponent: ({ error }) => <StatusCard error={error} />,
 });
 
 function RouteComponent() {
@@ -47,25 +40,14 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
-  /** Values */
-
-  const queryOptions = workOrderQueries.list(params);
-
   /** Callbacks */
 
   const handleParamsChange = (newParams: WorkOrderListRequestParams) =>
-    navigate({
-      to: "/app/dashboard/work-orders",
-      search: cleanParams(newParams),
-    });
+    navigate({ to: ".", search: newParams });
 
   return (
-    <PaginatedQueryList
-      queryOptions={queryOptions}
-      ParamsFormComponent={WorkOrderListParamsForm}
-      renderItem={(workOrder) => (
-        <WorkOrderListCard key={workOrder.id} workOrder={workOrder} />
-      )}
+    <WorkOrderList
+      params={params}
       onParamsChange={handleParamsChange}
       slotProps={{
         header: {

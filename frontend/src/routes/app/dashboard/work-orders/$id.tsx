@@ -77,11 +77,14 @@ function RouteComponent() {
 
   const handleUpdateWorkOrder = (data: WorkOrderFormValues) =>
     updateWorkOrderMutation.mutateAsync({
-      ...data,
       id: workOrder.id,
-      client: data.client?.id ?? null,
-      place: data.place?.google_place_id ?? null,
-      cost: Number(data.cost),
+      label: data.label,
+      description: data.description,
+      status: data.status,
+      cost: data.cost,
+      scheduled_date: data.scheduledDate,
+      completed_date: data.completedDate,
+      place: data.place || null,
     });
 
   const handleOnClose = () =>
@@ -108,7 +111,15 @@ function RouteComponent() {
       <WorkOrderFormDrawer
         open={isEditing}
         form={{
-          values: workOrder,
+          values: {
+            label: workOrder.label,
+            description: workOrder.description,
+            status: workOrder.status,
+            cost: Number(workOrder.cost),
+            scheduledDate: workOrder.scheduled_date,
+            completedDate: workOrder.completed_date,
+            place: workOrder.place,
+          },
           onSubmit: handleUpdateWorkOrder,
           onSuccess: handleOnClose,
         }}

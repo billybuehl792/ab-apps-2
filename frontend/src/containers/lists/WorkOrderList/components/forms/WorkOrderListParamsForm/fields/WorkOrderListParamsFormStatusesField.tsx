@@ -12,7 +12,7 @@ import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import { WorkOrderStatus } from "@/store/enums/work-orders";
 import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderListParamsFormStatusField = () => {
+const WorkOrderListParamsFormStatusesField = () => {
   /** Values */
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
@@ -29,7 +29,7 @@ const WorkOrderListParamsFormStatusField = () => {
               labelId="work-order-status-label"
               ref={field.ref}
               name={field.name}
-              value={field.value ?? []}
+              value={field.value}
               multiple
               input={<OutlinedInput label="Status" />}
               onBlur={field.onBlur}
@@ -64,4 +64,4 @@ const WorkOrderListParamsFormStatusField = () => {
   );
 };
 
-export default WorkOrderListParamsFormStatusField;
+export default WorkOrderListParamsFormStatusesField;

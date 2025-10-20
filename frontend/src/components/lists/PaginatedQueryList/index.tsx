@@ -61,10 +61,17 @@ const PaginatedQueryList = <Params extends ListRequestParams, Data = unknown>({
   slotProps,
   ...props
 }: PaginatedQueryListProps<Params, Data>) => {
+  /** Values */
+
+  const params = queryOptions.queryKey[1] as Params;
+
   /** Callbacks */
 
   const handleParamsChange = (newParams: Params) =>
     onParamsChange({ ...newParams, ...baseParams });
+
+  const handlePageChange = (page: number) =>
+    handleParamsChange({ ...params, page });
 
   return (
     <Stack spacing={2} {...props}>
@@ -77,10 +84,9 @@ const PaginatedQueryList = <Params extends ListRequestParams, Data = unknown>({
       />
       <PaginatedQueryListList
         queryOptions={queryOptions}
-        baseParams={baseParams}
         renderItem={renderItem}
         renderSkeletonItem={renderSkeletonItem}
-        onParamsChange={handleParamsChange}
+        onPageChange={handlePageChange}
         {...slotProps?.list}
       />
     </Stack>
