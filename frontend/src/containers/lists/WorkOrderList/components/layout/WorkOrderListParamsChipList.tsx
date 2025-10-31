@@ -1,14 +1,19 @@
-import { useQueries } from "@tanstack/react-query";
-import { Chip, Stack, type StackProps } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { Chip, type ChipProps, Stack, type StackProps } from "@mui/material";
 import { Close, FilterAlt, Sort } from "@mui/icons-material";
 import { clientQueries } from "@/store/queries/clients";
+import { WorkOrderStatus } from "@/store/enums/work-orders";
 import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
+
+type WorkOrderListFilters = Pick<
+  WorkOrderListRequestParams,
+  "ordering" | "status" | "city" | "client"
+>;
 
 interface WorkOrderListParamsChipListProps
   extends Omit<StackProps, "onChange"> {
-  params: WorkOrderListRequestParams;
-  baseParams?: Pick<WorkOrderListRequestParams, "client" | "status" | "city">;
-  onChange?: (params: WorkOrderListRequestParams) => void;
+  params: WorkOrderListFilters;
+  onChange: (values: WorkOrderListFilters) => void;
 }
 
 const WorkOrderListParamsChipList = ({
@@ -18,34 +23,31 @@ const WorkOrderListParamsChipList = ({
 }: WorkOrderListParamsChipListProps) => {
   /** Values */
 
-  const ordering = params.ordering;
-  const statuses = params.status ?? [];
-  const cities = params.city ?? [];
-  const clientIds = params.client ?? [];
-
   const hasParams =
-    !!ordering ||
-    statuses.length > 0 ||
-    cities.length > 0 ||
-    clientIds.length > 0;
-
-  /** Queries */
-
-  const clientsQueries = useQueries({
-    queries:
-      params.client?.map((clientId) => clientQueries.detail(clientId)) ?? [],
-  });
+    !!params.ordering ||
+    !!params.status?.length ||
+    !!params.city?.length ||
+    !!params.client?.length;
 
   /** Callbacks */
 
+  const handleRemoveOrdering = () => onChange({ ordering: undefined });
+
+  const handleRemoveStatus = (status: WorkOrderStatus) =>
+    onChange({ status: params?.status?.filter((s) => s !== status) });
+
+  const handleRemoveCity = (city: string) =>
+    onChange({ city: params?.city?.filter((c) => c !== city) });
+
+  const handleRemoveClient = (clientId: number) =>
+    onChange({ client: params?.client?.filter((id) => id !== clientId) });
+
   const handleClearAll = () =>
-    onChange?.({
-      ...params,
-      page: undefined,
+    onChange({
       ordering: undefined,
-      status: [],
-      city: [],
-      client: [],
+      status: undefined,
+      city: undefined,
+      client: undefined,
     });
 
   if (!hasParams) return null;
@@ -58,64 +60,39 @@ const WorkOrderListParamsChipList = ({
       flexWrap="wrap"
       {...props}
     >
-      {!!ordering && (
+      {!!params.ordering && (
         <Chip
-          label={`Ordering: ${ordering.snakeCaseToTitleCase()}`}
+          label={`Ordering: ${params.ordering.snakeCaseToTitleCase()}`}
           icon={<Sort />}
           size="xs"
-          {...(onChange && {
-            onDelete: () => onChange({ ...params, ordering: undefined }),
-          })}
+          onDelete={handleRemoveOrdering}
         />
       )}
-      {statuses.map((status) => (
+      {params.status?.map((status) => (
         <Chip
           key={status}
           icon={<FilterAlt />}
           label={`Status: ${status.snakeCaseToTitleCase()}`}
           size="xs"
-          {...(onChange && {
-            onDelete: () =>
-              onChange({
-                ...params,
-                status: statuses.filter((s) => s !== status),
-              }),
-          })}
+          onDelete={() => handleRemoveStatus(status)}
         />
       ))}
-      {cities.map((city) => (
+      {params.city?.map((city) => (
         <Chip
           key={city}
           icon={<FilterAlt />}
           label={`City: ${city.toTitleCase()}`}
           size="xs"
-          {...(onChange && {
-            onDelete: () =>
-              onChange({
-                ...params,
-                city: cities.filter((c) => c !== city),
-              }),
-          })}
+          onDelete={() => handleRemoveCity(city)}
         />
       ))}
-      {clientIds.map((clientId) => {
-        const clientQuery = clientsQueries.find((q) => q.data?.id === clientId);
-        return (
-          <Chip
-            key={clientId}
-            icon={<FilterAlt />}
-            label={`Client: ${clientQuery?.isLoading ? "..." : (clientQuery?.data?.full_name ?? clientId)}`}
-            size="xs"
-            {...(onChange && {
-              onDelete: () =>
-                onChange({
-                  ...params,
-                  client: clientIds.filter((id) => id !== clientId),
-                }),
-            })}
-          />
-        );
-      })}
+      {params.client?.map((clientId) => (
+        <ClientFilterChip
+          key={clientId}
+          clientId={clientId}
+          onDelete={() => handleRemoveClient(clientId)}
+        />
+      ))}
       <Chip
         label="Clear All"
         icon={<Close />}
@@ -123,8 +100,27 @@ const WorkOrderListParamsChipList = ({
         variant="outlined"
         color="error"
         onClick={handleClearAll}
+        sx={{ border: "none", "&:active": { boxShadow: "none" } }}
       />
     </Stack>
+  );
+};
+
+const ClientFilterChip = ({
+  clientId,
+  ...props
+}: ChipProps & { clientId: number }) => {
+  /** Queries */
+
+  const clientQuery = useQuery(clientQueries.detail(clientId));
+
+  return (
+    <Chip
+      icon={<FilterAlt />}
+      label={`Client: ${clientQuery?.isLoading ? "..." : (clientQuery?.data?.full_name ?? clientId)}`}
+      size="xs"
+      {...props}
+    />
   );
 };
 

@@ -1,13 +1,27 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Controller, useFormContext } from "react-hook-form";
 import { useDebounce } from "use-debounce";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Autocomplete,
+  type AutocompleteProps,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 import { clientQueries } from "@/store/queries/clients";
 import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
 import ClientChip from "@/containers/chips/ClientChip";
 import type { WorkOrderListParamsFormValues } from "..";
+import { Client } from "@/store/types/clients";
 
-const WorkOrderListParamsFormClientField = () => {
+type WorkOrderListParamsFormClientsFieldProps = Partial<
+  AutocompleteProps<Client, true, false, false>
+>;
+
+const WorkOrderListParamsFormClientsField = (
+  props: WorkOrderListParamsFormClientsFieldProps
+) => {
+  const [enabled, setEnabled] = useState(false);
   const [search, setSearch] = useDebounce("", 600);
 
   /** Values */
@@ -16,7 +30,10 @@ const WorkOrderListParamsFormClientField = () => {
 
   /** Queries */
 
-  const clientListQuery = useQuery(clientQueries.list({ search }));
+  const clientListQuery = useQuery({
+    ...clientQueries.list({ search }),
+    enabled,
+  });
 
   return (
     <Controller
@@ -30,10 +47,11 @@ const WorkOrderListParamsFormClientField = () => {
           disabled={field.disabled}
           loading={clientListQuery.isLoading}
           getOptionKey={(option) => option.id}
-          getOptionLabel={(option) => String(option)}
+          getOptionLabel={(option) => option.full_name}
           includeInputInList
+          disableCloseOnSelect
           filterOptions={(options) => options}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
+          isOptionEqualToValue={(option, value) => option === value}
           onInputChange={(_, value) => setSearch(value)}
           renderInput={(params) => (
             <TextField
@@ -61,8 +79,8 @@ const WorkOrderListParamsFormClientField = () => {
               }}
             />
           )}
-          renderOption={(props, option) => (
-            <ClientMenuItem client={option} {...props} />
+          renderOption={({ key: _key, ...props }, option) => (
+            <ClientMenuItem key={option.id} client={option} {...props} />
           )}
           renderValue={(value, getItemProps) =>
             value.map((item, index) => {
@@ -77,11 +95,14 @@ const WorkOrderListParamsFormClientField = () => {
               );
             })
           }
+          onOpen={() => setEnabled(true)}
+          onClose={() => setEnabled(false)}
           onChange={(_, value) => field.onChange(value)}
+          {...props}
         />
       )}
     />
   );
 };
 
-export default WorkOrderListParamsFormClientField;
+export default WorkOrderListParamsFormClientsField;

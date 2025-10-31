@@ -9,13 +9,20 @@ import {
 } from "@mui/material";
 import { FilterListOff } from "@mui/icons-material";
 import type { WorkOrderListParamsFormValues } from "..";
+import { isEqual } from "lodash";
 
-const WorkOrderListParamsFormOrderingHead = () => {
+const WorkOrderListParamsFormOrderingHead = ({
+  disabled,
+}: {
+  disabled?: boolean;
+}) => {
   /** Values */
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
 
-  methods.watch("ordering");
+  const ordering = methods.watch("ordering");
+
+  const isDirty = !isEqual(ordering, methods.formState.defaultValues?.ordering);
 
   /** Callbacks */
 
@@ -33,10 +40,14 @@ const WorkOrderListParamsFormOrderingHead = () => {
       borderColor="divider"
       zIndex={2}
     >
-      <Typography variant="body1">Sort By</Typography>
-      <Grow in={methods.getFieldState("ordering").isDirty}>
+      <Typography variant="body1">Ordering</Typography>
+      <Grow in={isDirty}>
         <Tooltip title="Reset Ordering">
-          <IconButton size="small" onClick={handleResetOrdering}>
+          <IconButton
+            size="small"
+            disabled={disabled}
+            onClick={handleResetOrdering}
+          >
             <FilterListOff fontSize="small" />
           </IconButton>
         </Tooltip>

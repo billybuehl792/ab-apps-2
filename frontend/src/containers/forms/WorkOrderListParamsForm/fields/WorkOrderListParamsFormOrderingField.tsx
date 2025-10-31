@@ -1,9 +1,13 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import type { WorkOrderListParamsFormValues } from "..";
 import { WorkOrderListRequestParamsOrdering } from "@/store/enums/work-orders";
+import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderListParamsFormOrderingField = () => {
+const WorkOrderListParamsFormOrderingField = ({
+  disabled,
+}: {
+  disabled?: boolean;
+}) => {
   /** Values */
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
@@ -33,6 +37,7 @@ const WorkOrderListParamsFormOrderingField = () => {
                 value={value}
                 label={value.snakeCaseToTitleCase()}
                 control={<Radio />}
+                disabled={disabled}
               />
             )
           )}

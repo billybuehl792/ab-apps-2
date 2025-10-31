@@ -33,6 +33,10 @@ class ClientViewSet(ModelViewSet):
             return ClientReadSerializer
         return ClientWriteSerializer
 
+    def perform_create(self, serializer):
+        company = get_user_company_from_request_or_raise(self.request)
+        serializer.save(company=company)
+
     @action(detail=False, methods=("get",))
     def count(self, request):
         """Return the total count of the filtered queryset."""

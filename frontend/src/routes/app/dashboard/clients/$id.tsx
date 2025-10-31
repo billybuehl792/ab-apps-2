@@ -111,12 +111,13 @@ function RouteComponent() {
           <Tab label="Documents" />
           <Tab label="History" />
         </Tabs>
-
-        <WorkOrderList
-          params={{ ...workOrderListParams, page_size: 1 }}
-          baseParams={{ client: [client.id] }}
-          onParamsChange={setWorkOrderListParams}
-        />
+        {tabValue === 0 && (
+          <WorkOrderList
+            params={workOrderListParams}
+            baseParams={{ client: [client.id] }}
+            onParamsChange={setWorkOrderListParams}
+          />
+        )}
       </Stack>
 
       {/* Modals */}

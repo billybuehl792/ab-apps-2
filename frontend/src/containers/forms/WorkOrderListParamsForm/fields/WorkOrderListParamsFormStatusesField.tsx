@@ -6,13 +6,20 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  type SelectProps,
   Stack,
 } from "@mui/material";
 import WorkOrderStatusChip from "@/containers/chips/WorkOrderStatusChip";
 import { WorkOrderStatus } from "@/store/enums/work-orders";
 import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderListParamsFormStatusesField = () => {
+type WorkOrderListParamsFormStatusesFieldProps = Partial<
+  SelectProps<WorkOrderStatus[]>
+>;
+
+const WorkOrderListParamsFormStatusesField = (
+  props: WorkOrderListParamsFormStatusesFieldProps
+) => {
   /** Values */
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
@@ -29,7 +36,7 @@ const WorkOrderListParamsFormStatusesField = () => {
               labelId="work-order-status-label"
               ref={field.ref}
               name={field.name}
-              value={field.value}
+              value={field.value ?? []}
               multiple
               input={<OutlinedInput label="Status" />}
               onBlur={field.onBlur}
@@ -45,10 +52,13 @@ const WorkOrderListParamsFormStatusesField = () => {
                   ))}
                 </Stack>
               )}
+              {...props}
             >
               {Object.values(WorkOrderStatus).map((option) => (
                 <MenuItem key={option} value={option}>
-                  <Checkbox checked={field.value.includes(option)} />
+                  <Checkbox
+                    checked={field.value && field.value.includes(option)}
+                  />
                   <WorkOrderStatusChip
                     key={option}
                     status={option}

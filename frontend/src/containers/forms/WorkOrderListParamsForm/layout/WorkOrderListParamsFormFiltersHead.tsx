@@ -1,4 +1,5 @@
 import { useFormContext } from "react-hook-form";
+import { isEqual } from "lodash";
 import {
   Grow,
   IconButton,
@@ -15,21 +16,23 @@ const WorkOrderListParamsFormFiltersHead = () => {
 
   const methods = useFormContext<WorkOrderListParamsFormValues>();
 
-  methods.watch("status");
-  methods.watch("client");
-  methods.watch("place__city");
+  const [status, client, city] = methods.watch([
+    "statuses",
+    "clients",
+    "cities",
+  ]);
 
   const isDirty =
-    methods.getFieldState("status").isDirty ||
-    methods.getFieldState("client").isDirty ||
-    methods.getFieldState("place__city").isDirty;
+    !isEqual(status, methods.formState.defaultValues?.statuses) ||
+    !isEqual(client, methods.formState.defaultValues?.clients) ||
+    !isEqual(city, methods.formState.defaultValues?.cities);
 
   /** Callbacks */
 
   const handleResetFilters = () => {
-    methods.resetField("status");
-    methods.resetField("client");
-    methods.resetField("place__city");
+    methods.resetField("statuses");
+    methods.resetField("clients");
+    methods.resetField("cities");
   };
 
   return (
@@ -44,7 +47,7 @@ const WorkOrderListParamsFormFiltersHead = () => {
       borderColor="divider"
       zIndex={2}
     >
-      <Typography variant="body1">Filter By</Typography>
+      <Typography variant="body1">Filters</Typography>
       <Grow in={isDirty}>
         <Tooltip title="Reset Filters">
           <IconButton size="small" onClick={handleResetFilters}>

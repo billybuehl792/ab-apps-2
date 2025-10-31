@@ -1,16 +1,28 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, useFormContext } from "react-hook-form";
-import { useDebounce } from "use-debounce";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import { clientQueries } from "@/store/queries/clients";
-import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
-import ClientChip from "@/containers/chips/ClientChip";
+import {
+  Autocomplete,
+  type AutocompleteProps,
+  Chip,
+  CircularProgress,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  TextField,
+} from "@mui/material";
+import { placeQueries } from "@/store/queries/places";
+import { PlaceIcons } from "@/store/constants/places";
 import type { WorkOrderListParamsFormValues } from "..";
 
-const WorkOrderListParamsFormClientsField = () => {
+type WorkOrderListParamsFormCitiesFieldProps = Partial<
+  AutocompleteProps<string, true, false, false>
+>;
+
+const WorkOrderListParamsFormCitiesField = (
+  props: WorkOrderListParamsFormCitiesFieldProps
+) => {
   const [enabled, setEnabled] = useState(false);
-  const [search, setSearch] = useDebounce("", 600);
 
   /** Values */
 
@@ -18,37 +30,32 @@ const WorkOrderListParamsFormClientsField = () => {
 
   /** Queries */
 
-  const clientListQuery = useQuery({
-    ...clientQueries.list({ search }),
-    enabled,
-  });
+  const citiesQuery = useQuery({ ...placeQueries.cities(), enabled });
 
   return (
     <Controller
-      name="clients"
+      name="cities"
       control={methods.control}
       render={({ field, formState }) => (
         <Autocomplete
           value={field.value}
           multiple
-          options={clientListQuery.data?.results ?? []}
+          options={citiesQuery.data ?? []}
           disabled={field.disabled}
-          loading={clientListQuery.isLoading}
-          getOptionKey={(option) => option.id}
-          getOptionLabel={(option) => String(option)}
+          loading={citiesQuery.isLoading}
+          getOptionKey={(option) => option}
+          getOptionLabel={(option) => option}
           includeInputInList
           disableCloseOnSelect
-          filterOptions={(options) => options}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          onInputChange={(_, value) => setSearch(value)}
+          isOptionEqualToValue={(option, value) => option === value}
           renderInput={(params) => (
             <TextField
-              label="Client"
+              label="City"
               name={field.name}
               inputRef={field.ref}
-              {...(formState.errors.clients && {
+              {...(formState.errors.cities && {
                 error: true,
-                helperText: formState.errors.clients.message,
+                helperText: formState.errors.cities.message,
               })}
               {...params}
               onBlur={field.onBlur}
@@ -57,7 +64,7 @@ const WorkOrderListParamsFormClientsField = () => {
                   ...params.InputProps,
                   endAdornment: (
                     <>
-                      {clientListQuery.isLoading && (
+                      {citiesQuery.isLoading && (
                         <CircularProgress color="inherit" size={20} />
                       )}
                       {params.InputProps.endAdornment}
@@ -68,16 +75,22 @@ const WorkOrderListParamsFormClientsField = () => {
             />
           )}
           renderOption={({ key: _key, ...props }, option) => (
-            <ClientMenuItem key={option.id} client={option} {...props} />
+            <MenuItem key={option} {...props}>
+              <ListItemIcon>
+                <PlaceIcons.Detail />
+              </ListItemIcon>
+              <ListItemText primary={option} />
+            </MenuItem>
           )}
           renderValue={(value, getItemProps) =>
             value.map((item, index) => {
               const { key, ...itemProps } = getItemProps({ index });
               return (
-                <ClientChip
+                <Chip
                   key={key}
-                  client={item}
+                  label={item}
                   size="small"
+                  icon={<PlaceIcons.Detail />}
                   {...itemProps}
                 />
               );
@@ -86,10 +99,11 @@ const WorkOrderListParamsFormClientsField = () => {
           onOpen={() => setEnabled(true)}
           onClose={() => setEnabled(false)}
           onChange={(_, value) => field.onChange(value)}
+          {...props}
         />
       )}
     />
   );
 };
 
-export default WorkOrderListParamsFormClientsField;
+export default WorkOrderListParamsFormCitiesField;

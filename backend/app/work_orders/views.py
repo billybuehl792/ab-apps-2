@@ -30,10 +30,13 @@ class WorkOrderViewSet(ModelViewSet):
             company=company).select_related('place').order_by("-created_at").distinct()
 
     def get_serializer_class(self):  # type: ignore
-        """Return appropriate serializer class based on action."""
         if self.action in ("list", "retrieve", "count"):
             return WorkOrderReadSerializer
         return WorkOrderWriteSerializer
+
+    def perform_create(self, serializer):
+        company = get_user_company_from_request_or_raise(self.request)
+        serializer.save(company=company)
 
     @action(detail=True, methods=("patch",), url_path="update-client")
     def update_client(self, request, pk=None):
