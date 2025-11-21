@@ -11,11 +11,9 @@ import {
 } from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
 
-type SignInFormValues = z.infer<typeof formSchema>;
-
 interface SignInFormProps
   extends Omit<StackProps<"form">, "onSubmit" | "onReset"> {
-  onSubmit: SubmitHandler<SignInFormValues>;
+  onSubmit: SubmitHandler<z.infer<typeof formSchema>>;
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
