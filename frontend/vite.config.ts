@@ -12,6 +12,9 @@ export default defineConfig({
     }),
     react(),
   ],
+  server: {
+    open: "/app", // Opens /app in dev mode
+  },
   build: {
     sourcemap: true, // Source map generation must be turned on for Sentry
     chunkSizeWarningLimit: 1000,

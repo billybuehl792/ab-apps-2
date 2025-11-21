@@ -40,13 +40,11 @@ api.interceptors.response.use(
       } catch (refreshErr) {
         authUtils.setAccessToken(null);
 
-        const pathname = router.state.location.pathname;
-        const search = ["/", "/sign-in", "/sign-out"].includes(pathname)
-          ? undefined
-          : { redirect: pathname };
-
-        // Redirect to sign-in page
-        router.navigate({ to: "/sign-out", replace: true, search });
+        router.navigate({
+          to: "/sign-out",
+          replace: true,
+          search: { redirect: router.state.location.pathname },
+        });
 
         return Promise.reject(refreshErr);
       }
