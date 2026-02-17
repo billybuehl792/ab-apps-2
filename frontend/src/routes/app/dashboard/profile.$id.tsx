@@ -1,21 +1,21 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowBack } from "@mui/icons-material";
 import { accountQueries } from "@/store/queries/account";
-import StatusCard from "@/components/cards/StatusCard";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import CustomLink from "@/components/links/CustomLink";
 import { errorUtils } from "@/store/utils/error";
 import { AccountIcons } from "@/store/constants/account";
-import type { RouteLoaderData } from "@/store/types/router";
-import type { User } from "@/store/types/account";
+import type { TRouteLoaderData } from "@/store/types/router";
+import type { IUser } from "@/store/types/account";
 
 export const Route = createFileRoute("/app/dashboard/profile/$id")({
-  loader: async ({ context, params }): Promise<RouteLoaderData<User>> => {
+  loader: async ({ context, params }): Promise<TRouteLoaderData<IUser>> => {
     try {
       if (isNaN(Number(params.id))) throw new Error("Invalid user ID");
 
       const user = await context.queryClient.fetchQuery(
-        accountQueries.users.detail(Number(params.id))
+        accountQueries.users.detail(Number(params.id)),
       );
 
       return {
@@ -27,12 +27,15 @@ export const Route = createFileRoute("/app/dashboard/profile/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusCard loading="loading user..." m={2} />,
-  errorComponent: ({ error }) => <StatusCard error={error} m={2} />,
+  pendingComponent: () => <StatusWrapper loading="loading user..." m={2} />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} m={2} />,
   notFoundComponent: () => (
-    <StatusCard
-      error={"User not found :("}
-      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    <StatusWrapper
+      error={{
+        label: "User not found :(",
+        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
+      }}
+      m={2}
     />
   ),
 });

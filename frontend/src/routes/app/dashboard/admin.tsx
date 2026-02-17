@@ -1,21 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminPanelSettings } from "@mui/icons-material";
-import StatusCard from "@/components/cards/StatusCard";
-import { UserGroup } from "@/store/enums/account";
-import { RouteLoaderData } from "@/store/types/router";
+import { EUserGroup } from "@/store/enums/account";
+import { TRouteLoaderData } from "@/store/types/router";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 
 export const Route = createFileRoute("/app/dashboard/admin")({
   beforeLoad: ({ context }) => {
     const isAdmin = context.auth.me?.groups.some((group) =>
-      [UserGroup.AbAdmin, UserGroup.CompanyAdmin].includes(group)
+      [EUserGroup.AbAdmin, EUserGroup.CompanyAdmin].includes(group),
     );
 
     if (!isAdmin)
       throw new Error("Insufficient permissions to access this content.");
   },
-  loader: (): RouteLoaderData => ({
+  loader: (): TRouteLoaderData => ({
     crumb: { label: "Admin", Icon: AdminPanelSettings },
   }),
-  errorComponent: ({ error }) => <StatusCard error={error} />,
-  notFoundComponent: () => <StatusCard error="Page not found" />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} />,
+  notFoundComponent: () => <StatusWrapper error="Page not found" />,
 });

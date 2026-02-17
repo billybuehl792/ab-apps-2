@@ -5,8 +5,8 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Card, CardContent, CardHeader, Stack } from "@mui/material";
 import useAuth from "@/store/hooks/useAuth";
 import FullScreen from "@/components/layout/FullScreen";
-import StatusCard from "@/components/cards/StatusCard";
 import SignInForm from "@/containers/forms/SignInForm";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 
 export const Route = createFileRoute("/sign-in")({
   validateSearch: zodValidator(
@@ -16,9 +16,9 @@ export const Route = createFileRoute("/sign-in")({
           .string()
           .optional()
           .refine((value) => (value?.startsWith("/app") ? value : undefined)),
-        undefined
+        undefined,
       ),
-    })
+    }),
   ),
   beforeLoad: ({ context, search }) => {
     const isAuthenticated = !!context.auth.me;
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sign-in")({
   component: RouteComponent,
   pendingComponent: () => (
     <FullScreen>
-      <StatusCard loading="Loading sign in..." />
+      <StatusWrapper loading="Loading sign in..." />
     </FullScreen>
   ),
 });
@@ -43,7 +43,7 @@ function RouteComponent() {
   /** Callbacks */
 
   const handleSignIn: ComponentProps<typeof SignInForm>["onSubmit"] = async (
-    data
+    data,
   ) => {
     await auth.signIn(data);
     router.navigate({ to: params.redirect ?? "/app", replace: true });

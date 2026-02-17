@@ -1,9 +1,26 @@
-import { createContext } from "react";
-import type { MenuOptions } from "@/components/modals/MenuOptionModal";
+import {
+  createContext,
+  type ReactNode,
+  type ReactEventHandler,
+  type SyntheticEvent,
+} from "react";
 
 export default createContext<{
-  open: (options: MenuOptions, event?: React.MouseEvent<HTMLElement>) => void;
-  close: VoidFunction;
+  open: <TOptions extends MenuOption[] = MenuOption[]>(
+    options: {
+      title?: ReactNode;
+      options: TOptions;
+      variant?: "menu" | "drawer";
+      disableCloseOnSelect?: boolean;
+      onSelect?: (
+        option: TOptions[number],
+        event: SyntheticEvent<HTMLElement>,
+      ) => void;
+      onClose?: ReactEventHandler;
+    },
+    event: React.MouseEvent<HTMLElement> | undefined,
+  ) => void;
+  close: ReactEventHandler;
 }>({
   open: () => null,
   close: () => null,

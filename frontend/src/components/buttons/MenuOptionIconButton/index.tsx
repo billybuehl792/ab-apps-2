@@ -1,32 +1,72 @@
+import { type ReactNode, useState } from "react";
 import { IconButton, type IconButtonProps } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
-import useMenu from "@/store/hooks/useMenu";
-import { type MenuOptions } from "@/components/modals/MenuOptionModal";
+import MenuOptionMenu, {
+  type IMenuOptionMenuProps,
+} from "@/components/modals/MenuOptionMenu";
 
-type MenuOptionIconButtonProps = IconButtonProps & MenuOptions;
+export interface IMenuOptionIconButtonProps<
+  TOptions extends IMenuOption[] = IMenuOption[],
+>
+  extends
+    Omit<IconButtonProps, "children" | "onSelect">,
+    Pick<
+      IMenuOptionMenuProps<TOptions>,
+      "options" | "disableCloseOnSelect" | "onSelect"
+    > {
+  icon?: ReactNode;
+  slotProps?: {
+    menu?: Partial<IMenuOptionMenuProps<TOptions>>;
+  };
+}
 
-const MenuOptionIconButton = ({
+const MenuOptionIconButton = <TOptions extends IMenuOption[] = IMenuOption[]>({
   title,
   options,
+  icon,
   disableCloseOnSelect,
-  variant,
-  children,
+  onSelect,
+  onClick,
+  slotProps,
   ...props
-}: MenuOptionIconButtonProps) => {
+}: IMenuOptionIconButtonProps<TOptions>) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   /** Values */
 
-  const menu = useMenu();
+  const open = Boolean(anchorEl);
 
   /** Callbacks */
 
-  const handleOpen: IconButtonProps["onClick"] = (event) => {
-    menu.open({ title, options, disableCloseOnSelect, variant }, event);
+  const handleOnClick: IconButtonProps["onClick"] = (event) => {
+    onClick?.(event);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose: IMenuOptionMenuProps<TOptions>["onClose"] = (event) => {
+    slotProps?.menu?.onClose?.(event);
+    setAnchorEl(null);
   };
 
   return (
-    <IconButton component="span" onClick={handleOpen} {...props}>
-      {children ?? <MoreVert />}
-    </IconButton>
+    <>
+      <IconButton
+        {...(open && { "aria-selected": "true" })}
+        onClick={handleOnClick}
+        {...props}
+      >
+        {icon ?? <MoreVert />}
+      </IconButton>
+      <MenuOptionMenu
+        open={open}
+        anchorEl={anchorEl}
+        options={options}
+        disableCloseOnSelect={disableCloseOnSelect}
+        onSelect={onSelect}
+        {...slotProps?.menu}
+        onClose={handleClose}
+      />
+    </>
   );
 };
 

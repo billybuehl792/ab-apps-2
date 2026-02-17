@@ -1,20 +1,24 @@
-import { type ComponentProps } from "react";
+import { type ComponentProps, type MouseEvent } from "react";
 import { MenuList, useMediaQuery } from "@mui/material";
-import MenuOptionMenuItem from "@/components/menu-items/MenuOptionMenuItem";
 import Drawer from "@/components/modals/Drawer";
-import type { MenuOptions } from "../MenuOptionModal";
-import { theme } from "@/store/config/theme";
+import MenuOptionMenuItem from "@/components/buttons/MenuOptionMenuItem";
 
-type MenuOptionDrawerProps = Partial<ComponentProps<typeof Drawer>> &
-  Omit<MenuOptions, "variant">;
+interface MenuOptionDrawerProps<
+  TOptions extends IMenuOption[] = IMenuOption[],
+> extends Omit<ComponentProps<typeof Drawer>, "children" | "onSelect"> {
+  options: TOptions;
+  disableCloseOnSelect?: boolean;
+  onSelect?: (option: TOptions[number], event: MouseEvent<HTMLElement>) => void;
+}
 
-const MenuOptionDrawer = ({
+const MenuOptionDrawer = <TOptions extends IMenuOption[] = IMenuOption[]>({
   title = "Options",
   options,
   disableCloseOnSelect,
+  onSelect,
   onClose,
   ...props
-}: MenuOptionDrawerProps) => {
+}: MenuOptionDrawerProps<TOptions>) => {
   /** Values */
 
   const isSm = useMediaQuery((theme) => theme.breakpoints.up("sm"));
@@ -29,20 +33,13 @@ const MenuOptionDrawer = ({
       <MenuList sx={{ minWidth: 300 }}>
         {options
           .filter(({ render }) => render !== false)
-          .map(({ onClick, ...option }) => (
+          .map((option) => (
             <MenuOptionMenuItem
               key={option.id}
               option={option}
-              onClick={() => {
-                if (disableCloseOnSelect || option.disableCloseOnSelect)
-                  onClick?.();
-                else {
-                  onClose?.();
-                  setTimeout(
-                    () => onClick?.(),
-                    theme.transitions.duration.leavingScreen
-                  );
-                }
+              onClick={(event) => {
+                onSelect?.(option, event);
+                if (!disableCloseOnSelect) onClose(event);
               }}
             />
           ))}

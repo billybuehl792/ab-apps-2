@@ -4,21 +4,18 @@ import {
   AppBar,
   type AppBarProps,
   Container,
+  IconButton,
   Stack,
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
+import { Menu, MenuOpen } from "@mui/icons-material";
 import Link from "@/components/links/CustomLink";
 import MeMenuOptionIconButton from "@/containers/buttons/MeMenuOptionIconButton";
-import MenuIconButton from "@/components/buttons/MenuIconButton";
 import Drawer from "@/components/modals/Drawer";
 import NavList from "@/containers/lists/NavList";
 
-interface NavBarProps extends AppBarProps {
-  height: number;
-}
-
-const NavBar = ({ height, ...props }: NavBarProps) => {
+const NavBar: React.FC<AppBarProps> = (props: AppBarProps) => {
   const [open, setOpen] = useState(false);
 
   /** Values */
@@ -38,7 +35,7 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
 
   return (
     <>
-      <AppBar variant="outlined" sx={{ height }} {...props}>
+      <AppBar variant="outlined" {...props}>
         <Container maxWidth="lg" sx={{ width: "100%", height: "100%" }}>
           <Stack
             component={Toolbar}
@@ -50,11 +47,9 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
           >
             <Stack spacing={2} direction="row" alignItems="center">
               {isMobile && (
-                <MenuIconButton
-                  open={open}
-                  color="inherit"
-                  onClick={handleToggleNavDrawerOpen}
-                />
+                <IconButton color="inherit" onClick={handleToggleNavDrawerOpen}>
+                  {open ? <MenuOpen /> : <Menu />}
+                </IconButton>
               )}
               <Link
                 label="AB Sandbox App"
@@ -66,7 +61,7 @@ const NavBar = ({ height, ...props }: NavBarProps) => {
                 noWrap
               />
             </Stack>
-            <MeMenuOptionIconButton />
+            <MeMenuOptionIconButton color="inherit" />
           </Stack>
         </Container>
       </AppBar>

@@ -1,15 +1,16 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { Button, Stack, Typography } from "@mui/material";
-import StatusCard from "@/components/cards/StatusCard";
-import FullScreen from "@/components/layout/FullScreen";
 import z from "zod";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { ErrorOutline } from "@mui/icons-material";
+import FullScreen from "@/components/layout/FullScreen";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/sign-out")({
   validateSearch: zodValidator(
     z.object({
       redirect: fallback(z.string().optional(), undefined),
-    })
+    }),
   ),
   beforeLoad: async ({ context, search }) => {
     await context.auth.signOut();
@@ -18,23 +19,18 @@ export const Route = createFileRoute("/sign-out")({
   component: () => <FullScreen />,
   pendingComponent: () => (
     <FullScreen>
-      <StatusCard loading="Signing out..." />
+      <StatusWrapper loading="Signing out..." />
     </FullScreen>
   ),
   errorComponent: ({ error }) => (
     <FullScreen>
-      <StatusCard
-        error={error}
-        description={
-          <Stack spacing={2} alignItems="center">
-            <Typography variant="body2" color="textSecondary">
-              Something went wrong while signing out...
-            </Typography>
-            <Button size="small" onClick={() => location.reload()}>
-              Reload Page
-            </Button>
-          </Stack>
-        }
+      <StatusWrapper
+        error={{
+          label: "Sign out failed",
+          description: errorUtils.getErrorMessage(error),
+          icon: <ErrorOutline fontSize="large" />,
+          actions: [],
+        }}
       />
     </FullScreen>
   ),

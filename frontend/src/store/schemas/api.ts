@@ -1,54 +1,43 @@
 import { z } from "zod";
-import { fallback } from "@tanstack/zod-adapter";
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "../constants/api";
+import { idSchema } from "./basic";
+import { DEFAULT_LIST_PARAMS } from "../constants/api";
 
-const pageParamSchema = fallback(
-  z.coerce
-    .number()
-    .nullable()
-    .optional()
-    .transform((val) =>
-      val ? (isNaN(val) || val <= DEFAULT_PAGE ? undefined : val) : undefined
-    ),
-  undefined
-);
+const pageParamSchema = z.coerce
+  .number()
+  .int()
+  .positive()
+  .optional()
+  .transform((val) => val || DEFAULT_LIST_PARAMS.page)
+  .catch(DEFAULT_LIST_PARAMS.page);
 
-const pageSizeParamSchema = fallback(
-  z.coerce
-    .number()
-    .nullable()
-    .optional()
-    .transform((val) =>
-      val
-        ? isNaN(val) || val === DEFAULT_PAGE_SIZE
-          ? undefined
-          : Math.min(Math.max(val, 1), 100)
-        : undefined
-    ),
-  undefined
-);
+const pageSizeParamSchema = z.coerce
+  .number()
+  .int()
+  .positive()
+  .max(100)
+  .optional()
+  .transform((val) => val || DEFAULT_LIST_PARAMS.page_size)
+  .catch(DEFAULT_LIST_PARAMS.page_size);
 
-const searchParamSchema = fallback(
-  z
-    .string()
-    .nullable()
-    .optional()
-    .transform((val) => (!val?.trim() ? undefined : val)),
-  undefined
-);
+const searchParamSchema = z.coerce
+  .string()
+  .trim()
+  .max(100)
+  .optional()
+  .transform((val) => val || undefined)
+  .catch(DEFAULT_LIST_PARAMS.search);
 
-const orderingParamSchema = fallback(
-  z
-    .string()
-    .nullable()
-    .optional()
-    .transform((val) => (val ? val : undefined)),
-  undefined
-);
+export const listRequestSchema = z.object({
+  params: z.object({
+    page: pageParamSchema,
+    page_size: pageSizeParamSchema,
+    search: searchParamSchema,
+  }),
+});
 
-export const listParamsSchema = z.object({
-  page: pageParamSchema,
-  page_size: pageSizeParamSchema,
-  search: searchParamSchema,
-  ordering: orderingParamSchema,
+export const listResponseSchema = z.object({
+  count: z.number().nonnegative(),
+  next: z.string().url().nullable(),
+  previous: z.string().url().nullable(),
+  results: z.array(z.object({ id: idSchema })),
 });

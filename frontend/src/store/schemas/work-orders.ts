@@ -1,47 +1,39 @@
 import z from "zod";
-import { fallback } from "@tanstack/zod-adapter";
-import { listParamsSchema } from "./api";
-import {
-  WorkOrderListRequestParamsOrdering,
-  WorkOrderStatus,
-} from "../enums/work-orders";
+import { listRequestSchema } from "./api";
+import { EWorkOrderListOrdering, WorkOrderStatus } from "../enums/work-orders";
+import { idSchema } from "./basic";
 
-export const workOrderListParamsSchema = listParamsSchema.extend({
-  ordering: fallback(
-    z.nativeEnum(WorkOrderListRequestParamsOrdering).optional(),
-    undefined
-  ),
-  status: fallback(
-    z
+export const workOrderListRequestSchema = listRequestSchema.extend({
+  params: listRequestSchema.shape.params.extend({
+    ordering: z
+      .nativeEnum(EWorkOrderListOrdering)
+      .nullable()
+      .optional()
+      .catch(undefined)
+      .transform((val) => val ?? EWorkOrderListOrdering.CreatedAsc),
+    status: z
       .union([
         z.nativeEnum(WorkOrderStatus),
         z.array(z.nativeEnum(WorkOrderStatus)),
       ])
-      .transform((val) => (Array.isArray(val) ? val : [val]))
-      .transform((val) => Array.from(new Set(val)))
-      .transform((val) => (val.length === 0 ? undefined : val))
-      .optional(),
-    undefined
-  ),
-  client: fallback(
-    z
-      .union([
-        z.coerce.number().int().positive(),
-        z.array(z.coerce.number().int().positive()),
-      ])
-      .transform((val) => (Array.isArray(val) ? val : [val]))
-      .transform((val) => Array.from(new Set(val)))
-      .transform((val) => (val.length === 0 ? undefined : val))
-      .optional(),
-    undefined
-  ),
-  city: fallback(
-    z
-      .union([z.string().min(2).max(100), z.array(z.string().min(2).max(100))])
-      .transform((val) => (Array.isArray(val) ? val : [val]))
-      .transform((val) => Array.from(new Set(val)))
-      .transform((val) => (val.length === 0 ? undefined : val))
-      .optional(),
-    undefined
-  ),
+      .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])))
+      .pipe(z.array(z.nativeEnum(WorkOrderStatus)))
+      .transform((val) => (!val || val.length === 0 ? undefined : val))
+      .optional()
+      .catch(undefined),
+    client: z
+      .union([idSchema, z.array(idSchema)])
+      .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])))
+      .pipe(z.array(idSchema))
+      .transform((val) => (!val || val.length === 0 ? undefined : val))
+      .optional()
+      .catch(undefined),
+    city: z
+      .union([idSchema, z.array(idSchema)])
+      .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])))
+      .pipe(z.array(idSchema))
+      .transform((val) => (!val || val.length === 0 ? undefined : val))
+      .optional()
+      .catch(undefined),
+  }),
 });

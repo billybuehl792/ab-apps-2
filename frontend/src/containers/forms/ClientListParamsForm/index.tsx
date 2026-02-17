@@ -1,33 +1,31 @@
-import { type ComponentProps } from "react";
-import { Stack } from "@mui/material";
-import Form from "@/components/forms/Form";
-import ClientListParamsFormOrderingHead from "./layout/ClientListParamsFormOrderingHead";
-import ClientListParamsFormFiltersHead from "./layout/ClientListParamsFormFiltersHead";
-import ClientListParamsFormOrderingField from "./fields/ClientListParamsFormOrderingField";
-import ClientListParamsFormWorkOrdersStatusField from "./fields/ClientListParamsFormWorkOrdersStatusField";
+import { Stack, type StackProps } from "@mui/material";
 import ClientListParamsFormCityField from "./fields/ClientListParamsFormCityField";
+import { clientListRequestParamsSchema } from "@/store/schemas/clients";
 import type { ClientListRequestParams } from "@/store/types/clients";
 
-export type ClientListParamsFormValues = ClientListRequestParams;
+interface ClientListParamsFormProps extends Omit<StackProps, "onChange"> {
+  values: ClientListRequestParams;
+  onChange: (values: ClientListRequestParams) => void;
+}
 
-const ClientListParamsForm = (
-  props: ComponentProps<typeof Form<ClientListParamsFormValues>>
-) => {
+const ClientListParamsForm: React.FC<ClientListParamsFormProps> = ({
+  values,
+  onChange,
+  ...props
+}) => {
+  /** Values */
+
+  const params = clientListRequestParamsSchema.parse(values);
+
+  /** Callbacks */
+
+  const handleOnChange = (values: ClientListRequestParams) => onChange(values);
+
   return (
-    <Form {...props}>
-      {/* Ordering */}
-      <ClientListParamsFormOrderingHead />
-      <Stack spacing={2}>
-        <ClientListParamsFormOrderingField />
-      </Stack>
-
-      {/* Filters */}
-      <ClientListParamsFormFiltersHead />
-      <Stack spacing={2}>
-        <ClientListParamsFormCityField />
-        <ClientListParamsFormWorkOrdersStatusField />
-      </Stack>
-    </Form>
+    <Stack {...props}>
+      <ClientListParamsFormCityField />
+      {/* <ClientListParamsFormWorkOrdersStatusField /> */}
+    </Stack>
   );
 };
 

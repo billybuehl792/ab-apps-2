@@ -18,10 +18,12 @@ const NavBreadcrumbs = (props: BreadcrumbsProps) => {
               <CustomLink
                 key={match.id}
                 label={match.loaderData.crumb.label}
-                Icon={match.loaderData.crumb.Icon}
                 to={match.pathname}
                 activeOptions={{ exact: true, includeSearch: false }}
                 color="text.secondary"
+                {...(match.loaderData.crumb.Icon && {
+                  icon: <match.loaderData.crumb.Icon />,
+                })}
                 sx={{
                   "&[data-status='active']": {
                     color: "text.primary",
@@ -31,7 +33,7 @@ const NavBreadcrumbs = (props: BreadcrumbsProps) => {
                   },
                 }}
               />
-            )
+            ),
         )}
       </Breadcrumbs>
     </>

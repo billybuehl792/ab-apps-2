@@ -1,43 +1,43 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { type ComponentProps, useMemo } from "react";
+import {
+  createFileRoute,
+  stripSearchParams,
+  useNavigate,
+} from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import z from "zod";
 import { Add } from "@mui/icons-material";
-import { clientQueries } from "@/store/queries/clients";
-import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
-import ClientListCard from "@/containers/cards/ClientListCard";
-import ClientListParamsForm from "@/containers/forms/ClientListParamsForm";
+import { useQuery } from "@tanstack/react-query";
+import { clientListRequestSchema } from "@/store/schemas/clients";
 import CustomLink from "@/components/links/CustomLink";
-import { paramUtils } from "@/store/utils/params";
-import { page } from "@/store/constants/layout";
-import type { ClientListRequestParams } from "@/store/types/clients";
-import type { RouteLoaderData } from "@/store/types/router";
+import ClientList from "@/containers/lists/ClientList";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import { clientEndpoints } from "@/store/constants/clients";
+import { EObjectChangeType } from "@/store/enums/api";
+import type { TRouteLoaderData } from "@/store/types/router";
 
-const cleanParams = (params: Record<string, unknown>) => {
-  const city = params.place__city;
-  const workOrdersStatus = params.work_orders__status;
-  if (city && !(city instanceof Array)) params.place__city = [city];
-  if (workOrdersStatus && !(workOrdersStatus instanceof Array))
-    params.work_orders__status = [workOrdersStatus];
-
-  return paramUtils.cleanListRequestParamsParams<ClientListRequestParams>(
-    params
-  );
-};
+const paramsSchema = clientListRequestSchema.shape.params;
+const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/dashboard/clients/")({
-  validateSearch: cleanParams,
-  loader: (): RouteLoaderData => ({
+  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  search: { middlewares: [stripSearchParams(defaultParams)] },
+  pendingComponent: () => <StatusWrapper loading my={2} />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} my={2} />,
+  component: RouteComponent,
+  loader: (): TRouteLoaderData => ({
     slotProps: {
       pageHeader: {
         endContent: (
           <CustomLink
             label="Create"
             to="/app/dashboard/clients/create"
-            Icon={Add}
+            icon={<Add />}
           />
         ),
       },
     },
   }),
-  component: RouteComponent,
 });
 
 function RouteComponent() {
@@ -46,29 +46,71 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
-  const queryOptions = clientQueries.list(params);
+  /** Queries */
+
+  const clientListQuery = useQuery({
+    queryKey: [clientEndpoints.id, { params }],
+    queryFn: () => clientEndpoints.get({ params }),
+  });
+
+  /** Data */
+
+  const total = useMemo(
+    () => clientListQuery.data?.count ?? false,
+    [clientListQuery.data],
+  );
 
   /** Callbacks */
 
-  const handleParamsChange = (newParams: ClientListRequestParams) =>
-    navigate({ to: "/app/dashboard/clients", search: cleanParams(newParams) });
+  const handleOnParamsChange = (
+    newParams: z.input<typeof clientListRequestSchema.shape.params>,
+  ) =>
+    navigate({
+      to: "/app/dashboard/clients",
+      search: clientListRequestSchema.shape.params.parse({
+        ...params,
+        ...newParams,
+      }),
+      replace: true,
+    });
+
+  const handleOnChange: ComponentProps<typeof ClientList>["onChange"] = (
+    client,
+    type,
+  ) => {
+    if (type === EObjectChangeType.Delete) {
+      const isLastItemOnPage =
+        clientListQuery.data?.results.at(-1)?.id === client.id;
+      const isFirstPage = params.page === 1;
+      if (isLastItemOnPage && !isFirstPage)
+        handleOnParamsChange({ page: params.page - 1 });
+      else clientListQuery.refetch();
+    }
+  };
 
   return (
-    <PaginatedQueryList
-      queryOptions={queryOptions}
-      ParamsFormComponent={ClientListParamsForm}
-      renderItem={(client) => (
-        <ClientListCard key={client.id} client={client} />
-      )}
-      onParamsChange={handleParamsChange}
+    <ClientList
+      items={clientListQuery.data?.results ?? []}
+      total={total}
+      options={{ params }}
+      loading={clientListQuery.isLoading}
+      error={clientListQuery.error}
+      renderSkeletonItem
+      mb={2}
+      onChange={handleOnChange}
+      onPageChange={(_event, page) => handleOnParamsChange({ page })}
+      onSearchChange={(value) =>
+        handleOnParamsChange({ search: value, page: 1 })
+      }
+      onOrderingChange={(value) =>
+        handleOnParamsChange({ ordering: value, page: 1 })
+      }
       slotProps={{
         header: {
           position: "sticky",
-          top: page.header.height + 16,
-          zIndex: 2,
+          top: (theme) => theme.layout.page.header.height,
           bgcolor: "background.paper",
-          boxShadow: (theme) =>
-            `0px -${page.header.height / 4}px ${theme.palette.background.paper}`,
+          zIndex: 1,
         },
       }}
     />

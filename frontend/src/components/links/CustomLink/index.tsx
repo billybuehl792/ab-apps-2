@@ -1,31 +1,30 @@
 import { forwardRef, type ReactNode } from "react";
 import { createLink, type LinkComponent } from "@tanstack/react-router";
 import { Link as MuiLink, type LinkProps as MuiLinkProps } from "@mui/material";
-import { type SvgIconComponent } from "@mui/icons-material";
 
 interface MUILinkComponentProps extends MuiLinkProps {
   label: ReactNode;
   active?: boolean;
-  Icon?: SvgIconComponent;
+  icon?: ReactNode;
 }
 
 const MUILinkComponent = forwardRef<HTMLAnchorElement, MUILinkComponentProps>(
-  ({ label, active, Icon, ...props }, ref) => {
+  ({ label, icon, active, ...props }, ref) => {
     return (
       <MuiLink
         ref={ref}
         variant="body2"
-        underline="none"
         display="flex"
+        underline="hover"
         alignItems="center"
         gap={1}
         {...props}
       >
-        {Icon && <Icon fontSize="inherit" />}
+        {icon}
         {label}
       </MuiLink>
     );
-  }
+  },
 );
 
 const CreatedLinkComponent = createLink(MUILinkComponent);

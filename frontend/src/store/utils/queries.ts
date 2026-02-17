@@ -1,4 +1,35 @@
-import type { QueryKey } from "../types/queries";
+import { queryOptions } from "@tanstack/react-query";
+import type { TQueryKey } from "../types/queries";
+import type { AxiosResponse } from "axios";
+
+export const getEndpointQueryKey = <
+  TArgs extends unknown[],
+  TResponse = unknown,
+>(
+  endpoint: {
+    url: string;
+    get: (...args: TArgs) => Promise<AxiosResponse<TResponse>>;
+  },
+  ...args: TArgs
+) => {
+  return args ? [endpoint.url, ...args] : [endpoint.url];
+};
+
+export const getEndpointQueryOptions = <
+  TArgs extends unknown[],
+  TResponse = unknown,
+>(
+  endpoint: {
+    url: string;
+    get: (...args: TArgs) => Promise<AxiosResponse<TResponse>>;
+  },
+  ...args: TArgs
+) => {
+  return queryOptions({
+    queryKey: getEndpointQueryKey(endpoint, ...args),
+    queryFn: () => endpoint.get(...args).then((res) => res.data),
+  });
+};
 
 /**
  * Generates a query key for a specific query.
@@ -8,13 +39,13 @@ import type { QueryKey } from "../types/queries";
  */
 const getQueryKey = <O extends object | undefined = undefined>(
   id: ReadonlyArray<string>,
-  options?: O
+  options?: O,
 ) => {
   return (
     options instanceof Object
-      ? ([id, options] as QueryKey<O>)
-      : ([id] as QueryKey)
-  ) as O extends object ? QueryKey<O> : QueryKey;
+      ? ([id, options] as TQueryKey<O>)
+      : ([id] as TQueryKey)
+  ) as O extends object ? TQueryKey<O> : TQueryKey;
 };
 
 /**

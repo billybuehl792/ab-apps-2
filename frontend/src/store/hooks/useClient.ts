@@ -1,83 +1,135 @@
+import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Delete, Edit, Info, Work } from "@mui/icons-material";
-import useConfirm from "./useConfirm";
-import { clientMutations } from "../mutations/clients";
+import { useSnackbar } from "notistack";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Delete, Edit, Info } from "@mui/icons-material";
 import { clientQueries } from "../queries/clients";
-import { ClientOptionId } from "../enums/clients";
+import { clientMutations } from "../mutations/clients";
+import { EClientOptionId } from "../enums/clients";
+import useConfirm from "./useConfirm";
+import { errorUtils } from "../utils/error";
 import type { ClientBasic } from "../types/clients";
+import { getPlaceholderClient } from "../constants/clients";
+import { EObjectChangeType } from "../enums/api";
 
-const useClient = (client: ClientBasic | number) => {
+const useClient = (
+  client: number | ClientBasic,
+  options?: { onChange?: (clientId: number, type: EObjectChangeType) => void },
+) => {
   /** Values */
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const confirm = useConfirm();
+  const snackbar = useSnackbar();
 
   const isId = typeof client === "number";
-  const clientId = isId ? client : client.id;
+  const clientId = typeof client === "number" ? client : client.id;
+  const clientFullName =
+    typeof client === "number" ? String(client) : client.full_name;
 
   /** Queries */
 
   const clientQuery = useQuery({
     ...clientQueries.detail(clientId),
-    enabled: isId && !isNaN(clientId),
+    enabled: isId && Boolean(clientId),
   });
-
-  /** Data */
-
-  const clientData = isId ? clientQuery.data : client;
-  const clientFullName = clientData ? clientData.full_name : "Client";
 
   /** Mutations */
 
   const deleteClientMutation = useMutation(clientMutations.delete());
 
+  /** Data */
+
+  const disabled =
+    (clientQuery.isEnabled && !clientQuery.isSuccess) ||
+    deleteClientMutation.isPending;
+
   /** Callbacks */
 
-  const handleDeleteClient = () => {
-    deleteClientMutation.mutate(clientId, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(clientQueries.list());
-        navigate({ to: "/app/dashboard/clients" });
-      },
-    });
-  };
+  const handleNavigateView = useCallback(
+    () =>
+      navigate({
+        to: "/app/dashboard/clients/$id",
+        params: { id: String(clientId) },
+      }),
+    [clientId, navigate],
+  );
+
+  const handleNavigateEdit = useCallback(
+    () =>
+      navigate({
+        to: "/app/dashboard/clients/$id",
+        params: { id: String(clientId) },
+        search: { edit: true },
+      }),
+    [clientId, navigate],
+  );
+
+  const handleDelete = useCallback(
+    () =>
+      confirm(`Delete ${clientFullName}?`, () =>
+        deleteClientMutation.mutate(clientId, {
+          onSuccess: () => {
+            options?.onChange?.(clientId, EObjectChangeType.Delete);
+            snackbar.enqueueSnackbar(`${clientFullName} deleted`, {
+              variant: "success",
+            });
+          },
+          onError: (error) =>
+            snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
+              variant: "error",
+            }),
+        }),
+      ),
+    [
+      confirm,
+      clientFullName,
+      deleteClientMutation,
+      clientId,
+      options,
+      snackbar,
+    ],
+  );
 
   /** Options */
 
-  const options: MenuOption<ClientOptionId>[] = [
+  const menuOptions: MenuOption<EClientOptionId, null>[] = [
     {
-      id: ClientOptionId.Detail,
+      id: EClientOptionId.Detail,
       label: "Detail",
       Icon: Info,
-      onClick: () =>
-        navigate({
-          to: "/app/dashboard/clients/$id",
-          params: { id: String(clientId) },
-        }),
+      disabled: disabled,
+      onClick: handleNavigateView,
     },
     {
-      id: ClientOptionId.Edit,
+      id: EClientOptionId.Edit,
       label: "Edit",
       Icon: Edit,
-      onClick: () =>
-        navigate({
-          to: "/app/dashboard/clients/$id",
-          params: { id: String(clientId) },
-          search: { edit: true },
-        }),
+      disabled,
+      onClick: handleNavigateEdit,
     },
     {
-      id: ClientOptionId.Delete,
+      id: EClientOptionId.Delete,
       label: "Delete",
       Icon: Delete,
       color: "error",
-      onClick: () => confirm(`Delete ${clientFullName}?`, handleDeleteClient),
+      disabled,
+      onClick: handleDelete,
     },
   ];
 
-  return { client: clientData, options };
+  return {
+    clientQuery,
+    client: {
+      ...getPlaceholderClient(clientId),
+      ...(isId ? clientQuery.data : client),
+    },
+    options: menuOptions,
+    disabled,
+    view: handleNavigateView,
+    edit: handleNavigateEdit,
+    delete: handleDelete,
+  };
 };
 
 export default useClient;

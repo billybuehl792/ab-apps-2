@@ -8,8 +8,5 @@ import {
 
 export const AdminIcons = {
   Detail: AdminPanelSettings,
-  Users: {
-    List: PeopleOutline,
-    Detail: PersonOutline,
-  },
+  Users: { List: PeopleOutline, Detail: PersonOutline },
 };

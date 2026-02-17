@@ -1,3 +1,5 @@
+import { LIST_DESC_CHAR } from "../constants/api";
+import { EOrderingDirection } from "../enums/api";
 import type { ListRequestParams } from "../types/api";
 
 const MAX_PAGE_SIZE = 100;
@@ -8,7 +10,7 @@ const MAX_PAGE_SIZE = 100;
  * @returns The sanitized parameters for the API list request.
  */
 const sanitizeListRequestParams = (
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
 ): ListRequestParams => {
   const formatted: ListRequestParams = {};
 
@@ -17,7 +19,7 @@ const sanitizeListRequestParams = (
   if (params?.page_size && !isNaN(Number(params.page_size)))
     formatted["page_size"] = Math.min(
       Math.max(Number(params.page_size), 1),
-      MAX_PAGE_SIZE
+      MAX_PAGE_SIZE,
     );
   if (params?.ordering && !!String(params.ordering).trim())
     formatted["ordering"] = String(params.ordering);
@@ -36,7 +38,7 @@ const sanitizeListRequestParams = (
 const cleanListRequestParamsParams = <
   P extends ListRequestParams = ListRequestParams,
 >(
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
 ): P => {
   const baseSanitizedParams = sanitizeListRequestParams(params);
   const formatted = { ...params, ...baseSanitizedParams };
@@ -47,12 +49,37 @@ const cleanListRequestParamsParams = <
         value !== undefined &&
         value !== "" &&
         value !== null &&
-        (Array.isArray(value) ? value.length > 0 : true)
-    )
+        (Array.isArray(value) ? value.length > 0 : true),
+    ),
   ) as P;
 };
+
+/**
+ * Ordering direction based on start character
+ */
+const getEOrderingDirection = (ordering: string): EOrderingDirection =>
+  ordering.startsWith(LIST_DESC_CHAR)
+    ? EOrderingDirection.DESC
+    : EOrderingDirection.ASC;
+
+/**
+ * `true` if `ordering` is descending
+ */
+const isOrderingAsc = (ordering: string) =>
+  getEOrderingDirection(ordering) === EOrderingDirection.ASC;
+
+/**
+ * `true` if `ordering` is descending
+ */
+const isOrderingDesc = (ordering: string) =>
+  getEOrderingDirection(ordering) === EOrderingDirection.DESC;
 
 export const paramUtils = {
   sanitizeListRequestParams,
   cleanListRequestParamsParams,
+
+  // Ordering
+  getEOrderingDirection,
+  isOrderingAsc,
+  isOrderingDesc,
 };

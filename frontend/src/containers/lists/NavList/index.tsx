@@ -15,26 +15,30 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
   const items: ListItem[] = [
     {
       id: "home",
+      value: "home",
       label: "Home",
-      Icon: Home,
+      icon: <Home />,
       link: { to: "/app/dashboard", activeOptions: { exact: true } },
     },
     {
       id: "clients",
+      value: "clients",
       label: "Clients",
-      Icon: ClientIcons.List,
+      icon: <ClientIcons.List />,
       link: { to: "/app/dashboard/clients" },
     },
     {
       id: "workOrders",
+      value: "workOrders",
       label: "Work Orders",
-      Icon: WorkOrderIcons.List,
+      icon: <WorkOrderIcons.List />,
       link: { to: "/app/dashboard/work-orders" },
     },
     {
       id: "profile",
+      value: "profile",
       label: "Profile",
-      Icon: AccountIcons.Detail,
+      icon: <AccountIcons.Detail />,
       link: {
         to: "/app/dashboard/profile/$id",
         params: { id: String(auth.me?.id) },
@@ -42,8 +46,9 @@ const NavList = (props: Partial<ComponentProps<typeof NestedList>>) => {
     },
     {
       id: "admin",
+      value: "admin",
       label: "Admin",
-      Icon: AdminIcons.Detail,
+      icon: <AdminIcons.Detail />,
       link: { to: "/app/dashboard/admin" },
     },
   ];

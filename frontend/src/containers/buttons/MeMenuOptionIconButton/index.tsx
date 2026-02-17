@@ -1,17 +1,16 @@
-import { type ComponentProps } from "react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Avatar } from "@mui/material";
 import { Logout, Person } from "@mui/icons-material";
-import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
+import MenuOptionIconButton, {
+  type IMenuOptionIconButtonProps,
+} from "@/components/buttons/MenuOptionIconButton";
 import useConfirm from "@/store/hooks/useConfirm";
 import useAuth from "@/store/hooks/useAuth";
+import { NULL_ID } from "@/store/constants/api";
 
-type MeMenuOptionIconButtonProps = Omit<
-  ComponentProps<typeof MenuOptionIconButton>,
-  "options"
->;
-
-const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
+const MeMenuOptionIconButton: React.FC<Partial<IMenuOptionIconButtonProps>> = (
+  props,
+) => {
   /** Values */
 
   const navigate = useNavigate();
@@ -19,31 +18,33 @@ const MeMenuOptionIconButton = (props: MeMenuOptionIconButtonProps) => {
   const auth = useAuth();
   const confirm = useConfirm();
 
-  const options: MenuOption[] = [
+  const userId = auth.me?.id ?? NULL_ID;
+
+  const options: IMenuOption[] = [
     {
       id: "profile",
+      value: "profile",
       label: "Profile",
-      Icon: Person,
+      icon: <Person />,
+      disabled: userId === NULL_ID,
       selected: location.pathname.startsWith("/app/dashboard/profile"),
-      onClick: () =>
-        navigate({
-          to: "/app/dashboard/profile/$id",
-          params: { id: String(auth.me?.id ?? 0) },
-        }),
+      link: {
+        to: "/app/dashboard/profile/$id",
+        params: { id: String(userId) },
+      },
     },
     {
       id: "signOut",
+      value: "signOut",
       label: "Sign Out",
-      Icon: Logout,
+      icon: <Logout />,
       color: "error",
       onClick: () => confirm("Sign Out", () => navigate({ to: "/sign-out" })),
     },
   ];
 
   return (
-    <MenuOptionIconButton options={options} {...props}>
-      <Avatar />
-    </MenuOptionIconButton>
+    <MenuOptionIconButton options={options} icon={<Avatar />} {...props} />
   );
 };
 

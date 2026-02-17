@@ -10,18 +10,20 @@ import {
 import { Search } from "@mui/icons-material";
 import CloseIconButton from "@/components/buttons/CloseIconButton";
 
-interface DebouncedSearchFieldProps
-  extends Omit<StandardTextFieldProps, "onChange" | "value"> {
+interface DebouncedSearchFieldProps extends Omit<
+  StandardTextFieldProps,
+  "onChange" | "value"
+> {
   value: string | undefined;
   loading?: boolean;
-  onSearch: (term: string) => void;
+  onChange: (value: string) => void;
 }
 
 const DebouncedSearchField = ({
   value,
   loading,
   disabled,
-  onSearch,
+  onChange,
   ...props
 }: DebouncedSearchFieldProps) => {
   const [localValue, setLocalValue] = useState(value ?? "");
@@ -35,12 +37,12 @@ const DebouncedSearchField = ({
 
   const handleOnClear = () => {
     setLocalValue("");
-    onSearch("");
+    onChange("");
   };
 
   const handleDebouncedSearch = useDebouncedCallback(
-    (term: string) => onSearch(term),
-    500
+    (term: string) => onChange(term),
+    500,
   );
 
   useEffect(() => {
@@ -52,6 +54,7 @@ const DebouncedSearchField = ({
       type="search"
       inputMode="search"
       autoComplete="off"
+      placeholder="Search..."
       fullWidth
       value={localValue}
       disabled={disabled}

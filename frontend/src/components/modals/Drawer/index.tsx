@@ -1,13 +1,13 @@
-import { type ReactNode } from "react";
+import { type MouseEventHandler, type ReactNode } from "react";
 import clsx from "clsx";
 import {
-  SwipeableDrawer as MuiSwipeableDrawer,
-  Stack,
-  type SwipeableDrawerProps as MuiSwipeableDrawerProps,
-  useMediaQuery,
   styled,
-  Typography,
+  useMediaQuery,
   Divider,
+  Stack,
+  SwipeableDrawer as MuiSwipeableDrawer,
+  Typography,
+  type SwipeableDrawerProps as MuiSwipeableDrawerProps,
 } from "@mui/material";
 import BackIconButton from "@/components/buttons/BackIconButton";
 import CloseIconButton from "@/components/buttons/CloseIconButton";
@@ -47,12 +47,11 @@ const StyledDrawer = styled(MuiSwipeableDrawer)(({ theme }) => ({
 }));
 
 interface DrawerProps
-  extends Omit<MuiSwipeableDrawerProps, "title" | "onOpen" | "onClose"> {
+  extends Omit<MuiSwipeableDrawerProps, "title" | "onOpen"> {
   title?: ReactNode;
   fullHeight?: boolean;
-  onOpen?: VoidFunction;
-  onBack?: VoidFunction;
-  onClose?: VoidFunction;
+  onOpen?: MuiSwipeableDrawerProps["onOpen"];
+  onBack?: MouseEventHandler<HTMLButtonElement>;
 }
 
 const Drawer = ({
@@ -79,8 +78,8 @@ const Drawer = ({
       disableSwipeToOpen
       disableBackdropTransition={!iOS} // iOS is hosted on high-end devices. The backdrop transition can be enabled without dropping frames. The performance will be good enough.
       disableDiscovery={iOS} // iOS has a "swipe to go back" feature that interferes with the discovery feature, so discovery has to be disabled.
-      onOpen={() => onOpen?.()}
-      onClose={() => onClose?.()}
+      onOpen={(event) => onOpen?.(event)}
+      onClose={onClose}
       ModalProps={{ keepMounted: false }}
       slotProps={{
         ...slotProps,
@@ -110,7 +109,7 @@ const Drawer = ({
               title
             )}
           </Stack>
-          {!!onClose && <CloseIconButton onClick={onClose} />}
+          <CloseIconButton onClick={onClose} />
         </Stack>
         <Divider variant="middle" />
       </Stack>

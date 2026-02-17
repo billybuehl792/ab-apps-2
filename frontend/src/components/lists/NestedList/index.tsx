@@ -1,48 +1,67 @@
-import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState, useEffect, useMemo, Fragment } from "react";
 import {
   Collapse,
   List,
   ListItem,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
   type ListItemProps,
   type ListProps,
   Typography,
+  ListItemButton,
 } from "@mui/material";
 import ExpandIconButton from "@/components/buttons/ExpandIconButton";
+import ListItemButtonLink from "@/components/links/ListItemButtonLink";
+import { sxUtils } from "@/store/utils/sx";
 
-interface NestedListProps extends ListProps {
+interface INestedListProps extends ListProps {
   items: ListItem[];
   slotProps?: {
-    item?: Partial<Omit<NestedListItemProps, "item">>;
+    item?: Partial<Omit<INestedListItemProps, "item">>;
   };
 }
 
-interface NestedListItemProps extends ListItemProps {
+interface INestedListItemProps extends ListItemProps {
   item: ListItem;
 }
 
-const NestedList = ({ items, ...props }: NestedListProps) => {
+const NestedList: React.FC<INestedListProps> = ({
+  items,
+  slotProps,
+  ...props
+}) => {
   return (
     <List disablePadding dense {...props}>
       {items
         .filter(({ render }) => render !== false)
         .map((item) => (
-          <NestedListItem key={item.id} item={item} />
+          <NestedListItem key={item.id} item={item} {...slotProps?.item} />
         ))}
     </List>
   );
 };
 
-const NestedListItem = ({ item, ...props }: NestedListItemProps) => {
+const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
   const [expanded, setExpanded] = useState(false);
 
   /** Values */
 
   const hasChildren =
     item.items?.some(({ render }) => render !== false) ?? false;
+
+  const ListItemContent = useMemo(
+    () => (
+      <Fragment>
+        {!!item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+        <ListItemText>
+          <Typography variant="body2" fontWeight="inherit" noWrap>
+            {item.label}
+          </Typography>
+        </ListItemText>
+      </Fragment>
+    ),
+    [item],
+  );
 
   /** Effects */
 
@@ -63,28 +82,26 @@ const NestedListItem = ({ item, ...props }: NestedListItemProps) => {
           ),
         })}
         {...props}
+        sx={[{ ...item.sx }, sxUtils.asArray(props.sx)]}
       >
-        <ListItemButton
-          selected={item.selected}
-          disabled={item.disabled}
-          {...(item.link && { LinkComponent: Link, ...item.link })}
-          onClick={item.onClick}
-          sx={{
-            '&[data-status="active"]': {
-              backgroundColor: "action.selected",
-              "> *": { fontWeight: "bold", color: "text.primary" },
-            },
-          }}
-        >
-          {!!item.Icon && (
-            <ListItemIcon sx={{ minWidth: 36 }}>{<item.Icon />}</ListItemIcon>
-          )}
-          <ListItemText>
-            <Typography variant="body2" fontWeight="inherit" noWrap>
-              {item.label}
-            </Typography>
-          </ListItemText>
-        </ListItemButton>
+        {item.link ? (
+          <ListItemButtonLink
+            {...item.link}
+            selected={item.selected}
+            disabled={item.disabled}
+            onClick={item.onClick}
+          >
+            {ListItemContent}
+          </ListItemButtonLink>
+        ) : (
+          <ListItemButton
+            selected={item.selected}
+            disabled={item.disabled}
+            onClick={item.onClick}
+          >
+            {ListItemContent}
+          </ListItemButton>
+        )}
       </ListItem>
 
       {hasChildren && (

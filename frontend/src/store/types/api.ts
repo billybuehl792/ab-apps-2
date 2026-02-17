@@ -1,13 +1,6 @@
-export type ListRequestParams<O extends string = string> = {
-  ordering?: O | null;
-  page_size?: number;
-  page?: number;
-  search?: string;
-};
+import z from "zod";
+import { listRequestSchema, listResponseSchema } from "../schemas/api";
 
-export interface ListResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
+export type TListRequest = z.infer<typeof listRequestSchema>;
+
+export type TListResponse = z.infer<typeof listResponseSchema>;

@@ -1,48 +1,15 @@
 import { StrictMode } from "react";
-import qs from "qs";
 import ReactDOM from "react-dom/client";
-import RootProvider from "./containers/providers/RootProvider";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-import { Home } from "@mui/icons-material";
-import StatusCard from "./components/cards/StatusCard";
 
 import "reset-css/reset.css";
 import "./store/utils/string";
 import "./store/utils/number";
 import "./store/utils/dayjs";
-import FullScreen from "./components/layout/FullScreen";
-import CustomLink from "./components/links/CustomLink";
-import type { GlobalRouterContext } from "./store/types/router";
 
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
+import router from "./store/config/router";
+import RootProvider from "./containers/providers/RootProvider";
 
-export const router = createRouter({
-  routeTree,
-  defaultPendingMs: 0,
-  context: {} as GlobalRouterContext,
-  parseSearch: (searchStr) => qs.parse(searchStr, { ignoreQueryPrefix: true }),
-  stringifySearch: (searchObj) => {
-    const str = qs.stringify(searchObj, { arrayFormat: "repeat" });
-    return str ? `?${str}` : "";
-  },
-  defaultPendingComponent: () => <StatusCard loading />,
-  defaultErrorComponent: ({ error }) => <StatusCard error={error} />,
-  defaultNotFoundComponent: () => (
-    <FullScreen>
-      <StatusCard
-        error="Page not found :("
-        description={
-          <CustomLink label="Home" Icon={Home} to="/app/dashboard" />
-        }
-      />
-    </FullScreen>
-  ),
-});
+export { router };
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
@@ -50,6 +17,6 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <RootProvider />
-    </StrictMode>
+    </StrictMode>,
   );
 }

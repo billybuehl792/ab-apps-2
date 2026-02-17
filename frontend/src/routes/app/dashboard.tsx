@@ -1,19 +1,23 @@
 import { createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { Box, Container } from "@mui/material";
-import { ArrowBack, Home } from "@mui/icons-material";
+import { Container } from "@mui/material";
+import { Home } from "@mui/icons-material";
 import PageHeader from "@/components/layout/PageHeader";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 import CustomLink from "@/components/links/CustomLink";
-import StatusCard from "@/components/cards/StatusCard";
 import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
-import type { RouteLoaderData } from "@/store/types/router";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard")({
-  loader: (): RouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
+  loader: (): TRouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
   component: RouteComponent,
   notFoundComponent: () => (
-    <StatusCard
-      error="Page not found :("
-      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    <StatusWrapper
+      error={{
+        label: "Page not found :(",
+        actions: [
+          <CustomLink label="Home" icon={<Home />} to="/app/dashboard" />,
+        ],
+      }}
     />
   ),
 });
@@ -30,9 +34,7 @@ function RouteComponent() {
         title={<NavBreadcrumbs />}
         {...currentMatch.loaderData?.slotProps?.pageHeader}
       />
-      <Box my={2}>
-        <Outlet />
-      </Box>
+      <Outlet />
     </Container>
   );
 }

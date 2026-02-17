@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  notFound,
+  stripSearchParams,
+  useNavigate,
+} from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
@@ -12,24 +19,28 @@ import CustomLink from "@/components/links/CustomLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
 import WorkOrderList from "@/containers/lists/WorkOrderList";
 import { errorUtils } from "@/store/utils/error";
-import { ClientIcons } from "@/store/constants/clients";
-import { ClientOptionId } from "@/store/enums/clients";
-import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
+import { clientEndpoints, ClientIcons } from "@/store/constants/clients";
+import { EClientOptionId } from "@/store/enums/clients";
+// import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
-import type { RouteLoaderData } from "@/store/types/router";
-import type { Client } from "@/store/types/clients";
+import type { TRouteLoaderData } from "@/store/types/router";
+import type { TClient } from "@/store/types/clients";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import { idSchema, truthySchema } from "@/store/schemas/basic";
+
+const paramsSchema = z.object({ edit: truthySchema });
+const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/dashboard/clients/$id")({
-  validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
-    edit: Boolean(search.edit) || undefined,
-  }),
-  loader: async ({ context, params }): Promise<RouteLoaderData<Client>> => {
+  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  search: { middlewares: [stripSearchParams(defaultParams)] },
+  loader: async ({ context, params }): Promise<TRouteLoaderData<TClient>> => {
     try {
-      if (isNaN(Number(params.id))) throw new Error("Invalid client ID");
-
-      const client = await context.queryClient.fetchQuery(
-        clientQueries.detail(Number(params.id))
-      );
+      const clientId = idSchema.parse(params.id);
+      const client = await context.queryClient.fetchQuery({
+        queryKey: clientEndpoints.client(clientId).id,
+        queryFn: clientEndpoints.client(clientId).get,
+      });
 
       return {
         data: client,
@@ -39,7 +50,7 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
             endContent: (
               <ClientMenuOptionIconButton
                 client={client}
-                hideOptions={[ClientOptionId.Detail]}
+                // hideOptions={[EClientOptionId.Detail]}
               />
             ),
           },
@@ -50,19 +61,21 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusCard loading="loading client..." />,
+  pendingComponent: () => <StatusWrapper loading="loading client..." />,
   notFoundComponent: () => (
-    <StatusCard
-      error="Client not found :("
-      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    <StatusWrapper
+      error={{
+        label: "Client not found :(",
+        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
+      }}
     />
   ),
 });
 
 function RouteComponent() {
   const [tabValue, setTabValue] = useState(0);
-  const [workOrderListParams, setWorkOrderListParams] =
-    useState<WorkOrderListRequestParams>({});
+  // const [workOrderListParams, setWorkOrderListParams] =
+  //   useState<WorkOrderListRequestParams>({});
 
   /** Values */
 
@@ -98,7 +111,7 @@ function RouteComponent() {
     });
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing={1} my={2}>
       <ClientDetailCard client={client} />
       <Stack spacing={2}>
         <Tabs
@@ -111,13 +124,13 @@ function RouteComponent() {
           <Tab label="Documents" />
           <Tab label="History" />
         </Tabs>
-        {tabValue === 0 && (
+        {/* {tabValue === 0 && (
           <WorkOrderList
             params={workOrderListParams}
             baseParams={{ client: [client.id] }}
             onParamsChange={setWorkOrderListParams}
           />
-        )}
+        )} */}
       </Stack>
 
       {/* Modals */}

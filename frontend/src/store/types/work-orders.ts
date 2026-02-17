@@ -1,7 +1,7 @@
 import z from "zod";
-import { workOrderListParamsSchema } from "../schemas/work-orders";
+import { workOrderListRequestSchema } from "../schemas/work-orders";
 import { WorkOrderStatus } from "../enums/work-orders";
-import type { ClientBasic } from "./clients";
+import type { TClientBasic } from "./clients";
 import type { PlaceBasic, PlaceWriteable } from "./places";
 
 export interface WorkOrder {
@@ -12,7 +12,7 @@ export interface WorkOrder {
   scheduled_date: string | null;
   completed_date: string | null;
   cost: string;
-  client: ClientBasic | null;
+  client: TClientBasic | null;
   place: PlaceBasic | null;
   created_at: string;
   updated_at: string;
@@ -37,10 +37,10 @@ export interface WorkOrderWriteable {
 
 /** API */
 
-export type WorkOrderCreateBody = Omit<WorkOrderWriteable, "id">;
+export type TWorkOrderCreateBody = Omit<WorkOrderWriteable, "id">;
 
-export type WorkOrderUpdateBody = Partial<WorkOrderCreateBody> & { id: number };
+export type TWorkOrderUpdateBody = Partial<TWorkOrderCreateBody> & {
+  id: number;
+};
 
-export type WorkOrderListRequestParams = z.output<
-  typeof workOrderListParamsSchema
->;
+export type TWorkOrderListRequest = z.output<typeof workOrderListRequestSchema>;

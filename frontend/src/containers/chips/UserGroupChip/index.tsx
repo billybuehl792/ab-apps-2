@@ -1,5 +1,5 @@
 import { Chip, type ChipProps } from "@mui/material";
-import { UserGroup } from "@/store/enums/account";
+import { EUserGroup } from "@/store/enums/account";
 
 interface UserGroupChipProps extends ChipProps {
   group: UserGroup;
@@ -9,9 +9,9 @@ const UserGroupChip = ({ group, ...props }: UserGroupChipProps) => {
   /** Values */
 
   const color =
-    group === UserGroup.AbAdmin
+    group === EUserGroup.AbAdmin
       ? "success"
-      : group === UserGroup.CompanyAdmin
+      : group === EUserGroup.CompanyAdmin
         ? "info"
         : "default";
 

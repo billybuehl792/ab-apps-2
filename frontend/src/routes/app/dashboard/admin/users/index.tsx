@@ -3,7 +3,6 @@ import { accountQueries } from "@/store/queries/account";
 import UserListCard from "@/containers/cards/UserListCard";
 import PaginatedQueryList from "@/components/lists/PaginatedQueryList";
 import { paramUtils } from "@/store/utils/params";
-import { page } from "@/store/constants/layout";
 import type { UserListRequestParams } from "@/store/types/account";
 
 const cleanParams = (params: Record<string, unknown>) =>
@@ -30,21 +29,5 @@ function RouteComponent() {
       search: cleanParams(newParams),
     });
 
-  return (
-    <PaginatedQueryList
-      queryOptions={queryOptions}
-      renderItem={(user) => <UserListCard key={user.id} user={user} />}
-      onParamsChange={handleParamsChange}
-      slotProps={{
-        header: {
-          position: "sticky",
-          top: page.header.height + 16,
-          zIndex: 2,
-          bgcolor: "background.paper",
-          boxShadow: (theme) =>
-            `0px -${page.header.height / 4}px ${theme.palette.background.paper}`,
-        },
-      }}
-    />
-  );
+  return null;
 }

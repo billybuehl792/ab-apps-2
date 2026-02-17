@@ -1,4 +1,4 @@
-export enum ClientOptionId {
+export enum EClientOptionId {
   Detail = "detail",
   Edit = "edit",
   CreateWorkOrder = "createWorkOrder",
@@ -7,7 +7,13 @@ export enum ClientOptionId {
 
 /** API */
 
-export enum ClientListRequestParamsOrdering {
-  FirstName = "first_name",
-  LastName = "last_name",
+export enum EClientListOrdering {
+  CreatedAtAsc = "created_at",
+  CreatedAtDesc = "-created_at",
+  FirstNameAsc = "first_name",
+  FirstNameDesc = "-first_name",
+  LastNameAsc = "last_name",
+  LastNameDesc = "-last_name",
+  UpdatedAtAsc = "updated_at",
+  UpdatedAtDesc = "-updated_at",
 }

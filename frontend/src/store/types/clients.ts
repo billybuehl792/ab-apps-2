@@ -1,50 +1,24 @@
-import { ClientListRequestParamsOrdering } from "../enums/clients";
-import { WorkOrderStatus } from "../enums/work-orders";
-import type { ListRequestParams } from "./api";
-import type { PlaceBasic, PlaceWriteable } from "./places";
+import z from "zod";
+import {
+  clientBasicSchema,
+  clientListRequestSchema,
+  clientListResponseSchema,
+  clientSchema,
+  clientWriteableSchema,
+} from "../schemas/clients";
 
-export interface Client {
-  id: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_primary: string;
-  phone_secondary: string | null;
-  place: PlaceBasic | null;
-  work_orders_count: number;
-  documents_count: number;
-  created_at: string;
-  updated_at: string;
-}
+export type TClient = z.infer<typeof clientSchema>;
 
-export interface ClientBasic {
-  id: number;
-  full_name: string;
-  email: string;
-  phone_primary: string;
-  place: PlaceBasic | null;
-}
+export type TClientBasic = z.infer<typeof clientBasicSchema>;
 
-export interface ClientWriteable {
-  id: number;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  email: string;
-  phone_primary: string;
-  phone_secondary?: string | null;
-  place?: PlaceWriteable | null;
-}
+export type TClientWriteable = z.infer<typeof clientWriteableSchema>;
 
 /** API */
 
-export type ClientCreateBody = Omit<ClientWriteable, "id" | "full_name">;
+export type TClientCreateBody = Omit<TClientWriteable, "id" | "full_name">;
 
-export type ClientUpdateBody = Partial<ClientCreateBody> & { id: number };
+export type TClientUpdateBody = Partial<TClientCreateBody> & { id: number };
 
-export type ClientListRequestParams =
-  ListRequestParams<ClientListRequestParamsOrdering> & {
-    work_orders__status?: WorkOrderStatus[];
-    place__city?: string[];
-  };
+export type TClientListRequest = z.infer<typeof clientListRequestSchema>;
+
+export type TClientListResponse = z.infer<typeof clientListResponseSchema>;

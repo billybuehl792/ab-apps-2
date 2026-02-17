@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
-import { type LinkOptions } from "@tanstack/react-router";
+import { type CreateLinkProps } from "@tanstack/react-router";
+import { EOrderingDirection } from "../enums/api";
 
 declare global {
   /**
@@ -10,7 +11,7 @@ declare global {
    * @template K - The keys from T where at least one must be provided
    *
    */
-  type RequireAtLeastOne<T, K extends keyof T> = Omit<T, K> &
+  type TRequireAtLeastOne<T, K extends keyof T> = Omit<T, K> &
     {
       [P in K]-?: Required<Pick<T, P>> & Partial<Pick<T, Exclude<K, P>>>;
     }[K];
@@ -24,7 +25,7 @@ declare global {
    * @template K1 - The first key that could be required
    * @template K2 - The second key that could be required
    */
-  type RequireOnlyOne<T, K1 extends keyof T, K2 extends keyof T> = Omit<
+  type TRequireOnlyOne<T, K1 extends keyof T, K2 extends keyof T> = Omit<
     T,
     K1 | K2
   > &
@@ -39,28 +40,46 @@ declare global {
    * @template T - The original type to transform
    * @template K - The keys from T that should be required (all other keys become optional)
    */
-  type WithRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>;
+  type TWithRequired<T, K extends keyof T> = Partial<T> & Required<Pick<T, K>>;
 
-  interface MenuOption<T = string, C = VoidFunction> {
-    id: T;
+  type TOptionValue =
+    | string
+    | number
+    | boolean
+    | null
+    | TOptionValue[]
+    | { [key: string]: TOptionValue };
+
+  interface IMenuOption<TValue extends TOptionValue = TOptionValue> {
+    id: string;
+    value: TValue;
     render?: boolean;
     label: string;
-    Icon?: SvgIconComponent;
+    icon?: ReactNode;
     description?: ReactNode;
     disabled?: boolean;
     selected?: boolean;
-    color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
+    color?: string;
     tooltip?: ReactNode;
-    disableCloseOnSelect?: boolean;
-    onClick?: C;
+    link?: CreateLinkProps;
+    sx?: SxProps<Theme>;
+    onClick?: VoidFunction;
   }
 
-  interface ListItem<T = string, C = VoidFunction>
-    extends Omit<MenuOption<T, C>, "color" | "disableCloseOnSelect"> {
-    link?: LinkOptions;
+  interface IListItem<
+    TValue extends TOptionValue = TOptionValue,
+  > extends IMenuOption<TValue> {
     expanded?: boolean;
-    items?: ListItem<T, C>[];
+    items?: IListItem<TValue>[];
   }
+
+  type TOrderingOption<T extends TOptionValue = TOptionValue> = Omit<
+    IMenuOption<{
+      [EOrderingDirection.ASC]: T;
+      [EOrderingDirection.DESC]: T;
+    }>,
+    "link"
+  >;
 
   interface String {
     /**

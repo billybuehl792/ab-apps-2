@@ -1,29 +1,32 @@
 import { type ComponentProps } from "react";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import type { User } from "@/store/types/account";
 import { useNavigate } from "@tanstack/react-router";
 import { Person } from "@mui/icons-material";
+import type { IUser } from "@/store/types/account";
 
-interface UserMenuOptionIconButtonProps
-  extends Omit<ComponentProps<typeof MenuOptionIconButton>, "options"> {
-  user: User | User["id"];
+interface IUserMenuOptionIconButtonProps extends Omit<
+  ComponentProps<typeof MenuOptionIconButton>,
+  "options"
+> {
+  user: IUser | IUser["id"];
 }
 
-const UserMenuOptionIconButton = ({
+const UserMenuOptionIconButton: React.FC<IUserMenuOptionIconButtonProps> = ({
   user,
   ...props
-}: UserMenuOptionIconButtonProps) => {
+}) => {
   /** Values */
 
   const navigate = useNavigate();
 
   const userId = typeof user === "object" ? user.id : user;
 
-  const options: MenuOption[] = [
+  const options: IMenuOption[] = [
     {
       id: "profile",
+      value: "profile",
       label: "Profile",
-      Icon: Person,
+      icon: <Person />,
       onClick: () =>
         navigate({
           to: "/app/dashboard/profile/$id",

@@ -1,13 +1,16 @@
 import { type ReactNode } from "react";
 import { Stack, type StackProps } from "@mui/material";
-import { page } from "@/store/constants/layout";
 
-interface PageHeaderProps extends Omit<StackProps, "title"> {
+interface IPageHeaderProps extends Omit<StackProps, "title"> {
   title: ReactNode;
   endContent?: ReactNode;
 }
 
-const PageHeader = ({ title, endContent, ...props }: PageHeaderProps) => {
+const PageHeader: React.FC<IPageHeaderProps> = ({
+  title,
+  endContent,
+  ...props
+}) => {
   return (
     <Stack
       direction="row"
@@ -15,7 +18,7 @@ const PageHeader = ({ title, endContent, ...props }: PageHeaderProps) => {
       position="sticky"
       justifyContent="space-between"
       alignItems="center"
-      height={page.header.height}
+      height={({ layout }) => layout.page.header.height}
       boxSizing="border-box"
       top={0}
       py={2}

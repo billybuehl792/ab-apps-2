@@ -1,23 +1,28 @@
-import { type ReactNode, type ComponentProps } from "react";
+import {
+  type ReactNode,
+  type ComponentProps,
+  type SyntheticEvent,
+  type ReactEventHandler,
+} from "react";
 import { useMediaQuery, type MenuProps } from "@mui/material";
 import MenuOptionListDrawer from "../MenuOptionDrawer";
 import MenuOptionListMenu from "../MenuOptionMenu";
 
-export interface MenuOptions {
-  title?: ReactNode;
-  options: MenuOption[];
-  disableCloseOnSelect?: boolean;
-  variant?: "drawer" | "menu";
-}
-
-interface MenuOptionModalProps extends MenuOptions {
-  anchorEl?: MenuProps["anchorEl"];
+export interface IMenuOptionModalProps<
+  T extends IMenuOption[] = IMenuOption[],
+> {
   open: boolean;
-  onClose: VoidFunction;
+  options: T;
+  title?: ReactNode;
+  anchorEl?: MenuProps["anchorEl"];
+  variant?: "menu" | "drawer";
+  disableCloseOnSelect?: boolean;
+  onSelect?: (option: T[number], event: SyntheticEvent<HTMLElement>) => void;
+  onClose: ReactEventHandler;
   onTransitionExited?: VoidFunction;
   slotProps?: {
-    drawer?: Partial<ComponentProps<typeof MenuOptionListDrawer>>;
-    menu?: Partial<ComponentProps<typeof MenuOptionListMenu>>;
+    drawer?: Partial<ComponentProps<typeof MenuOptionListDrawer<T>>>;
+    menu?: Partial<ComponentProps<typeof MenuOptionListMenu<T>>>;
   };
 }
 
@@ -25,17 +30,18 @@ interface MenuOptionModalProps extends MenuOptions {
  * This component renders either `MenuOptionMenu` (desktop) or a
  * `MenuOptionDrawer` (mobile) with a list of selectable options.
  */
-const MenuOptionModal = ({
-  anchorEl,
+const MenuOptionModal = <T extends IMenuOption[] = IMenuOption[]>({
   open,
   options,
-  disableCloseOnSelect,
   title = "Options",
+  anchorEl,
   variant,
+  disableCloseOnSelect,
+  onSelect,
   onClose,
   onTransitionExited,
   slotProps,
-}: MenuOptionModalProps) => {
+}: IMenuOptionModalProps<T>) => {
   /** Values */
 
   const isTouch = useMediaQuery("(pointer: coarse)");
@@ -47,6 +53,7 @@ const MenuOptionModal = ({
       open={open}
       options={options}
       disableCloseOnSelect={disableCloseOnSelect}
+      onSelect={onSelect}
       onClose={onClose}
       onTransitionExited={onTransitionExited}
       {...slotProps?.menu}
@@ -57,6 +64,7 @@ const MenuOptionModal = ({
       open={open}
       options={options}
       disableCloseOnSelect={disableCloseOnSelect}
+      onSelect={onSelect}
       onClose={onClose}
       onTransitionExited={onTransitionExited}
       {...slotProps?.drawer}

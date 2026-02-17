@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ClientIcons } from "@/store/constants/clients";
-import type { RouteLoaderData } from "@/store/types/router";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/clients")({
-  loader: (): RouteLoaderData => ({
+  loader: (): TRouteLoaderData => ({
     crumb: { label: "Clients", Icon: ClientIcons.List },
   }),
 });

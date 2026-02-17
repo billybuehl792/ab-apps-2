@@ -13,9 +13,13 @@ export enum WorkOrderStatus {
 
 /** API */
 
-export enum WorkOrderListRequestParamsOrdering {
-  Cost = "cost",
-  Created = "created_at",
-  ScheduledDate = "scheduled_date",
-  CompletedDate = "completed_date",
+export enum EWorkOrderListOrdering {
+  CompletedDateAsc = "completed_date",
+  CompletedDateDesc = "-completed_date",
+  CostAsc = "cost",
+  CostDesc = "-cost",
+  CreatedAsc = "created_at",
+  CreatedDesc = "-created_at",
+  ScheduledDateAsc = "scheduled_date",
+  ScheduledDateDesc = "-scheduled_date",
 }

@@ -1,7 +1,7 @@
-import { UserGroup } from "../enums/account";
-import type { ListRequestParams } from "./api";
+import { EUserGroup } from "../enums/account";
+import type { TListRequest } from "./api";
 
-export interface Credentials {
+export interface ICredentials {
   username: string;
   password: string;
 }
@@ -14,14 +14,14 @@ export interface Company {
   updated_at: string;
 }
 
-export interface User {
+export interface IUser {
   id: number;
   username: string;
   full_name: string;
   first_name: string;
   last_name: string;
   email: string;
-  groups: UserGroup[];
+  groups: EUserGroup[];
   company: Company;
 }
 
@@ -31,15 +31,15 @@ export interface WriteableUser {
   first_name?: string;
   last_name?: string;
   email?: string;
-  groups?: UserGroup[];
+  groups?: EUserGroup[];
   company?: Company;
 }
 
 /** API */
 
-export type UserListRequestParams = ListRequestParams;
+export type UserListRequestParams = TListRequest["params"];
 
 export interface AccessTokenApiResponse {
   access: string;
-  me: User;
+  me: IUser;
 }

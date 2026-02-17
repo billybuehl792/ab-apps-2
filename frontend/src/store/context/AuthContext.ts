@@ -1,9 +1,9 @@
 import { createContext } from "react";
-import type { Credentials, User } from "../types/account";
+import type { ICredentials, IUser } from "../types/account";
 
 export default createContext<{
-  me: User | null;
-  signIn: (credentials: Credentials) => Promise<void>;
+  me: IUser | null;
+  signIn: (credentials: ICredentials) => Promise<void>;
   signOut: () => Promise<void>;
 }>({
   me: null,

@@ -1,13 +1,15 @@
-import { type PropsWithChildren } from "react";
-import { RouterProvider as TanstackRouterProvider } from "@tanstack/react-router";
+import {
+  type RouterProps,
+  RouterProvider as TanstackRouterProvider,
+} from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { router } from "@/main";
+// import { router } from "@/main";
 import useAuth from "@/store/hooks/useAuth";
+import router from "@/store/config/router";
 
-const RouterProvider = ({
-  children: _children,
-  ...props
-}: PropsWithChildren) => {
+type TRouterProviderProps = Omit<RouterProps, "router" | "context">;
+
+const RouterProvider: React.FC<TRouterProviderProps> = (props) => {
   /** Values */
 
   const queryClient = useQueryClient();

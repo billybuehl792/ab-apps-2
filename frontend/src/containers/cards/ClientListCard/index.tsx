@@ -12,12 +12,26 @@ import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIco
 import Metadata from "@/components/lists/Metadata";
 import { ClientIcons } from "@/store/constants/clients";
 import type { Client } from "@/store/types/clients";
+import { EObjectChangeType } from "@/store/enums/api";
+import { EClientOptionId } from "@/store/enums/clients";
 
-interface ClientListCardProps extends CardProps {
+interface ClientListCardProps extends Omit<CardProps, "onClick" | "onChange"> {
   client: Client;
+  options?: ComponentProps<typeof ClientMenuOptionIconButton>["options"];
+  onChange?: (client: Client, type: EObjectChangeType) => void;
+  onClick?: (
+    client: Client,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => void;
 }
 
-const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
+const ClientListCard = ({
+  client,
+  options,
+  onChange,
+  onClick,
+  ...props
+}: ClientListCardProps) => {
   /** Values */
 
   const items: ComponentProps<typeof Metadata>["items"] = [
@@ -72,6 +86,15 @@ const ClientListCard = ({ client, ...props }: ClientListCardProps) => {
       >
         <ClientMenuOptionIconButton
           client={client}
+          options={options}
+          onSelect={(option) =>
+            onChange?.(
+              client,
+              option.id === EClientOptionId.Delete
+                ? EObjectChangeType.Delete
+                : EObjectChangeType.Update,
+            )
+          }
           sx={{ pointerEvents: "auto" }}
         />
       </CardActions>

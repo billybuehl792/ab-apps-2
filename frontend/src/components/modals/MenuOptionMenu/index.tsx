@@ -1,38 +1,34 @@
+import { type MouseEvent, type ReactEventHandler } from "react";
 import { Menu, type MenuProps } from "@mui/material";
-import MenuOptionMenuItem from "@/components/menu-items/MenuOptionMenuItem";
-import type { MenuOptions } from "../MenuOptionModal";
-import { theme } from "@/store/config/theme";
+import MenuOptionMenuItem from "@/components/buttons/MenuOptionMenuItem";
 
-interface MenuOptionMenuProps
-  extends Omit<MenuProps, "slotProps" | "title">,
-    Omit<MenuOptions, "title" | "variant"> {
-  onClose?: VoidFunction;
+export interface IMenuOptionMenuProps<
+  TOptions extends IMenuOption[] = IMenuOption[],
+> extends Omit<MenuProps, "onSelect" | "onClose"> {
+  options: TOptions;
+  disableCloseOnSelect?: boolean;
+  onSelect?: (option: TOptions[number], event: MouseEvent<HTMLElement>) => void;
+  onClose: ReactEventHandler<HTMLElement>;
 }
 
-const MenuOptionMenu = ({
+const MenuOptionMenu = <TOptions extends IMenuOption[] = IMenuOption[]>({
   options,
   disableCloseOnSelect,
+  onSelect,
   onClose,
   ...props
-}: MenuOptionMenuProps) => {
+}: IMenuOptionMenuProps<TOptions>) => {
   return (
     <Menu id="menu" component="div" onClose={onClose} {...props}>
       {options
         .filter(({ render }) => render !== false)
-        .map(({ onClick, ...option }) => (
+        .map((option) => (
           <MenuOptionMenuItem
             key={option.id}
             option={option}
-            onClick={() => {
-              if (disableCloseOnSelect || option.disableCloseOnSelect)
-                onClick?.();
-              else {
-                onClose?.();
-                setTimeout(
-                  () => onClick?.(),
-                  theme.transitions.duration.leavingScreen
-                );
-              }
+            onClick={(event) => {
+              onSelect?.(option, event);
+              if (!disableCloseOnSelect) onClose(event);
             }}
           />
         ))}

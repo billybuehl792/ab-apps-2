@@ -9,7 +9,7 @@ const CardActionAreaLinkComponent = React.forwardRef<
 >((props, ref) => <CardActionArea ref={ref} component="a" {...props} />);
 
 const CreatedCardActionAreaLinkComponent = createLink(
-  CardActionAreaLinkComponent
+  CardActionAreaLinkComponent,
 );
 
 const CardActionAreaLink: LinkComponent<

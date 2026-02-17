@@ -11,4 +11,11 @@ const getErrorMessage = (error: unknown): string => {
   return message;
 };
 
-export const errorUtils = { getErrorMessage };
+const isInvalidPageError = (error: unknown): boolean => {
+  const isAxiosError = error instanceof AxiosError;
+  if (!isAxiosError) return false;
+
+  return error.response?.data.detail.toLowerCase().includes("invalid page");
+};
+
+export const errorUtils = { getErrorMessage, isInvalidPageError };
