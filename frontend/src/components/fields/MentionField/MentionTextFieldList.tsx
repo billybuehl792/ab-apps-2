@@ -7,9 +7,10 @@ import type {
 } from "@tiptap/suggestion";
 import { type MentionNodeAttrs } from "@tiptap/extension-mention";
 import { MenuItem, MenuList, Paper, Popper } from "@mui/material";
-import { clientQueries } from "@/store/queries/clients";
 import ClientMenuItem from "@/containers/menu-items/ClientMenuItem";
-import type { ClientBasic } from "@/store/types/clients";
+import type { TClientBasic } from "@/store/types/clients";
+import { clientEndpoints } from "@/store/constants/clients";
+import { clientListRequestSchema } from "@/store/schemas/clients";
 
 export interface MentionListHandle {
   onKeyDown: (props: SuggestionKeyDownProps) => void;
@@ -29,14 +30,19 @@ const MentionTextFieldList = forwardRef<
     : null;
 
   const [search] = useDebounce(props.query ?? "", 300);
+  const requestOptions = clientListRequestSchema.parse({ params: { search } });
 
   /** Queries */
 
-  const clientListQuery = useQuery(clientQueries.list({ search }));
+  const clientListQuery = useQuery({
+    queryKey: [...clientEndpoints.id, requestOptions],
+    queryFn: () => clientEndpoints.get(requestOptions),
+    enabled: !!search,
+  });
 
   /** Callbacks */
 
-  const handleAddMention = (client: ClientBasic) =>
+  const handleAddMention = (client: TClientBasic) =>
     props.command({ id: client.id, label: client.full_name });
 
   const handleArrowKey = (direction: "up" | "down") => {

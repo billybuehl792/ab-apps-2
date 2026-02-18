@@ -6,11 +6,11 @@ import {
   type MenuItemProps,
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
-import { clientQueries } from "@/store/queries/clients";
-import { type Client } from "@/store/types/clients";
+import type { TClientBasic } from "@/store/types/clients";
+import { clientEndpoints } from "@/store/constants/clients";
 
 interface ClientMenuItemProps extends MenuItemProps {
-  client: WithRequired<Client, "id" | "full_name"> | Client["id"];
+  client: TClientBasic | TClientBasic["id"];
 }
 
 const ClientMenuItem = ({
@@ -25,7 +25,8 @@ const ClientMenuItem = ({
   /** Queries */
 
   const clientQuery = useQuery({
-    ...clientQueries.detail(clientId),
+    queryKey: clientEndpoints.client(clientId).id,
+    queryFn: clientEndpoints.client(clientId).get,
     enabled: isId,
   });
 

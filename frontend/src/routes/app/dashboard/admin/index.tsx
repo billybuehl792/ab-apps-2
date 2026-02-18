@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { accountQueries } from "@/store/queries/account";
-import { AdminIcons } from "@/store/constants/admin";
+import { Stack } from "@mui/material";
+import { userEndpoints } from "@/store/constants/account";
 import ListCard from "@/components/cards/ListCard";
+import { AdminIcons } from "@/store/constants/admin";
 
 export const Route = createFileRoute("/app/dashboard/admin/")({
   component: RouteComponent,
@@ -12,10 +12,13 @@ export const Route = createFileRoute("/app/dashboard/admin/")({
 function RouteComponent() {
   /** Values */
 
-  const userCountQuery = useQuery(accountQueries.users.count());
+  const userCountQuery = useQuery({
+    queryKey: userEndpoints.id,
+    queryFn: () => userEndpoints.get(),
+  });
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} my={2}>
       <ListCard
         label="Users"
         description={`Total: ${userCountQuery.data?.count ?? "-"}`}

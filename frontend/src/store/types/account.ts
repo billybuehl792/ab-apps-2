@@ -1,45 +1,32 @@
-import { EUserGroup } from "../enums/account";
-import type { TListRequest } from "./api";
+import z from "zod";
+import {
+  accessTokenResponseSchema,
+  changePasswordRequestSchema,
+  companySchema,
+  credentialsSchema,
+  userCreateSchema,
+  userListRequestSchema,
+  userListResponseSchema,
+  userSchema,
+  userUpdateSchema,
+} from "../schemas/account";
 
-export interface ICredentials {
-  username: string;
-  password: string;
-}
+export type TAccessTokenResponse = z.infer<typeof accessTokenResponseSchema>;
 
-export interface Company {
-  id: number;
-  label: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-}
+export type TCredentials = z.infer<typeof credentialsSchema>;
 
-export interface IUser {
-  id: number;
-  username: string;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  groups: EUserGroup[];
-  company: Company;
-}
+export type TChangePasswordRequest = z.infer<
+  typeof changePasswordRequestSchema
+>;
 
-export interface WriteableUser {
-  id: number;
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  groups?: EUserGroup[];
-  company?: Company;
-}
+export type TCompany = z.infer<typeof companySchema>;
 
-/** API */
+export type TUser = z.infer<typeof userSchema>;
 
-export type UserListRequestParams = TListRequest["params"];
+export type TUserCreate = z.infer<typeof userCreateSchema>;
 
-export interface AccessTokenApiResponse {
-  access: string;
-  me: IUser;
-}
+export type TUserUpdate = z.infer<typeof userUpdateSchema>;
+
+export type TUserListRequest = z.infer<typeof userListRequestSchema>;
+
+export type TUserListResponse = z.infer<typeof userListResponseSchema>;

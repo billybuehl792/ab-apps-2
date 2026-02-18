@@ -1,21 +1,24 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowBack } from "@mui/icons-material";
-import { accountQueries } from "@/store/queries/account";
+import { userEndpoints } from "@/store/constants/account";
 import CustomLink from "@/components/links/CustomLink";
-import StatusCard from "@/components/cards/StatusCard";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import { errorUtils } from "@/store/utils/error";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 import { AdminIcons } from "@/store/constants/admin";
-import type { RouteLoaderData } from "@/store/types/router";
-import type { User } from "@/store/types/account";
+import { errorUtils } from "@/store/utils/error";
+import type { TRouteLoaderData } from "@/store/types/router";
+import type { TUser } from "@/store/types/account";
 
 export const Route = createFileRoute("/app/dashboard/admin/users/$id")({
-  loader: async ({ context, params }): Promise<RouteLoaderData<User>> => {
+  loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
     try {
-      if (isNaN(Number(params.id))) throw new Error("Invalid user ID");
-      const user = await context.queryClient.fetchQuery(
-        accountQueries.users.detail(Number(params.id))
-      );
+      const userId = parseInt(params.id);
+      if (isNaN(userId)) throw new Error("Invalid user ID");
+
+      const user = await context.queryClient.fetchQuery({
+        queryKey: userEndpoints.user(userId).id,
+        queryFn: userEndpoints.user(userId).get,
+      });
 
       return {
         data: user,
@@ -26,11 +29,13 @@ export const Route = createFileRoute("/app/dashboard/admin/users/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusCard loading="loading user..." />,
+  pendingComponent: () => <StatusWrapper loading="loading user..." />,
   notFoundComponent: () => (
-    <StatusCard
-      error={"User not found :("}
-      description={<CustomLink label="Back" Icon={ArrowBack} to=".." />}
+    <StatusWrapper
+      error={{
+        label: "User not found :(",
+        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
+      }}
     />
   ),
 });

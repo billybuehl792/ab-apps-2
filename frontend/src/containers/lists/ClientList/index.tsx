@@ -93,7 +93,7 @@ const ClientList: React.FC<IClientListProps> = ({
                 size="small"
                 value={options.params.ordering}
                 onChange={onOrderingChange}
-                width={150}
+                width={160}
                 {...slotProps?.orderingButtonGroup}
               />
             ),

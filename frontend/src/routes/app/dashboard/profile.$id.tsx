@@ -1,22 +1,24 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Stack } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import { accountQueries } from "@/store/queries/account";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import CustomLink from "@/components/links/CustomLink";
+import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import { errorUtils } from "@/store/utils/error";
-import { AccountIcons } from "@/store/constants/account";
 import type { TRouteLoaderData } from "@/store/types/router";
-import type { IUser } from "@/store/types/account";
+import type { TUser } from "@/store/types/account";
 
 export const Route = createFileRoute("/app/dashboard/profile/$id")({
-  loader: async ({ context, params }): Promise<TRouteLoaderData<IUser>> => {
+  loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
     try {
-      if (isNaN(Number(params.id))) throw new Error("Invalid user ID");
+      const userId = parseInt(params.id, 10);
+      if (isNaN(userId)) throw new Error("Invalid user ID");
 
-      const user = await context.queryClient.fetchQuery(
-        accountQueries.users.detail(Number(params.id)),
-      );
+      const user = await context.queryClient.fetchQuery({
+        queryKey: userEndpoints.user(userId).id,
+        queryFn: userEndpoints.user(userId).get,
+      });
 
       return {
         data: user,
@@ -27,15 +29,15 @@ export const Route = createFileRoute("/app/dashboard/profile/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusWrapper loading="loading user..." m={2} />,
-  errorComponent: ({ error }) => <StatusWrapper error={error} m={2} />,
+  pendingComponent: () => <StatusWrapper loading="loading user..." my={2} />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} my={2} />,
   notFoundComponent: () => (
     <StatusWrapper
       error={{
         label: "User not found :(",
         actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
       }}
-      m={2}
+      my={2}
     />
   ),
 });
@@ -45,5 +47,9 @@ function RouteComponent() {
 
   const loaderData = Route.useLoaderData();
 
-  return <UserDetailCard user={loaderData.data} />;
+  return (
+    <Stack my={2}>
+      <UserDetailCard user={loaderData.data} />
+    </Stack>
+  );
 }

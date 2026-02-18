@@ -4,19 +4,19 @@ import ConfirmDialog, {
   type ConfirmOptions,
 } from "@/components/modals/ConfirmDialog";
 
-const ConfirmProvider = ({ children }: PropsWithChildren) => {
+const ConfirmProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<ConfirmOptions | null>(null);
   const [callback, setCallback] = useState<VoidFunction | null>(null);
   const [resolver, setResolver] = useState<((result: boolean) => void) | null>(
-    null
+    null,
   );
 
   /** Callbacks */
 
   const handleConfirmOpen: ContextType<typeof ConfirmContext> = (
     options,
-    callback
+    callback,
   ) => {
     setOptions(typeof options === "string" ? { title: options } : options);
     setCallback(() => callback ?? null);

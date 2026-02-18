@@ -10,18 +10,12 @@ import z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Stack, Tab, Tabs } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import { clientMutations } from "@/store/mutations/clients";
-import { clientQueries } from "@/store/queries/clients";
-import StatusCard from "@/components/cards/StatusCard";
 import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientFormDrawer from "@/containers/modals/ClientFormDrawer";
 import CustomLink from "@/components/links/CustomLink";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
-import WorkOrderList from "@/containers/lists/WorkOrderList";
 import { errorUtils } from "@/store/utils/error";
 import { clientEndpoints, ClientIcons } from "@/store/constants/clients";
-import { EClientOptionId } from "@/store/enums/clients";
-// import type { WorkOrderListRequestParams } from "@/store/types/work-orders";
 import type { ClientFormValues } from "@/containers/forms/ClientForm";
 import type { TRouteLoaderData } from "@/store/types/router";
 import type { TClient } from "@/store/types/clients";
@@ -61,13 +55,14 @@ export const Route = createFileRoute("/app/dashboard/clients/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusWrapper loading="loading client..." />,
+  pendingComponent: () => <StatusWrapper loading="loading client..." my={2} />,
   notFoundComponent: () => (
     <StatusWrapper
       error={{
         label: "Client not found :(",
         actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
       }}
+      my={2}
     />
   ),
 });
@@ -88,13 +83,15 @@ function RouteComponent() {
 
   /** Mutations */
 
-  const updateClientMutation = useMutation(clientMutations.update());
+  const updateClientMutation = useMutation({
+    mutationKey: clientEndpoints.client(client.id).id,
+    mutationFn: clientEndpoints.client(client.id).patch,
+  });
 
   /** Callbacks */
 
   const handleUpdateClient = (data: ClientFormValues) =>
     updateClientMutation.mutateAsync({
-      id: client.id,
       first_name: data.firstName,
       last_name: data.lastName,
       email: data.email,

@@ -34,14 +34,22 @@ export const clientBasicSchema = z.object({
   place: placeBasicSchema.nullable(),
 });
 
-export const clientWriteableSchema = z.object({
-  id: idSchema,
+export const clientCreateSchema = z.object({
   first_name: nameSchema,
   last_name: nameSchema,
   email: emailSchema,
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable(),
   place: placeBasicSchema.nullable(),
+});
+
+export const clientUpdateSchema = z.object({
+  first_name: nameSchema.optional(),
+  last_name: nameSchema.optional(),
+  email: emailSchema.optional(),
+  phone_primary: phoneSchema.optional(),
+  phone_secondary: phoneSchema.nullable().optional(),
+  place: placeBasicSchema.nullable().optional(),
 });
 
 export const clientListRequestSchema = listRequestSchema.extend({

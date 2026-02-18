@@ -1,7 +1,7 @@
 import { type ComponentProps } from "react";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
 import useClient from "@/store/hooks/useClient";
-import type { ClientBasic } from "@/store/types/clients";
+import type { TClientBasic } from "@/store/types/clients";
 
 interface ClientMenuOptionIconButtonProps extends Partial<
   Omit<
@@ -11,7 +11,7 @@ interface ClientMenuOptionIconButtonProps extends Partial<
     "onChange"
   >
 > {
-  client: ClientBasic | number;
+  client: TClientBasic | number;
   onChange?: NonNullable<Parameters<typeof useClient>[1]>["onChange"];
 }
 

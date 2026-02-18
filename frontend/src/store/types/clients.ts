@@ -1,23 +1,20 @@
 import z from "zod";
 import {
+  clientSchema,
   clientBasicSchema,
+  clientCreateSchema,
+  clientUpdateSchema,
   clientListRequestSchema,
   clientListResponseSchema,
-  clientSchema,
-  clientWriteableSchema,
 } from "../schemas/clients";
 
 export type TClient = z.infer<typeof clientSchema>;
 
 export type TClientBasic = z.infer<typeof clientBasicSchema>;
 
-export type TClientWriteable = z.infer<typeof clientWriteableSchema>;
+export type TClientCreate = z.infer<typeof clientCreateSchema>;
 
-/** API */
-
-export type TClientCreateBody = Omit<TClientWriteable, "id" | "full_name">;
-
-export type TClientUpdateBody = Partial<TClientCreateBody> & { id: number };
+export type TClientUpdate = z.infer<typeof clientUpdateSchema>;
 
 export type TClientListRequest = z.infer<typeof clientListRequestSchema>;
 

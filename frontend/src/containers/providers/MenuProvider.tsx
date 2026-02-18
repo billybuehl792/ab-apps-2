@@ -2,7 +2,7 @@ import { type ContextType, useState, type PropsWithChildren } from "react";
 import MenuContext from "@/store/context/MenuContext";
 import MenuOptionModal from "@/components/modals/MenuOptionModal";
 
-const MenuProvider = ({ children }: PropsWithChildren) => {
+const MenuProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement | true>(null);
   const [options, setOptions] = useState<
     Parameters<ContextType<typeof MenuContext>["open"]>[0] | null

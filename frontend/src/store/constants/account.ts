@@ -1,4 +1,16 @@
 import { AccountCircle, ManageAccounts } from "@mui/icons-material";
+import api from "../config/api";
+import { EUserListOrdering } from "../enums/account";
+import type {
+  TAccessTokenResponse,
+  TChangePasswordRequest,
+  TCredentials,
+  TUser,
+  TUserCreate,
+  TUserListRequest,
+  TUserListResponse,
+  TUserUpdate,
+} from "../types/account";
 
 /** Icons */
 
@@ -10,22 +22,124 @@ export const AccountIcons = {
 /** API */
 
 export const accountEndpoints = {
-  account: Object.assign(
-    () => `${import.meta.env.VITE_BACKEND_BASE_URL}/api/account/`,
-    {
-      auth: Object.assign(() => `${accountEndpoints.account()}auth/`, {
-        me: () => `${accountEndpoints.account.auth()}me/`,
-        changePassword: () =>
-          `${accountEndpoints.account.auth()}change-password/`,
-        token: Object.assign(() => `${accountEndpoints.account.auth()}token/`, {
-          refresh: () => `${accountEndpoints.account.auth.token()}refresh/`,
-          revoke: () => `${accountEndpoints.account.auth.token()}revoke/`,
-        }),
+  id: ["account"] as const,
+  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/account/`,
+  auth: () => ({
+    id: [...accountEndpoints.id, "auth"] as const,
+    url: `${accountEndpoints.url}auth/`,
+    token: () => ({
+      id: [...accountEndpoints.auth().id, "token"] as const,
+      url: `${accountEndpoints.auth().url}token/`,
+      post: (credentials: TCredentials) =>
+        api
+          .post<TAccessTokenResponse>(
+            accountEndpoints.auth().token().url,
+            credentials,
+          )
+          .then((res) => res.data),
+      refresh: () => ({
+        id: [...accountEndpoints.auth().token().id, "refresh"] as const,
+        url: `${accountEndpoints.auth().token().url}refresh/`,
+        post: () =>
+          api
+            .post<TAccessTokenResponse>(
+              accountEndpoints.auth().token().refresh().url,
+            )
+            .then((res) => res.data),
       }),
-      users: Object.assign(() => `${accountEndpoints.account()}users/`, {
-        detail: (id: number) => `${accountEndpoints.account.users()}${id}/`,
-        count: () => `${accountEndpoints.account.users()}count/`,
+      revoke: () => ({
+        id: [...accountEndpoints.auth().token().id, "revoke"] as const,
+        url: `${accountEndpoints.auth().token().url}revoke/`,
+        post: () =>
+          api
+            .post<TAccessTokenResponse>(
+              accountEndpoints.auth().token().revoke().url,
+            )
+            .then((res) => res.data),
       }),
-    }
-  ),
+    }),
+    me: () => ({
+      id: [...accountEndpoints.auth().id, "me"] as const,
+      url: `${accountEndpoints.auth().url}me/`,
+      get: () =>
+        api
+          .get<TUser>(accountEndpoints.auth().me().url)
+          .then((res) => res.data),
+    }),
+    changePassword: () => ({
+      id: [...accountEndpoints.auth().id, "change-password"] as const,
+      url: `${accountEndpoints.auth().url}change-password/`,
+      patch: (body: TChangePasswordRequest) =>
+        api.patch(accountEndpoints.auth().changePassword().url, body),
+    }),
+  }),
+  users: () => ({
+    id: [...accountEndpoints.id, "users"] as const,
+    url: `${accountEndpoints.url}users/`,
+    get: (options?: TUserListRequest) =>
+      api
+        .get<TUserListResponse>(accountEndpoints.users().url, options)
+        .then((res) => res.data),
+    post: (body: TUserCreate) =>
+      api
+        .post<TUser>(accountEndpoints.users().url, body)
+        .then((res) => res.data),
+    user: (id: TUser["id"]) => ({
+      id: [...accountEndpoints.users().id, "detail", id] as const,
+      url: `${accountEndpoints.users().url}${id}/`,
+      get: () =>
+        api
+          .get<TUser>(accountEndpoints.users().user(id).url)
+          .then((res) => res.data),
+      patch: (body: TUserUpdate) =>
+        api
+          .patch<TUser>(accountEndpoints.users().user(id).url, body)
+          .then((res) => res.data),
+      delete: () =>
+        api
+          .delete<void>(accountEndpoints.users().user(id).url)
+          .then((res) => res.data),
+    }),
+  }),
 };
+
+export const authEndpoints = accountEndpoints.auth();
+export const tokenEndpoints = accountEndpoints.auth().token();
+export const userEndpoints = accountEndpoints.users();
+
+/** Other */
+
+export const userListOrderingOptions: TOrderingOption<EUserListOrdering>[] = [
+  {
+    id: "created_at",
+    label: "Created",
+    value: {
+      asc: EUserListOrdering.CreatedAtAsc,
+      desc: EUserListOrdering.CreatedAtDesc,
+    },
+  },
+  {
+    id: "updated_at",
+    label: "Updated",
+    value: {
+      asc: EUserListOrdering.UpdatedAtAsc,
+      desc: EUserListOrdering.UpdatedAtDesc,
+    },
+  },
+  {
+    id: "first_name",
+    label: "First Name",
+    value: {
+      asc: EUserListOrdering.FirstNameAsc,
+      desc: EUserListOrdering.FirstNameDesc,
+    },
+  },
+  {
+    id: "last_name",
+    label: "Last Name",
+    value: {
+      asc: EUserListOrdering.LastNameAsc,
+      desc: EUserListOrdering.LastNameDesc,
+    },
+  },
+];

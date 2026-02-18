@@ -2,18 +2,16 @@ import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useSnackbar } from "notistack";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Delete, Edit, Info } from "@mui/icons-material";
-import { clientQueries } from "../queries/clients";
-import { clientMutations } from "../mutations/clients";
+// import { Delete, Edit, Info } from "@mui/icons-material";
 import { EClientOptionId } from "../enums/clients";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import type { ClientBasic } from "../types/clients";
-import { getPlaceholderClient } from "../constants/clients";
+import type { TClientBasic } from "../types/clients";
+import { clientEndpoints, getPlaceholderClient } from "../constants/clients";
 import { EObjectChangeType } from "../enums/api";
 
 const useClient = (
-  client: number | ClientBasic,
+  client: number | TClientBasic,
   options?: { onChange?: (clientId: number, type: EObjectChangeType) => void },
 ) => {
   /** Values */
@@ -30,13 +28,20 @@ const useClient = (
   /** Queries */
 
   const clientQuery = useQuery({
-    ...clientQueries.detail(clientId),
+    queryKey: clientEndpoints.client(clientId).id,
+    queryFn: clientEndpoints.client(clientId).get,
     enabled: isId && Boolean(clientId),
   });
 
   /** Mutations */
 
-  const deleteClientMutation = useMutation(clientMutations.delete());
+  const deleteClientMutation = useMutation({
+    mutationKey: [
+      clientEndpoints.client(clientId).id,
+      EObjectChangeType.Delete,
+    ],
+    mutationFn: clientEndpoints.client(clientId).delete,
+  });
 
   /** Data */
 
@@ -68,7 +73,7 @@ const useClient = (
   const handleDelete = useCallback(
     () =>
       confirm(`Delete ${clientFullName}?`, () =>
-        deleteClientMutation.mutate(clientId, {
+        deleteClientMutation.mutate(undefined, {
           onSuccess: () => {
             options?.onChange?.(clientId, EObjectChangeType.Delete);
             snackbar.enqueueSnackbar(`${clientFullName} deleted`, {
@@ -93,25 +98,25 @@ const useClient = (
 
   /** Options */
 
-  const menuOptions: MenuOption<EClientOptionId, null>[] = [
+  const menuOptions: IMenuOption<EClientOptionId>[] = [
     {
       id: EClientOptionId.Detail,
+      value: EClientOptionId.Detail,
       label: "Detail",
-      Icon: Info,
       disabled: disabled,
       onClick: handleNavigateView,
     },
     {
       id: EClientOptionId.Edit,
+      value: EClientOptionId.Edit,
       label: "Edit",
-      Icon: Edit,
       disabled,
       onClick: handleNavigateEdit,
     },
     {
       id: EClientOptionId.Delete,
+      value: EClientOptionId.Delete,
       label: "Delete",
-      Icon: Delete,
       color: "error",
       disabled,
       onClick: handleDelete,

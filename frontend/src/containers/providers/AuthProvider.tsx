@@ -5,12 +5,12 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { accountMutations } from "@/store/mutations/account";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
-import StatusCard from "@/components/cards/StatusCard";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 import { queryUtils } from "@/store/utils/queries";
 import { authUtils } from "@/store/utils/auth";
+import { tokenEndpoints } from "@/store/constants/account";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -22,21 +22,28 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   /** Mutations */
 
-  const tokenMutation = useMutation(accountMutations.auth.token());
-  const tokenRefreshMutation = useMutation(
-    accountMutations.auth.tokenRefresh()
-  );
-  const tokenRevokeMutation = useMutation(accountMutations.auth.tokenRevoke());
+  const tokenMutation = useMutation({
+    mutationKey: tokenEndpoints.id,
+    mutationFn: tokenEndpoints.post,
+  });
+  const tokenRefreshMutation = useMutation({
+    mutationKey: tokenEndpoints.refresh().id,
+    mutationFn: tokenEndpoints.refresh().post,
+  });
+  const tokenRevokeMutation = useMutation({
+    mutationKey: tokenEndpoints.revoke().id,
+    mutationFn: tokenEndpoints.revoke().post,
+  });
 
   /** Callbacks */
 
   const signIn: ContextType<typeof AuthContext>["signIn"] = async (
-    credentials
+    credentials,
   ) => {
     await tokenMutation.mutateAsync(credentials, {
       onSuccess: (res) => {
-        authUtils.setAccessToken(res.data.access);
-        setMe(res.data.me);
+        authUtils.setAccessToken(res.access);
+        setMe(res.me);
       },
     });
     await queryUtils.delay(500); // Allow auth state to propagate to router
@@ -58,8 +65,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     tokenRefreshMutation.mutate(undefined, {
       onSuccess: (res) => {
-        authUtils.setAccessToken(res.data.access);
-        setMe(res.data.me);
+        authUtils.setAccessToken(res.access);
+        setMe(res.me);
       },
       onError: () => {
         authUtils.setAccessToken(null);
@@ -76,7 +83,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         children
       ) : (
         <FullScreen>
-          <StatusCard loading="Loading authentication..." />
+          <StatusWrapper loading="Loading authentication..." />
         </FullScreen>
       )}
     </AuthContext>

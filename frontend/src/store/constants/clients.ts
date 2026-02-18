@@ -1,13 +1,13 @@
 import { Groups, Person, PersonAdd } from "@mui/icons-material";
+import api from "../config/api";
 import { EClientListOrdering } from "../enums/clients";
 import type {
   TClient,
-  TClientCreateBody,
+  TClientCreate,
+  TClientUpdate,
   TClientListRequest,
   TClientListResponse,
-  TClientUpdateBody,
 } from "../types/clients";
-import api from "../config/api";
 
 /** Icons */
 
@@ -26,16 +26,19 @@ export const clientEndpoints = {
     api
       .get<TClientListResponse>(clientEndpoints.url, options)
       .then((res) => res.data),
-  post: (body: TClientCreateBody) =>
-    api.post<TClient>(clientEndpoints.url, body),
+  post: (body: TClientCreate) =>
+    api.post<TClient>(clientEndpoints.url, body).then((res) => res.data),
   client: (id: TClient["id"]) => ({
     id: [...clientEndpoints.id, "client", id] as const,
     url: `${clientEndpoints.url}${id}/`,
     get: () =>
       api.get<TClient>(clientEndpoints.client(id).url).then((res) => res.data),
-    patch: (body: TClientUpdateBody) =>
-      api.patch<TClient>(clientEndpoints.client(id).url, body),
-    delete: () => api.delete<void>(clientEndpoints.client(id).url),
+    patch: (body: TClientUpdate) =>
+      api
+        .patch<TClient>(clientEndpoints.client(id).url, body)
+        .then((res) => res.data),
+    delete: () =>
+      api.delete<void>(clientEndpoints.client(id).url).then((res) => res.data),
   }),
 };
 

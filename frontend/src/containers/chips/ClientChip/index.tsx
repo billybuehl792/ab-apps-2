@@ -1,11 +1,11 @@
 import { Chip, Skeleton, type ChipProps } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Person } from "@mui/icons-material";
-import { clientQueries } from "@/store/queries/clients";
-import type { ClientBasic } from "@/store/types/clients";
+import { clientEndpoints } from "@/store/constants/clients";
+import type { TClientBasic } from "@/store/types/clients";
 
 interface ClientChipProps extends ChipProps {
-  client: ClientBasic | number;
+  client: TClientBasic | number;
 }
 
 const DEFAULT_LABEL = "-";
@@ -19,7 +19,8 @@ const ClientChip = ({ client: clientProp, ...props }: ClientChipProps) => {
   /** Queries */
 
   const clientQuery = useQuery({
-    ...clientQueries.detail(clientId),
+    queryKey: clientEndpoints.client(clientId).id,
+    queryFn: clientEndpoints.client(clientId).get,
     enabled: isId,
   });
 

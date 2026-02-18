@@ -2,8 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
-import { accountApi } from "../api/account";
-import { accountEndpoints } from "../constants/account";
+import { tokenEndpoints } from "../constants/account";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -14,7 +13,6 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = authUtils.getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
-
   return config;
 });
 
@@ -24,17 +22,17 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
 
     if (
-      !originalRequest.url.startsWith(accountEndpoints.account.auth.token()) &&
+      !originalRequest.url.startsWith(tokenEndpoints.url) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
 
       try {
-        const refreshTokenResponse = await accountApi.auth.tokenRefresh();
+        const refreshTokenResponse = await tokenEndpoints.refresh().post();
 
-        authUtils.setAccessToken(refreshTokenResponse.data.access);
-        originalRequest.headers.Authorization = `Bearer ${refreshTokenResponse.data.access}`;
+        authUtils.setAccessToken(refreshTokenResponse.access);
+        originalRequest.headers.Authorization = `Bearer ${refreshTokenResponse.access}`;
 
         return api(originalRequest);
       } catch (refreshErr) {
@@ -51,7 +49,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(requestError);
-  }
+  },
 );
 
 export default api;

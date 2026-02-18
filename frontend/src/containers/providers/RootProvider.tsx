@@ -9,10 +9,7 @@ import MenuProvider from "./MenuProvider";
 import theme from "@/store/config/theme";
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
-  },
+  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
 });
 
 const RootProvider: React.FC<PropsWithChildren> = ({ children }) => {
