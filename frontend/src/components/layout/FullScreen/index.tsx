@@ -5,22 +5,19 @@ import {
   type StackProps,
 } from "@mui/material";
 
-interface FullScreenProps extends Omit<StackProps, "maxWidth"> {
+interface IFullScreenProps extends Omit<StackProps, "maxWidth"> {
   maxWidth?: ContainerProps["maxWidth"];
-  slotProps?: {
-    container?: ContainerProps;
-  };
+  slotProps?: { container?: ContainerProps };
 }
 
-const FullScreen = ({
+const FullScreen: React.FC<IFullScreenProps> = ({
   children,
   maxWidth = "xs",
   slotProps,
   ...props
-}: FullScreenProps) => {
+}) => {
   return (
     <Stack
-      component="main"
       position="absolute"
       top={0}
       left={0}

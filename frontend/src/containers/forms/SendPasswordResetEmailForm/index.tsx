@@ -13,15 +13,15 @@ import {
   TextField,
 } from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
-import { credentialsSchema } from "@/store/schemas/account";
-import type { TCredentials } from "@/store/types/account";
+import { sendPasswordResetEmailRequestSchema } from "@/store/schemas/account";
+import type { TSendPasswordResetEmailRequest } from "@/store/types/account";
 
-interface ISignInFormProps extends Omit<
+interface ISendPasswordResetEmailFormProps extends Omit<
   StackProps<"form">,
   "onSubmit" | "onReset"
 > {
-  onSubmit: SubmitHandler<TCredentials>;
-  onSubmitInvalid?: SubmitErrorHandler<TCredentials>;
+  onSubmit: SubmitHandler<TSendPasswordResetEmailRequest>;
+  onSubmitInvalid?: SubmitErrorHandler<TSendPasswordResetEmailRequest>;
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
@@ -29,17 +29,14 @@ interface ISignInFormProps extends Omit<
   };
 }
 
-const SignInForm: React.FC<ISignInFormProps> = ({
-  onSubmit,
-  onSubmitInvalid,
-  slotProps,
-  ...props
-}) => {
+const SendPasswordResetEmailForm: React.FC<
+  ISendPasswordResetEmailFormProps
+> = ({ onSubmit, onSubmitInvalid, slotProps, ...props }) => {
   /** Values */
 
   const methods = useForm({
-    resolver: zodResolver(credentialsSchema),
-    defaultValues: { username: "", password: "" },
+    resolver: zodResolver(sendPasswordResetEmailRequestSchema),
+    defaultValues: { email: "" },
   });
 
   /** Callbacks */
@@ -50,7 +47,7 @@ const SignInForm: React.FC<ISignInFormProps> = ({
     } catch (error) {
       setTimeout(() =>
         methods.setError(
-          "password",
+          "email",
           { type: "server", message: errorUtils.getErrorMessage(error) },
           { shouldFocus: true },
         ),
@@ -74,26 +71,14 @@ const SignInForm: React.FC<ISignInFormProps> = ({
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <TextField
-          label="Username"
+          label="Email Address"
           required
           disabled={
             methods.formState.disabled || methods.formState.isSubmitting
           }
-          error={!!methods.formState.errors.username}
-          helperText={methods.formState.errors.username?.message}
-          {...methods.register("username")}
-        />
-        <TextField
-          type="password"
-          label="Password"
-          required
-          disabled={
-            methods.formState.disabled || methods.formState.isSubmitting
-          }
-          error={!!methods.formState.errors.password}
-          helperText={methods.formState.errors.password?.message}
-          onFocus={(event) => event.target.select()}
-          {...methods.register("password")}
+          error={!!methods.formState.errors.email}
+          helperText={methods.formState.errors.email?.message}
+          {...methods.register("email")}
         />
       </Stack>
       <Stack direction="row" justifyContent="end" {...slotProps?.actions}>
@@ -103,11 +88,11 @@ const SignInForm: React.FC<ISignInFormProps> = ({
           loading={methods.formState.isValid && methods.formState.isSubmitting}
           {...slotProps?.submitButton}
         >
-          Sign In
+          Send Reset Link
         </Button>
       </Stack>
     </Stack>
   );
 };
 
-export default SignInForm;
+export default SendPasswordResetEmailForm;

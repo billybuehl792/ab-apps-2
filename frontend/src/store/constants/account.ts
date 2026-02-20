@@ -3,8 +3,9 @@ import api from "../config/api";
 import { EUserListOrdering } from "../enums/account";
 import type {
   TAccessTokenResponse,
-  TChangePasswordRequest,
+  TResetPasswordRequest,
   TCredentials,
+  TSendPasswordResetEmailRequest,
   TUser,
   TUserCreate,
   TUserListRequest,
@@ -66,11 +67,19 @@ export const accountEndpoints = {
           .get<TUser>(accountEndpoints.auth().me().url)
           .then((res) => res.data),
     }),
-    changePassword: () => ({
-      id: [...accountEndpoints.auth().id, "change-password"] as const,
-      url: `${accountEndpoints.auth().url}change-password/`,
-      patch: (body: TChangePasswordRequest) =>
-        api.patch(accountEndpoints.auth().changePassword().url, body),
+    sendPasswordResetEmail: () => ({
+      id: [...accountEndpoints.auth().id, "send-password-reset-email"] as const,
+      url: `${accountEndpoints.auth().url}send-password-reset-email/`,
+      post: (body: TSendPasswordResetEmailRequest) =>
+        api
+          .post(accountEndpoints.auth().sendPasswordResetEmail().url, body)
+          .then((res) => res.data),
+    }),
+    resetPassword: () => ({
+      id: [...accountEndpoints.auth().id, "reset-password"] as const,
+      url: `${accountEndpoints.auth().url}reset-password/`,
+      patch: (body: TResetPasswordRequest) =>
+        api.patch(accountEndpoints.auth().resetPassword().url, body),
     }),
   }),
   users: () => ({

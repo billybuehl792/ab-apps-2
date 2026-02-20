@@ -10,7 +10,10 @@ export const objectSchema = z.object({
 
 export const nameSchema = z.coerce.string().min(1).max(100).trim();
 
-export const emailSchema = z.coerce.string().email();
+export const emailSchema = z.coerce
+  .string()
+  .max(100, "Email must be at most 100 characters")
+  .email("Invalid email address");
 
 export const phoneSchema = z.coerce
   .string()

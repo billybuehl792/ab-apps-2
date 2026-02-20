@@ -1,11 +1,10 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Box, Container, Paper, useMediaQuery } from "@mui/material";
-import { ErrorOutline, Home } from "@mui/icons-material";
 import NavBar from "@/containers/layout/NavBar";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import CustomLink from "@/components/links/CustomLink";
 import NavList from "@/containers/lists/NavList";
+import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -24,17 +23,8 @@ export const Route = createFileRoute("/app")({
     </FullScreen>
   ),
   notFoundComponent: () => (
-    <Container maxWidth="lg">
-      <StatusWrapper
-        error={{
-          icon: <ErrorOutline fontSize="large" />,
-          label: "Page not found :(",
-          actions: [
-            <CustomLink label="Home" icon={<Home />} to="/app/dashboard" />,
-          ],
-        }}
-        sx={{ my: 2 }}
-      />
+    <Container sx={{ my: 2 }}>
+      <PageNotFoundCard />
     </Container>
   ),
 });

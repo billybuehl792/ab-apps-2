@@ -140,6 +140,7 @@ const components: Components<
           transform: "scaleX(0)",
           transition: theme.transitions.create(["opacity", "transform"]),
         },
+        [`& .MuiSvgIcon-root`]: { fontSize: "inherit" },
       }),
       underlineHover: {
         "&:hover": {

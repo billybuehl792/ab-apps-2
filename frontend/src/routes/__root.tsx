@@ -2,6 +2,7 @@ import { createRootRouteWithContext } from "@tanstack/react-router";
 import { Button } from "@mui/material";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
+import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import { errorUtils } from "@/store/utils/error";
 import type { IGlobalRouterContext } from "@/store/types/router";
 
@@ -29,6 +30,11 @@ export const Route = createRootRouteWithContext<IGlobalRouterContext>()({
           ],
         }}
       />
+    </FullScreen>
+  ),
+  notFoundComponent: () => (
+    <FullScreen>
+      <PageNotFoundCard />
     </FullScreen>
   ),
 });

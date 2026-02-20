@@ -11,20 +11,19 @@ import { listRequestSchema, listResponseSchema } from "./api";
 const usernameSchema = z
   .string()
   .min(1, "Username is required")
-  .max(150, "Username must be at most 150 characters")
-  .trim();
+  .max(64, "Username must be at most 64 characters");
 
 const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(128, "Password must be at most 128 characters")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(
-    /[^A-Za-z0-9]/,
-    "Password must contain at least one special character",
-  );
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter");
+// .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+// .regex(/[0-9]/, "Password must contain at least one number")
+// .regex(
+//   /[^A-Za-z0-9]/,
+//   "Password must contain at least one special character",
+// );
 
 export const credentialsSchema = z.object({
   username: usernameSchema,
@@ -32,7 +31,7 @@ export const credentialsSchema = z.object({
 });
 
 export const companySchema = objectSchema.extend({
-  label: z.coerce.string().min(1).max(100).trim(),
+  label: z.coerce.string().min(1).max(100),
   description: emailSchema,
 });
 
@@ -87,7 +86,11 @@ export const accessTokenResponseSchema = z.object({
   me: userSchema,
 });
 
-export const changePasswordRequestSchema = z
+export const sendPasswordResetEmailRequestSchema = z.object({
+  email: emailSchema,
+});
+
+export const resetPasswordRequestSchema = z
   .object({
     old_password: passwordSchema,
     new_password: passwordSchema,

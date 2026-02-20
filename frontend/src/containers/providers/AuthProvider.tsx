@@ -5,6 +5,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
@@ -19,6 +20,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   /** Values */
 
   const queryClient = useQueryClient();
+  const snackbar = useSnackbar();
 
   /** Mutations */
 
@@ -44,6 +46,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       onSuccess: (res) => {
         authUtils.setAccessToken(res.access);
         setMe(res.me);
+        snackbar.enqueueSnackbar("Signed in successfully", {
+          variant: "success",
+        });
       },
     });
     await queryUtils.delay(500); // Allow auth state to propagate to router
@@ -55,6 +60,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         authUtils.setAccessToken(null);
         setMe(null);
         queryClient.clear();
+        snackbar.enqueueSnackbar("Signed out successfully", {
+          variant: "success",
+        });
       },
     });
     await queryUtils.delay(500); // Allow auth state to propagate to router

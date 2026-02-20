@@ -6,14 +6,22 @@ import {
   stripSearchParams,
   useRouter,
 } from "@tanstack/react-router";
-import z from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { Card, CardContent, CardHeader, Divider, Stack } from "@mui/material";
+import z from "zod";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 import useAuth from "@/store/hooks/useAuth";
 import FullScreen from "@/components/layout/FullScreen";
-import SignInForm from "@/containers/forms/SignInForm";
-import StatusWrapper from "@/components/layout/StatusWrapper";
 import CustomLink from "@/components/links/CustomLink";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import SendPasswordResetEmailForm from "@/containers/forms/SendPasswordResetEmailForm";
 
 const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
 const paramsSchema = z.object({
@@ -27,7 +35,7 @@ const paramsSchema = z.object({
 });
 const defaultParams = paramsSchema.parse({});
 
-export const Route = createFileRoute("/sign-in")({
+export const Route = createFileRoute("/forgot-password")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   beforeLoad: ({ context, search }) => {
@@ -37,7 +45,7 @@ export const Route = createFileRoute("/sign-in")({
   component: RouteComponent,
   pendingComponent: () => (
     <FullScreen>
-      <StatusWrapper loading="Loading sign in..." />
+      <StatusWrapper loading="Loading password reset..." />
     </FullScreen>
   ),
 });
@@ -51,26 +59,37 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleSignIn: ComponentProps<typeof SignInForm>["onSubmit"] = async (
-    data,
-  ) => {
-    await auth.signIn(data);
+  const handleSendResetLink: ComponentProps<
+    typeof SendPasswordResetEmailForm
+  >["onSubmit"] = async (data) => {
+    // await auth.signIn(data);
     router.navigate({ to: params.redirect, replace: true });
   };
 
   return (
-    <FullScreen maxWidth="sm">
+    <FullScreen maxWidth="xs">
       <Stack spacing={1}>
         <Card>
-          <CardHeader title="AB Apps" />
+          <CardHeader title="Reset your password" />
           <Divider />
           <CardContent>
-            <SignInForm onSubmit={handleSignIn} />
+            <Typography
+              variant="body2"
+              textAlign="center"
+              color="textSecondary"
+            >
+              Enter your user account's verified email address and we will send
+              you a password reset link.
+            </Typography>
+          </CardContent>
+          <CardContent>
+            <SendPasswordResetEmailForm onSubmit={handleSendResetLink} />
           </CardContent>
         </Card>
         <CustomLink
-          label="Forgot password?"
-          to="/forgot-password"
+          label="Sign in"
+          icon={<ArrowBack fontSize="large" />}
+          to="/sign-in"
           color="inherit"
           width="fit-content"
         />

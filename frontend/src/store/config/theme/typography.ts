@@ -27,9 +27,9 @@ const typography: TypographyVariantsOptions = {
     textTransform: "none",
   },
   h1: {
-    fontSize: "1.75rem",
+    fontSize: "2rem",
     lineHeight: 1.235,
-    fontWeight: 500,
+    fontWeight: 600,
     letterSpacing: "-0.01562em",
   },
   h2: {
