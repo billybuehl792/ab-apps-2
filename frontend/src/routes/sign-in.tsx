@@ -59,7 +59,7 @@ function RouteComponent() {
   };
 
   return (
-    <FullScreen maxWidth="sm">
+    <FullScreen>
       <Stack spacing={1}>
         <Card>
           <CardHeader title="AB Apps" />

@@ -72,6 +72,7 @@ const SendPasswordResetEmailForm: React.FC<
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <TextField
           label="Email Address"
+          placeholder="example@email.com"
           required
           disabled={
             methods.formState.disabled || methods.formState.isSubmitting

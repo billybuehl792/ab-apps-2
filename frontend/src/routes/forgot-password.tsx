@@ -1,13 +1,10 @@
 import { type ComponentProps } from "react";
 import {
   createFileRoute,
-  type FileRoutesByPath,
   redirect,
   stripSearchParams,
   useRouter,
 } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import z from "zod";
 import {
   Card,
   CardContent,
@@ -23,29 +20,17 @@ import CustomLink from "@/components/links/CustomLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import SendPasswordResetEmailForm from "@/containers/forms/SendPasswordResetEmailForm";
 
-const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
-const paramsSchema = z.object({
-  redirect: z.coerce
-    .string()
-    .optional()
-    .transform((value) =>
-      value?.startsWith(APP_ROUTE_PATH) ? value : APP_ROUTE_PATH,
-    )
-    .catch(APP_ROUTE_PATH),
-});
-const defaultParams = paramsSchema.parse({});
-
 export const Route = createFileRoute("/forgot-password")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
-  search: { middlewares: [stripSearchParams(defaultParams)] },
-  beforeLoad: ({ context, search }) => {
+  validateSearch: () => ({}),
+  search: { middlewares: [stripSearchParams(true)] },
+  beforeLoad: ({ context }) => {
     const isAuthenticated = !!context.auth.me;
-    if (isAuthenticated) throw redirect({ to: search.redirect, replace: true });
+    if (isAuthenticated) throw redirect({ to: "/app", replace: true });
   },
   component: RouteComponent,
   pendingComponent: () => (
     <FullScreen>
-      <StatusWrapper loading="Loading password reset..." />
+      <StatusWrapper loading="Loading forgot password..." />
     </FullScreen>
   ),
 });
@@ -63,7 +48,7 @@ function RouteComponent() {
     typeof SendPasswordResetEmailForm
   >["onSubmit"] = async (data) => {
     // await auth.signIn(data);
-    router.navigate({ to: params.redirect, replace: true });
+    // router.navigate({ to: params.redirect, replace: true });
   };
 
   return (
