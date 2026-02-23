@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppSandboxRouteImport } from './routes/app/sandbox'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppDashboardIndexRouteImport } from './routes/app/dashboard/index'
+import { Route as ResetPasswordEncodedUserIdTokenRouteImport } from './routes/reset-password.$encodedUserId.$token'
 import { Route as AppDashboardWorkOrdersRouteImport } from './routes/app/dashboard/work-orders'
 import { Route as AppDashboardClientsRouteImport } from './routes/app/dashboard/clients'
 import { Route as AppDashboardAdminRouteImport } from './routes/app/dashboard/admin'
@@ -75,6 +76,12 @@ const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppDashboardRoute,
 } as any)
+const ResetPasswordEncodedUserIdTokenRoute =
+  ResetPasswordEncodedUserIdTokenRouteImport.update({
+    id: '/reset-password/$encodedUserId/$token',
+    path: '/reset-password/$encodedUserId/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppDashboardWorkOrdersRoute = AppDashboardWorkOrdersRouteImport.update({
   id: '/work-orders',
   path: '/work-orders',
@@ -147,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/app/dashboard/admin': typeof AppDashboardAdminRouteWithChildren
   '/app/dashboard/clients': typeof AppDashboardClientsRouteWithChildren
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
+  '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
@@ -165,6 +173,7 @@ export interface FileRoutesByTo {
   '/app/sandbox': typeof AppSandboxRoute
   '/app': typeof AppIndexRoute
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
+  '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard': typeof AppDashboardIndexRoute
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
@@ -187,6 +196,7 @@ export interface FileRoutesById {
   '/app/dashboard/admin': typeof AppDashboardAdminRouteWithChildren
   '/app/dashboard/clients': typeof AppDashboardClientsRouteWithChildren
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
+  '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
     | '/app/dashboard/work-orders'
+    | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/app/sandbox'
     | '/app'
     | '/app/dashboard/work-orders'
+    | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard'
     | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
@@ -250,6 +262,7 @@ export interface FileRouteTypes {
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
     | '/app/dashboard/work-orders'
+    | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
@@ -267,6 +280,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   SignInRoute: typeof SignInRoute
   SignOutRoute: typeof SignOutRoute
+  ResetPasswordEncodedUserIdTokenRoute: typeof ResetPasswordEncodedUserIdTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -333,6 +347,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/dashboard/'
       preLoaderRoute: typeof AppDashboardIndexRouteImport
       parentRoute: typeof AppDashboardRoute
+    }
+    '/reset-password/$encodedUserId/$token': {
+      id: '/reset-password/$encodedUserId/$token'
+      path: '/reset-password/$encodedUserId/$token'
+      fullPath: '/reset-password/$encodedUserId/$token'
+      preLoaderRoute: typeof ResetPasswordEncodedUserIdTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/dashboard/work-orders': {
       id: '/app/dashboard/work-orders'
@@ -498,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   SignInRoute: SignInRoute,
   SignOutRoute: SignOutRoute,
+  ResetPasswordEncodedUserIdTokenRoute: ResetPasswordEncodedUserIdTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

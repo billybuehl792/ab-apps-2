@@ -86,13 +86,12 @@ export const accessTokenResponseSchema = z.object({
   me: userSchema,
 });
 
-export const sendPasswordResetEmailRequestSchema = z.object({
+export const requestPasswordResetRequestSchema = z.object({
   email: emailSchema,
 });
 
 export const resetPasswordRequestSchema = z
   .object({
-    old_password: passwordSchema,
     new_password: passwordSchema,
     new_password_confirm: passwordSchema,
   })

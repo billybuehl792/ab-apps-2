@@ -3,8 +3,8 @@ import {
   createFileRoute,
   redirect,
   stripSearchParams,
-  useRouter,
 } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -13,12 +13,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
-import useAuth from "@/store/hooks/useAuth";
+import { ArrowBack, CheckCircle } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
 import FullScreen from "@/components/layout/FullScreen";
 import CustomLink from "@/components/links/CustomLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import SendPasswordResetEmailForm from "@/containers/forms/SendPasswordResetEmailForm";
+import RequestPasswordResetForm from "@/containers/forms/RequestPasswordResetForm";
+import { authEndpoints } from "@/store/constants/account";
+import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/forgot-password")({
   validateSearch: () => ({}),
@@ -38,41 +40,74 @@ export const Route = createFileRoute("/forgot-password")({
 function RouteComponent() {
   /** Values */
 
-  const auth = useAuth();
-  const router = useRouter();
-  const params = Route.useSearch();
+  const snackbar = useSnackbar();
+
+  /** Mutations */
+
+  const requestPasswordResetMutation = useMutation({
+    mutationKey: authEndpoints.requestPasswordReset().id,
+    mutationFn: authEndpoints.requestPasswordReset().post,
+  });
 
   /** Callbacks */
 
-  const handleSendResetLink: ComponentProps<
-    typeof SendPasswordResetEmailForm
-  >["onSubmit"] = async (data) => {
-    // await auth.signIn(data);
-    // router.navigate({ to: params.redirect, replace: true });
-  };
+  const handleRequestPasswordReset: ComponentProps<
+    typeof RequestPasswordResetForm
+  >["onSubmit"] = (data) =>
+    requestPasswordResetMutation.mutateAsync(data, {
+      onSuccess: () =>
+        snackbar.enqueueSnackbar(
+          "Password reset email sent! Please check your inbox.",
+          { variant: "success" },
+        ),
+      onError: (error) =>
+        snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
+          variant: "error",
+        }),
+    });
 
   return (
-    <FullScreen maxWidth="xs">
+    <FullScreen>
       <Stack spacing={1}>
         <Card>
-          <CardHeader title="Reset your password" />
+          <CardHeader title="Forgot Password" />
           <Divider />
-          <CardContent>
-            <Typography
-              variant="body2"
-              textAlign="center"
-              color="textSecondary"
-            >
-              Enter your user account's verified email address and we will send
-              you a password reset link.
-            </Typography>
-          </CardContent>
-          <CardContent>
-            <SendPasswordResetEmailForm onSubmit={handleSendResetLink} />
-          </CardContent>
+          {requestPasswordResetMutation.isSuccess ? (
+            <Stack component={CardContent} spacing={2}>
+              <Stack direction="row" justifyContent="center">
+                <CheckCircle color="success" fontSize="xl" />
+              </Stack>
+              <Typography
+                variant="body2"
+                textAlign="center"
+                color="textSecondary"
+              >
+                If your email address is registered, a password reset link has
+                been sent to your email.
+              </Typography>
+            </Stack>
+          ) : (
+            <>
+              <CardContent>
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  color="textSecondary"
+                >
+                  Enter your user account's verified email address and we will
+                  send you a password reset link.
+                </Typography>
+              </CardContent>
+              <CardContent>
+                <RequestPasswordResetForm
+                  onSubmit={handleRequestPasswordReset}
+                />
+              </CardContent>
+            </>
+          )}
         </Card>
         <CustomLink
-          label="Sign in"
+          label="Back to sign in"
           icon={<ArrowBack fontSize="large" />}
           to="/sign-in"
           color="inherit"

@@ -14,6 +14,7 @@ declare module "@mui/material/SvgIcon" {
   interface SvgIconPropsSizeOverrides {
     xs: true;
     xxs: true;
+    xl: true;
   }
 }
 
@@ -177,6 +178,10 @@ const components: Components<
       {
         props: { fontSize: "xxs" },
         style: { fontSize: "0.75rem" },
+      },
+      {
+        props: { fontSize: "xl" },
+        style: { fontSize: "3rem" },
       },
     ],
   },

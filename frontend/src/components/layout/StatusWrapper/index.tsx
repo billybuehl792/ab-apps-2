@@ -31,7 +31,7 @@ const getErrorStatusValue = (error: IStatusWrapperProps["error"]): IStatus => ({
   ...(!!error &&
     typeof error === "object" &&
     (error instanceof Error
-      ? { description: errorUtils.getErrorMessage(error.message) }
+      ? { description: errorUtils.getErrorMessage(error) }
       : error)),
 });
 

@@ -13,15 +13,15 @@ import {
   TextField,
 } from "@mui/material";
 import { errorUtils } from "@/store/utils/error";
-import { sendPasswordResetEmailRequestSchema } from "@/store/schemas/account";
-import type { TSendPasswordResetEmailRequest } from "@/store/types/account";
+import { resetPasswordRequestSchema } from "@/store/schemas/account";
+import type { TResetPasswordRequest } from "@/store/types/account";
 
-interface ISendPasswordResetEmailFormProps extends Omit<
+interface IResetPasswordFormProps extends Omit<
   StackProps<"form">,
   "onSubmit" | "onReset"
 > {
-  onSubmit: SubmitHandler<TSendPasswordResetEmailRequest>;
-  onSubmitInvalid?: SubmitErrorHandler<TSendPasswordResetEmailRequest>;
+  onSubmit: SubmitHandler<TResetPasswordRequest>;
+  onSubmitInvalid?: SubmitErrorHandler<TResetPasswordRequest>;
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
@@ -29,14 +29,17 @@ interface ISendPasswordResetEmailFormProps extends Omit<
   };
 }
 
-const SendPasswordResetEmailForm: React.FC<
-  ISendPasswordResetEmailFormProps
-> = ({ onSubmit, onSubmitInvalid, slotProps, ...props }) => {
+const ResetPasswordForm: React.FC<IResetPasswordFormProps> = ({
+  onSubmit,
+  onSubmitInvalid,
+  slotProps,
+  ...props
+}) => {
   /** Values */
 
   const methods = useForm({
-    resolver: zodResolver(sendPasswordResetEmailRequestSchema),
-    defaultValues: { email: "" },
+    resolver: zodResolver(resetPasswordRequestSchema),
+    defaultValues: { new_password: "", new_password_confirm: "" },
   });
 
   /** Callbacks */
@@ -47,7 +50,7 @@ const SendPasswordResetEmailForm: React.FC<
     } catch (error) {
       setTimeout(() =>
         methods.setError(
-          "email",
+          "new_password",
           { type: "server", message: errorUtils.getErrorMessage(error) },
           { shouldFocus: true },
         ),
@@ -71,15 +74,28 @@ const SendPasswordResetEmailForm: React.FC<
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <TextField
-          label="Email Address"
-          placeholder="example@email.com"
+          type="password"
+          label="New Password"
           required
           disabled={
             methods.formState.disabled || methods.formState.isSubmitting
           }
-          error={!!methods.formState.errors.email}
-          helperText={methods.formState.errors.email?.message}
-          {...methods.register("email")}
+          error={!!methods.formState.errors.new_password}
+          helperText={methods.formState.errors.new_password?.message}
+          onFocus={(event) => event.target.select()}
+          {...methods.register("new_password")}
+        />
+        <TextField
+          type="password"
+          label="Confirm New Password"
+          required
+          disabled={
+            methods.formState.disabled || methods.formState.isSubmitting
+          }
+          error={!!methods.formState.errors.new_password_confirm}
+          helperText={methods.formState.errors.new_password_confirm?.message}
+          onFocus={(event) => event.target.select()}
+          {...methods.register("new_password_confirm")}
         />
       </Stack>
       <Stack direction="row" justifyContent="end" {...slotProps?.actions}>
@@ -89,11 +105,11 @@ const SendPasswordResetEmailForm: React.FC<
           loading={methods.formState.isValid && methods.formState.isSubmitting}
           {...slotProps?.submitButton}
         >
-          Send Reset Link
+          Reset Password
         </Button>
       </Stack>
     </Stack>
   );
 };
 
-export default SendPasswordResetEmailForm;
+export default ResetPasswordForm;

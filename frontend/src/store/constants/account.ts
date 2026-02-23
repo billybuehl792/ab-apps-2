@@ -5,13 +5,14 @@ import type {
   TAccessTokenResponse,
   TResetPasswordRequest,
   TCredentials,
-  TSendPasswordResetEmailRequest,
+  TRequestPasswordResetRequest,
   TUser,
   TUserCreate,
   TUserListRequest,
   TUserListResponse,
   TUserUpdate,
 } from "../types/account";
+import type { TDetailResponse } from "../types/api";
 
 /** Icons */
 
@@ -67,19 +68,31 @@ export const accountEndpoints = {
           .get<TUser>(accountEndpoints.auth().me().url)
           .then((res) => res.data),
     }),
-    sendPasswordResetEmail: () => ({
-      id: [...accountEndpoints.auth().id, "send-password-reset-email"] as const,
-      url: `${accountEndpoints.auth().url}send-password-reset-email/`,
-      post: (body: TSendPasswordResetEmailRequest) =>
+    requestPasswordReset: () => ({
+      id: [...accountEndpoints.auth().id, "request-password-reset"] as const,
+      url: `${accountEndpoints.auth().url}request-password-reset/`,
+      post: (body: TRequestPasswordResetRequest) =>
         api
-          .post(accountEndpoints.auth().sendPasswordResetEmail().url, body)
+          .post<TDetailResponse>(
+            accountEndpoints.auth().requestPasswordReset().url,
+            body,
+          )
           .then((res) => res.data),
     }),
-    resetPassword: () => ({
-      id: [...accountEndpoints.auth().id, "reset-password"] as const,
-      url: `${accountEndpoints.auth().url}reset-password/`,
-      patch: (body: TResetPasswordRequest) =>
-        api.patch(accountEndpoints.auth().resetPassword().url, body),
+    resetPassword: (options: { encodedUserId: string; token: string }) => ({
+      id: [...accountEndpoints.auth().id, "reset-password", options] as const,
+      url: `${accountEndpoints.auth().url}reset-password/${options.encodedUserId}/${options.token}/`,
+      get: () =>
+        api
+          .get<TDetailResponse>(
+            `${accountEndpoints.auth().resetPassword(options).url}`,
+          )
+          .then((res) => res.data),
+      post: (body: TResetPasswordRequest) =>
+        api.post<TDetailResponse>(
+          accountEndpoints.auth().resetPassword(options).url,
+          body,
+        ),
     }),
   }),
   users: () => ({

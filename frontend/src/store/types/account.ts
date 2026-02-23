@@ -4,7 +4,7 @@ import {
   companySchema,
   credentialsSchema,
   resetPasswordRequestSchema,
-  sendPasswordResetEmailRequestSchema,
+  requestPasswordResetRequestSchema,
   userCreateSchema,
   userListRequestSchema,
   userListResponseSchema,
@@ -16,8 +16,8 @@ export type TAccessTokenResponse = z.infer<typeof accessTokenResponseSchema>;
 
 export type TCredentials = z.infer<typeof credentialsSchema>;
 
-export type TSendPasswordResetEmailRequest = z.infer<
-  typeof sendPasswordResetEmailRequestSchema
+export type TRequestPasswordResetRequest = z.infer<
+  typeof requestPasswordResetRequestSchema
 >;
 
 export type TResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;

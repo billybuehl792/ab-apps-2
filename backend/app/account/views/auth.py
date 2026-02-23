@@ -1,11 +1,17 @@
 import os
 import logging
 
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.views import APIView, settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -162,6 +168,161 @@ class ChangePasswordView(APIView):
                 )
 
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class RequestPasswordResetView(APIView):
+    """
+    Request password reset view:
+    - Accepts email address
+    - Generates reset token and sends email
+    """
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response(
+                {"detail": "Email is required."},
+                status=HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = CustomUser.objects.get(email=email)
+
+            # Generate token
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            # Build reset link
+            frontend_url = os.environ.get("FRONTEND_URL")
+            if (not frontend_url):
+                raise ValueError(
+                    "FRONTEND_URL environment variable is not set")
+
+            reset_link = f"{frontend_url}/reset-password/{uid}/{token}"
+
+            # Send email
+            send_mail(
+                subject="Password Reset Request",
+                message=f"Click the link to reset your password: {reset_link}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            logger.info(f"Password reset email sent to {email}")
+
+        except CustomUser.DoesNotExist:
+            # Don't reveal if user exists or not
+            logger.warning(
+                f"Password reset requested for non-existent email: {email}")
+        except Exception as e:
+            logger.error(f"Error sending password reset email: {e}")
+            return Response(
+                {"detail": "An error occurred while sending reset email."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Always return success to prevent email enumeration
+        return Response(
+            {"detail": "If the email exists, a reset link has been sent."},
+            status=HTTP_200_OK
+        )
+
+
+class ResetPasswordView(APIView):
+    """
+    Reset password view:
+    - GET: Validates token and uid
+    - POST: Updates user password
+    """
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get(self, request, uid, token):
+        """
+        Validate reset link without requiring a password.
+        Returns 200 if valid, 400 if invalid/expired.
+        """
+        try:
+            # Decode uid
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = CustomUser.objects.get(pk=user_id)
+
+            # Validate token
+            token_generator = PasswordResetTokenGenerator()
+            if not token_generator.check_token(user, token):
+                return Response(
+                    {"detail": "Invalid or expired reset link."},
+                    status=HTTP_400_BAD_REQUEST
+                )
+
+            return Response(
+                {"detail": "Reset link is valid."},
+                status=HTTP_200_OK
+            )
+
+        except (CustomUser.DoesNotExist, ValueError, TypeError):
+            return Response(
+                {"detail": "Invalid reset link."},
+                status=HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.error(f"Error validating reset link: {e}")
+            return Response(
+                {"detail": "An error occurred while validating reset link."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def post(self, request, uid, token):
+        new_password = request.data.get('new_password')
+
+        if not new_password:
+            return Response(
+                {"detail": "New password is required."},
+                status=HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Decode uid
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = CustomUser.objects.get(pk=user_id)
+
+            # Validate token
+            token_generator = PasswordResetTokenGenerator()
+            if not token_generator.check_token(user, token):
+                return Response(
+                    {"detail": "Invalid or expired reset link."},
+                    status=HTTP_400_BAD_REQUEST
+                )
+
+            # Update password
+            user.set_password(new_password)
+            user.save()
+
+            logger.info(
+                f"Password reset successfully for user {user.username}")
+
+            return Response(
+                {"detail": "Password reset successfully."},
+                status=HTTP_200_OK
+            )
+
+        except (CustomUser.DoesNotExist, ValueError, TypeError):
+            return Response(
+                {"detail": "Invalid reset link."},
+                status=HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            logger.error(f"Error resetting password: {e}")
+            return Response(
+                {"detail": "An error occurred while resetting password."},
+                status=HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 @api_view(['GET'])
