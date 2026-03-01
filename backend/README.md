@@ -23,30 +23,61 @@ A Django + Django REST Framework backend with JWT authentication and two models:
 
 ## 📦 Setup & Installation
 
+### 1. Clone the repository
+
 ```bash
-# 1. Clone the repository
- git clone <your-repo-url>
- cd <project-folder>
+ git clone https://github.com/billybuehl792/ab-apps-2.git
+ cd ab-apps-2/backend
+```
 
-# 2. Create & activate a virtual environment
- python -m venv .venv
- source .venv/bin/activate   # Windows: .venv\Scripts\activate
+### 2. Create & activate a virtual environment
 
-# 3. Install dependencies
- pip install -r requirements.txt
+```bash
+python -m venv .venv
+source .venv/bin/activate # Windows: .venv\Scripts\activate
+```
 
-# If requirements.txt is missing, install manually:
- pip install django djangorestframework djangorestframework-simplejwt django-filter
+### 3. Install dependencies
 
-# 4. Run database migrations
- python manage.py makemigrations
- python manage.py migrate
+```bash
+pip install -r requirements.txt
+```
 
-# 5. Create an admin user (optional)
- python manage.py createsuperuser
+### 4. Run database migrations
 
-# 6. Start the development server
- python manage.py runserver
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5. Create a superuser
+
+First, create a `Company` - all users must be associated with a company.
+
+#### 5.1 Create a `Company`
+
+```bash
+python manage.py shell
+```
+
+```python
+from app.companies.models import Company
+
+Company.objects.create(label="Test Company", description="Just a test.")
+
+exit()
+```
+
+#### 5.2 Create `User`
+
+```bash
+python manage.py createsuperuser
+```
+
+### 6. Start the development server
+
+```bash
+python manage.py runserver
 ```
 
 The API will be available at: **http://127.0.0.1:8000/api/**
