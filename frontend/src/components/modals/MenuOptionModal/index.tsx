@@ -9,20 +9,24 @@ import MenuOptionListDrawer from "../MenuOptionDrawer";
 import MenuOptionListMenu from "../MenuOptionMenu";
 
 export interface IMenuOptionModalProps<
-  T extends IMenuOption[] = IMenuOption[],
+  TOptions extends IMenuOption[] = IMenuOption[],
 > {
   open: boolean;
-  options: T;
+  options: TOptions;
   title?: ReactNode;
   anchorEl?: MenuProps["anchorEl"];
   variant?: "menu" | "drawer";
   disableCloseOnSelect?: boolean;
-  onSelect?: (option: T[number], event: SyntheticEvent<HTMLElement>) => void;
+  hideOptions?: TOptions[number]["id"][];
+  onSelect?: (
+    option: TOptions[number],
+    event: SyntheticEvent<HTMLElement>,
+  ) => void;
   onClose: ReactEventHandler;
   onTransitionExited?: VoidFunction;
   slotProps?: {
-    drawer?: Partial<ComponentProps<typeof MenuOptionListDrawer<T>>>;
-    menu?: Partial<ComponentProps<typeof MenuOptionListMenu<T>>>;
+    drawer?: Partial<ComponentProps<typeof MenuOptionListDrawer<TOptions>>>;
+    menu?: Partial<ComponentProps<typeof MenuOptionListMenu<TOptions>>>;
   };
 }
 
@@ -30,18 +34,19 @@ export interface IMenuOptionModalProps<
  * This component renders either `MenuOptionMenu` (desktop) or a
  * `MenuOptionDrawer` (mobile) with a list of selectable options.
  */
-const MenuOptionModal = <T extends IMenuOption[] = IMenuOption[]>({
+const MenuOptionModal = <TOptions extends IMenuOption[] = IMenuOption[]>({
   open,
   options,
   title = "Options",
   anchorEl,
   variant,
   disableCloseOnSelect,
+  hideOptions,
   onSelect,
   onClose,
   onTransitionExited,
   slotProps,
-}: IMenuOptionModalProps<T>) => {
+}: IMenuOptionModalProps<TOptions>) => {
   /** Values */
 
   const isTouch = useMediaQuery("(pointer: coarse)");
@@ -52,6 +57,7 @@ const MenuOptionModal = <T extends IMenuOption[] = IMenuOption[]>({
       anchorEl={anchorEl}
       open={open}
       options={options}
+      hideOptions={hideOptions}
       disableCloseOnSelect={disableCloseOnSelect}
       onSelect={onSelect}
       onClose={onClose}
@@ -63,6 +69,7 @@ const MenuOptionModal = <T extends IMenuOption[] = IMenuOption[]>({
       title={title}
       open={open}
       options={options}
+      hideOptions={hideOptions}
       disableCloseOnSelect={disableCloseOnSelect}
       onSelect={onSelect}
       onClose={onClose}

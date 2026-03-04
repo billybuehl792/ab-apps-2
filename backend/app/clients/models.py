@@ -16,7 +16,7 @@ class Client(TimeStampedModel):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     phone_primary = models.CharField(max_length=50)
-    phone_secondary = models.CharField(max_length=50, blank=True, default="")
+    phone_secondary = models.CharField(max_length=50, blank=True, null=True)
     place = models.ForeignKey(
         Place,
         on_delete=models.SET_NULL,

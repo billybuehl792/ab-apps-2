@@ -1,42 +1,38 @@
-import type { ListRequestParams } from "./api";
+import z from "zod";
+import {
+  googleAutocompleteSuggestionListRequestSchema,
+  googleAutocompleteSuggestionListResponseSchema,
+  googleAutocompleteSuggestionSchema,
+  placeBasicSchema,
+  placeListRequestSchema,
+  placeListResponseSchema,
+  placeSchema,
+} from "../schemas/places";
 
-export interface Place {
-  id: number;
-  /** Google `placeId` */
-  google_place_id: string;
-  /** Human-readable address */
-  address_full: string;
-  /** Shortened human-readable address */
-  address_short: string;
-  /** Country code (e.g., "US") */
-  city: string;
-  postal_code: string;
-  state: string;
-  country: string;
-  latitude: number;
-  longitude: number;
-  created_at: string;
-  updated_at: string;
-}
+export type TPlace = z.infer<typeof placeSchema>;
 
-export interface PlaceBasic {
-  id: number;
-  /** Google `placeId` */
-  google_place_id: string;
-  /** Shortened human-readable address */
-  address_short: string;
-  city: string;
-  state: string;
-}
+export type TPlaceBasic = z.infer<typeof placeBasicSchema>;
 
 export interface PlaceWriteable {
   id: number;
   google_place_id: string;
 }
 
-/** API */
+export type TGoogleAutocompleteSuggestion = z.infer<
+  typeof googleAutocompleteSuggestionSchema
+>;
 
-export type PlaceListRequestParams = ListRequestParams;
+export type TPlaceListRequest = z.infer<typeof placeListRequestSchema>;
+
+export type TPlaceListResponse = z.infer<typeof placeListResponseSchema>;
+
+export type TGoogleAutocompleteSuggestionListRequest = z.infer<
+  typeof googleAutocompleteSuggestionListRequestSchema
+>;
+
+export type TGoogleAutocompleteSuggestionListResponse = z.infer<
+  typeof googleAutocompleteSuggestionListResponseSchema
+>;
 
 /** Google Places API */
 

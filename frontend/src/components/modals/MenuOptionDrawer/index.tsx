@@ -7,6 +7,7 @@ interface MenuOptionDrawerProps<
   TOptions extends IMenuOption[] = IMenuOption[],
 > extends Omit<ComponentProps<typeof Drawer>, "children" | "onSelect"> {
   options: TOptions;
+  hideOptions?: TOptions[number]["id"][];
   disableCloseOnSelect?: boolean;
   onSelect?: (option: TOptions[number], event: MouseEvent<HTMLElement>) => void;
 }
@@ -14,6 +15,7 @@ interface MenuOptionDrawerProps<
 const MenuOptionDrawer = <TOptions extends IMenuOption[] = IMenuOption[]>({
   title = "Options",
   options,
+  hideOptions,
   disableCloseOnSelect,
   onSelect,
   onClose,
@@ -32,7 +34,9 @@ const MenuOptionDrawer = <TOptions extends IMenuOption[] = IMenuOption[]>({
     >
       <MenuList sx={{ minWidth: 300 }}>
         {options
-          .filter(({ render }) => render !== false)
+          .filter(
+            ({ render, id }) => render !== false && !hideOptions?.includes(id),
+          )
           .map((option) => (
             <MenuOptionMenuItem
               key={option.id}

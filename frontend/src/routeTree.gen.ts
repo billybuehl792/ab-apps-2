@@ -28,7 +28,9 @@ import { Route as AppDashboardProfileIdRouteImport } from './routes/app/dashboar
 import { Route as AppDashboardClientsCreateRouteImport } from './routes/app/dashboard/clients/create'
 import { Route as AppDashboardClientsIdRouteImport } from './routes/app/dashboard/clients/$id'
 import { Route as AppDashboardAdminUsersRouteImport } from './routes/app/dashboard/admin/users'
+import { Route as AppDashboardClientsIdIndexRouteImport } from './routes/app/dashboard/clients/$id/index'
 import { Route as AppDashboardAdminUsersIndexRouteImport } from './routes/app/dashboard/admin/users/index'
+import { Route as AppDashboardClientsIdEditRouteImport } from './routes/app/dashboard/clients/$id/edit'
 import { Route as AppDashboardAdminUsersIdRouteImport } from './routes/app/dashboard/admin/users/$id'
 
 const SignOutRoute = SignOutRouteImport.update({
@@ -129,11 +131,23 @@ const AppDashboardAdminUsersRoute = AppDashboardAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AppDashboardAdminRoute,
 } as any)
+const AppDashboardClientsIdIndexRoute =
+  AppDashboardClientsIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppDashboardClientsIdRoute,
+  } as any)
 const AppDashboardAdminUsersIndexRoute =
   AppDashboardAdminUsersIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AppDashboardAdminUsersRoute,
+  } as any)
+const AppDashboardClientsIdEditRoute =
+  AppDashboardClientsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AppDashboardClientsIdRoute,
   } as any)
 const AppDashboardAdminUsersIdRoute =
   AppDashboardAdminUsersIdRouteImport.update({
@@ -157,13 +171,15 @@ export interface FileRoutesByFullPath {
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
-  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
+  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin/': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients/': typeof AppDashboardClientsIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
+  '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users/': typeof AppDashboardAdminUsersIndexRoute
+  '/app/dashboard/clients/$id/': typeof AppDashboardClientsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -175,13 +191,14 @@ export interface FileRoutesByTo {
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard': typeof AppDashboardIndexRoute
-  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients': typeof AppDashboardClientsIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
+  '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersIndexRoute
+  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -199,13 +216,15 @@ export interface FileRoutesById {
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
-  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRoute
+  '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin/': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients/': typeof AppDashboardClientsIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
+  '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users/': typeof AppDashboardAdminUsersIndexRoute
+  '/app/dashboard/clients/$id/': typeof AppDashboardClientsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -230,7 +249,9 @@ export interface FileRouteTypes {
     | '/app/dashboard/admin/'
     | '/app/dashboard/clients/'
     | '/app/dashboard/admin/users/$id'
+    | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users/'
+    | '/app/dashboard/clients/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -242,13 +263,14 @@ export interface FileRouteTypes {
     | '/app/dashboard/work-orders'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard'
-    | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
     | '/app/dashboard/profile/$id'
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
     | '/app/dashboard/admin/users/$id'
+    | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users'
+    | '/app/dashboard/clients/$id'
   id:
     | '__root__'
     | '/'
@@ -271,7 +293,9 @@ export interface FileRouteTypes {
     | '/app/dashboard/admin/'
     | '/app/dashboard/clients/'
     | '/app/dashboard/admin/users/$id'
+    | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users/'
+    | '/app/dashboard/clients/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -418,12 +442,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardAdminUsersRouteImport
       parentRoute: typeof AppDashboardAdminRoute
     }
+    '/app/dashboard/clients/$id/': {
+      id: '/app/dashboard/clients/$id/'
+      path: '/'
+      fullPath: '/app/dashboard/clients/$id/'
+      preLoaderRoute: typeof AppDashboardClientsIdIndexRouteImport
+      parentRoute: typeof AppDashboardClientsIdRoute
+    }
     '/app/dashboard/admin/users/': {
       id: '/app/dashboard/admin/users/'
       path: '/'
       fullPath: '/app/dashboard/admin/users/'
       preLoaderRoute: typeof AppDashboardAdminUsersIndexRouteImport
       parentRoute: typeof AppDashboardAdminUsersRoute
+    }
+    '/app/dashboard/clients/$id/edit': {
+      id: '/app/dashboard/clients/$id/edit'
+      path: '/edit'
+      fullPath: '/app/dashboard/clients/$id/edit'
+      preLoaderRoute: typeof AppDashboardClientsIdEditRouteImport
+      parentRoute: typeof AppDashboardClientsIdRoute
     }
     '/app/dashboard/admin/users/$id': {
       id: '/app/dashboard/admin/users/$id'
@@ -464,14 +502,29 @@ const AppDashboardAdminRouteChildren: AppDashboardAdminRouteChildren = {
 const AppDashboardAdminRouteWithChildren =
   AppDashboardAdminRoute._addFileChildren(AppDashboardAdminRouteChildren)
 
+interface AppDashboardClientsIdRouteChildren {
+  AppDashboardClientsIdEditRoute: typeof AppDashboardClientsIdEditRoute
+  AppDashboardClientsIdIndexRoute: typeof AppDashboardClientsIdIndexRoute
+}
+
+const AppDashboardClientsIdRouteChildren: AppDashboardClientsIdRouteChildren = {
+  AppDashboardClientsIdEditRoute: AppDashboardClientsIdEditRoute,
+  AppDashboardClientsIdIndexRoute: AppDashboardClientsIdIndexRoute,
+}
+
+const AppDashboardClientsIdRouteWithChildren =
+  AppDashboardClientsIdRoute._addFileChildren(
+    AppDashboardClientsIdRouteChildren,
+  )
+
 interface AppDashboardClientsRouteChildren {
-  AppDashboardClientsIdRoute: typeof AppDashboardClientsIdRoute
+  AppDashboardClientsIdRoute: typeof AppDashboardClientsIdRouteWithChildren
   AppDashboardClientsCreateRoute: typeof AppDashboardClientsCreateRoute
   AppDashboardClientsIndexRoute: typeof AppDashboardClientsIndexRoute
 }
 
 const AppDashboardClientsRouteChildren: AppDashboardClientsRouteChildren = {
-  AppDashboardClientsIdRoute: AppDashboardClientsIdRoute,
+  AppDashboardClientsIdRoute: AppDashboardClientsIdRouteWithChildren,
   AppDashboardClientsCreateRoute: AppDashboardClientsCreateRoute,
   AppDashboardClientsIndexRoute: AppDashboardClientsIndexRoute,
 }

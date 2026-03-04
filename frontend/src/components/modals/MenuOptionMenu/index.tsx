@@ -6,6 +6,7 @@ export interface IMenuOptionMenuProps<
   TOptions extends IMenuOption[] = IMenuOption[],
 > extends Omit<MenuProps, "onSelect" | "onClose"> {
   options: TOptions;
+  hideOptions?: TOptions[number]["id"][];
   disableCloseOnSelect?: boolean;
   onSelect?: (option: TOptions[number], event: MouseEvent<HTMLElement>) => void;
   onClose: ReactEventHandler<HTMLElement>;
@@ -14,6 +15,7 @@ export interface IMenuOptionMenuProps<
 const MenuOptionMenu = <TOptions extends IMenuOption[] = IMenuOption[]>({
   options,
   disableCloseOnSelect,
+  hideOptions,
   onSelect,
   onClose,
   ...props
@@ -21,7 +23,9 @@ const MenuOptionMenu = <TOptions extends IMenuOption[] = IMenuOption[]>({
   return (
     <Menu id="menu" component="div" onClose={onClose} {...props}>
       {options
-        .filter(({ render }) => render !== false)
+        .filter(
+          ({ render, id }) => render !== false && !hideOptions?.includes(id),
+        )
         .map((option) => (
           <MenuOptionMenuItem
             key={option.id}

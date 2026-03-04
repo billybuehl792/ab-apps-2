@@ -1,7 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EClientListOrdering } from "../enums/clients";
-import { placeBasicSchema } from "./places";
+import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
 import { WorkOrderStatus } from "../enums/work-orders";
 import {
   emailSchema,
@@ -39,8 +39,8 @@ export const clientCreateSchema = z.object({
   last_name: nameSchema,
   email: emailSchema,
   phone_primary: phoneSchema,
-  phone_secondary: phoneSchema.nullable(),
-  place: placeBasicSchema.nullable(),
+  phone_secondary: phoneSchema.nullable().optional(),
+  place: googleAutocompleteSuggestionSchema.nullable().optional(),
 });
 
 export const clientUpdateSchema = z.object({
@@ -49,7 +49,7 @@ export const clientUpdateSchema = z.object({
   email: emailSchema.optional(),
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
-  place: placeBasicSchema.nullable().optional(),
+  place: googleAutocompleteSuggestionSchema.nullable().optional(),
 });
 
 export const clientListRequestSchema = listRequestSchema.extend({

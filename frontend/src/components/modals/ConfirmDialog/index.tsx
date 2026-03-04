@@ -21,8 +21,7 @@ export interface ConfirmOptions {
 }
 
 interface ConfirmDialogProps
-  extends Omit<DialogProps, "title" | "content" | "onClose">,
-    ConfirmOptions {
+  extends Omit<DialogProps, "title" | "content" | "onClose">, ConfirmOptions {
   onConfirm: VoidFunction;
   onClose: VoidFunction;
 }
@@ -41,6 +40,7 @@ const ConfirmDialog = ({
     <Dialog
       aria-labelledby="confirm-dialog-title"
       aria-describedby="confirm-dialog-description"
+      maxWidth="xs"
       onClose={onClose}
       {...props}
     >
@@ -62,12 +62,10 @@ const ConfirmDialog = ({
         >
           {title}
         </Box>
-        {!!onClose && (
-          <CloseIconButton onClick={onClose} sx={{ flexShrink: 0 }} />
-        )}
+        <CloseIconButton onClick={onClose} sx={{ flexShrink: 0 }} />
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+        <DialogContentText id="alert-dialog-description" textAlign="center">
           {description}
         </DialogContentText>
         {typeof content === "string" ? (

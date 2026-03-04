@@ -2,21 +2,19 @@ import { useState, type ComponentProps } from "react";
 import {
   createFileRoute,
   useBlocker,
+  useLoaderData,
   useNavigate,
 } from "@tanstack/react-router";
 import { Stack, Typography } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 import useClient from "@/store/hooks/useClient";
 import useConfirm from "@/store/hooks/useConfirm";
-import ClientCreateForm from "@/containers/forms/ClientCreateForm";
-import { ClientIcons } from "@/store/constants/clients";
-import { NULL_ID } from "@/store/constants/api";
+import ClientUpdateForm from "@/containers/forms/ClientUpdateForm";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/dashboard/clients/create")({
-  loader: (): TRouteLoaderData => ({
-    crumb: { label: "Create Client", Icon: ClientIcons.Create },
-  }),
+export const Route = createFileRoute("/app/dashboard/clients/$id/edit")({
   component: RouteComponent,
+  loader: (): TRouteLoaderData => ({ crumb: { label: "Edit", Icon: Edit } }),
 });
 
 function RouteComponent() {
@@ -24,26 +22,27 @@ function RouteComponent() {
 
   /** Values */
 
-  const confirm = useConfirm();
+  const loaderData = useLoaderData({ from: "/app/dashboard/clients/$id" });
   const navigate = useNavigate();
+  const confirm = useConfirm();
 
-  const clientHook = useClient({ id: NULL_ID });
+  const clientHook = useClient(loaderData.data);
 
   /** Callbacks */
 
-  const handleOnSubmit: ComponentProps<typeof ClientCreateForm>["onSubmit"] = (
-    body,
+  const handleOnSubmit: ComponentProps<typeof ClientUpdateForm>["onSubmit"] = (
+    data,
   ) =>
-    clientHook.mutations.create.mutateAsync(body, {
-      onSuccess: (newClient) =>
+    clientHook.mutations.update.mutateAsync(data, {
+      onSuccess: (updatedClient) =>
         navigate({
           to: "/app/dashboard/clients/$id",
-          params: { id: String(newClient.id) },
+          params: { id: String(updatedClient.id) },
         }),
     });
 
   const handleOnFormStateChange: ComponentProps<
-    typeof ClientCreateForm
+    typeof ClientUpdateForm
   >["onFormStateChange"] = (formState) => setIsFormDirty(formState.isDirty);
 
   /** Effects */
@@ -61,8 +60,12 @@ function RouteComponent() {
 
   return (
     <Stack spacing={2} my={2}>
-      <Typography variant="h5">Create New Client</Typography>
-      <ClientCreateForm
+      <Stack>
+        <Typography variant="h5">Edit Client</Typography>
+        <Typography variant="caption">{clientHook.client.full_name}</Typography>
+      </Stack>
+      <ClientUpdateForm
+        client={clientHook.client}
         onFormStateChange={handleOnFormStateChange}
         onSubmit={handleOnSubmit}
       />
