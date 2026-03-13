@@ -80,8 +80,9 @@ export const clientListOrderingOptions: TOrderingOption<EClientListOrdering>[] =
     },
   ];
 
-export const getPlaceholderClient = (id: number): TClient => ({
-  id,
+export const getPlaceholderClient = (
+  data: TWithRequired<Partial<TClient>, "id">,
+): TClient => ({
   full_name: "-",
   email: "",
   phone_primary: "",
@@ -93,4 +94,5 @@ export const getPlaceholderClient = (id: number): TClient => ({
   documents_count: 0,
   created_at: "",
   updated_at: "",
+  ...data,
 });

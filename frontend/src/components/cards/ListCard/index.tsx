@@ -24,7 +24,7 @@ interface IListCardBaseProps {
   endContent?: ReactNode;
 }
 
-interface IListCardProps
+export interface IListCardProps
   extends Omit<StackProps<typeof Card>, "onClick">, IListCardBaseProps {
   link?: LinkOptions | false;
   options?: IMenuOption[];

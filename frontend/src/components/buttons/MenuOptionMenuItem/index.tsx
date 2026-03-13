@@ -31,9 +31,9 @@ const MenuOptionMenuItem = <TOption extends IMenuOption>({
   const Content = useMemo(
     () => (
       <Fragment>
-        {!!option.icon && (
+        {(!!option.Icon || !!option.icon) && (
           <ListItemIcon sx={{ color: option.color }}>
-            {option.icon}
+            {option.Icon ? <option.Icon /> : option.icon}
           </ListItemIcon>
         )}
         <ListItemText

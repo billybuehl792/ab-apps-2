@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { type CreateLinkProps } from "@tanstack/react-router";
 import { EOrderingDirection } from "../enums/api";
+import { SvgIconComponent } from "@mui/icons-material";
 
 declare global {
   /**
@@ -50,12 +51,16 @@ declare global {
     | TOptionValue[]
     | { [key: string]: TOptionValue };
 
-  interface IMenuOption<TValue extends TOptionValue = TOptionValue> {
-    id: string;
+  interface IMenuOption<
+    TValue extends TOptionValue = TOptionValue,
+    TId extends string = string,
+  > {
+    id: TId;
     value: TValue;
     render?: boolean;
     label: string;
     icon?: ReactNode;
+    Icon?: SvgIconComponent;
     description?: ReactNode;
     disabled?: boolean;
     selected?: boolean;

@@ -1,35 +1,40 @@
-import { type ComponentProps } from "react";
-import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import useClient from "@/store/hooks/useClient";
+import useClient, {
+  type IUseClientOptions,
+  type TUseClient,
+} from "@/store/hooks/useClient";
+import MenuOptionIconButton, {
+  type IMenuOptionIconButtonProps,
+} from "@/components/buttons/MenuOptionIconButton";
 import type { TClientBasic } from "@/store/types/clients";
 
-interface ClientMenuOptionIconButtonProps extends Partial<
-  Omit<
-    ComponentProps<
-      typeof MenuOptionIconButton<ReturnType<typeof useClient>["options"]>
-    >,
-    "onChange"
-  >
-> {
-  client: TClientBasic | number;
-  onChange?: NonNullable<Parameters<typeof useClient>[1]>["onChange"];
+type TMenuOptionIconButtonProps = Omit<
+  IMenuOptionIconButtonProps<TUseClient["options"]>,
+  "options"
+>;
+
+interface IClientMenuOptionIconButtonProps
+  extends TMenuOptionIconButtonProps, IUseClientOptions {
+  client: TWithRequired<TClientBasic, "id">;
 }
 
-const ClientMenuOptionIconButton = ({
-  client: clientProp,
-  options: optionsProp,
-  onChange,
-  ...props
-}: ClientMenuOptionIconButtonProps) => {
+const ClientMenuOptionIconButton: React.FC<
+  IClientMenuOptionIconButtonProps
+> = ({ client, options, hideOptions, disabled, onChange, ...props }) => {
   /** Values */
 
-  const { clientQuery, client, options } = useClient(clientProp, { onChange });
+  const clientHook = useClient(client, {
+    disabled,
+    options,
+    hideOptions,
+    onChange,
+  });
 
   return (
     <MenuOptionIconButton
-      title={client.full_name}
-      disabled={clientQuery.isEnabled && !clientQuery.isSuccess}
-      options={options}
+      title={clientHook.client.full_name}
+      disabled={clientHook.disabled}
+      loading={clientHook.isLoading}
+      options={clientHook.options}
       {...props}
     />
   );

@@ -3,7 +3,7 @@ import { Close } from "@mui/icons-material";
 
 const CloseIconButton = (props: IconButtonProps) => {
   return (
-    <IconButton {...props}>
+    <IconButton aria-label="close" {...props}>
       <Close />
     </IconButton>
   );

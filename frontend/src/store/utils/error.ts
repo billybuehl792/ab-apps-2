@@ -1,14 +1,19 @@
 import { AxiosError } from "axios";
 
 const getErrorMessage = (error: unknown): string => {
-  let message = "An unknown error occurred";
+  if (typeof error === "string") return error;
+  if (error instanceof AxiosError) {
+    if (error.response?.data) {
+      if (typeof error.response?.data === "string") return error.response.data;
+      if (typeof error.response?.data.detail === "string")
+        return error.response.data.detail;
+      if (Array.isArray(error.response?.data))
+        return error.response.data.join(" ");
+    }
+  }
+  if (error instanceof Error) return error.message;
 
-  if (typeof error === "string") message = error;
-  else if (error instanceof AxiosError)
-    message = error.response?.data.detail ?? error.message;
-  else if (error instanceof Error) message = error.message;
-
-  return message;
+  return "An unknown error occurred";
 };
 
 const isInvalidPageError = (error: unknown): boolean => {

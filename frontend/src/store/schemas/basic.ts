@@ -1,4 +1,5 @@
 import z from "zod";
+import { RegexPattern } from "../constants/regex";
 
 export const idSchema = z.coerce.number().int().positive();
 
@@ -8,16 +9,20 @@ export const objectSchema = z.object({
   updated_at: z.string().datetime().nullable(),
 });
 
-export const nameSchema = z.coerce.string().min(1).max(100).trim();
+export const nameSchema = z.coerce
+  .string()
+  .min(1, "Must be at least 1 character")
+  .max(100, "Cannot exceed 100 characters")
+  .trim();
 
 export const emailSchema = z.coerce
   .string()
-  .max(100, "Email must be at most 100 characters")
+  .max(100, "Cannot exceed 100 characters")
   .email("Invalid email address");
 
 export const phoneSchema = z.coerce
   .string()
-  .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format");
+  .regex(RegexPattern.Phone, "Invalid phone number format");
 
 export const truthySchema = z.coerce
   .boolean()

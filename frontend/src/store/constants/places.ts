@@ -1,4 +1,12 @@
 import { AddLocationAlt, Map, Place } from "@mui/icons-material";
+import api from "../config/api";
+import type {
+  TGoogleAutocompleteSuggestionListRequest,
+  TGoogleAutocompleteSuggestionListResponse,
+  TPlace,
+  TPlaceListRequest,
+  TPlaceListResponse,
+} from "../types/places";
 
 /** Icons */
 
@@ -11,18 +19,44 @@ export const PlaceIcons = {
 /** API */
 
 export const placeEndpoints = {
-  places: Object.assign(
-    () => `${import.meta.env.VITE_BACKEND_BASE_URL}/api/places/`,
-    {
-      detail: (id: number) => `${placeEndpoints.places()}${id}/`,
-      count: () => `${placeEndpoints.places()}count/`,
-      cities: () => `${placeEndpoints.places()}cities/`,
-      googlePlace: () => `${placeEndpoints.places()}google-place/`,
-      googleAutocompleteSuggestions: () =>
-        `${placeEndpoints.places()}google-autocomplete-suggestions/`,
-    }
-  ),
+  id: ["places"] as const,
+  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/places/`,
+  get: (options?: TPlaceListRequest) =>
+    api
+      .get<TPlaceListResponse>(placeEndpoints.url, options)
+      .then((res) => res.data),
+  place: (id: TPlace["id"]) => ({
+    id: [...placeEndpoints.id, "place", id] as const,
+    url: `${placeEndpoints.url}${id}/`,
+    get: () =>
+      api.get<TPlace>(placeEndpoints.place(id).url).then((res) => res.data),
+  }),
+  googleAutocompleteSuggestions: () => ({
+    id: [...placeEndpoints.id, "google-autocomplete-suggestions"] as const,
+    url: `${placeEndpoints.url}google-autocomplete-suggestions/`,
+    get: (options: TGoogleAutocompleteSuggestionListRequest) =>
+      api
+        .get<TGoogleAutocompleteSuggestionListResponse>(
+          placeEndpoints.googleAutocompleteSuggestions().url,
+          options,
+        )
+        .then((res) => res.data),
+  }),
 };
+
+// export const placeEndpoints = {
+//   places: Object.assign(
+//     () => `${import.meta.env.VITE_BACKEND_BASE_URL}/api/places/`,
+//     {
+//       detail: (id: number) => `${placeEndpoints.places()}${id}/`,
+//       count: () => `${placeEndpoints.places()}count/`,
+//       cities: () => `${placeEndpoints.places()}cities/`,
+//       googlePlace: () => `${placeEndpoints.places()}google-place/`,
+//       googleAutocompleteSuggestions: () =>
+//         `${placeEndpoints.places()}google-autocomplete-suggestions/`,
+//     },
+//   ),
+// };
 
 /** Google Places API */
 

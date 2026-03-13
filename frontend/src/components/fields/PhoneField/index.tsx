@@ -5,7 +5,7 @@ import {
   type TextFieldProps,
 } from "@mui/material";
 
-const PhoneField = (props: TextFieldProps) => {
+const PhoneField: React.FC<TextFieldProps> = (props) => {
   return (
     <TextField
       type="tel"
