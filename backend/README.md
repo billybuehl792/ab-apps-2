@@ -43,18 +43,24 @@ source .venv/bin/activate # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Run database migrations
+### 4. Create your environment file
+
+```bash
+cp .env.sample .env # Windows (PowerShell): Copy-Item .env.sample .env
+```
+
+### 5. Run database migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5. Create a superuser
+### 6. Create a superuser
 
 First, create a `Company` - all users must be associated with a company.
 
-#### 5.1 Create a `Company`
+#### 6.1 Create a `Company`
 
 ```bash
 python manage.py shell
@@ -68,13 +74,13 @@ Company.objects.create(label="Test Company", description="Just a test.")
 exit()
 ```
 
-#### 5.2 Create `User`
+#### 6.2 Create `User`
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 6. Start the development server
+### 7. Start the development server
 
 ```bash
 python manage.py runserver
@@ -173,9 +179,3 @@ project-root/
 - Add ownership (link Clients/work-orders to `User`) for multi-user apps
 - Deploy backend to services like Railway, Render, or Heroku
 - Deploy frontend (React/Vite) separately on Vercel and point it to this API
-
----
-
-## 📝 License
-
-MIT — feel free to use and modify.

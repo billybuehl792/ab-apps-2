@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app/dashboard/clients/create")({
 });
 
 function RouteComponent() {
-  const [isFormDirty, setIsFormDirty] = useState(false);
+  const [blockNavigation, setBlockNavigation] = useState(false);
 
   /** Values */
 
@@ -35,22 +35,24 @@ function RouteComponent() {
     body,
   ) =>
     clientHook.mutations.create.mutateAsync(body, {
-      onSuccess: (newClient) =>
+      onSuccess: (newClient) => {
+        setBlockNavigation(false);
         navigate({
           to: "/app/dashboard/clients/$id",
           params: { id: String(newClient.id) },
-        }),
+        });
+      },
     });
 
   const handleOnFormStateChange: ComponentProps<
     typeof ClientCreateForm
-  >["onFormStateChange"] = (formState) => setIsFormDirty(formState.isDirty);
+  >["onFormStateChange"] = (formState) => setBlockNavigation(formState.isDirty);
 
   /** Effects */
 
   useBlocker({
     shouldBlockFn: async () =>
-      isFormDirty
+      blockNavigation
         ? !(await confirm({
             title: "Unsaved Changes",
             description:

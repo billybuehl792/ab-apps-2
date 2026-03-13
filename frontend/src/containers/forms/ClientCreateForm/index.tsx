@@ -12,6 +12,7 @@ import {
   Stack,
   TextField,
   type StackProps,
+  FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneField from "@/components/fields/PhoneField";
@@ -64,13 +65,12 @@ const ClientCreateForm: React.FC<IClientCreateFormProps> = ({
     try {
       await onSubmit(data);
     } catch (error) {
-      setTimeout(() =>
-        methods.setError(
-          "root",
-          { type: "server", message: errorUtils.getErrorMessage(error) },
-          { shouldFocus: true },
-        ),
-      );
+      setTimeout(() => {
+        methods.setError("root", {
+          type: "server",
+          message: errorUtils.getErrorMessage(error),
+        });
+      });
       throw error;
     }
   }, onSubmitInvalid);
@@ -93,6 +93,11 @@ const ClientCreateForm: React.FC<IClientCreateFormProps> = ({
       {...props}
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
+        {!!methods.formState.errors.root && (
+          <FormHelperText error>
+            {methods.formState.errors.root?.message}
+          </FormHelperText>
+        )}
         <Stack direction="row" spacing={1}>
           <TextField
             label="First Name"

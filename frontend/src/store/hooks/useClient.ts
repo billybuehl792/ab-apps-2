@@ -15,7 +15,7 @@ type TClientMenuOption = IMenuOption<EClientOptionId, EClientOptionId>;
 export interface IUseClientOptions {
   disabled?: boolean;
   hideOptions?: EClientOptionId[];
-  withOptions?:
+  options?:
     | TClientMenuOption[]
     | ((
         client: TClient,
@@ -178,12 +178,12 @@ const useClient = (
 
   const menuOptions = useMemo(
     () =>
-      options?.withOptions
-        ? typeof options.withOptions === "function"
-          ? options.withOptions(clientQuery.data, baseMenuOptions)
-          : options.withOptions
+      options?.options
+        ? typeof options.options === "function"
+          ? options.options(clientQuery.data, baseMenuOptions)
+          : options.options
         : baseMenuOptions,
-    [clientQuery.data, options?.withOptions, baseMenuOptions],
+    [clientQuery.data, options?.options, baseMenuOptions],
   );
 
   return {

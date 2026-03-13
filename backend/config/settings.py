@@ -160,6 +160,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "config.pagination.AdjustableSizePagination",
     "PAGE_SIZE": 20,
+    "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
 }
 
 # Additional settings
