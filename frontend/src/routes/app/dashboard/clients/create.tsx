@@ -27,7 +27,7 @@ function RouteComponent() {
   const confirm = useConfirm();
   const navigate = useNavigate();
 
-  const clientHook = useClient({ id: NULL_ID });
+  const clientHook = useClient(NULL_ID);
 
   /** Callbacks */
 

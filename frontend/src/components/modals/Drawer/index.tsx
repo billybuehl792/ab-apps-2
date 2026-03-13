@@ -17,9 +17,7 @@ const iOS =
   /iPad|iPhone|iPod/.test(navigator.userAgent);
 
 const StyledDrawer = styled(MuiSwipeableDrawer)(({ theme }) => ({
-  ".MuiDrawer-paperAnchorRight": {
-    width: 420,
-  },
+  ".MuiDrawer-paperAnchorRight": { width: 420 },
   "&.full-height": {
     ".MuiDrawer-paperAnchorBottom": {
       height: `calc(100vh - ${theme.spacing(8)})`,
@@ -46,8 +44,10 @@ const StyledDrawer = styled(MuiSwipeableDrawer)(({ theme }) => ({
   },
 }));
 
-interface DrawerProps
-  extends Omit<MuiSwipeableDrawerProps, "title" | "onOpen"> {
+interface DrawerProps extends Omit<
+  MuiSwipeableDrawerProps,
+  "title" | "onOpen"
+> {
   title?: ReactNode;
   fullHeight?: boolean;
   onOpen?: MuiSwipeableDrawerProps["onOpen"];

@@ -1,28 +1,20 @@
 import { useState } from "react";
 import {
   createFileRoute,
-  stripSearchParams,
   useLoaderData,
   useNavigate,
 } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import z from "zod";
 import { Stack, Tab, Tabs } from "@mui/material";
 import ClientDetailCard from "@/containers/cards/ClientDetailCard";
 import ClientMenuOptionIconButton from "@/containers/buttons/ClientMenuOptionIconButton";
-import type { TRouteLoaderData } from "@/store/types/router";
-import { idSchema, truthySchema } from "@/store/schemas/basic";
-import { EClientOptionId } from "@/store/enums/clients";
 import { router } from "@/main";
-import { EObjectChangeType } from "@/store/enums/api";
 import useClient from "@/store/hooks/useClient";
-
-const paramsSchema = z.object({ edit: truthySchema });
-const defaultParams = paramsSchema.parse({});
+import { idSchema } from "@/store/schemas/basic";
+import { EClientOptionId } from "@/store/enums/clients";
+import { EObjectChangeType } from "@/store/enums/api";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/clients/$id/")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
-  search: { middlewares: [stripSearchParams(defaultParams)] },
   component: RouteComponent,
   loader: ({ params }): TRouteLoaderData => ({
     slotProps: {
@@ -56,7 +48,6 @@ function RouteComponent() {
   const navigate = useNavigate();
 
   const client = loaderData.data;
-  const isEditing = search.edit;
 
   /** Callbacks */
 

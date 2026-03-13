@@ -7,6 +7,7 @@ import { errorUtils } from "../utils/error";
 import { clientEndpoints, getPlaceholderClient } from "../constants/clients";
 import { EClientOptionId } from "../enums/clients";
 import { EObjectChangeType } from "../enums/api";
+import { NULL_ID } from "../constants/api";
 import type { TClient, TClientBasic } from "../types/clients";
 
 type TClientMenuOption = IMenuOption<EClientOptionId, EClientOptionId>;
@@ -14,11 +15,11 @@ type TClientMenuOption = IMenuOption<EClientOptionId, EClientOptionId>;
 export interface IUseClientOptions {
   disabled?: boolean;
   hideOptions?: EClientOptionId[];
-  options?:
+  withOptions?:
     | TClientMenuOption[]
     | ((
         client: TClient,
-        baseOptions: TClientMenuOption[],
+        baseMenuOptions: TClientMenuOption[],
       ) => TClientMenuOption[]);
   onChange?: (client: TClient, type: EObjectChangeType) => void;
 }
@@ -26,16 +27,17 @@ export interface IUseClientOptions {
 export type TUseClient = ReturnType<typeof useClient>;
 
 const useClient = (
-  client: TWithRequired<TClientBasic, "id">,
+  client: TClientBasic | TClientBasic["id"],
   options?: IUseClientOptions,
 ) => {
   /** Values */
 
-  const confirm = useConfirm();
   const snackbar = useSnackbar();
+  const confirm = useConfirm();
 
   const isId = typeof client === "number";
-  const clientId = typeof client === "number" ? client : client.id;
+  const clientId = isId ? client : client.id;
+  const isNonExistentClient = clientId === NULL_ID;
 
   /** Queries */
 
@@ -44,9 +46,9 @@ const useClient = (
     queryFn: clientEndpoints.client(clientId).get,
     initialData: getPlaceholderClient({
       id: clientId,
-      ...(!isId ? client : {}),
+      ...(isId ? {} : client),
     }),
-    enabled: isId && Boolean(clientId),
+    enabled: isId && !isNonExistentClient,
   });
 
   /** Mutations */
@@ -60,11 +62,10 @@ const useClient = (
         variant: "success",
       });
     },
-    onError: (error) => {
+    onError: (error) =>
       snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
         variant: "error",
-      });
-    },
+      }),
   });
 
   const updateMutation = useMutation({
@@ -105,10 +106,9 @@ const useClient = (
 
   /** Data */
 
-  const isMutating =
-    createMutation.isPending ||
-    updateMutation.isPending ||
-    deleteMutation.isPending;
+  const isMutating = isNonExistentClient
+    ? createMutation.isPending
+    : updateMutation.isPending || deleteMutation.isPending;
   const isDisabled =
     options?.disabled ||
     isMutating ||
@@ -135,54 +135,55 @@ const useClient = (
 
   /** Options */
 
-  const baseOptions: IMenuOption<EClientOptionId, EClientOptionId>[] = useMemo(
-    () => [
-      {
-        id: EClientOptionId.Detail,
-        render: !options?.hideOptions?.includes(EClientOptionId.Detail),
-        value: EClientOptionId.Detail,
-        label: "Detail",
-        Icon: Info,
-        isDisabled: isDisabled,
-        link: {
-          to: "/app/dashboard/clients/$id",
-          params: { id: String(clientId) },
+  const baseMenuOptions: IMenuOption<EClientOptionId, EClientOptionId>[] =
+    useMemo(
+      () => [
+        {
+          id: EClientOptionId.Detail,
+          render: !options?.hideOptions?.includes(EClientOptionId.Detail),
+          value: EClientOptionId.Detail,
+          label: "Detail",
+          Icon: Info,
+          isDisabled: isDisabled,
+          link: {
+            to: "/app/dashboard/clients/$id",
+            params: { id: String(clientId) },
+          },
         },
-      },
-      {
-        id: EClientOptionId.Edit,
-        render: !options?.hideOptions?.includes(EClientOptionId.Edit),
-        value: EClientOptionId.Edit,
-        label: "Edit",
-        Icon: Edit,
-        isDisabled: isDisabled,
-        link: {
-          to: "/app/dashboard/clients/$id/edit",
-          params: { id: String(clientId) },
+        {
+          id: EClientOptionId.Edit,
+          render: !options?.hideOptions?.includes(EClientOptionId.Edit),
+          value: EClientOptionId.Edit,
+          label: "Edit",
+          Icon: Edit,
+          isDisabled: isDisabled,
+          link: {
+            to: "/app/dashboard/clients/$id/edit",
+            params: { id: String(clientId) },
+          },
         },
-      },
-      {
-        id: EClientOptionId.Delete,
-        render: !options?.hideOptions?.includes(EClientOptionId.Delete),
-        value: EClientOptionId.Delete,
-        label: "Delete",
-        Icon: Delete,
-        color: "error.main",
-        isDisabled: isChangeDisabled,
-        onClick: handleDelete,
-      },
-    ],
-    [isDisabled, isChangeDisabled, handleDelete, options],
-  );
+        {
+          id: EClientOptionId.Delete,
+          render: !options?.hideOptions?.includes(EClientOptionId.Delete),
+          value: EClientOptionId.Delete,
+          label: "Delete",
+          Icon: Delete,
+          color: "error.main",
+          isDisabled: isChangeDisabled,
+          onClick: handleDelete,
+        },
+      ],
+      [isDisabled, isChangeDisabled, handleDelete, options],
+    );
 
   const menuOptions = useMemo(
     () =>
-      options?.options
-        ? typeof options.options === "function"
-          ? options.options(clientQuery.data, baseOptions)
-          : options.options
-        : baseOptions,
-    [clientQuery.data, options?.options, baseOptions],
+      options?.withOptions
+        ? typeof options.withOptions === "function"
+          ? options.withOptions(clientQuery.data, baseMenuOptions)
+          : options.withOptions
+        : baseMenuOptions,
+    [clientQuery.data, options?.withOptions, baseMenuOptions],
   );
 
   return {
