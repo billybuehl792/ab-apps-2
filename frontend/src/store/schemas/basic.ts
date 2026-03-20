@@ -24,14 +24,6 @@ export const phoneSchema = z.coerce
   .string()
   .regex(RegexPattern.Phone, "Invalid phone number format");
 
-export const truthySchema = z.coerce
-  .boolean()
-  .optional()
-  .transform((val) => !!val || undefined)
-  .catch(undefined);
-
 export const idOrIdArraySchema = z
   .union([idSchema, z.array(idSchema)])
-  .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])))
-  .pipe(z.array(idSchema).min(1))
-  .catch([]);
+  .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])));

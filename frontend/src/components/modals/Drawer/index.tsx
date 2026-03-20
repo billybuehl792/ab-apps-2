@@ -44,7 +44,7 @@ const StyledDrawer = styled(MuiSwipeableDrawer)(({ theme }) => ({
   },
 }));
 
-interface DrawerProps extends Omit<
+export interface IDrawerProps extends Omit<
   MuiSwipeableDrawerProps,
   "title" | "onOpen"
 > {
@@ -65,7 +65,7 @@ const Drawer = ({
   slotProps,
   className,
   ...props
-}: DrawerProps) => {
+}: IDrawerProps) => {
   /** Values */
 
   const isTouch = useMediaQuery("(pointer: coarse)");

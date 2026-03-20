@@ -1,40 +1,40 @@
 import { type ComponentProps } from "react";
+import { Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import PaginatedList, {
   type IPaginatedListProps,
 } from "@/components/lists/PaginatedList";
-import OrderingButtonGroup, {
-  type IOrderingButtonGroupProps,
-} from "@/components/buttons/OrderingButtonGroup";
 import CustomLink from "@/components/links/CustomLink";
 import ClientListCard from "./components/cards/ClientListCard";
-import {
-  ClientIcons,
-  clientListOrderingOptions,
-} from "@/store/constants/clients";
+import ClientListOrderingButtonGroup, {
+  type IClientListOrderingButtonGroupProps,
+} from "./components/buttons/ClientListOrderingButtonGroup";
+import ClientListFiltersIconButton, {
+  type IClientListFiltersIconButtonProps,
+} from "./components/buttons/ClientListFiltersIconButton";
+import { ClientIcons } from "@/store/constants/clients";
 import type { TClient, TClientListRequest } from "@/store/types/clients";
 
 type TPaginatedListProps = IPaginatedListProps<
   TClient,
   TClientListRequest["params"]
 >;
-type TOrderingButtonGroupProps = IOrderingButtonGroupProps<
-  typeof clientListOrderingOptions
->;
 type TCardProps = Partial<
   Omit<ComponentProps<typeof ClientListCard>, "client">
 >;
 
-interface IClientListProps extends Omit<
+export interface IClientListProps extends Omit<
   TPaginatedListProps,
   "params" | "renderItem" | "onChange" | "slotProps"
 > {
   options: TClientListRequest;
-  onOrderingChange?: TOrderingButtonGroupProps["onChange"];
-  onChange?: TCardProps["onChange"];
+  onOrderingChange?: IClientListOrderingButtonGroupProps["onChange"];
+  onFiltersChange?: IClientListFiltersIconButtonProps["form"]["onSubmit"];
+  onCardChange?: TCardProps["onChange"];
   slotProps?: {
     card?: TCardProps | ((client: TClient) => TCardProps);
-    orderingButtonGroup?: Partial<TOrderingButtonGroupProps>;
+    orderingButtonGroup?: Partial<IClientListOrderingButtonGroupProps>;
+    filtersIconButton?: Partial<IClientListFiltersIconButtonProps>;
   } & TPaginatedListProps["slotProps"];
 }
 
@@ -45,7 +45,8 @@ const ClientList: React.FC<IClientListProps> = ({
   error,
   empty,
   onOrderingChange,
-  onChange,
+  onFiltersChange,
+  onCardChange,
   slotProps: { card: cardProps, ...slotProps } = {},
   ...props
 }) => {
@@ -78,7 +79,7 @@ const ClientList: React.FC<IClientListProps> = ({
         <ClientListCard
           key={client.id}
           client={client}
-          onChange={onChange}
+          onChange={onCardChange}
           {...(typeof cardProps === "function" ? cardProps(client) : cardProps)}
         />
       )}
@@ -86,16 +87,29 @@ const ClientList: React.FC<IClientListProps> = ({
       slotProps={{
         ...slotProps,
         header: {
-          ...(!!onOrderingChange && {
+          ...((!!onOrderingChange || !!onFiltersChange) && {
             endContent: (
-              <OrderingButtonGroup
-                options={clientListOrderingOptions}
-                size="small"
-                value={options.params.ordering}
-                onChange={onOrderingChange}
-                width={160}
-                {...slotProps?.orderingButtonGroup}
-              />
+              <Stack direction="row" spacing={1}>
+                {!!onOrderingChange && (
+                  <ClientListOrderingButtonGroup
+                    value={options.params.ordering}
+                    onChange={onOrderingChange}
+                    {...slotProps?.orderingButtonGroup}
+                  />
+                )}
+                {!!onFiltersChange && (
+                  <ClientListFiltersIconButton
+                    form={{
+                      values: {
+                        city: options.params.city ?? [],
+                        workOrderStatus: options.params.work_order_status ?? [],
+                      },
+                      onSubmit: onFiltersChange,
+                    }}
+                    {...slotProps?.filtersIconButton}
+                  />
+                )}
+              </Stack>
             ),
           }),
           ...slotProps?.header,

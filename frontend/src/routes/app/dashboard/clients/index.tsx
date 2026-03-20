@@ -1,4 +1,4 @@
-import { type ComponentProps, useMemo } from "react";
+import { useMemo } from "react";
 import {
   createFileRoute,
   stripSearchParams,
@@ -10,7 +10,9 @@ import { Add } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import { clientListRequestSchema } from "@/store/schemas/clients";
 import CustomLink from "@/components/links/CustomLink";
-import ClientList from "@/containers/lists/ClientList";
+import ClientList, {
+  type IClientListProps,
+} from "@/containers/lists/ClientList";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { clientEndpoints } from "@/store/constants/clients";
 import { EObjectChangeType } from "@/store/enums/api";
@@ -46,6 +48,7 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
+  console.log("params", params);
   /** Queries */
 
   const clientListQuery = useQuery({
@@ -74,7 +77,7 @@ function RouteComponent() {
       replace: true,
     });
 
-  const handleOnChange: ComponentProps<typeof ClientList>["onChange"] = (
+  const handleOnCardChange: IClientListProps["onCardChange"] = (
     client,
     type,
   ) => {
@@ -97,13 +100,19 @@ function RouteComponent() {
       error={clientListQuery.error}
       renderSkeletonItem
       mb={2}
-      onChange={handleOnChange}
+      onCardChange={handleOnCardChange}
       onPageChange={(_event, page) => handleOnParamsChange({ page })}
       onSearchChange={(value) =>
         handleOnParamsChange({ search: value, page: 1 })
       }
       onOrderingChange={(value) =>
         handleOnParamsChange({ ordering: value, page: 1 })
+      }
+      onFiltersChange={(value) =>
+        handleOnParamsChange({
+          city: value.city,
+          work_order_status: value.workOrderStatus,
+        })
       }
       slotProps={{
         header: {

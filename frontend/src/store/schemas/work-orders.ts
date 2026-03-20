@@ -37,3 +37,10 @@ export const workOrderListRequestSchema = listRequestSchema.extend({
       .catch(undefined),
   }),
 });
+
+export const workOrderStatusOrWorkOrderStatusArraySchema = z
+  .union([
+    z.nativeEnum(WorkOrderStatus),
+    z.array(z.nativeEnum(WorkOrderStatus)),
+  ])
+  .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])));

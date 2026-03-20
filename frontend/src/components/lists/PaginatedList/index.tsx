@@ -30,7 +30,7 @@ export interface IPaginatedListProps<
   empty?: IStatusWrapperProps["empty"];
   renderItem: (item: TItem, index: number) => ReactNode;
   renderSkeletonItem?: true | ((index: number) => ReactNode);
-  onPageChange: ComponentProps<typeof Pagination>["onChange"];
+  onPageChange: PaginationProps["onChange"];
   onSearchChange?: ComponentProps<typeof PaginatedListHeader>["onSearchChange"];
   slotProps?: {
     header?: Partial<ComponentProps<typeof PaginatedListHeader>>;

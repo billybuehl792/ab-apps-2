@@ -2,7 +2,6 @@ import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EClientListOrdering } from "../enums/clients";
 import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
-import { WorkOrderStatus } from "../enums/work-orders";
 import {
   emailSchema,
   idOrIdArraySchema,
@@ -10,6 +9,7 @@ import {
   nameSchema,
   phoneSchema,
 } from "./basic";
+import { workOrderStatusOrWorkOrderStatusArraySchema } from "./work-orders";
 
 export const clientSchema = z.object({
   id: idSchema,
@@ -56,18 +56,13 @@ export const clientListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
     ordering: z
       .nativeEnum(EClientListOrdering)
+      .default(EClientListOrdering.FirstNameAsc),
+    city: idOrIdArraySchema
       .optional()
-      .transform((val) => val || EClientListOrdering.FirstNameAsc)
-      .catch(EClientListOrdering.FirstNameAsc),
-    city: idOrIdArraySchema.optional(),
-    work_order_status: z
-      .union([
-        z.nativeEnum(WorkOrderStatus),
-        z.array(z.nativeEnum(WorkOrderStatus)),
-      ])
-      .transform((val) => Array.from(new Set(Array.isArray(val) ? val : [val])))
-      .pipe(z.array(z.nativeEnum(WorkOrderStatus)).min(1))
-      .optional(),
+      .transform((val) => (val?.length ? val : undefined)),
+    work_order_status: workOrderStatusOrWorkOrderStatusArraySchema
+      .optional()
+      .transform((val) => (val?.length ? val : undefined)),
   }),
 });
 

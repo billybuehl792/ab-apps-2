@@ -1,31 +1,21 @@
 import { z } from "zod";
 import { idSchema } from "./basic";
-import { DEFAULT_LIST_PARAMS } from "../constants/api";
 
-const pageParamSchema = z.coerce
-  .number()
-  .int()
-  .positive()
-  .optional()
-  .transform((val) => val || DEFAULT_LIST_PARAMS.page)
-  .catch(DEFAULT_LIST_PARAMS.page);
+const pageParamSchema = z.coerce.number().int().positive().default(1);
 
 const pageSizeParamSchema = z.coerce
   .number()
   .int()
   .positive()
-  .max(100)
-  .optional()
-  .transform((val) => val || DEFAULT_LIST_PARAMS.page_size)
-  .catch(DEFAULT_LIST_PARAMS.page_size);
+  .max(100, "Cannot exceed a page size of 100")
+  .default(20);
 
 const searchParamSchema = z.coerce
   .string()
   .trim()
-  .max(100)
-  .optional()
+  .max(100, "Cannot exceed a search length of 100 characters")
   .transform((val) => val || undefined)
-  .catch(DEFAULT_LIST_PARAMS.search);
+  .optional();
 
 export const listRequestSchema = z.object({
   params: z.object({
@@ -36,7 +26,7 @@ export const listRequestSchema = z.object({
 });
 
 export const listResponseSchema = z.object({
-  count: z.number().nonnegative(),
+  count: z.number().int().nonnegative(),
   next: z.string().url().nullable(),
   previous: z.string().url().nullable(),
   results: z.array(z.object({ id: idSchema })),
