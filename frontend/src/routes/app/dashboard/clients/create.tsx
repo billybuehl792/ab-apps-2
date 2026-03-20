@@ -35,13 +35,12 @@ function RouteComponent() {
     body,
   ) =>
     clientHook.mutations.create.mutateAsync(body, {
-      onSuccess: (newClient) => {
-        setBlockNavigation(false);
+      onSuccess: (newClient) =>
         navigate({
           to: "/app/dashboard/clients/$id",
           params: { id: String(newClient.id) },
-        });
-      },
+          ignoreBlocker: true,
+        }),
     });
 
   const handleOnFormStateChange: ComponentProps<
