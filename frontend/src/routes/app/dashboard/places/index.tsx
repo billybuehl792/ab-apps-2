@@ -8,20 +8,18 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import z from "zod";
 import { Add } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import { clientListRequestSchema } from "@/store/schemas/clients";
 import CustomLink from "@/components/links/CustomLink";
-import ClientList, {
-  type IClientListProps,
-} from "@/containers/lists/ClientList";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { clientEndpoints } from "@/store/constants/clients";
-import { EObjectChangeType } from "@/store/enums/api";
+import { placeEndpoints } from "@/store/constants/places";
+import { placeListRequestSchema } from "@/store/schemas/places";
 import type { TRouteLoaderData } from "@/store/types/router";
+import PlaceList, { type IPlaceListProps } from "@/containers/lists/PlaceList";
+import { EObjectChangeType } from "@/store/enums/api";
 
-const paramsSchema = clientListRequestSchema.shape.params;
+const paramsSchema = placeListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
-export const Route = createFileRoute("/app/dashboard/clients/")({
+export const Route = createFileRoute("/app/dashboard/places/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   pendingComponent: () => <StatusWrapper loading my={2} />,
@@ -33,7 +31,7 @@ export const Route = createFileRoute("/app/dashboard/clients/")({
         endContent: (
           <CustomLink
             label="Create"
-            to="/app/dashboard/clients/create"
+            to="/app/dashboard/places/create"
             icon={<Add />}
           />
         ),
@@ -50,53 +48,50 @@ function RouteComponent() {
 
   /** Queries */
 
-  const clientListQuery = useQuery({
-    queryKey: [clientEndpoints.id, { params }],
-    queryFn: () => clientEndpoints.get({ params }),
+  const placeListQuery = useQuery({
+    queryKey: [placeEndpoints.id, { params }],
+    queryFn: () => placeEndpoints.get({ params }),
   });
 
   /** Data */
 
   const total = useMemo(
-    () => clientListQuery.data?.count ?? false,
-    [clientListQuery.data],
+    () => placeListQuery.data?.count ?? false,
+    [placeListQuery.data],
   );
 
   /** Callbacks */
 
   const handleOnParamsChange = (
-    newParams: z.input<typeof clientListRequestSchema.shape.params>,
+    newParams: z.input<typeof placeListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/dashboard/clients",
-      search: clientListRequestSchema.shape.params.parse({
+      to: "/app/dashboard/places",
+      search: placeListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,
       }),
       replace: true,
     });
 
-  const handleOnCardChange: IClientListProps["onCardChange"] = (
-    client,
-    type,
-  ) => {
+  const handleOnCardChange: IPlaceListProps["onCardChange"] = (place, type) => {
     if (type === EObjectChangeType.Delete) {
       const isLastItemOnPage =
-        clientListQuery.data?.results.at(-1)?.id === client.id;
+        placeListQuery.data?.results.at(-1)?.id === place.id;
       const isFirstPage = params.page === 1;
       if (isLastItemOnPage && !isFirstPage)
         handleOnParamsChange({ page: params.page - 1 });
-      else clientListQuery.refetch();
+      else placeListQuery.refetch();
     }
   };
 
   return (
-    <ClientList
-      items={clientListQuery.data?.results ?? []}
+    <PlaceList
+      items={placeListQuery.data?.results ?? []}
       total={total}
       options={{ params }}
-      loading={clientListQuery.isLoading}
-      error={clientListQuery.error}
+      loading={placeListQuery.isLoading}
+      error={placeListQuery.error}
       renderSkeletonItem
       mb={2}
       onCardChange={handleOnCardChange}
@@ -106,12 +101,6 @@ function RouteComponent() {
       }
       onOrderingChange={(value) =>
         handleOnParamsChange({ ordering: value, page: 1 })
-      }
-      onFiltersChange={(value) =>
-        handleOnParamsChange({
-          city: value.city,
-          work_order_status: value.workOrderStatus,
-        })
       }
       slotProps={{
         header: {

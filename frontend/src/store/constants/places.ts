@@ -4,9 +4,12 @@ import type {
   TGoogleAutocompleteSuggestionListRequest,
   TGoogleAutocompleteSuggestionListResponse,
   TPlace,
+  TPlaceCreate,
   TPlaceListRequest,
   TPlaceListResponse,
+  TPlaceUpdate,
 } from "../types/places";
+import { EPlaceListOrdering } from "../enums/places";
 
 /** Icons */
 
@@ -25,11 +28,19 @@ export const placeEndpoints = {
     api
       .get<TPlaceListResponse>(placeEndpoints.url, options)
       .then((res) => res.data),
+  post: (body: TPlaceCreate) =>
+    api.post<TPlace>(placeEndpoints.url, body).then((res) => res.data),
   place: (id: TPlace["id"]) => ({
     id: [...placeEndpoints.id, "place", id] as const,
     url: `${placeEndpoints.url}${id}/`,
     get: () =>
       api.get<TPlace>(placeEndpoints.place(id).url).then((res) => res.data),
+    patch: (body: TPlaceUpdate) =>
+      api
+        .patch<TPlace>(placeEndpoints.place(id).url, body)
+        .then((res) => res.data),
+    delete: () =>
+      api.delete<void>(placeEndpoints.place(id).url).then((res) => res.data),
   }),
   googleAutocompleteSuggestions: () => ({
     id: [...placeEndpoints.id, "google-autocomplete-suggestions"] as const,
@@ -44,54 +55,48 @@ export const placeEndpoints = {
   }),
 };
 
-// export const placeEndpoints = {
-//   places: Object.assign(
-//     () => `${import.meta.env.VITE_BACKEND_BASE_URL}/api/places/`,
-//     {
-//       detail: (id: number) => `${placeEndpoints.places()}${id}/`,
-//       count: () => `${placeEndpoints.places()}count/`,
-//       cities: () => `${placeEndpoints.places()}cities/`,
-//       googlePlace: () => `${placeEndpoints.places()}google-place/`,
-//       googleAutocompleteSuggestions: () =>
-//         `${placeEndpoints.places()}google-autocomplete-suggestions/`,
-//     },
-//   ),
-// };
+/** Other */
 
-/** Google Places API */
-
-export const defaultLatLng = { latitude: 41.2303, longitude: -81.4806 }; // Default coordinates for Twinsburg, OH
-
-export const defaultGooglePlaceFields = [
-  "id",
-  "formattedAddress",
-  "shortFormattedAddress",
-  "postalAddress",
-  "location",
-];
-
-export const defaultGoogleAutocompleteFields = [
-  "suggestions.placePrediction.placeId",
-  "suggestions.placePrediction.structuredFormat",
-  "suggestions.placePrediction.text.text",
-  "suggestions.placePrediction.text.matches",
-];
-
-export const defaultGoogleAutocompleteOptions = {
-  origin: defaultLatLng,
-  locationRestriction: {
-    rectangle: {
-      low: {
-        latitude: defaultLatLng.latitude - 0.5,
-        longitude: defaultLatLng.longitude - 0.5,
-      },
-      high: {
-        latitude: defaultLatLng.latitude + 0.5,
-        longitude: defaultLatLng.longitude + 0.5,
-      },
+export const placeListOrderingOptions: TOrderingOption<EPlaceListOrdering>[] = [
+  {
+    id: "city",
+    label: "City",
+    value: {
+      asc: EPlaceListOrdering.CityAsc,
+      desc: EPlaceListOrdering.CityDesc,
     },
   },
-  includedPrimaryTypes: ["street_address"],
-  languageCode: "en-US",
-  regionCode: "us",
-};
+  {
+    id: "created",
+    label: "Created",
+    value: {
+      asc: EPlaceListOrdering.CreatedAtAsc,
+      desc: EPlaceListOrdering.CreatedAtDesc,
+    },
+  },
+  {
+    id: "updated",
+    label: "Updated",
+    value: {
+      asc: EPlaceListOrdering.UpdatedAtAsc,
+      desc: EPlaceListOrdering.UpdatedAtDesc,
+    },
+  },
+];
+
+export const getPlaceholderPlace = (
+  data: TWithRequired<Partial<TPlace>, "id">,
+): TPlace => ({
+  google_place_id: "",
+  address_full: "",
+  address_short: "",
+  city: "",
+  postal_code: "",
+  state: "",
+  country: "",
+  latitude: 0,
+  longitude: 0,
+  created_at: "",
+  updated_at: "",
+  ...data,
+});

@@ -20,8 +20,8 @@ class PlaceViewSet(ModelViewSet):
     serializer_class = PlaceReadSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("country", "state", "city", "postal_code")
-    search_fields = ("address_full", "address_short", "place_id")
-    ordering_fields = ("created_at", "country", "state", "city")
+    search_fields = ("address_full", "address_short", "google_place_id")
+    ordering_fields = ("created_at", "updated_at", "country", "state", "city")
     permission_classes = (IsAuthenticated,)
 
     def __init__(self, *args, **kwargs):

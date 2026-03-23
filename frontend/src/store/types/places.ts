@@ -4,14 +4,20 @@ import {
   googleAutocompleteSuggestionListResponseSchema,
   googleAutocompleteSuggestionSchema,
   placeBasicSchema,
+  placeCreateSchema,
   placeListRequestSchema,
   placeListResponseSchema,
   placeSchema,
+  placeUpdateSchema,
 } from "../schemas/places";
 
 export type TPlace = z.infer<typeof placeSchema>;
 
 export type TPlaceBasic = z.infer<typeof placeBasicSchema>;
+
+export type TPlaceCreate = z.infer<typeof placeCreateSchema>;
+
+export type TPlaceUpdate = z.infer<typeof placeUpdateSchema>;
 
 export interface PlaceWriteable {
   id: number;

@@ -21,7 +21,7 @@ class ClientViewSet(ModelViewSet):
     filterset_class = ClientFilter
     search_fields = ("first_name", "last_name",
                      "email", "phone_primary", "place__address_full")
-    ordering_fields = ("created_at", "first_name", "last_name")
+    ordering_fields = ("created_at", "updated_at", "first_name", "last_name")
 
     def get_queryset(self):  # type: ignore
         company = get_user_company_from_request_or_raise(self.request)
