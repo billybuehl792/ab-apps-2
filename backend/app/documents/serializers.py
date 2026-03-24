@@ -4,7 +4,7 @@ from .models import Document
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    """Serializer for reading Document model excluding company field."""
+    """Serializer for reading Document model excluding field."""
 
     class Meta:
         model = Document
@@ -14,7 +14,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class DocumentCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating Document model excluding company field."""
+    """Serializer for creating Document model excluding field."""
 
     class Meta:
         model = Document
@@ -25,7 +25,7 @@ class DocumentCreateSerializer(serializers.ModelSerializer):
 
 
 class DocumentUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for updating Document model excluding company field."""
+    """Serializer for updating Document model excluding field."""
 
     class Meta:
         model = Document

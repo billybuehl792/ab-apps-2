@@ -5,15 +5,11 @@ from rest_framework.serializers import ModelSerializer, Serializer, CharField, P
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from app.account.models import CustomUser
-from app.companies.models import Company
 from app.account.services.auth_utils import validate_password_change, validate_password_strength
 
 
 class RegisterSerializer(ModelSerializer):
     password = CharField(write_only=True)
-    company = PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), required=True
-    )
     groups = PrimaryKeyRelatedField(
         queryset=Group.objects.all(), many=True, required=True
     )
@@ -21,7 +17,7 @@ class RegisterSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ("username", "first_name", "last_name",
-                  "email", "password", "company", "groups")
+                  "email", "password", "groups")
 
     def validate_password(self, value):
         return validate_password_strength(value)
@@ -40,7 +36,6 @@ class RegisterSerializer(ModelSerializer):
             last_name=validated_data.get("last_name", ""),
             email=validated_data.get("email", ""),
             password=validated_data["password"],
-            company=validated_data.get("company"),
         )
         user.groups.set(groups)
         return user

@@ -2,21 +2,20 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_400_BAD_REQUEST
 import logging
 
-from app.places.services.place_service import PlaceService
-from app.common.services.utils import get_user_company_from_request_or_raise
 from .models import Place
 from .serializers import PlaceReadSerializer
+from .services.place_service import PlaceService
 
 logger = logging.getLogger(__name__)
 
 
 class PlaceViewSet(ModelViewSet):
+    queryset = Place.objects.all()
     serializer_class = PlaceReadSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("country", "state", "city", "postal_code")
@@ -27,10 +26,6 @@ class PlaceViewSet(ModelViewSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._place_service = PlaceService()
-
-    def get_queryset(self):  # type: ignore
-        company = get_user_company_from_request_or_raise(self.request)
-        return Place.objects.filter(company=company).order_by("-created_at")
 
     @action(detail=False, methods=("get",), url_path="google-place")
     def google_place(self, request):
@@ -82,11 +77,10 @@ class PlaceViewSet(ModelViewSet):
 
     @action(detail=False, methods=("get",), url_path="cities")
     def list_cities(self, request) -> Response:
-        """List unique cities for the current user's company."""
-        company = get_user_company_from_request_or_raise(request)
+        """List unique cities for all places."""
         cities = (
             Place.objects
-            .filter(company=company, city__isnull=False)
+            .filter(city__isnull=False)
             .values_list("city", flat=True)
             .distinct()
             .order_by("city")

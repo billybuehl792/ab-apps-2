@@ -4,7 +4,7 @@ Full-stack app with a Django REST backend and a React + Vite frontend.
 
 ## Overview
 
-- Backend: Django REST API with JWT auth, companies, clients, places, documents, and work orders
+- Backend: Django REST API with JWT auth, clients, places, documents, and work orders
 - Frontend: React + TypeScript + Vite application
 
 ## Documentation

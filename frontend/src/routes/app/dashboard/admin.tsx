@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminPanelSettings } from "@mui/icons-material";
 import { EUserGroup } from "@/store/enums/account";
-import { TRouteLoaderData } from "@/store/types/router";
 import StatusWrapper from "@/components/layout/StatusWrapper";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/dashboard/admin")({
   beforeLoad: ({ context }) => {

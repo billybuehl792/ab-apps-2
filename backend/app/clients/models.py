@@ -5,12 +5,9 @@ from django.contrib.contenttypes.fields import GenericRelation
 from app.common.models import TimeStampedModel
 from app.documents.models import Document
 from app.places.models import Place
-from app.companies.models import Company
 
 
 class Client(TimeStampedModel):
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="clients")
     full_name = models.CharField(max_length=511, editable=False)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -29,8 +26,8 @@ class Client(TimeStampedModel):
     class Meta:  # type: ignore
         constraints = [
             models.UniqueConstraint(
-                fields=['company', 'first_name', 'last_name'],
-                name='unique_client_name_per_company'
+                fields=['first_name', 'last_name'],
+                name='unique_client_name'
             )
         ]
         verbose_name = 'Client'
@@ -76,7 +73,6 @@ class Client(TimeStampedModel):
     def add_document(self, **kwargs):
         """Helper method to create a document for this client."""
         return Document.objects.create(
-            company=self.company,
             content_object=self,
             **kwargs
         )

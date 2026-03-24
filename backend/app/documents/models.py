@@ -8,7 +8,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from app.common.models import TimeStampedModel
-from app.companies.models import Company
 
 User = get_user_model()
 
@@ -26,8 +25,6 @@ def thumbnail_upload_to(instance, filename):
 
 
 class Document(TimeStampedModel):
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="documents")
     uploaded_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
     label = models.CharField(max_length=255, blank=True)

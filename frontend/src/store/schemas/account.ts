@@ -30,11 +30,6 @@ export const credentialsSchema = z.object({
   password: passwordSchema,
 });
 
-export const companySchema = objectSchema.extend({
-  label: z.coerce.string().min(1).max(100),
-  description: emailSchema,
-});
-
 export const userSchema = objectSchema.extend({
   username: usernameSchema,
   full_name: nameSchema,
@@ -42,7 +37,6 @@ export const userSchema = objectSchema.extend({
   last_name: nameSchema,
   email: emailSchema,
   groups: z.array(z.nativeEnum(EUserGroup)),
-  company: companySchema,
 });
 
 export const userCreateSchema = z.object({
@@ -52,7 +46,6 @@ export const userCreateSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   groups: z.array(z.nativeEnum(EUserGroup)).optional(),
-  company: companySchema.optional(),
 });
 
 export const userUpdateSchema = z.object({
@@ -61,7 +54,6 @@ export const userUpdateSchema = z.object({
   last_name: nameSchema.optional(),
   email: emailSchema.optional(),
   groups: z.array(z.nativeEnum(EUserGroup)).optional(),
-  company: companySchema.optional(),
 });
 
 export const userListRequestSchema = listRequestSchema.extend({
@@ -69,9 +61,7 @@ export const userListRequestSchema = listRequestSchema.extend({
     ordering: z
       .nativeEnum(EUserListOrdering)
       .optional()
-      .transform((val) => val || EUserListOrdering.FirstNameAsc)
-      .catch(EUserListOrdering.FirstNameAsc),
-    company: idOrIdArraySchema.optional(),
+      .default(EUserListOrdering.FirstNameAsc),
   }),
 });
 
