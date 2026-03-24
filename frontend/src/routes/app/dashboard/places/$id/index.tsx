@@ -1,4 +1,6 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { Stack, Typography } from "@mui/material";
+import PlaceMapCard from "@/containers/cards/PlaceMapCard";
 
 export const Route = createFileRoute("/app/dashboard/places/$id/")({
   component: RouteComponent,
@@ -9,5 +11,10 @@ function RouteComponent() {
 
   const loaderData = useLoaderData({ from: "/app/dashboard/places/$id" });
 
-  return <div>{loaderData.data.address_full}</div>;
+  return (
+    <Stack spacing={2}>
+      <Typography>{loaderData.data.address_full}</Typography>
+      <PlaceMapCard place={loaderData.data} />
+    </Stack>
+  );
 }
