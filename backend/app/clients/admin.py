@@ -19,8 +19,7 @@ class WorkOrderInline(admin.TabularInline):
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ("id", "full_name", "first_name", "last_name",
-                    "email", "phone_primary", "place", "work_orders", "company")
-    list_filter = ("company",)
+                    "email", "phone_primary", "place", "work_orders")
     search_fields = ("first_name", "last_name", "email", "phone_primary")
     inlines = [DocumentInline, WorkOrderInline]
 

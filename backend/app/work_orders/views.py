@@ -6,8 +6,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from app.common.permissions import IsFromCompany
-from app.common.services.utils import get_user_company_from_request_or_raise
 from .models import WorkOrder
 from .serializers import WorkOrderReadSerializer, WorkOrderWriteSerializer
 from .filters import WorkOrderFilter
@@ -16,27 +14,19 @@ from .filters import WorkOrderFilter
 class WorkOrderViewSet(ModelViewSet):
     """ViewSet for managing `WorkOrder` resources with filtering, search, and ordering."""
 
-    permission_classes = (IsAuthenticated, IsFromCompany)
+    permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = WorkOrderFilter
     search_fields = ("label", "client__first_name", "client__last_name",
                      "client__email", "place__address_short", "place__city")
     ordering_fields = ("created_at", "scheduled_date",
                        "completed_date", "cost")
-
-    def get_queryset(self):  # type: ignore
-        company = get_user_company_from_request_or_raise(self.request)
-        return WorkOrder.objects.filter(
-            company=company).select_related('place').order_by("-created_at").distinct()
+    queryset = WorkOrder.objects.all()
 
     def get_serializer_class(self):  # type: ignore
         if self.action in ("list", "retrieve", "count"):
             return WorkOrderReadSerializer
         return WorkOrderWriteSerializer
-
-    def perform_create(self, serializer):
-        company = get_user_company_from_request_or_raise(self.request)
-        serializer.save(company=company)
 
     @action(detail=True, methods=("patch",), url_path="update-client")
     def update_client(self, request, pk=None):
@@ -63,8 +53,7 @@ class WorkOrderViewSet(ModelViewSet):
 
         try:
             from app.clients.models import Client
-            client = Client.objects.get(
-                pk=client_id, company=work_order.company)
+            client = Client.objects.get(pk=client_id)
             work_order.client = client
             work_order.save()
 
@@ -73,24 +62,11 @@ class WorkOrderViewSet(ModelViewSet):
             )
         except Client.DoesNotExist:
             return Response(
-                {"error": "Client not found in your company."},
+                {"error": "Client not found."},
                 status=HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             return Response(
-                {"error": "Failed to set client."},
-                status=HTTP_400_BAD_REQUEST
-            )
-
-    @action(detail=False, methods=("get",))
-    def count(self, request):
-        """Return the total count of the filtered queryset."""
-        try:
-            filtered_queryset = self.filter_queryset(self.get_queryset())
-            count = filtered_queryset.count()
-            return Response({"count": count})
-        except Exception as e:
-            return Response(
-                {"error": "Failed to get count"},
+                {"error": f"Failed to set client: {str(e)}"},
                 status=HTTP_400_BAD_REQUEST
             )

@@ -11,16 +11,11 @@ class CustomUserAdmin(UserAdmin):
     form = UserChangeForm
     model = CustomUser
     list_display = ("id", "username", "email", "first_name",
-                    "last_name", "company", "is_active", "is_staff", "display_groups", "display_permissions")
-    list_filter = ("company", "groups")
+                    "last_name", "is_active", "is_staff", "display_groups", "display_permissions")
+    list_filter = ("groups",)
     search_fields = ("email", "first_name", "last_name", "username")
 
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {"fields": ("company",)}),
-    )  # type: ignore
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {"fields": ("company",)}),
-    )
+    fieldsets = UserAdmin.fieldsets
 
     @admin.display(description="Groups")
     def display_groups(self, obj):

@@ -10,7 +10,6 @@ A Django + Django REST Framework backend with JWT authentication and two models:
 - CRUD API for Clients and WorkOrders
 - Filtering, searching, and ordering with DRF
 - Django Admin integration
-- Extensible for per-user or per-company ownership
 
 ---
 
@@ -57,24 +56,6 @@ python manage.py migrate
 ```
 
 ### 6. Create a superuser
-
-First, create a `Company` - all users must be associated with a company.
-
-#### 6.1 Create a `Company`
-
-```bash
-python manage.py shell
-```
-
-```python
-from app.companies.models import Company
-
-Company.objects.create(label="Test Company", description="Just a test.")
-
-exit()
-```
-
-#### 6.2 Create `User`
 
 ```bash
 python manage.py createsuperuser

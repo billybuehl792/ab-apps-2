@@ -1,7 +1,6 @@
 from typing import Optional
 
 from app.places.models import Place
-from app.companies.models import Company
 from app.places.services.google_places_service import GooglePlaceResponse, GooglePlacesClient
 
 
@@ -25,7 +24,7 @@ class PlaceService:
 
     _google_places_client = GooglePlacesClient()
 
-    def get_or_create(self, place_data: dict, company: Company) -> tuple[Place, bool]:
+    def get_or_create(self, place_data: dict) -> tuple[Place, bool]:
         """
         Get a Place by its internal ID or Google Place ID, or create it by fetching details
         from Google Places API if it doesn't exist.
@@ -38,19 +37,18 @@ class PlaceService:
         existing_place = None
         if place_id:
             existing_place = Place.objects.filter(
-                id=int(place_id), company=company).first()
+                id=int(place_id)).first()
             if existing_place:
                 return (existing_place, False)
         if google_place_id:
             existing_place = Place.objects.filter(
-                google_place_id=google_place_id, company=company).first()
+                google_place_id=google_place_id).first()
             if existing_place:
                 return (existing_place, False)
             else:
                 # Create new place from Google Places API
                 google_place = self.fetch_google_place(google_place_id)
-                created_place = self._create_place_from_google_place(
-                    google_place, company)
+                created_place = self._create_place_from_google_place(google_place)
                 return (created_place, True)
 
         raise PlaceNotFoundError(
@@ -72,12 +70,11 @@ class PlaceService:
             raise PlaceServiceError(
                 f"Failed to fetch autocomplete suggestions: {str(e)}")
 
-    def _create_place_from_google_place(self, google_place: GooglePlaceResponse, company: Company) -> Place:
+    def _create_place_from_google_place(self, google_place: GooglePlaceResponse) -> Place:
         """Create a new place by fetching data from Google Places API."""
         try:
             place_data = google_place.parse_place_data()
-            place, created = Place.objects.get_or_create(
-                company=company, **place_data.__dict__)
+            place, created = Place.objects.get_or_create(**place_data.__dict__)
 
             return place
         except (AttributeError, ValueError, TypeError) as e:

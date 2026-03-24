@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local
     "app.common",
-    "app.companies",
     "app.account",
     "app.documents",
     "app.places",

@@ -2,7 +2,6 @@ from rest_framework.serializers import ModelSerializer, ValidationError, Integer
 
 from .models import Place
 from .services.place_service import PlaceService
-from app.common.services.utils import get_user_company_from_context_or_raise
 
 
 class PlaceReadSerializer(ModelSerializer):
@@ -59,11 +58,9 @@ class PlaceWriteSerializer(ModelSerializer):
             )
 
         validated = super().to_internal_value(data)
-        company = get_user_company_from_context_or_raise(self.context)
 
         try:
-            place, _ = self._place_service.get_or_create(
-                validated, company)
+            place, _ = self._place_service.get_or_create(validated)
             return place
         except Exception as e:
             raise ValidationError(

@@ -1,7 +1,6 @@
 import z from "zod";
 import {
   accessTokenResponseSchema,
-  companySchema,
   credentialsSchema,
   resetPasswordRequestSchema,
   requestPasswordResetRequestSchema,
@@ -21,8 +20,6 @@ export type TRequestPasswordResetRequest = z.infer<
 >;
 
 export type TResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
-
-export type TCompany = z.infer<typeof companySchema>;
 
 export type TUser = z.infer<typeof userSchema>;
 
