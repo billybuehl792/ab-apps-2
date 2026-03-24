@@ -6,6 +6,7 @@ import StatusWrapper from "@/components/layout/StatusWrapper";
 import { clientEndpoints, ClientIcons } from "@/store/constants/clients";
 import { WorkOrderIcons } from "@/store/constants/work-orders";
 import ListCard from "@/components/cards/ListCard";
+import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 
 export const Route = createFileRoute("/app/dashboard/")({
   component: RouteComponent,
@@ -14,26 +15,36 @@ export const Route = createFileRoute("/app/dashboard/")({
 });
 
 function RouteComponent() {
-  /** Values */
+  /** Queries */
 
-  const clientCountQuery = useQuery({
+  const placeListQuery = useQuery({
+    queryKey: placeEndpoints.id,
+    queryFn: () => placeEndpoints.get(),
+  });
+  const clientListQuery = useQuery({
     queryKey: clientEndpoints.id,
     queryFn: () => clientEndpoints.get(),
   });
-  const workOrderCountQuery = useQuery(workOrderQueries.count());
+  const workOrderListQuery = useQuery(workOrderQueries.count());
 
   return (
     <Stack spacing={1} my={2}>
       <ListCard
+        startContent={<PlaceIcons.List fontSize="large" color="disabled" />}
+        label="Places"
+        description={`Total: ${placeListQuery.data?.count ?? "-"}`}
+        link={{ to: "/app/dashboard/places" }}
+      />
+      <ListCard
         startContent={<ClientIcons.List fontSize="large" color="disabled" />}
         label="Clients"
-        description={`Total: ${clientCountQuery.data?.count ?? "-"}`}
+        description={`Total: ${clientListQuery.data?.count ?? "-"}`}
         link={{ to: "/app/dashboard/clients" }}
       />
       <ListCard
         startContent={<WorkOrderIcons.List fontSize="large" color="disabled" />}
         label="Work Orders"
-        description={`Total: ${workOrderCountQuery.data?.count ?? "-"}`}
+        description={`Total: ${workOrderListQuery.data?.count ?? "-"}`}
         link={{ to: "/app/dashboard/work-orders" }}
       />
     </Stack>

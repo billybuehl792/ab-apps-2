@@ -14,15 +14,15 @@ import ExpandIconButton from "@/components/buttons/ExpandIconButton";
 import ListItemButtonLink from "@/components/links/ListItemButtonLink";
 import { sxUtils } from "@/store/utils/sx";
 
-interface INestedListProps extends ListProps {
-  items: ListItem[];
+export interface INestedListProps extends ListProps {
+  items: IListItem[];
   slotProps?: {
     item?: Partial<Omit<INestedListItemProps, "item">>;
   };
 }
 
 interface INestedListItemProps extends ListItemProps {
-  item: ListItem;
+  item: IListItem;
 }
 
 const NestedList: React.FC<INestedListProps> = ({
@@ -52,7 +52,9 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
   const ListItemContent = useMemo(
     () => (
       <Fragment>
-        {!!item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+        {(!!item.icon || !!item.Icon) && (
+          <ListItemIcon>{item.Icon ? <item.Icon /> : item.icon}</ListItemIcon>
+        )}
         <ListItemText>
           <Typography variant="body2" fontWeight="inherit" noWrap>
             {item.label}

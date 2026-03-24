@@ -20,14 +20,19 @@ import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppDashboardIndexRouteImport } from './routes/app/dashboard/index'
 import { Route as ResetPasswordEncodedUserIdTokenRouteImport } from './routes/reset-password.$encodedUserId.$token'
 import { Route as AppDashboardWorkOrdersRouteImport } from './routes/app/dashboard/work-orders'
+import { Route as AppDashboardPlacesRouteImport } from './routes/app/dashboard/places'
 import { Route as AppDashboardClientsRouteImport } from './routes/app/dashboard/clients'
 import { Route as AppDashboardAdminRouteImport } from './routes/app/dashboard/admin'
+import { Route as AppDashboardPlacesIndexRouteImport } from './routes/app/dashboard/places/index'
 import { Route as AppDashboardClientsIndexRouteImport } from './routes/app/dashboard/clients/index'
 import { Route as AppDashboardAdminIndexRouteImport } from './routes/app/dashboard/admin/index'
 import { Route as AppDashboardProfileIdRouteImport } from './routes/app/dashboard/profile.$id'
+import { Route as AppDashboardPlacesCreateRouteImport } from './routes/app/dashboard/places/create'
+import { Route as AppDashboardPlacesIdRouteImport } from './routes/app/dashboard/places/$id'
 import { Route as AppDashboardClientsCreateRouteImport } from './routes/app/dashboard/clients/create'
 import { Route as AppDashboardClientsIdRouteImport } from './routes/app/dashboard/clients/$id'
 import { Route as AppDashboardAdminUsersRouteImport } from './routes/app/dashboard/admin/users'
+import { Route as AppDashboardPlacesIdIndexRouteImport } from './routes/app/dashboard/places/$id/index'
 import { Route as AppDashboardClientsIdIndexRouteImport } from './routes/app/dashboard/clients/$id/index'
 import { Route as AppDashboardAdminUsersIndexRouteImport } from './routes/app/dashboard/admin/users/index'
 import { Route as AppDashboardClientsIdEditRouteImport } from './routes/app/dashboard/clients/$id/edit'
@@ -89,6 +94,11 @@ const AppDashboardWorkOrdersRoute = AppDashboardWorkOrdersRouteImport.update({
   path: '/work-orders',
   getParentRoute: () => AppDashboardRoute,
 } as any)
+const AppDashboardPlacesRoute = AppDashboardPlacesRouteImport.update({
+  id: '/places',
+  path: '/places',
+  getParentRoute: () => AppDashboardRoute,
+} as any)
 const AppDashboardClientsRoute = AppDashboardClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
@@ -98,6 +108,11 @@ const AppDashboardAdminRoute = AppDashboardAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AppDashboardRoute,
+} as any)
+const AppDashboardPlacesIndexRoute = AppDashboardPlacesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppDashboardPlacesRoute,
 } as any)
 const AppDashboardClientsIndexRoute =
   AppDashboardClientsIndexRouteImport.update({
@@ -115,6 +130,17 @@ const AppDashboardProfileIdRoute = AppDashboardProfileIdRouteImport.update({
   path: '/profile/$id',
   getParentRoute: () => AppDashboardRoute,
 } as any)
+const AppDashboardPlacesCreateRoute =
+  AppDashboardPlacesCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AppDashboardPlacesRoute,
+  } as any)
+const AppDashboardPlacesIdRoute = AppDashboardPlacesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDashboardPlacesRoute,
+} as any)
 const AppDashboardClientsCreateRoute =
   AppDashboardClientsCreateRouteImport.update({
     id: '/create',
@@ -131,6 +157,12 @@ const AppDashboardAdminUsersRoute = AppDashboardAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AppDashboardAdminRoute,
 } as any)
+const AppDashboardPlacesIdIndexRoute =
+  AppDashboardPlacesIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppDashboardPlacesIdRoute,
+  } as any)
 const AppDashboardClientsIdIndexRoute =
   AppDashboardClientsIdIndexRouteImport.update({
     id: '/',
@@ -167,19 +199,24 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/dashboard/admin': typeof AppDashboardAdminRouteWithChildren
   '/app/dashboard/clients': typeof AppDashboardClientsRouteWithChildren
+  '/app/dashboard/places': typeof AppDashboardPlacesRouteWithChildren
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
+  '/app/dashboard/places/$id': typeof AppDashboardPlacesIdRouteWithChildren
+  '/app/dashboard/places/create': typeof AppDashboardPlacesCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin/': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients/': typeof AppDashboardClientsIndexRoute
+  '/app/dashboard/places/': typeof AppDashboardPlacesIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
   '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users/': typeof AppDashboardAdminUsersIndexRoute
   '/app/dashboard/clients/$id/': typeof AppDashboardClientsIdIndexRoute
+  '/app/dashboard/places/$id/': typeof AppDashboardPlacesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -192,13 +229,16 @@ export interface FileRoutesByTo {
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard': typeof AppDashboardIndexRoute
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
+  '/app/dashboard/places/create': typeof AppDashboardPlacesCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients': typeof AppDashboardClientsIndexRoute
+  '/app/dashboard/places': typeof AppDashboardPlacesIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
   '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersIndexRoute
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdIndexRoute
+  '/app/dashboard/places/$id': typeof AppDashboardPlacesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,19 +252,24 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/dashboard/admin': typeof AppDashboardAdminRouteWithChildren
   '/app/dashboard/clients': typeof AppDashboardClientsRouteWithChildren
+  '/app/dashboard/places': typeof AppDashboardPlacesRouteWithChildren
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
+  '/app/dashboard/places/$id': typeof AppDashboardPlacesIdRouteWithChildren
+  '/app/dashboard/places/create': typeof AppDashboardPlacesCreateRoute
   '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/dashboard/admin/': typeof AppDashboardAdminIndexRoute
   '/app/dashboard/clients/': typeof AppDashboardClientsIndexRoute
+  '/app/dashboard/places/': typeof AppDashboardPlacesIndexRoute
   '/app/dashboard/admin/users/$id': typeof AppDashboardAdminUsersIdRoute
   '/app/dashboard/clients/$id/edit': typeof AppDashboardClientsIdEditRoute
   '/app/dashboard/admin/users/': typeof AppDashboardAdminUsersIndexRoute
   '/app/dashboard/clients/$id/': typeof AppDashboardClientsIdIndexRoute
+  '/app/dashboard/places/$id/': typeof AppDashboardPlacesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -239,19 +284,24 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
+    | '/app/dashboard/places'
     | '/app/dashboard/work-orders'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
+    | '/app/dashboard/places/$id'
+    | '/app/dashboard/places/create'
     | '/app/dashboard/profile/$id'
     | '/app/dashboard/admin/'
     | '/app/dashboard/clients/'
+    | '/app/dashboard/places/'
     | '/app/dashboard/admin/users/$id'
     | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users/'
     | '/app/dashboard/clients/$id/'
+    | '/app/dashboard/places/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,13 +314,16 @@ export interface FileRouteTypes {
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard'
     | '/app/dashboard/clients/create'
+    | '/app/dashboard/places/create'
     | '/app/dashboard/profile/$id'
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
+    | '/app/dashboard/places'
     | '/app/dashboard/admin/users/$id'
     | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
+    | '/app/dashboard/places/$id'
   id:
     | '__root__'
     | '/'
@@ -283,19 +336,24 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/dashboard/admin'
     | '/app/dashboard/clients'
+    | '/app/dashboard/places'
     | '/app/dashboard/work-orders'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
+    | '/app/dashboard/places/$id'
+    | '/app/dashboard/places/create'
     | '/app/dashboard/profile/$id'
     | '/app/dashboard/admin/'
     | '/app/dashboard/clients/'
+    | '/app/dashboard/places/'
     | '/app/dashboard/admin/users/$id'
     | '/app/dashboard/clients/$id/edit'
     | '/app/dashboard/admin/users/'
     | '/app/dashboard/clients/$id/'
+    | '/app/dashboard/places/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -386,6 +444,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardWorkOrdersRouteImport
       parentRoute: typeof AppDashboardRoute
     }
+    '/app/dashboard/places': {
+      id: '/app/dashboard/places'
+      path: '/places'
+      fullPath: '/app/dashboard/places'
+      preLoaderRoute: typeof AppDashboardPlacesRouteImport
+      parentRoute: typeof AppDashboardRoute
+    }
     '/app/dashboard/clients': {
       id: '/app/dashboard/clients'
       path: '/clients'
@@ -399,6 +464,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/dashboard/admin'
       preLoaderRoute: typeof AppDashboardAdminRouteImport
       parentRoute: typeof AppDashboardRoute
+    }
+    '/app/dashboard/places/': {
+      id: '/app/dashboard/places/'
+      path: '/'
+      fullPath: '/app/dashboard/places/'
+      preLoaderRoute: typeof AppDashboardPlacesIndexRouteImport
+      parentRoute: typeof AppDashboardPlacesRoute
     }
     '/app/dashboard/clients/': {
       id: '/app/dashboard/clients/'
@@ -421,6 +493,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardProfileIdRouteImport
       parentRoute: typeof AppDashboardRoute
     }
+    '/app/dashboard/places/create': {
+      id: '/app/dashboard/places/create'
+      path: '/create'
+      fullPath: '/app/dashboard/places/create'
+      preLoaderRoute: typeof AppDashboardPlacesCreateRouteImport
+      parentRoute: typeof AppDashboardPlacesRoute
+    }
+    '/app/dashboard/places/$id': {
+      id: '/app/dashboard/places/$id'
+      path: '/$id'
+      fullPath: '/app/dashboard/places/$id'
+      preLoaderRoute: typeof AppDashboardPlacesIdRouteImport
+      parentRoute: typeof AppDashboardPlacesRoute
+    }
     '/app/dashboard/clients/create': {
       id: '/app/dashboard/clients/create'
       path: '/create'
@@ -441,6 +527,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/dashboard/admin/users'
       preLoaderRoute: typeof AppDashboardAdminUsersRouteImport
       parentRoute: typeof AppDashboardAdminRoute
+    }
+    '/app/dashboard/places/$id/': {
+      id: '/app/dashboard/places/$id/'
+      path: '/'
+      fullPath: '/app/dashboard/places/$id/'
+      preLoaderRoute: typeof AppDashboardPlacesIdIndexRouteImport
+      parentRoute: typeof AppDashboardPlacesIdRoute
     }
     '/app/dashboard/clients/$id/': {
       id: '/app/dashboard/clients/$id/'
@@ -532,9 +625,36 @@ const AppDashboardClientsRouteChildren: AppDashboardClientsRouteChildren = {
 const AppDashboardClientsRouteWithChildren =
   AppDashboardClientsRoute._addFileChildren(AppDashboardClientsRouteChildren)
 
+interface AppDashboardPlacesIdRouteChildren {
+  AppDashboardPlacesIdIndexRoute: typeof AppDashboardPlacesIdIndexRoute
+}
+
+const AppDashboardPlacesIdRouteChildren: AppDashboardPlacesIdRouteChildren = {
+  AppDashboardPlacesIdIndexRoute: AppDashboardPlacesIdIndexRoute,
+}
+
+const AppDashboardPlacesIdRouteWithChildren =
+  AppDashboardPlacesIdRoute._addFileChildren(AppDashboardPlacesIdRouteChildren)
+
+interface AppDashboardPlacesRouteChildren {
+  AppDashboardPlacesIdRoute: typeof AppDashboardPlacesIdRouteWithChildren
+  AppDashboardPlacesCreateRoute: typeof AppDashboardPlacesCreateRoute
+  AppDashboardPlacesIndexRoute: typeof AppDashboardPlacesIndexRoute
+}
+
+const AppDashboardPlacesRouteChildren: AppDashboardPlacesRouteChildren = {
+  AppDashboardPlacesIdRoute: AppDashboardPlacesIdRouteWithChildren,
+  AppDashboardPlacesCreateRoute: AppDashboardPlacesCreateRoute,
+  AppDashboardPlacesIndexRoute: AppDashboardPlacesIndexRoute,
+}
+
+const AppDashboardPlacesRouteWithChildren =
+  AppDashboardPlacesRoute._addFileChildren(AppDashboardPlacesRouteChildren)
+
 interface AppDashboardRouteChildren {
   AppDashboardAdminRoute: typeof AppDashboardAdminRouteWithChildren
   AppDashboardClientsRoute: typeof AppDashboardClientsRouteWithChildren
+  AppDashboardPlacesRoute: typeof AppDashboardPlacesRouteWithChildren
   AppDashboardWorkOrdersRoute: typeof AppDashboardWorkOrdersRoute
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
   AppDashboardProfileIdRoute: typeof AppDashboardProfileIdRoute
@@ -543,6 +663,7 @@ interface AppDashboardRouteChildren {
 const AppDashboardRouteChildren: AppDashboardRouteChildren = {
   AppDashboardAdminRoute: AppDashboardAdminRouteWithChildren,
   AppDashboardClientsRoute: AppDashboardClientsRouteWithChildren,
+  AppDashboardPlacesRoute: AppDashboardPlacesRouteWithChildren,
   AppDashboardWorkOrdersRoute: AppDashboardWorkOrdersRoute,
   AppDashboardIndexRoute: AppDashboardIndexRoute,
   AppDashboardProfileIdRoute: AppDashboardProfileIdRoute,
