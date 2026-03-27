@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "app.account",
     "app.documents",
     "app.places",
+    "app.contacts",
     "app.clients",
     "app.work_orders",
 ]

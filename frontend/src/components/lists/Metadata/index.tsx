@@ -6,11 +6,18 @@ import {
   type TypographyProps,
   type StackProps,
 } from "@mui/material";
+import { isValidElement, ReactNode } from "react";
 
-interface IMetadataProps<
-  TOptions extends MenuOption[] = MenuOption[],
-> extends StackProps {
-  items: TOptions;
+export interface IMetadataItem {
+  id: string;
+  label: ReactNode;
+  value: ReactNode;
+  tooltip?: ReactNode;
+  render?: boolean;
+}
+
+interface IMetadataProps extends StackProps {
+  items: IMetadataItem[];
   slotProps?: {
     item?: StackProps;
     label?: TypographyProps;
@@ -18,11 +25,7 @@ interface IMetadataProps<
   };
 }
 
-const Metadata = <TOptions extends MenuOption[]>({
-  items,
-  slotProps,
-  ...props
-}: IMetadataProps<TOptions>) => {
+const Metadata: React.FC<IMetadataProps> = ({ items, slotProps, ...props }) => {
   return (
     <Stack {...props}>
       {items
@@ -43,7 +46,15 @@ const Metadata = <TOptions extends MenuOption[]>({
             ) : (
               item.label
             )}
-            <Tooltip title={item.tooltip ?? item.value}>
+            <Tooltip
+              title={
+                item?.tooltip ||
+                typeof item.value === "string" ||
+                typeof item.value === "number"
+                  ? String(item.value)
+                  : null
+              }
+            >
               {typeof item.value === "string" ||
               typeof item.value === "number" ? (
                 <Typography variant="caption" noWrap {...slotProps?.value}>

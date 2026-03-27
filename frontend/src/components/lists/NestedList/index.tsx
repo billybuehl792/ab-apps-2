@@ -95,14 +95,16 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
           >
             {ListItemContent}
           </ListItemButtonLink>
-        ) : (
+        ) : item.onClick || hasChildren ? (
           <ListItemButton
             selected={item.selected}
             disabled={item.disabled}
-            onClick={item.onClick}
+            onClick={item.onClick ?? (() => setExpanded(!expanded))}
           >
             {ListItemContent}
           </ListItemButton>
+        ) : (
+          ListItemContent
         )}
       </ListItem>
 

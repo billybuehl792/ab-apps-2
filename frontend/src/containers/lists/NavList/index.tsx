@@ -1,13 +1,13 @@
-import { Home } from "@mui/icons-material";
+import { Groups, Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
 } from "@/components/lists/NestedList";
 import useAuth from "@/store/hooks/useAuth";
-import { ClientIcons } from "@/store/constants/clients";
 import { WorkOrderIcons } from "@/store/constants/work-orders";
 import { AccountIcons } from "@/store/constants/account";
 import { AdminIcons } from "@/store/constants/admin";
 import { PlaceIcons } from "@/store/constants/places";
+import { ContactIcons } from "@/store/constants/contacts";
 
 const NavList = (props: Partial<INestedListProps>) => {
   /** Values */
@@ -22,19 +22,28 @@ const NavList = (props: Partial<INestedListProps>) => {
       Icon: Home,
       link: { to: "/app/dashboard", activeOptions: { exact: true } },
     },
+
+    {
+      id: "directory",
+      value: "directory",
+      label: "Directory",
+      Icon: Groups,
+      items: [
+        {
+          id: "contacts",
+          value: "contacts",
+          label: "Contacts",
+          Icon: ContactIcons.List,
+          link: { to: "/app/dashboard/contacts" },
+        },
+      ],
+    },
     {
       id: "places",
       value: "places",
       label: "Places",
       Icon: PlaceIcons.List,
       link: { to: "/app/dashboard/places" },
-    },
-    {
-      id: "clients",
-      value: "clients",
-      label: "Clients",
-      Icon: ClientIcons.List,
-      link: { to: "/app/dashboard/clients" },
     },
     {
       id: "workOrders",
