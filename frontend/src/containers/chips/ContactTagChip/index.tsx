@@ -4,7 +4,7 @@ import { ContactTagIcons } from "@/store/constants/contacts";
 import type { IUseContactTagOptions } from "@/store/hooks/useContactTag";
 import type { TContactTag } from "@/store/types/contacts";
 
-interface ContactTagChipProps extends ChipProps {
+interface IContactTagChipProps extends ChipProps {
   contactTag: TContactTag | TContactTag["id"];
   options?: IUseContactTagOptions;
 }
@@ -13,7 +13,7 @@ const ContactTagChip = ({
   contactTag,
   options,
   ...props
-}: ContactTagChipProps) => {
+}: IContactTagChipProps) => {
   /** Values */
 
   const contactTagHook = useContactTag(contactTag, options);

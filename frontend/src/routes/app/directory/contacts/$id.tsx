@@ -8,7 +8,7 @@ import { errorUtils } from "@/store/utils/error";
 import type { TContact } from "@/store/types/contacts";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/dashboard/contacts/$id")({
+export const Route = createFileRoute("/app/directory/contacts/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TContact>> => {
     try {
       const contactId = idSchema.parse(params.id);

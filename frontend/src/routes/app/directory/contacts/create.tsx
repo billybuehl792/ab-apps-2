@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type { TRouteLoaderData } from "@/store/types/router";
 import { ContactIcons } from "@/store/constants/contacts";
 
-export const Route = createFileRoute("/app/dashboard/contacts/create")({
+export const Route = createFileRoute("/app/directory/contacts/create")({
   loader: (): TRouteLoaderData => ({
     crumb: { label: "Create Contact", Icon: ContactIcons.Create },
   }),

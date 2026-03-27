@@ -14,7 +14,7 @@ import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/dashboard/contacts/$id/")({
+export const Route = createFileRoute("/app/directory/contacts/$id/")({
   loader: ({ params }): TRouteLoaderData => ({
     slotProps: {
       pageHeader: {
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/app/dashboard/contacts/$id/")({
             hideOptions={[EContactOptionId.Detail]}
             onChange={(_, type) => {
               if (type === EObjectChangeType.Delete)
-                router.navigate({ to: "/app/dashboard/contacts" });
+                router.navigate({ to: "/app/directory/contacts" });
             }}
           />
         ),
@@ -39,7 +39,7 @@ function RouteComponent() {
 
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/dashboard/contacts/$id" });
+  const loaderData = useLoaderData({ from: "/app/directory/contacts/$id" });
   const search = Route.useSearch();
 
   const contactHook = useContact(loaderData.data);

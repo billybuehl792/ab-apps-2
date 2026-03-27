@@ -65,6 +65,13 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
     [item],
   );
 
+  /** Callbacks */
+
+  const handleOnClick = () => {
+    item?.onClick?.();
+    if (hasChildren) setExpanded(true);
+  };
+
   /** Effects */
 
   useEffect(() => {
@@ -91,7 +98,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
             {...item.link}
             selected={item.selected}
             disabled={item.disabled}
-            onClick={item.onClick}
+            onClick={handleOnClick}
           >
             {ListItemContent}
           </ListItemButtonLink>
@@ -99,7 +106,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
           <ListItemButton
             selected={item.selected}
             disabled={item.disabled}
-            onClick={item.onClick ?? (() => setExpanded(!expanded))}
+            onClick={handleOnClick}
           >
             {ListItemContent}
           </ListItemButton>

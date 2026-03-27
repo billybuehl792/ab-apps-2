@@ -22,28 +22,28 @@ const NavList = (props: Partial<INestedListProps>) => {
       Icon: Home,
       link: { to: "/app/dashboard", activeOptions: { exact: true } },
     },
-
     {
       id: "directory",
       value: "directory",
       label: "Directory",
       Icon: Groups,
+      link: { to: "/app/directory", activeOptions: { exact: true } },
       items: [
         {
           id: "contacts",
           value: "contacts",
           label: "Contacts",
           Icon: ContactIcons.List,
-          link: { to: "/app/dashboard/contacts" },
+          link: { to: "/app/directory/contacts" },
+        },
+        {
+          id: "places",
+          value: "places",
+          label: "Places",
+          Icon: PlaceIcons.List,
+          link: { to: "/app/directory/places" },
         },
       ],
-    },
-    {
-      id: "places",
-      value: "places",
-      label: "Places",
-      Icon: PlaceIcons.List,
-      link: { to: "/app/dashboard/places" },
     },
     {
       id: "workOrders",

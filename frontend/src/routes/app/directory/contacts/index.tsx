@@ -4,22 +4,22 @@ import {
   stripSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { useQuery } from "@tanstack/react-query";
 import z from "zod";
 import { Add } from "@mui/icons-material";
-import { useQuery } from "@tanstack/react-query";
-import CustomLink from "@/components/links/CustomLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { placeEndpoints } from "@/store/constants/places";
-import { placeListRequestSchema } from "@/store/schemas/places";
-import type { TRouteLoaderData } from "@/store/types/router";
-import PlaceList, { type IPlaceListProps } from "@/containers/lists/PlaceList";
+import ButtonLink from "@/components/links/ButtonLink";
+import ContactList from "@/containers/lists/ContactList";
+import { contactEndpoints } from "@/store/constants/contacts";
+import { contactListRequestSchema } from "@/store/schemas/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
+import type { TRouteLoaderData } from "@/store/types/router";
 
-const paramsSchema = placeListRequestSchema.shape.params;
+const paramsSchema = contactListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
-export const Route = createFileRoute("/app/dashboard/places/")({
+export const Route = createFileRoute("/app/directory/contacts/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   pendingComponent: () => <StatusWrapper loading my={2} />,
@@ -29,10 +29,10 @@ export const Route = createFileRoute("/app/dashboard/places/")({
     slotProps: {
       pageHeader: {
         endContent: (
-          <CustomLink
-            label="Create"
-            to="/app/dashboard/places/create"
-            icon={<Add />}
+          <ButtonLink
+            children="Create"
+            to="/app/directory/contacts/create"
+            startIcon={<Add />}
           />
         ),
       },
@@ -48,50 +48,53 @@ function RouteComponent() {
 
   /** Queries */
 
-  const placeListQuery = useQuery({
-    queryKey: [placeEndpoints.id, { params }],
-    queryFn: () => placeEndpoints.get({ params }),
+  const contactListQuery = useQuery({
+    queryKey: [contactEndpoints.id, { params }],
+    queryFn: () => contactEndpoints.get({ params }),
   });
 
   /** Data */
 
   const total = useMemo(
-    () => placeListQuery.data?.count ?? false,
-    [placeListQuery.data],
+    () => contactListQuery.data?.count ?? false,
+    [contactListQuery.data],
   );
 
   /** Callbacks */
 
   const handleOnParamsChange = (
-    newParams: z.input<typeof placeListRequestSchema.shape.params>,
+    newParams: z.input<typeof contactListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/dashboard/places",
-      search: placeListRequestSchema.shape.params.parse({
+      to: "/app/dashboard/contacts",
+      search: contactListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,
       }),
       replace: true,
     });
 
-  const handleOnCardChange: IPlaceListProps["onCardChange"] = (place, type) => {
+  const handleOnCardChange: IContactListProps["onCardChange"] = (
+    contact,
+    type,
+  ) => {
     if (type === EObjectChangeType.Delete) {
       const isLastItemOnPage =
-        placeListQuery.data?.results.at(-1)?.id === place.id;
+        contactListQuery.data?.results.at(-1)?.id === contact.id;
       const isFirstPage = params.page === 1;
       if (isLastItemOnPage && !isFirstPage)
         handleOnParamsChange({ page: params.page - 1 });
-      else placeListQuery.refetch();
+      else contactListQuery.refetch();
     }
   };
 
   return (
-    <PlaceList
-      items={placeListQuery.data?.results ?? []}
+    <ContactList
+      items={contactListQuery.data?.results ?? []}
       total={total}
       options={{ params }}
-      loading={placeListQuery.isLoading}
-      error={placeListQuery.error}
+      loading={contactListQuery.isLoading}
+      error={contactListQuery.error}
       renderSkeletonItem
       mb={2}
       onCardChange={handleOnCardChange}
@@ -101,6 +104,12 @@ function RouteComponent() {
       }
       onOrderingChange={(value) =>
         handleOnParamsChange({ ordering: value, page: 1 })
+      }
+      onFiltersChange={(value) =>
+        handleOnParamsChange({
+          city: value.city,
+          work_order_status: value.workOrderStatus,
+        })
       }
       slotProps={{
         header: {

@@ -12,7 +12,7 @@ import useConfirm from "@/store/hooks/useConfirm";
 import ContactUpdateForm from "@/containers/forms/ContactUpdateForm";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/dashboard/contacts/$id/edit")({
+export const Route = createFileRoute("/app/directory/contacts/$id/edit")({
   component: RouteComponent,
   loader: (): TRouteLoaderData => ({ crumb: { label: "Edit", Icon: Edit } }),
 });
@@ -22,7 +22,7 @@ function RouteComponent() {
 
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/dashboard/contacts/$id" });
+  const loaderData = useLoaderData({ from: "/app/directory/contacts/$id" });
   const navigate = useNavigate();
   const confirm = useConfirm();
 
@@ -36,7 +36,7 @@ function RouteComponent() {
     contactHook.mutations.update.mutateAsync(data, {
       onSuccess: (updatedContact) =>
         navigate({
-          to: "/app/dashboard/contacts/$id",
+          to: "/app/directory/contacts/$id",
           params: { id: String(updatedContact.id) },
           ignoreBlocker: true,
         }),

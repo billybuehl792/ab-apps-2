@@ -26,13 +26,13 @@ function RouteComponent() {
   /** Values */
 
   const matches = useMatches();
-  const currentMatch = matches[matches.length - 1];
+  const currentMatch = matches.at(-1);
 
   return (
     <Container maxWidth="md">
       <PageHeader
         title={<NavBreadcrumbs />}
-        {...currentMatch.loaderData?.slotProps?.pageHeader}
+        {...currentMatch?.loaderData?.slotProps?.pageHeader}
       />
       <Outlet />
     </Container>

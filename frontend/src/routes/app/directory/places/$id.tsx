@@ -8,7 +8,7 @@ import type { TRouteLoaderData } from "@/store/types/router";
 import { idSchema } from "@/store/schemas/basic";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 
-export const Route = createFileRoute("/app/dashboard/places/$id")({
+export const Route = createFileRoute("/app/directory/places/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TPlace>> => {
     try {
       const placeId = idSchema.parse(params.id);
