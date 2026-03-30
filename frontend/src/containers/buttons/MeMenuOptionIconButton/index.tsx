@@ -27,9 +27,9 @@ const MeMenuOptionIconButton: React.FC<Partial<IMenuOptionIconButtonProps>> = (
       label: "Profile",
       icon: <Person />,
       disabled: userId === NULL_ID,
-      selected: location.pathname.startsWith("/app/dashboard/profile"),
+      selected: location.pathname.startsWith("/app/profile"),
       link: {
-        to: "/app/dashboard/profile/$id",
+        to: "/app/profile/$id",
         params: { id: String(userId) },
       },
     },

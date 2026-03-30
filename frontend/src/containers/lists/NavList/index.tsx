@@ -3,16 +3,21 @@ import NestedList, {
   type INestedListProps,
 } from "@/components/lists/NestedList";
 import useAuth from "@/store/hooks/useAuth";
-import { WorkOrderIcons } from "@/store/constants/work-orders";
 import { AccountIcons } from "@/store/constants/account";
 import { AdminIcons } from "@/store/constants/admin";
 import { PlaceIcons } from "@/store/constants/places";
 import { ContactIcons } from "@/store/constants/contacts";
+import { EUserGroup } from "@/store/enums/account";
 
 const NavList = (props: Partial<INestedListProps>) => {
   /** Values */
 
   const auth = useAuth();
+
+  const isAdmin = auth.me?.groups.some(
+    (group) =>
+      group === EUserGroup.CompanyAdmin || group === EUserGroup.AbAdmin,
+  );
 
   const items: IListItem[] = [
     {
@@ -46,19 +51,12 @@ const NavList = (props: Partial<INestedListProps>) => {
       ],
     },
     {
-      id: "workOrders",
-      value: "workOrders",
-      label: "Work Orders",
-      Icon: WorkOrderIcons.List,
-      link: { to: "/app/dashboard/work-orders" },
-    },
-    {
       id: "profile",
       value: "profile",
       label: "Profile",
       Icon: AccountIcons.Detail,
       link: {
-        to: "/app/dashboard/profile/$id",
+        to: "/app/profile/$id",
         params: { id: String(auth.me?.id) },
       },
     },
@@ -67,6 +65,7 @@ const NavList = (props: Partial<INestedListProps>) => {
       value: "admin",
       label: "Admin",
       Icon: AdminIcons.Detail,
+      render: isAdmin,
       link: { to: "/app/dashboard/admin" },
     },
   ];

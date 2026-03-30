@@ -18,9 +18,11 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppSandboxRouteImport } from './routes/app/sandbox'
 import { Route as AppDirectoryRouteImport } from './routes/app/directory'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
+import { Route as AppAdminRouteImport } from './routes/app/admin'
 import { Route as AppDirectoryIndexRouteImport } from './routes/app/directory/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/app/dashboard/index'
 import { Route as ResetPasswordEncodedUserIdTokenRouteImport } from './routes/reset-password.$encodedUserId.$token'
+import { Route as AppProfileIdRouteImport } from './routes/app/profile.$id'
 import { Route as AppDirectoryPlacesRouteImport } from './routes/app/directory/places'
 import { Route as AppDirectoryContactsRouteImport } from './routes/app/directory/contacts'
 import { Route as AppDashboardWorkOrdersRouteImport } from './routes/app/dashboard/work-orders'
@@ -34,7 +36,6 @@ import { Route as AppDirectoryPlacesCreateRouteImport } from './routes/app/direc
 import { Route as AppDirectoryPlacesIdRouteImport } from './routes/app/directory/places/$id'
 import { Route as AppDirectoryContactsCreateRouteImport } from './routes/app/directory/contacts/create'
 import { Route as AppDirectoryContactsIdRouteImport } from './routes/app/directory/contacts/$id'
-import { Route as AppDashboardProfileIdRouteImport } from './routes/app/dashboard/profile.$id'
 import { Route as AppDashboardClientsCreateRouteImport } from './routes/app/dashboard/clients/create'
 import { Route as AppDashboardClientsIdRouteImport } from './routes/app/dashboard/clients/$id'
 import { Route as AppDashboardAdminUsersRouteImport } from './routes/app/dashboard/admin/users'
@@ -91,6 +92,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDirectoryIndexRoute = AppDirectoryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -107,6 +113,11 @@ const ResetPasswordEncodedUserIdTokenRoute =
     path: '/reset-password/$encodedUserId/$token',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AppProfileIdRoute = AppProfileIdRouteImport.update({
+  id: '/profile/$id',
+  path: '/profile/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDirectoryPlacesRoute = AppDirectoryPlacesRouteImport.update({
   id: '/places',
   path: '/places',
@@ -176,11 +187,6 @@ const AppDirectoryContactsIdRoute = AppDirectoryContactsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppDirectoryContactsRoute,
 } as any)
-const AppDashboardProfileIdRoute = AppDashboardProfileIdRouteImport.update({
-  id: '/profile/$id',
-  path: '/profile/$id',
-  getParentRoute: () => AppDashboardRoute,
-} as any)
 const AppDashboardClientsCreateRoute =
   AppDashboardClientsCreateRouteImport.update({
     id: '/create',
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/dashboard': typeof AppDashboardRouteWithChildren
   '/app/directory': typeof AppDirectoryRouteWithChildren
   '/app/sandbox': typeof AppSandboxRoute
@@ -255,13 +262,13 @@ export interface FileRoutesByFullPath {
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
   '/app/directory/contacts': typeof AppDirectoryContactsRouteWithChildren
   '/app/directory/places': typeof AppDirectoryPlacesRouteWithChildren
+  '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/directory/': typeof AppDirectoryIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
-  '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/directory/contacts/$id': typeof AppDirectoryContactsIdRouteWithChildren
   '/app/directory/contacts/create': typeof AppDirectoryContactsCreateRoute
   '/app/directory/places/$id': typeof AppDirectoryPlacesIdRouteWithChildren
@@ -283,14 +290,15 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/sandbox': typeof AppSandboxRoute
   '/app': typeof AppIndexRoute
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
+  '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard': typeof AppDashboardIndexRoute
   '/app/directory': typeof AppDirectoryIndexRoute
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
-  '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/directory/contacts/create': typeof AppDirectoryContactsCreateRoute
   '/app/directory/places/create': typeof AppDirectoryPlacesCreateRoute
   '/app/dashboard/admin': typeof AppDashboardAdminIndexRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/dashboard': typeof AppDashboardRouteWithChildren
   '/app/directory': typeof AppDirectoryRouteWithChildren
   '/app/sandbox': typeof AppSandboxRoute
@@ -321,13 +330,13 @@ export interface FileRoutesById {
   '/app/dashboard/work-orders': typeof AppDashboardWorkOrdersRoute
   '/app/directory/contacts': typeof AppDirectoryContactsRouteWithChildren
   '/app/directory/places': typeof AppDirectoryPlacesRouteWithChildren
+  '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/dashboard/': typeof AppDashboardIndexRoute
   '/app/directory/': typeof AppDirectoryIndexRoute
   '/app/dashboard/admin/users': typeof AppDashboardAdminUsersRouteWithChildren
   '/app/dashboard/clients/$id': typeof AppDashboardClientsIdRouteWithChildren
   '/app/dashboard/clients/create': typeof AppDashboardClientsCreateRoute
-  '/app/dashboard/profile/$id': typeof AppDashboardProfileIdRoute
   '/app/directory/contacts/$id': typeof AppDirectoryContactsIdRouteWithChildren
   '/app/directory/contacts/create': typeof AppDirectoryContactsCreateRoute
   '/app/directory/places/$id': typeof AppDirectoryPlacesIdRouteWithChildren
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/sign-in'
     | '/sign-out'
+    | '/app/admin'
     | '/app/dashboard'
     | '/app/directory'
     | '/app/sandbox'
@@ -361,13 +371,13 @@ export interface FileRouteTypes {
     | '/app/dashboard/work-orders'
     | '/app/directory/contacts'
     | '/app/directory/places'
+    | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/directory/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
-    | '/app/dashboard/profile/$id'
     | '/app/directory/contacts/$id'
     | '/app/directory/contacts/create'
     | '/app/directory/places/$id'
@@ -389,14 +399,15 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/sign-in'
     | '/sign-out'
+    | '/app/admin'
     | '/app/sandbox'
     | '/app'
     | '/app/dashboard/work-orders'
+    | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard'
     | '/app/directory'
     | '/app/dashboard/clients/create'
-    | '/app/dashboard/profile/$id'
     | '/app/directory/contacts/create'
     | '/app/directory/places/create'
     | '/app/dashboard/admin'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/sign-in'
     | '/sign-out'
+    | '/app/admin'
     | '/app/dashboard'
     | '/app/directory'
     | '/app/sandbox'
@@ -426,13 +438,13 @@ export interface FileRouteTypes {
     | '/app/dashboard/work-orders'
     | '/app/directory/contacts'
     | '/app/directory/places'
+    | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/dashboard/'
     | '/app/directory/'
     | '/app/dashboard/admin/users'
     | '/app/dashboard/clients/$id'
     | '/app/dashboard/clients/create'
-    | '/app/dashboard/profile/$id'
     | '/app/directory/contacts/$id'
     | '/app/directory/contacts/create'
     | '/app/directory/places/$id'
@@ -524,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/directory/': {
       id: '/app/directory/'
       path: '/'
@@ -544,6 +563,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password/$encodedUserId/$token'
       preLoaderRoute: typeof ResetPasswordEncodedUserIdTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/profile/$id': {
+      id: '/app/profile/$id'
+      path: '/profile/$id'
+      fullPath: '/app/profile/$id'
+      preLoaderRoute: typeof AppProfileIdRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/directory/places': {
       id: '/app/directory/places'
@@ -635,13 +661,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/directory/contacts/$id'
       preLoaderRoute: typeof AppDirectoryContactsIdRouteImport
       parentRoute: typeof AppDirectoryContactsRoute
-    }
-    '/app/dashboard/profile/$id': {
-      id: '/app/dashboard/profile/$id'
-      path: '/profile/$id'
-      fullPath: '/app/dashboard/profile/$id'
-      preLoaderRoute: typeof AppDashboardProfileIdRouteImport
-      parentRoute: typeof AppDashboardRoute
     }
     '/app/dashboard/clients/create': {
       id: '/app/dashboard/clients/create'
@@ -780,7 +799,6 @@ interface AppDashboardRouteChildren {
   AppDashboardClientsRoute: typeof AppDashboardClientsRouteWithChildren
   AppDashboardWorkOrdersRoute: typeof AppDashboardWorkOrdersRoute
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
-  AppDashboardProfileIdRoute: typeof AppDashboardProfileIdRoute
 }
 
 const AppDashboardRouteChildren: AppDashboardRouteChildren = {
@@ -788,7 +806,6 @@ const AppDashboardRouteChildren: AppDashboardRouteChildren = {
   AppDashboardClientsRoute: AppDashboardClientsRouteWithChildren,
   AppDashboardWorkOrdersRoute: AppDashboardWorkOrdersRoute,
   AppDashboardIndexRoute: AppDashboardIndexRoute,
-  AppDashboardProfileIdRoute: AppDashboardProfileIdRoute,
 }
 
 const AppDashboardRouteWithChildren = AppDashboardRoute._addFileChildren(
@@ -869,17 +886,21 @@ const AppDirectoryRouteWithChildren = AppDirectoryRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
   AppDashboardRoute: typeof AppDashboardRouteWithChildren
   AppDirectoryRoute: typeof AppDirectoryRouteWithChildren
   AppSandboxRoute: typeof AppSandboxRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppProfileIdRoute: typeof AppProfileIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
   AppDashboardRoute: AppDashboardRouteWithChildren,
   AppDirectoryRoute: AppDirectoryRouteWithChildren,
   AppSandboxRoute: AppSandboxRoute,
   AppIndexRoute: AppIndexRoute,
+  AppProfileIdRoute: AppProfileIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
