@@ -27,7 +27,7 @@ const NavList = (props: Partial<INestedListProps>) => {
       value: "directory",
       label: "Directory",
       Icon: Groups,
-      link: { to: "/app/directory", activeOptions: { exact: true } },
+      link: { to: "/app/directory" },
       items: [
         {
           id: "contacts",

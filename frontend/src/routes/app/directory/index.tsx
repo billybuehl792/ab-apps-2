@@ -33,7 +33,7 @@ function RouteComponent() {
         startContent={<PlaceIcons.List fontSize="large" color="disabled" />}
         label="Places"
         description={`Total: ${placeListQuery.data?.count ?? "-"}`}
-        link={{ to: "/app/dashboard/places" }}
+        link={{ to: "/app/directory/places" }}
       />
     </Stack>
   );

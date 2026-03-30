@@ -1,14 +1,24 @@
+import { type ComponentProps } from "react";
 import { useMatches } from "@tanstack/react-router";
 import { Breadcrumbs, type BreadcrumbsProps } from "@mui/material";
 import ButtonLink from "@/components/links/ButtonLink";
 
-const NavBreadcrumbs = (props: BreadcrumbsProps) => {
+interface INavBreadcrumbProps extends Omit<BreadcrumbsProps, "slotProps"> {
+  slotProps?: {
+    crumb?: ComponentProps<typeof ButtonLink>;
+  };
+}
+
+const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
+  slotProps: { crumb: crumbProps, ...slotProps } = {},
+  ...props
+}) => {
   /** Values */
 
   const matches = useMatches();
 
   return (
-    <Breadcrumbs maxItems={2} {...props}>
+    <Breadcrumbs maxItems={2} slotProps={slotProps} {...props}>
       {matches.map(
         (match) =>
           !!match.loaderData?.crumb && (
@@ -22,6 +32,7 @@ const NavBreadcrumbs = (props: BreadcrumbsProps) => {
               {...(match.loaderData.crumb.Icon && {
                 startIcon: <match.loaderData.crumb.Icon />,
               })}
+              {...crumbProps}
               sx={{
                 color: "text.secondary",
                 "&[data-status='active']": {

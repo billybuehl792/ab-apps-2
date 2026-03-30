@@ -28,10 +28,12 @@ interface IContactCreateFormProps extends Omit<
   onSubmit: SubmitHandler<TContactCreate>;
   onSubmitInvalid?: SubmitErrorHandler<TContactCreate>;
   onFormStateChange?: (formState: FormState<TContactCreate>) => void;
+  onCancel?: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
     submitButton?: ButtonProps;
+    cancelButton?: ButtonProps;
   };
 }
 
@@ -39,6 +41,7 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
   onSubmit,
   onSubmitInvalid,
   onFormStateChange,
+  onCancel,
   slotProps,
   ...props
 }) => {
@@ -158,7 +161,23 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
           )}
         />
       </Stack>
-      <Stack direction="row" justifyContent="end" {...slotProps?.actions}>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="end"
+        {...slotProps?.actions}
+      >
+        {!!onCancel && (
+          <Button
+            variant="text"
+            color="error"
+            disabled={methods.formState.disabled}
+            onClick={onCancel}
+            {...slotProps?.cancelButton}
+          >
+            Cancel
+          </Button>
+        )}
         <Button
           type="submit"
           disabled={methods.formState.disabled}

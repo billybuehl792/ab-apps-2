@@ -42,6 +42,10 @@ function RouteComponent() {
         }),
     });
 
+  const handleOnCancel: ComponentProps<
+    typeof ContactUpdateForm
+  >["onCancel"] = () => navigate({ to: ".." });
+
   const handleOnFormStateChange: ComponentProps<
     typeof ContactUpdateForm
   >["onFormStateChange"] = (formState) => setBlockNavigation(formState.isDirty);
@@ -71,6 +75,7 @@ function RouteComponent() {
         contact={contactHook.contact}
         onFormStateChange={handleOnFormStateChange}
         onSubmit={handleOnSubmit}
+        onCancel={handleOnCancel}
       />
     </Stack>
   );

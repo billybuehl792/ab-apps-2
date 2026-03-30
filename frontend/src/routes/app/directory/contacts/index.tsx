@@ -10,7 +10,9 @@ import z from "zod";
 import { Add } from "@mui/icons-material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import ButtonLink from "@/components/links/ButtonLink";
-import ContactList from "@/containers/lists/ContactList";
+import ContactList, {
+  type IContactListProps,
+} from "@/containers/lists/ContactList";
 import { contactEndpoints } from "@/store/constants/contacts";
 import { contactListRequestSchema } from "@/store/schemas/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
@@ -66,7 +68,7 @@ function RouteComponent() {
     newParams: z.input<typeof contactListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/dashboard/contacts",
+      to: "/app/directory/contacts",
       search: contactListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,
@@ -108,7 +110,7 @@ function RouteComponent() {
       onFiltersChange={(value) =>
         handleOnParamsChange({
           city: value.city,
-          work_order_status: value.workOrderStatus,
+          tag: value.tag,
         })
       }
       slotProps={{

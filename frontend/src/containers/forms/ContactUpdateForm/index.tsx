@@ -28,10 +28,12 @@ interface IContactUpdateFormProps extends Omit<
   onSubmit: SubmitHandler<TContactUpdate>;
   onSubmitInvalid?: SubmitErrorHandler<TContactUpdate>;
   onFormStateChange?: (formState: FormState<TContactUpdate>) => void;
+  onCancel?: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
     submitButton?: ButtonProps;
+    cancelButton?: ButtonProps;
   };
 }
 
@@ -40,6 +42,7 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
   onSubmit,
   onSubmitInvalid,
   onFormStateChange,
+  onCancel,
   slotProps,
   ...props
 }) => {
@@ -169,7 +172,23 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
           )}
         />
       </Stack>
-      <Stack direction="row" justifyContent="end" {...slotProps?.actions}>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="end"
+        {...slotProps?.actions}
+      >
+        {!!onCancel && (
+          <Button
+            variant="text"
+            color="error"
+            disabled={methods.formState.disabled}
+            onClick={onCancel}
+            {...slotProps?.cancelButton}
+          >
+            Cancel
+          </Button>
+        )}
         <Button
           type="submit"
           disabled={methods.formState.disabled}

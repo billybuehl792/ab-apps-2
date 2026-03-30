@@ -68,7 +68,7 @@ const ContactListCard: React.FC<IContactListCardProps> = ({
         />
       }
       link={{
-        to: "/app/dashboard/contacts/$id",
+        to: "/app/directory/contacts/$id",
         params: { id: String(contact.id) },
       }}
       disabled={contactHook.disabled}

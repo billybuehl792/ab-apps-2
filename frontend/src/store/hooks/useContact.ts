@@ -152,7 +152,7 @@ const useContact = (
           Icon: Info,
           isDisabled: isDisabled,
           link: {
-            to: "/app/dashboard/contacts/$id",
+            to: "/app/directory/contacts/$id",
             params: { id: String(contactId) },
           },
         },
@@ -164,7 +164,7 @@ const useContact = (
           Icon: Edit,
           isDisabled: isDisabled,
           link: {
-            to: "/app/dashboard/contacts/$id/edit",
+            to: "/app/directory/contacts/$id/edit",
             params: { id: String(contactId) },
           },
         },

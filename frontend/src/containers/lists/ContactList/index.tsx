@@ -67,7 +67,7 @@ const ContactList: React.FC<IContactListProps> = ({
                     actions: [
                       <CustomLink
                         label="Create"
-                        to="/app/dashboard/contacts/create"
+                        to="/app/directory/contacts/create"
                         icon={<Add />}
                       />,
                     ],
