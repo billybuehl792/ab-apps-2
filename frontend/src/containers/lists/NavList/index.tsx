@@ -4,7 +4,6 @@ import NestedList, {
 } from "@/components/lists/NestedList";
 import useAuth from "@/store/hooks/useAuth";
 import { AccountIcons } from "@/store/constants/account";
-import { AdminIcons } from "@/store/constants/admin";
 import { PlaceIcons } from "@/store/constants/places";
 import { ContactIcons } from "@/store/constants/contacts";
 import { EUserGroup } from "@/store/enums/account";
@@ -64,9 +63,9 @@ const NavList = (props: Partial<INestedListProps>) => {
       id: "admin",
       value: "admin",
       label: "Admin",
-      Icon: AdminIcons.Detail,
+      Icon: AccountIcons.users.Detail,
       render: isAdmin,
-      link: { to: "/app/dashboard/admin" },
+      link: { to: "/app/admin" },
     },
   ];
 

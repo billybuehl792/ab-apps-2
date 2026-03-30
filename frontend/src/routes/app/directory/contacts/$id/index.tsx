@@ -60,13 +60,6 @@ function RouteComponent() {
           <Tab label="Documents" />
           <Tab label="History" />
         </Tabs>
-        {/* {tabValue === 0 && (
-          <WorkOrderList
-            params={workOrderListParams}
-            baseParams={{ contact: [contact.id] }}
-            onParamsChange={setWorkOrderListParams}
-          />
-        )} */}
       </Stack>
     </Stack>
   );

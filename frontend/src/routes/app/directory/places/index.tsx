@@ -15,6 +15,7 @@ import { placeListRequestSchema } from "@/store/schemas/places";
 import type { TRouteLoaderData } from "@/store/types/router";
 import PlaceList, { type IPlaceListProps } from "@/containers/lists/PlaceList";
 import { EObjectChangeType } from "@/store/enums/api";
+import ButtonLink from "@/components/links/ButtonLink";
 
 const paramsSchema = placeListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -29,10 +30,11 @@ export const Route = createFileRoute("/app/directory/places/")({
     slotProps: {
       pageHeader: {
         endContent: (
-          <CustomLink
-            label="Create"
-            to="/app/dashboard/places/create"
-            icon={<Add />}
+          <ButtonLink
+            to="/app/directory/places/create"
+            children="Create"
+            startIcon={<Add />}
+            variant="text"
           />
         ),
       },
@@ -66,7 +68,7 @@ function RouteComponent() {
     newParams: z.input<typeof placeListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/dashboard/places",
+      to: ".",
       search: placeListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,

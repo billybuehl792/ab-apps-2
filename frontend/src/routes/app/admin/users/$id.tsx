@@ -1,15 +1,14 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowBack } from "@mui/icons-material";
-import { userEndpoints } from "@/store/constants/account";
+import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import CustomLink from "@/components/links/CustomLink";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { AdminIcons } from "@/store/constants/admin";
 import { errorUtils } from "@/store/utils/error";
 import type { TRouteLoaderData } from "@/store/types/router";
 import type { TUser } from "@/store/types/account";
 
-export const Route = createFileRoute("/app/dashboard/admin/users/$id")({
+export const Route = createFileRoute("/app/admin/users/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
     try {
       const userId = parseInt(params.id);
@@ -22,7 +21,7 @@ export const Route = createFileRoute("/app/dashboard/admin/users/$id")({
 
       return {
         data: user,
-        crumb: { label: user.username, Icon: AdminIcons.Users.Detail },
+        crumb: { label: user.username, Icon: AccountIcons.users.Detail },
       };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });

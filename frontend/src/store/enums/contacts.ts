@@ -4,6 +4,12 @@ export enum EContactOptionId {
   Delete = "delete",
 }
 
+export enum EContactTagOptionId {
+  Detail = "detail",
+  Edit = "edit",
+  Delete = "delete",
+}
+
 /** API */
 
 export enum EContactListOrdering {

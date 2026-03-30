@@ -8,11 +8,11 @@ import {
 import { ArrowForwardIos } from "@mui/icons-material";
 import CardActionAreaLink from "@/components/links/CardActionAreaLink";
 import UserGroupChip from "@/containers/chips/UserGroupChip";
-import { AdminIcons } from "@/store/constants/admin";
-import type { User } from "@/store/types/account";
+import { AccountIcons } from "@/store/constants/account";
+import type { TUser } from "@/store/types/account";
 
 interface UserListCardProps extends CardProps {
-  user: User;
+  user: TUser;
 }
 
 const UserListCard = ({ user, ...props }: UserListCardProps) => {
@@ -35,7 +35,7 @@ const UserListCard = ({ user, ...props }: UserListCardProps) => {
             flexGrow={1}
             overflow="hidden"
           >
-            <AdminIcons.Users.Detail fontSize="large" color="disabled" />
+            <AccountIcons.users.Detail fontSize="large" color="disabled" />
             <Stack overflow="hidden">
               <Typography variant="body1" noWrap>
                 {user.username}

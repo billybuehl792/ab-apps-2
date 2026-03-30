@@ -3,13 +3,13 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Add } from "@mui/icons-material";
 import { userListRequestSchema } from "@/store/schemas/account";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import CustomLink from "@/components/links/CustomLink";
+import ButtonLink from "@/components/links/ButtonLink";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 const paramsSchema = userListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
-export const Route = createFileRoute("/app/dashboard/admin/users/")({
+export const Route = createFileRoute("/app/admin/users/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   pendingComponent: () => <StatusWrapper loading my={2} />,
@@ -19,11 +19,10 @@ export const Route = createFileRoute("/app/dashboard/admin/users/")({
     slotProps: {
       pageHeader: {
         endContent: (
-          <CustomLink
-            label="Create"
-            to="/app/dashboard/clients/create"
-            icon={<Add />}
-            disabled
+          <ButtonLink
+            to="/app/admin/users/create"
+            startIcon={<Add />}
+            children="Create New"
           />
         ),
       },
