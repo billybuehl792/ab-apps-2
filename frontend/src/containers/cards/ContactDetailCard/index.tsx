@@ -9,31 +9,39 @@ import {
 import dayjs from "dayjs";
 import Metadata from "@/components/lists/Metadata";
 import { DateTimeFormat } from "@/store/enums/datetime";
-import type { TClient } from "@/store/types/clients";
+import type { TContact } from "@/store/types/contacts";
 
-interface ClientDetailCardProps extends CardProps {
-  client: TClient;
+interface ContactDetailCardProps extends CardProps {
+  contact: TContact;
 }
 
-const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
+const ContactDetailCard = ({ contact, ...props }: ContactDetailCardProps) => {
   /** Values */
 
   const metadata: ComponentProps<typeof Metadata>["items"] = [
     {
       id: "email",
       label: "Email",
-      value: client.email,
+      value: contact.email,
     },
     {
       id: "phone",
       label: "Phone",
-      value: client.phone_primary.toPhone(),
+      value: contact.phone_primary.toPhone(),
     },
     {
       id: "created",
       label: "Created",
-      value: dayjs(client.created_at).fromNow(),
-      tooltip: dayjs(client.created_at).format(
+      value: dayjs(contact.created_at).fromNow(),
+      tooltip: dayjs(contact.created_at).format(
+        DateTimeFormat.DATETIME_MERIDIEM,
+      ),
+    },
+    {
+      id: "updated",
+      label: "Updated",
+      value: dayjs(contact.updated_at).fromNow(),
+      tooltip: dayjs(contact.updated_at).format(
         DateTimeFormat.DATETIME_MERIDIEM,
       ),
     },
@@ -42,11 +50,11 @@ const ClientDetailCard = ({ client, ...props }: ClientDetailCardProps) => {
   return (
     <Card variant="outlined" {...props}>
       <CardContent component={Stack} spacing={1}>
-        <Typography variant="h6">{client.full_name}</Typography>
+        <Typography variant="h6">{`${contact.first_name} ${contact.last_name}`}</Typography>
         <Metadata items={metadata} />
       </CardContent>
     </Card>
   );
 };
 
-export default ClientDetailCard;
+export default ContactDetailCard;

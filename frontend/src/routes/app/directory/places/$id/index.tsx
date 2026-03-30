@@ -2,7 +2,7 @@ import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { Stack, Typography } from "@mui/material";
 import PlaceMapCard from "@/containers/cards/PlaceMapCard";
 
-export const Route = createFileRoute("/app/dashboard/places/$id/")({
+export const Route = createFileRoute("/app/directory/places/$id/")({
   component: RouteComponent,
 });
 

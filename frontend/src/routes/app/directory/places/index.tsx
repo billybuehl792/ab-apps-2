@@ -19,7 +19,7 @@ import { EObjectChangeType } from "@/store/enums/api";
 const paramsSchema = placeListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
-export const Route = createFileRoute("/app/dashboard/places/")({
+export const Route = createFileRoute("/app/directory/places/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   pendingComponent: () => <StatusWrapper loading my={2} />,

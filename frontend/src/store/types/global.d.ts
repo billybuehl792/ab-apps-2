@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { type CreateLinkProps } from "@tanstack/react-router";
+import { LinkOptions, type CreateLinkProps } from "@tanstack/react-router";
 import { EOrderingDirection } from "../enums/api";
 import { SvgIconComponent } from "@mui/icons-material";
 
@@ -66,7 +66,7 @@ declare global {
     selected?: boolean;
     color?: string;
     tooltip?: ReactNode;
-    link?: CreateLinkProps;
+    link?: LinkOptions;
     sx?: SxProps<Theme>;
     onClick?: VoidFunction;
   }

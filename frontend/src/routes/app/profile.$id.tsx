@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { Stack } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+import PageHeader from "@/components/layout/PageHeader";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import CustomLink from "@/components/links/CustomLink";
@@ -9,7 +10,7 @@ import { errorUtils } from "@/store/utils/error";
 import type { TRouteLoaderData } from "@/store/types/router";
 import type { TUser } from "@/store/types/account";
 
-export const Route = createFileRoute("/app/dashboard/profile/$id")({
+export const Route = createFileRoute("/app/profile/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
     try {
       const userId = parseInt(params.id, 10);
@@ -48,8 +49,11 @@ function RouteComponent() {
   const loaderData = Route.useLoaderData();
 
   return (
-    <Stack my={2}>
-      <UserDetailCard user={loaderData.data} />
-    </Stack>
+    <Container maxWidth="md">
+      <PageHeader title={<Typography variant="h4">Profile</Typography>} />
+      <Stack mt={2}>
+        <UserDetailCard user={loaderData.data} />
+      </Stack>
+    </Container>
   );
 }
