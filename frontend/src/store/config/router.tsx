@@ -20,8 +20,8 @@ const router = createRouter({
     const str = qs.stringify(searchObj, { arrayFormat: "repeat" });
     return str ? `?${str}` : "";
   },
-  defaultPendingComponent: () => <StatusWrapper loading m={2} />,
-  defaultErrorComponent: ({ error }) => <StatusWrapper error={error} m={2} />,
+  defaultPendingComponent: () => <StatusWrapper loading />,
+  defaultErrorComponent: ({ error }) => <StatusWrapper error={error} />,
   defaultNotFoundComponent: () => <PageNotFoundCard />,
 });
 

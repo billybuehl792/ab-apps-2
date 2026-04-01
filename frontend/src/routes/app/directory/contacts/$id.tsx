@@ -1,8 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { ArrowBack } from "@mui/icons-material";
 import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
-import ButtonLink from "@/components/links/ButtonLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
+import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import { idSchema } from "@/store/schemas/basic";
 import { errorUtils } from "@/store/utils/error";
 import type { TContact } from "@/store/types/contacts";
@@ -28,16 +27,7 @@ export const Route = createFileRoute("/app/directory/contacts/$id")({
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
   },
-  pendingComponent: () => <StatusWrapper loading="loading contact..." my={2} />,
-  notFoundComponent: () => (
-    <StatusWrapper
-      error={{
-        label: "Contact not found :(",
-        actions: [
-          <ButtonLink children="Back" startIcon={<ArrowBack />} to=".." />,
-        ],
-      }}
-      my={2}
-    />
-  ),
+  pendingComponent: () => <StatusWrapper loading="Loading Contact..." my={2} />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} my={2} />,
+  notFoundComponent: () => <PageNotFoundCard my={2} />,
 });

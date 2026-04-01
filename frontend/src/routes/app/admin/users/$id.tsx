@@ -1,19 +1,16 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { ArrowBack } from "@mui/icons-material";
 import { AccountIcons, userEndpoints } from "@/store/constants/account";
-import CustomLink from "@/components/links/CustomLink";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { errorUtils } from "@/store/utils/error";
+import { idSchema } from "@/store/schemas/basic";
 import type { TRouteLoaderData } from "@/store/types/router";
 import type { TUser } from "@/store/types/account";
 
 export const Route = createFileRoute("/app/admin/users/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
     try {
-      const userId = parseInt(params.id);
-      if (isNaN(userId)) throw new Error("Invalid user ID");
-
+      const userId = idSchema.parse(params.id);
       const user = await context.queryClient.fetchQuery({
         queryKey: userEndpoints.user(userId).id,
         queryFn: userEndpoints.user(userId).get,
@@ -29,14 +26,6 @@ export const Route = createFileRoute("/app/admin/users/$id")({
   },
   component: RouteComponent,
   pendingComponent: () => <StatusWrapper loading="loading user..." />,
-  notFoundComponent: () => (
-    <StatusWrapper
-      error={{
-        label: "User not found :(",
-        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
-      }}
-    />
-  ),
 });
 
 function RouteComponent() {

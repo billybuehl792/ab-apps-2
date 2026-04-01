@@ -1,22 +1,15 @@
-import React, { type ComponentProps } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
-  type CardProps,
   Stack,
+  type StackProps,
   Typography,
 } from "@mui/material";
-import { Home, SentimentDissatisfied } from "@mui/icons-material";
-import ButtonLink from "@/components/links/ButtonLink";
+import { SentimentDissatisfied } from "@mui/icons-material";
+import BackButton from "@/containers/buttons/BackButton";
 
-interface IPageNotFoundCardProps extends CardProps<typeof Card> {
-  link?: ComponentProps<typeof ButtonLink> | false;
-}
-
-const PageNotFoundCard: React.FC<IPageNotFoundCardProps> = ({
-  link = { children: "Home", startIcon: <Home />, to: "/app/dashboard" },
-  ...props
-}) => {
+const PageNotFoundCard: React.FC<StackProps> = (props) => {
   return (
     <Stack component={Card} {...props}>
       <Stack
@@ -38,11 +31,9 @@ const PageNotFoundCard: React.FC<IPageNotFoundCardProps> = ({
             The page you are looking for does not exist. Please check the URL or
             return to the homepage.
           </Typography>
-          {!!link && (
-            <Stack direction="row">
-              <ButtonLink variant="text" size="small" {...link} />
-            </Stack>
-          )}
+          <Stack direction="row">
+            <BackButton variant="text" size="small" />
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
