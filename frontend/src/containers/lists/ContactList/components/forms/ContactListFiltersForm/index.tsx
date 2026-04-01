@@ -60,8 +60,8 @@ const ContactListFiltersForm: React.FC<IContactListFiltersFormProps> = ({
     defaultValues: DEFAULT_VALUES,
   });
 
-  const isFieldDisabled =
-    methods.formState.disabled || methods.formState.isSubmitting;
+  // const isFieldDisabled =
+  //   methods.formState.disabled || methods.formState.isSubmitting;
 
   /** Callbacks */
 

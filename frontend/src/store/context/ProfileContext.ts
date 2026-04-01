@@ -1,4 +1,4 @@
 import { createContext } from "react";
-import type { User } from "../types/account";
+import type { TUser } from "../types/account";
 
-export default createContext<{ me: User }>({ me: null! });
+export default createContext<{ me: TUser }>({ me: null! });

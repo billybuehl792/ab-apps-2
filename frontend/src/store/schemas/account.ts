@@ -1,10 +1,5 @@
 import z from "zod";
-import {
-  emailSchema,
-  idOrIdArraySchema,
-  nameSchema,
-  objectSchema,
-} from "./basic";
+import { emailSchema, nameSchema, objectSchema } from "./basic";
 import { EUserGroup, EUserListOrdering } from "../enums/account";
 import { listRequestSchema, listResponseSchema } from "./api";
 
