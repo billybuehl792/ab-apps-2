@@ -49,7 +49,7 @@ const MenuOptionMenuItem = <TOption extends IMenuOption>({
   if (option.link)
     return (
       <MenuItemLink
-        {...option.link}
+        {...(option.link as ComponentProps<typeof MenuItemLink>)}
         selected={option.selected}
         disabled={option.disabled}
         onClick={handleOnClick}

@@ -1,13 +1,8 @@
 import { useState } from "react";
-import {
-  createFileRoute,
-  useLoaderData,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
 import { idSchema } from "@/store/schemas/basic";
-import useContact from "@/store/hooks/useContact";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import { EContactOptionId } from "@/store/enums/contacts";
@@ -40,10 +35,6 @@ function RouteComponent() {
   /** Values */
 
   const loaderData = useLoaderData({ from: "/app/directory/contacts/$id" });
-  const search = Route.useSearch();
-
-  const contactHook = useContact(loaderData.data);
-  const navigate = useNavigate();
 
   const contact = loaderData.data;
 

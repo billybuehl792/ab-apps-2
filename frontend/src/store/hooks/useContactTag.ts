@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-import { Delete, Edit, Info } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
 import {
@@ -150,30 +150,6 @@ const useContactTag = (
     EContactTagOptionId
   >[] = useMemo(
     () => [
-      {
-        id: EContactTagOptionId.Detail,
-        render: !options?.hideOptions?.includes(EContactTagOptionId.Detail),
-        value: EContactTagOptionId.Detail,
-        label: "Detail",
-        Icon: Info,
-        isDisabled: isDisabled,
-        link: {
-          to: "/app/directory/contacts/tags/$id",
-          params: { id: String(contactTagId) },
-        },
-      },
-      {
-        id: EContactTagOptionId.Edit,
-        render: !options?.hideOptions?.includes(EContactTagOptionId.Edit),
-        value: EContactTagOptionId.Edit,
-        label: "Edit",
-        Icon: Edit,
-        isDisabled: isDisabled,
-        link: {
-          to: "/app/directory/contacts/tags/$id/edit",
-          params: { id: String(contactTagId) },
-        },
-      },
       {
         id: EContactTagOptionId.Delete,
         render: !options?.hideOptions?.includes(EContactTagOptionId.Delete),

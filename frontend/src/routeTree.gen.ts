@@ -15,7 +15,6 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as AppSandboxRouteImport } from './routes/app/sandbox'
 import { Route as AppDirectoryRouteImport } from './routes/app/directory'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppAdminRouteImport } from './routes/app/admin'
@@ -68,11 +67,6 @@ const IndexRoute = IndexRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSandboxRoute = AppSandboxRouteImport.update({
-  id: '/sandbox',
-  path: '/sandbox',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDirectoryRoute = AppDirectoryRouteImport.update({
@@ -208,7 +202,6 @@ export interface FileRoutesByFullPath {
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/directory': typeof AppDirectoryRouteWithChildren
-  '/app/sandbox': typeof AppSandboxRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/users': typeof AppAdminUsersRouteWithChildren
   '/app/directory/contacts': typeof AppDirectoryContactsRouteWithChildren
@@ -237,7 +230,6 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/sandbox': typeof AppSandboxRoute
   '/app': typeof AppIndexRoute
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
@@ -265,7 +257,6 @@ export interface FileRoutesById {
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/directory': typeof AppDirectoryRouteWithChildren
-  '/app/sandbox': typeof AppSandboxRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/users': typeof AppAdminUsersRouteWithChildren
   '/app/directory/contacts': typeof AppDirectoryContactsRouteWithChildren
@@ -299,7 +290,6 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/dashboard'
     | '/app/directory'
-    | '/app/sandbox'
     | '/app/'
     | '/app/admin/users'
     | '/app/directory/contacts'
@@ -328,7 +318,6 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/app/dashboard'
-    | '/app/sandbox'
     | '/app'
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
@@ -355,7 +344,6 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/dashboard'
     | '/app/directory'
-    | '/app/sandbox'
     | '/app/'
     | '/app/admin/users'
     | '/app/directory/contacts'
@@ -430,13 +418,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/sandbox': {
-      id: '/app/sandbox'
-      path: '/sandbox'
-      fullPath: '/app/sandbox'
-      preLoaderRoute: typeof AppSandboxRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/directory': {
@@ -712,7 +693,6 @@ interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
   AppDirectoryRoute: typeof AppDirectoryRouteWithChildren
-  AppSandboxRoute: typeof AppSandboxRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProfileIdRoute: typeof AppProfileIdRoute
 }
@@ -721,7 +701,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
   AppDirectoryRoute: AppDirectoryRouteWithChildren,
-  AppSandboxRoute: AppSandboxRoute,
   AppIndexRoute: AppIndexRoute,
   AppProfileIdRoute: AppProfileIdRoute,
 }

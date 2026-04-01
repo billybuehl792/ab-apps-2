@@ -5,10 +5,10 @@ import {
   type MenuItemProps,
 } from "@mui/material";
 import { Place as PlaceIcon } from "@mui/icons-material";
-import type { PlaceBasic } from "@/store/types/places";
+import type { TPlace } from "@/store/types/places";
 
 interface PlaceMenuItemProps extends MenuItemProps {
-  place: PlaceBasic;
+  place: TPlace;
 }
 
 const PlaceMenuItem = ({ place, ...props }: PlaceMenuItemProps) => {

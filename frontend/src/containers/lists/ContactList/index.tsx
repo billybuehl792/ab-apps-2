@@ -1,11 +1,10 @@
 import { type ComponentProps } from "react";
 import { Stack } from "@mui/material";
-import { Add } from "@mui/icons-material";
 import PaginatedList, {
   type IPaginatedListProps,
 } from "@/components/lists/PaginatedList";
-import CustomLink from "@/components/links/CustomLink";
 import ContactListCard from "./components/cards/ContactListCard";
+import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactListOrderingButtonGroup, {
   type IContactListOrderingButtonGroupProps,
 } from "./components/buttons/ContactListOrderingButtonGroup";
@@ -63,15 +62,7 @@ const ContactList: React.FC<IContactListProps> = ({
               icon: <ContactIcons.List fontSize="large" />,
               ...(options.params.search
                 ? { description: `No results for "${options.params.search}".` }
-                : {
-                    actions: [
-                      <CustomLink
-                        label="Create"
-                        to="/app/directory/contacts/create"
-                        icon={<Add />}
-                      />,
-                    ],
-                  }),
+                : { actions: [<ContactCreateButton />] }),
             }
           : empty
       }

@@ -7,9 +7,8 @@ import {
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useQuery } from "@tanstack/react-query";
 import z from "zod";
-import { Add } from "@mui/icons-material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import ButtonLink from "@/components/links/ButtonLink";
+import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactList, {
   type IContactListProps,
 } from "@/containers/lists/ContactList";
@@ -29,15 +28,7 @@ export const Route = createFileRoute("/app/directory/contacts/")({
   component: RouteComponent,
   loader: (): TRouteLoaderData => ({
     slotProps: {
-      pageHeader: {
-        endContent: (
-          <ButtonLink
-            children="Create"
-            to="/app/directory/contacts/create"
-            startIcon={<Add />}
-          />
-        ),
-      },
+      pageHeader: { endContent: <ContactCreateButton variant="text" /> },
     },
   }),
 });

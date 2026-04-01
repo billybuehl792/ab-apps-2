@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Box,
   Stack,
@@ -6,7 +7,6 @@ import {
   type TypographyProps,
   type StackProps,
 } from "@mui/material";
-import { isValidElement, ReactNode } from "react";
 
 export interface IMetadataItem {
   id: string;
