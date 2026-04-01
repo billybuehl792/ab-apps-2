@@ -8,13 +8,12 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import z from "zod";
 import { Add } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import CustomLink from "@/components/links/CustomLink";
-import StatusWrapper from "@/components/layout/StatusWrapper";
 import { placeEndpoints } from "@/store/constants/places";
 import { placeListRequestSchema } from "@/store/schemas/places";
 import type { TRouteLoaderData } from "@/store/types/router";
 import PlaceList, { type IPlaceListProps } from "@/containers/lists/PlaceList";
 import { EObjectChangeType } from "@/store/enums/api";
+import ButtonLink from "@/components/links/ButtonLink";
 
 const paramsSchema = placeListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -22,22 +21,23 @@ const defaultParams = paramsSchema.parse({});
 export const Route = createFileRoute("/app/directory/places/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
-  pendingComponent: () => <StatusWrapper loading my={2} />,
-  errorComponent: ({ error }) => <StatusWrapper error={error} my={2} />,
   component: RouteComponent,
-  loader: (): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: {
-        endContent: (
-          <CustomLink
-            label="Create"
-            to="/app/dashboard/places/create"
-            icon={<Add />}
-          />
-        ),
+  loader: (): TRouteLoaderData => {
+    return {
+      slotProps: {
+        pageHeader: {
+          endContent: (
+            <ButtonLink
+              to="/app/directory/places/create"
+              children="Create"
+              startIcon={<Add />}
+              variant="text"
+            />
+          ),
+        },
       },
-    },
-  }),
+    };
+  },
 });
 
 function RouteComponent() {
@@ -66,7 +66,7 @@ function RouteComponent() {
     newParams: z.input<typeof placeListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/dashboard/places",
+      to: ".",
       search: placeListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,

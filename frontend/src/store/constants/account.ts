@@ -1,4 +1,9 @@
-import { AccountCircle, ManageAccounts } from "@mui/icons-material";
+import {
+  AccountCircle,
+  ManageAccounts,
+  PeopleOutline,
+  PersonOutline,
+} from "@mui/icons-material";
 import api from "../config/api";
 import { EUserListOrdering } from "../enums/account";
 import type {
@@ -19,6 +24,10 @@ import type { TDetailResponse } from "../types/api";
 export const AccountIcons = {
   Detail: AccountCircle,
   Settings: ManageAccounts,
+  users: {
+    Detail: PersonOutline,
+    List: PeopleOutline,
+  },
 };
 
 /** API */

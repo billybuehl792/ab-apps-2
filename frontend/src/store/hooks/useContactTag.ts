@@ -8,17 +8,20 @@ import {
   contactEndpoints,
   getPlaceholderContactTag,
 } from "../constants/contacts";
-import { EContactOptionId } from "../enums/contacts";
+import { EContactTagOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
 import { NULL_ID } from "../constants/api";
 import { markdownUtils } from "../utils/markdown";
 import type { TContactTag } from "../types/contacts";
 
-type TContactTagMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
+type TContactTagMenuOption = IMenuOption<
+  EContactTagOptionId,
+  EContactTagOptionId
+>;
 
 export interface IUseContactTagOptions {
   disabled?: boolean;
-  hideOptions?: EContactOptionId[];
+  hideOptions?: EContactTagOptionId[];
   options?:
     | TContactTagMenuOption[]
     | ((
@@ -142,46 +145,48 @@ const useContactTag = (
 
   /** Options */
 
-  const baseMenuOptions: IMenuOption<EContactOptionId, EContactOptionId>[] =
-    useMemo(
-      () => [
-        {
-          id: EContactOptionId.Detail,
-          render: !options?.hideOptions?.includes(EContactOptionId.Detail),
-          value: EContactOptionId.Detail,
-          label: "Detail",
-          Icon: Info,
-          isDisabled: isDisabled,
-          link: {
-            to: "/app/dashboard/contacts/tags/$id",
-            params: { id: String(contactTagId) },
-          },
+  const baseMenuOptions: IMenuOption<
+    EContactTagOptionId,
+    EContactTagOptionId
+  >[] = useMemo(
+    () => [
+      {
+        id: EContactTagOptionId.Detail,
+        render: !options?.hideOptions?.includes(EContactTagOptionId.Detail),
+        value: EContactTagOptionId.Detail,
+        label: "Detail",
+        Icon: Info,
+        isDisabled: isDisabled,
+        link: {
+          to: "/app/directory/contacts/tags/$id",
+          params: { id: String(contactTagId) },
         },
-        {
-          id: EContactOptionId.Edit,
-          render: !options?.hideOptions?.includes(EContactOptionId.Edit),
-          value: EContactOptionId.Edit,
-          label: "Edit",
-          Icon: Edit,
-          isDisabled: isDisabled,
-          link: {
-            to: "/app/dashboard/contacts/tags/$id/edit",
-            params: { id: String(contactTagId) },
-          },
+      },
+      {
+        id: EContactTagOptionId.Edit,
+        render: !options?.hideOptions?.includes(EContactTagOptionId.Edit),
+        value: EContactTagOptionId.Edit,
+        label: "Edit",
+        Icon: Edit,
+        isDisabled: isDisabled,
+        link: {
+          to: "/app/directory/contacts/tags/$id/edit",
+          params: { id: String(contactTagId) },
         },
-        {
-          id: EContactOptionId.Delete,
-          render: !options?.hideOptions?.includes(EContactOptionId.Delete),
-          value: EContactOptionId.Delete,
-          label: "Delete",
-          Icon: Delete,
-          color: "error.main",
-          isDisabled: isChangeDisabled,
-          onClick: handleDelete,
-        },
-      ],
-      [isDisabled, isChangeDisabled, handleDelete, options],
-    );
+      },
+      {
+        id: EContactTagOptionId.Delete,
+        render: !options?.hideOptions?.includes(EContactTagOptionId.Delete),
+        value: EContactTagOptionId.Delete,
+        label: "Delete",
+        Icon: Delete,
+        color: "error.main",
+        isDisabled: isChangeDisabled,
+        onClick: handleDelete,
+      },
+    ],
+    [isDisabled, isChangeDisabled, handleDelete, options],
+  );
 
   const menuOptions = useMemo(
     () =>

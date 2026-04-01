@@ -1,12 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { ArrowBack } from "@mui/icons-material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import CustomLink from "@/components/links/CustomLink";
 import { errorUtils } from "@/store/utils/error";
+import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
+import { idSchema } from "@/store/schemas/basic";
 import type { TPlace } from "@/store/types/places";
 import type { TRouteLoaderData } from "@/store/types/router";
-import { idSchema } from "@/store/schemas/basic";
-import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 
 export const Route = createFileRoute("/app/directory/places/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TPlace>> => {
@@ -25,14 +23,5 @@ export const Route = createFileRoute("/app/directory/places/$id")({
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
   },
-  pendingComponent: () => <StatusWrapper loading="loading place..." my={2} />,
-  notFoundComponent: () => (
-    <StatusWrapper
-      error={{
-        label: "Place not found :(",
-        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
-      }}
-      my={2}
-    />
-  ),
+  pendingComponent: () => <StatusWrapper loading="Loading Place..." my={2} />,
 });

@@ -1,10 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
 import PageHeader from "@/components/layout/PageHeader";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import CustomLink from "@/components/links/CustomLink";
+import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import { errorUtils } from "@/store/utils/error";
 import type { TRouteLoaderData } from "@/store/types/router";
@@ -30,17 +29,9 @@ export const Route = createFileRoute("/app/profile/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusWrapper loading="loading user..." my={2} />,
-  errorComponent: ({ error }) => <StatusWrapper error={error} my={2} />,
-  notFoundComponent: () => (
-    <StatusWrapper
-      error={{
-        label: "User not found :(",
-        actions: [<CustomLink label="Back" icon={<ArrowBack />} to=".." />],
-      }}
-      my={2}
-    />
-  ),
+  pendingComponent: () => <StatusWrapper loading="loading user..." m={2} />,
+  errorComponent: ({ error }) => <StatusWrapper error={error} m={2} />,
+  notFoundComponent: () => <PageNotFoundCard m={2} />,
 });
 
 function RouteComponent() {

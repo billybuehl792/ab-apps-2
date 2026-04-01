@@ -49,7 +49,7 @@ const PlaceListCard: React.FC<IPlaceListCardProps> = ({
         />
       }
       link={{
-        to: "/app/dashboard/places/$id",
+        to: "/app/directory/places/$id",
         params: { id: String(place.id) },
       }}
       disabled={placeHook.disabled}

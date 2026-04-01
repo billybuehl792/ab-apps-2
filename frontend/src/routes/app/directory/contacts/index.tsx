@@ -68,7 +68,7 @@ function RouteComponent() {
     newParams: z.input<typeof contactListRequestSchema.shape.params>,
   ) =>
     navigate({
-      to: "/app/directory/contacts",
+      to: ".",
       search: contactListRequestSchema.shape.params.parse({
         ...params,
         ...newParams,

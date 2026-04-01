@@ -140,7 +140,7 @@ const usePlace = (
           Icon: Info,
           isDisabled: isDisabled,
           link: {
-            to: "/app/dashboard/places/$id",
+            to: "/app/directory/places/$id",
             params: { id: String(placeId) },
           },
         },
@@ -152,7 +152,7 @@ const usePlace = (
           Icon: Edit,
           isDisabled: isDisabled,
           link: {
-            to: "/app/dashboard/places/$id/edit",
+            to: "/app/directory/places/$id/edit",
             params: { id: String(placeId) },
           },
         },

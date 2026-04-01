@@ -1,10 +1,10 @@
 import { type ComponentProps } from "react";
 import { Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import ButtonLink from "@/components/links/ButtonLink";
 import PaginatedList, {
   type IPaginatedListProps,
 } from "@/components/lists/PaginatedList";
-import CustomLink from "@/components/links/CustomLink";
 import PlaceListCard from "./components/cards/PlaceListCard";
 import PlaceListOrderingButtonGroup, {
   type IPlaceListOrderingButtonGroupProps,
@@ -57,10 +57,10 @@ const PlaceList: React.FC<IPlaceListProps> = ({
                 ? { description: `No results for "${options.params.search}".` }
                 : {
                     actions: [
-                      <CustomLink
-                        label="Create"
-                        to="/app/dashboard/places/create"
-                        icon={<Add />}
+                      <ButtonLink
+                        children="Create"
+                        to="/app/directory/places/create"
+                        startIcon={<Add />}
                       />,
                     ],
                   }),
