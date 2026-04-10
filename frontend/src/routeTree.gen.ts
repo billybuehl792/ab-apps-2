@@ -17,8 +17,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppDirectoryRouteImport } from './routes/app/directory'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
+import { Route as AppBoardRouteImport } from './routes/app/board'
 import { Route as AppAdminRouteImport } from './routes/app/admin'
 import { Route as AppDirectoryIndexRouteImport } from './routes/app/directory/index'
+import { Route as AppBoardIndexRouteImport } from './routes/app/board/index'
 import { Route as AppAdminIndexRouteImport } from './routes/app/admin/index'
 import { Route as ResetPasswordEncodedUserIdTokenRouteImport } from './routes/reset-password.$encodedUserId.$token'
 import { Route as AppProfileIdRouteImport } from './routes/app/profile.$id'
@@ -79,6 +81,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBoardRoute = AppBoardRouteImport.update({
+  id: '/board',
+  path: '/board',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -88,6 +95,11 @@ const AppDirectoryIndexRoute = AppDirectoryIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppDirectoryRoute,
+} as any)
+const AppBoardIndexRoute = AppBoardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppBoardRoute,
 } as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/',
@@ -200,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/board': typeof AppBoardRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/directory': typeof AppDirectoryRouteWithChildren
   '/app/': typeof AppIndexRoute
@@ -209,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin/': typeof AppAdminIndexRoute
+  '/app/board/': typeof AppBoardIndexRoute
   '/app/directory/': typeof AppDirectoryIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
@@ -234,6 +248,7 @@ export interface FileRoutesByTo {
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin': typeof AppAdminIndexRoute
+  '/app/board': typeof AppBoardIndexRoute
   '/app/directory': typeof AppDirectoryIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
@@ -255,6 +270,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/board': typeof AppBoardRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/directory': typeof AppDirectoryRouteWithChildren
   '/app/': typeof AppIndexRoute
@@ -264,6 +280,7 @@ export interface FileRoutesById {
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin/': typeof AppAdminIndexRoute
+  '/app/board/': typeof AppBoardIndexRoute
   '/app/directory/': typeof AppDirectoryIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
@@ -288,6 +305,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/app/admin'
+    | '/app/board'
     | '/app/dashboard'
     | '/app/directory'
     | '/app/'
@@ -297,6 +315,7 @@ export interface FileRouteTypes {
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin/'
+    | '/app/board/'
     | '/app/directory/'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
@@ -322,6 +341,7 @@ export interface FileRouteTypes {
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin'
+    | '/app/board'
     | '/app/directory'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
@@ -342,6 +362,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/app/admin'
+    | '/app/board'
     | '/app/dashboard'
     | '/app/directory'
     | '/app/'
@@ -351,6 +372,7 @@ export interface FileRouteTypes {
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin/'
+    | '/app/board/'
     | '/app/directory/'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
@@ -434,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/board': {
+      id: '/app/board'
+      path: '/board'
+      fullPath: '/app/board'
+      preLoaderRoute: typeof AppBoardRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin': {
       id: '/app/admin'
       path: '/admin'
@@ -447,6 +476,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/directory/'
       preLoaderRoute: typeof AppDirectoryIndexRouteImport
       parentRoute: typeof AppDirectoryRoute
+    }
+    '/app/board/': {
+      id: '/app/board/'
+      path: '/'
+      fullPath: '/app/board/'
+      preLoaderRoute: typeof AppBoardIndexRouteImport
+      parentRoute: typeof AppBoardRoute
     }
     '/app/admin/': {
       id: '/app/admin/'
@@ -614,6 +650,18 @@ const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
   AppAdminRouteChildren,
 )
 
+interface AppBoardRouteChildren {
+  AppBoardIndexRoute: typeof AppBoardIndexRoute
+}
+
+const AppBoardRouteChildren: AppBoardRouteChildren = {
+  AppBoardIndexRoute: AppBoardIndexRoute,
+}
+
+const AppBoardRouteWithChildren = AppBoardRoute._addFileChildren(
+  AppBoardRouteChildren,
+)
+
 interface AppDirectoryContactsIdRouteChildren {
   AppDirectoryContactsIdEditRoute: typeof AppDirectoryContactsIdEditRoute
   AppDirectoryContactsIdIndexRoute: typeof AppDirectoryContactsIdIndexRoute
@@ -691,6 +739,7 @@ const AppDirectoryRouteWithChildren = AppDirectoryRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
+  AppBoardRoute: typeof AppBoardRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
   AppDirectoryRoute: typeof AppDirectoryRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -699,6 +748,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
+  AppBoardRoute: AppBoardRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
   AppDirectoryRoute: AppDirectoryRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
