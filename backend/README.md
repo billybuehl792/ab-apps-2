@@ -1,13 +1,12 @@
-# Django REST API with JWT Auth, Clients & WorkOrders
+# Django REST API with JWT Auth
 
-A Django + Django REST Framework backend with JWT authentication and two models: `Client` (customers) and `WorkOrder` (work orders) in a one-to-many relationship.
+A Django + Django REST Framework backend with JWT authentication.
 
 ---
 
 ## 🚀 Features
 
 - JWT authentication using `djangorestframework-simplejwt`
-- CRUD API for Clients and WorkOrders
 - Filtering, searching, and ordering with DRF
 - Django Admin integration
 
@@ -105,33 +104,7 @@ Response:
 Use the token in your requests:
 
 ```bash
-curl -H "Authorization: Bearer <ACCESS_TOKEN>" http://127.0.0.1:8000/api/clients/
-```
-
----
-
-## 📚 API Endpoints
-
-### Clients
-
-- `GET /api/clients/` → list all clients
-- `POST /api/clients/` → create a new client
-- `GET /api/clients/{id}/` → retrieve one client
-- `PUT/PATCH /api/clients/{id}/` → update client
-- `DELETE /api/clients/{id}/` → delete client
-
-### work-orders
-
-- `GET /api/work-orders/` → list all work-orders
-- `POST /api/work-orders/` → create a work-order
-- `GET /api/work-orders/{id}/` → retrieve one work-order
-- `PUT/PATCH /api/work-orders/{id}/` → update work-order
-- `DELETE /api/work-orders/{id}/` → delete work-order
-
-Supports filtering, searching, and ordering. Example:
-
-```bash
-/work-orders/?client=1&status=in_progress&ordering=price
+curl -H "Authorization: Bearer <ACCESS_TOKEN>" http://127.0.0.1:8000/api/contacts/
 ```
 
 ---
@@ -142,7 +115,7 @@ Supports filtering, searching, and ordering. Example:
 project-root/
 ├── core/                # Django project settings
 ├── api/                 # App containing models, views, serializers
-│   ├── models.py        # Database models (Client, WorkOrder)
+│   ├── models.py        # Database models (Contact, Place, etc.)
 │   ├── serializers.py   # DRF serializers (JSON ↔ Models)
 │   ├── views.py         # API endpoints (ViewSets)
 │   ├── admin.py         # Django admin config
@@ -163,6 +136,5 @@ project-root/
 ## 🔧 Next Steps
 
 - Configure production settings (`SECRET_KEY`, `ALLOWED_HOSTS`, DB config)
-- Add ownership (link Clients/work-orders to `User`) for multi-user apps
 - Deploy backend to services like Railway, Render, or Heroku
 - Deploy frontend (React/Vite) separately on Vercel and point it to this API

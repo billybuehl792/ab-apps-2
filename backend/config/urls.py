@@ -26,6 +26,4 @@ urlpatterns = [
     path("api/documents/", include("app.documents.urls")),
     path("api/places/", include("app.places.urls")),
     path("api/contacts/", include("app.contacts.urls")),
-    path("api/clients/", include("app.clients.urls")),
-    path("api/work-orders/", include("app.work_orders.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
