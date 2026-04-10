@@ -9,7 +9,7 @@ export const Route = createFileRoute("/app/directory/places/$id/")({
 function RouteComponent() {
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/dashboard/places/$id" });
+  const loaderData = useLoaderData({ from: "/app/directory/places/$id" });
 
   return (
     <Stack spacing={2}>

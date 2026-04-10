@@ -19,7 +19,7 @@ const UserListCard = ({ user, ...props }: UserListCardProps) => {
   return (
     <Stack component={Card} position="relative" {...props}>
       <CardActionAreaLink
-        to="/app/dashboard/admin/users/$id"
+        to="/app/admin/users/$id"
         params={{ id: String(user.id) }}
       >
         <CardContent

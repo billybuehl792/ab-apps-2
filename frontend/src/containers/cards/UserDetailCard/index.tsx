@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 import Metadata from "@/components/lists/Metadata";
 import UserGroupChip from "@/containers/chips/UserGroupChip";
-import type { User } from "@/store/types/account";
+import type { TUser } from "@/store/types/account";
 
 interface UserDetailCardProps extends CardProps {
-  user: User;
+  user: TUser;
 }
 
 const UserDetailCard = ({ user, ...props }: UserDetailCardProps) => {

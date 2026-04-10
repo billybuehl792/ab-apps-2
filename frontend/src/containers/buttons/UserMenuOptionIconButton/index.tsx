@@ -2,16 +2,16 @@ import { type ComponentProps } from "react";
 import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
 import { useNavigate } from "@tanstack/react-router";
 import { Person } from "@mui/icons-material";
-import type { IUser } from "@/store/types/account";
+import type { TUser } from "@/store/types/account";
 
-interface IUserMenuOptionIconButtonProps extends Omit<
+interface TUserMenuOptionIconButtonProps extends Omit<
   ComponentProps<typeof MenuOptionIconButton>,
   "options"
 > {
-  user: IUser | IUser["id"];
+  user: TUser | TUser["id"];
 }
 
-const UserMenuOptionIconButton: React.FC<IUserMenuOptionIconButtonProps> = ({
+const UserMenuOptionIconButton: React.FC<TUserMenuOptionIconButtonProps> = ({
   user,
   ...props
 }) => {
@@ -28,10 +28,7 @@ const UserMenuOptionIconButton: React.FC<IUserMenuOptionIconButtonProps> = ({
       label: "Profile",
       icon: <Person />,
       onClick: () =>
-        navigate({
-          to: "/app/dashboard/profile/$id",
-          params: { id: String(userId) },
-        }),
+        navigate({ to: "/app/profile/$id", params: { id: String(userId) } }),
     },
   ];
 

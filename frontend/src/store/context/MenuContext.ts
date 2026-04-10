@@ -6,7 +6,7 @@ import {
 } from "react";
 
 export default createContext<{
-  open: <TOptions extends MenuOption[] = MenuOption[]>(
+  open: <TOptions extends IMenuOption[] = IMenuOption[]>(
     options: {
       title?: ReactNode;
       options: TOptions;

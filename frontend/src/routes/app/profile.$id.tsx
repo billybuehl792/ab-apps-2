@@ -29,7 +29,7 @@ export const Route = createFileRoute("/app/profile/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusWrapper loading="loading user..." m={2} />,
+  pendingComponent: () => <StatusWrapper loading="Loading User..." m={2} />,
   errorComponent: ({ error }) => <StatusWrapper error={error} m={2} />,
   notFoundComponent: () => <PageNotFoundCard m={2} />,
 });

@@ -42,7 +42,7 @@ source .venv/bin/activate # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Create your environment file
+### 4. Create your environment file and add variables
 
 ```bash
 cp .env.sample .env # Windows (PowerShell): Copy-Item .env.sample .env
@@ -67,7 +67,13 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-The API will be available at: **http://127.0.0.1:8000/api/**
+to expose on network (for preview):
+
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+The API will be available at: **http://127.0.0.1:8000/api/** or **http://192.168.1.x:8000/api/**
 
 ---
 
