@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from "react";
+import { useLocation } from "@tanstack/react-router";
 import {
   Collapse,
   List,
@@ -46,6 +47,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
 
   /** Values */
 
+  const location = useLocation();
   const hasChildren =
     item.items?.some(({ render }) => render !== false) ?? false;
 
@@ -62,11 +64,27 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
     </Fragment>
   );
 
+  /** Callbacks */
+
+  const handleOnExpandChange = (newExpanded: boolean) => {
+    setExpanded(newExpanded);
+    item.onExpandChange?.(newExpanded);
+  };
+
   /** Effects */
 
   useEffect(() => {
-    if (typeof item.expanded === "boolean") setExpanded(item.expanded);
+    if (typeof item.expanded === "boolean") handleOnExpandChange(item.expanded);
   }, [item.expanded]);
+
+  useEffect(() => {
+    if (!hasChildren || !item.link?.to) return;
+    const isChildPath = location.pathname.startsWith(item.link.to);
+    if (isChildPath) {
+      const isExactPath = location.pathname === item.link.to;
+      if (!isExactPath) handleOnExpandChange(true);
+    }
+  }, [location.pathname, item.link?.to, hasChildren]);
 
   return (
     <>
@@ -74,11 +92,14 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
         disablePadding
         {...(hasChildren && {
           secondaryAction: (
-            <ExpandIconButton expanded={expanded} onChange={setExpanded} />
+            <ExpandIconButton
+              expanded={expanded}
+              onChange={handleOnExpandChange}
+            />
           ),
         })}
         {...props}
-        sx={[{ ...item.sx }, sxUtils.asArray(props.sx)]}
+        sx={[...sxUtils.asArray(item.sx), ...sxUtils.asArray(props.sx)]}
       >
         {item.link ? (
           <ListItemButtonLink

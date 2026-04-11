@@ -1,4 +1,3 @@
-import { useLocation } from "@tanstack/react-router";
 import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
@@ -14,7 +13,6 @@ const NavList = (props: Partial<INestedListProps>) => {
   /** Values */
 
   const auth = useAuth();
-  const location = useLocation();
 
   const isAdmin = auth.me?.groups.some(
     (group) =>
@@ -35,10 +33,6 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Board",
       Icon: CalendarViewMonth,
       link: { to: "/app/board" },
-      expanded:
-        (location.pathname !== "/app/board" &&
-          location.pathname.startsWith("/app/board")) ||
-        undefined,
       items: [
         {
           id: "jobs",
@@ -55,10 +49,6 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Directory",
       Icon: Groups,
       link: { to: "/app/directory" },
-      expanded:
-        (location.pathname !== "/app/directory" &&
-          location.pathname.startsWith("/app/directory")) ||
-        undefined,
       items: [
         {
           id: "contacts",
