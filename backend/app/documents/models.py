@@ -25,8 +25,6 @@ def thumbnail_upload_to(instance, filename):
 
 
 class Document(TimeStampedModel):
-    uploaded_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True)
     label = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     file = models.FileField(upload_to=document_upload_to)
@@ -35,11 +33,12 @@ class Document(TimeStampedModel):
     original_filename = models.CharField(
         max_length=255, blank=True, editable=False)
     mime_type = models.CharField(max_length=255, blank=True, editable=False)
-
     content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+    uploaded_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:  # type: ignore
         indexes = [
@@ -53,6 +52,3 @@ class Document(TimeStampedModel):
             mime, _ = mimetypes.guess_type(self.file.name)
             self.mime_type = mime or ""
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.label or self.file.name

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
-import { Groups, Home } from "@mui/icons-material";
+import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
 import ListCard from "@/components/cards/ListCard";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import type { TRouteLoaderData } from "@/store/types/router";
@@ -22,6 +22,14 @@ function RouteComponent() {
             label="Directory"
             description="Contacts and Places"
             link={{ to: "/app/directory" }}
+          />
+          <ListCard
+            startContent={
+              <CalendarViewMonth fontSize="large" color="disabled" />
+            }
+            label="Board"
+            description="Jobs and Tasks"
+            link={{ to: "/app/board" }}
           />
         </Stack>
       </Stack>

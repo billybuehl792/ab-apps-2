@@ -15,6 +15,7 @@ class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = JobsFilter
+    ordering = ("-created_at",)
     search_fields = ("label", "description", "assignee__first_name", "assignee__last_name",
                      "recipient__first_name", "recipient__last_name", "place__address_full")
     ordering_fields = ("created_at", "updated_at", "label",

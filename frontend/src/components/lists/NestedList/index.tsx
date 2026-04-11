@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
   Collapse,
   List,
@@ -49,33 +49,23 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
   const hasChildren =
     item.items?.some(({ render }) => render !== false) ?? false;
 
-  const ListItemContent = useMemo(
-    () => (
-      <Fragment>
-        {(!!item.icon || !!item.Icon) && (
-          <ListItemIcon>{item.Icon ? <item.Icon /> : item.icon}</ListItemIcon>
-        )}
-        <ListItemText>
-          <Typography variant="body2" fontWeight="inherit" noWrap>
-            {item.label}
-          </Typography>
-        </ListItemText>
-      </Fragment>
-    ),
-    [item],
+  const ListItemContent = (
+    <Fragment>
+      {(!!item.icon || !!item.Icon) && (
+        <ListItemIcon>{item.Icon ? <item.Icon /> : item.icon}</ListItemIcon>
+      )}
+      <ListItemText>
+        <Typography variant="body2" fontWeight="inherit" noWrap>
+          {item.label}
+        </Typography>
+      </ListItemText>
+    </Fragment>
   );
-
-  /** Callbacks */
-
-  const handleOnClick = () => {
-    item?.onClick?.();
-    if (hasChildren) setExpanded(true);
-  };
 
   /** Effects */
 
   useEffect(() => {
-    setExpanded(!!item.expanded);
+    if (typeof item.expanded === "boolean") setExpanded(item.expanded);
   }, [item.expanded]);
 
   return (
@@ -84,10 +74,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
         disablePadding
         {...(hasChildren && {
           secondaryAction: (
-            <ExpandIconButton
-              expanded={item.expanded || expanded}
-              onChange={setExpanded}
-            />
+            <ExpandIconButton expanded={expanded} onChange={setExpanded} />
           ),
         })}
         {...props}
@@ -98,7 +85,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
             {...item.link}
             selected={item.selected}
             disabled={item.disabled}
-            onClick={handleOnClick}
+            onClick={item.onClick}
           >
             {ListItemContent}
           </ListItemButtonLink>
@@ -106,7 +93,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
           <ListItemButton
             selected={item.selected}
             disabled={item.disabled}
-            onClick={handleOnClick}
+            onClick={item.onClick}
           >
             {ListItemContent}
           </ListItemButton>

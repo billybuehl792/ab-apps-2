@@ -1,6 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
+import { EJobListOrdering } from "../enums/jobs";
 
 export const jobSchema = z.object({
   id: idSchema,
@@ -34,7 +35,13 @@ export const jobUpdateSchema = z.object({
   completed_at: z.string().datetime().nullable().optional(),
 });
 
-export const jobListRequestSchema = listRequestSchema;
+export const jobListRequestSchema = listRequestSchema.extend({
+  params: listRequestSchema.shape.params.extend({
+    ordering: z.nativeEnum(EJobListOrdering).default(EJobListOrdering.LabelAsc),
+    completed: z.boolean().optional(),
+    scheduled: z.boolean().optional(),
+  }),
+});
 
 export const jobListResponseSchema = listResponseSchema.extend({
   results: z.array(jobSchema),

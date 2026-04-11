@@ -1,3 +1,4 @@
+import { useLocation } from "@tanstack/react-router";
 import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
@@ -7,11 +8,13 @@ import { AccountIcons } from "@/store/constants/account";
 import { PlaceIcons } from "@/store/constants/places";
 import { ContactIcons } from "@/store/constants/contacts";
 import { EUserGroup } from "@/store/enums/account";
+import { JobIcons } from "@/store/constants/jobs";
 
 const NavList = (props: Partial<INestedListProps>) => {
   /** Values */
 
   const auth = useAuth();
+  const location = useLocation();
 
   const isAdmin = auth.me?.groups.some(
     (group) =>
@@ -32,6 +35,19 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Board",
       Icon: CalendarViewMonth,
       link: { to: "/app/board" },
+      expanded:
+        (location.pathname !== "/app/board" &&
+          location.pathname.startsWith("/app/board")) ||
+        undefined,
+      items: [
+        {
+          id: "jobs",
+          value: "jobs",
+          label: "Jobs",
+          Icon: JobIcons.List,
+          link: { to: "/app/board/jobs" },
+        },
+      ],
     },
     {
       id: "directory",
@@ -39,6 +55,10 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Directory",
       Icon: Groups,
       link: { to: "/app/directory" },
+      expanded:
+        (location.pathname !== "/app/directory" &&
+          location.pathname.startsWith("/app/directory")) ||
+        undefined,
       items: [
         {
           id: "contacts",

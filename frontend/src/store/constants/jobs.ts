@@ -7,6 +7,7 @@ import type {
   TJobListRequest,
   TJobListResponse,
 } from "../types/jobs";
+import { EJobListOrdering } from "../enums/jobs";
 
 /** Icons */
 
@@ -39,6 +40,33 @@ export const jobEndpoints = {
 };
 
 /** Other */
+
+export const jobListOrderingOptions: TOrderingOption<EJobListOrdering>[] = [
+  {
+    id: "label",
+    label: "Label",
+    value: {
+      asc: EJobListOrdering.LabelAsc,
+      desc: EJobListOrdering.LabelDesc,
+    },
+  },
+  {
+    id: "created_at",
+    label: "Created",
+    value: {
+      asc: EJobListOrdering.CreatedAtAsc,
+      desc: EJobListOrdering.CreatedAtDesc,
+    },
+  },
+  {
+    id: "updated_at",
+    label: "Updated",
+    value: {
+      asc: EJobListOrdering.UpdatedAtAsc,
+      desc: EJobListOrdering.UpdatedAtDesc,
+    },
+  },
+];
 
 export const getPlaceholderJob = (
   data: TWithRequired<Partial<TJob>, "id">,

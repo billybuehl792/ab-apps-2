@@ -22,6 +22,7 @@ function RouteComponent() {
         startContent={<JobIcons.List fontSize="large" color="disabled" />}
         label="Jobs"
         description={`Total: ${jobListQuery.data?.count ?? "-"}`}
+        link={{ to: "/app/board/jobs" }}
       />
     </Stack>
   );
