@@ -63,10 +63,9 @@ INSTALLED_APPS = [
     "app.common",
     "app.account",
     "app.documents",
-    "app.places",
     "app.contacts",
-    "app.clients",
-    "app.work_orders",
+    "app.places",
+    "app.jobs",
 ]
 
 MIDDLEWARE = [

@@ -15,9 +15,10 @@ class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = ContactsFilter
+    ordering = ("last_name", "first_name")
+    ordering_fields = ("created_at", "updated_at", "first_name", "last_name")
     search_fields = ("first_name", "last_name",
                      "email", "phone_primary", "place__address_full")
-    ordering_fields = ("created_at", "updated_at", "first_name", "last_name")
 
     def get_serializer_class(self):  # type: ignore[override]
         if self.action in ("list", "retrieve"):

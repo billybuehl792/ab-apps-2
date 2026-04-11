@@ -1,4 +1,4 @@
-import { Groups, Home } from "@mui/icons-material";
+import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
 } from "@/components/lists/NestedList";
@@ -7,6 +7,7 @@ import { AccountIcons } from "@/store/constants/account";
 import { PlaceIcons } from "@/store/constants/places";
 import { ContactIcons } from "@/store/constants/contacts";
 import { EUserGroup } from "@/store/enums/account";
+import { JobIcons } from "@/store/constants/jobs";
 
 const NavList = (props: Partial<INestedListProps>) => {
   /** Values */
@@ -25,6 +26,22 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Home",
       Icon: Home,
       link: { to: "/app/dashboard", activeOptions: { exact: true } },
+    },
+    {
+      id: "board",
+      value: "board",
+      label: "Board",
+      Icon: CalendarViewMonth,
+      link: { to: "/app/board" },
+      items: [
+        {
+          id: "jobs",
+          value: "jobs",
+          label: "Jobs",
+          Icon: JobIcons.List,
+          link: { to: "/app/board/jobs" },
+        },
+      ],
     },
     {
       id: "directory",

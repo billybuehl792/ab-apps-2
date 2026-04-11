@@ -1,4 +1,3 @@
-import { type ComponentProps } from "react";
 import {
   Card,
   CardContent,
@@ -11,47 +10,45 @@ import Metadata from "@/components/lists/Metadata";
 import { DateTimeFormat } from "@/store/enums/datetime";
 import type { TContact } from "@/store/types/contacts";
 
-interface ContactDetailCardProps extends CardProps {
+interface IContactDetailCardProps extends CardProps {
   contact: TContact;
 }
 
-const ContactDetailCard = ({ contact, ...props }: ContactDetailCardProps) => {
-  /** Values */
-
-  const metadata: ComponentProps<typeof Metadata>["items"] = [
-    {
-      id: "email",
-      label: "Email",
-      value: contact.email,
-    },
-    {
-      id: "phone",
-      label: "Phone",
-      value: contact.phone_primary.toPhone(),
-    },
-    {
-      id: "created",
-      label: "Created",
-      value: dayjs(contact.created_at).fromNow(),
-      tooltip: dayjs(contact.created_at).format(
-        DateTimeFormat.DATETIME_MERIDIEM,
-      ),
-    },
-    {
-      id: "updated",
-      label: "Updated",
-      value: dayjs(contact.updated_at).fromNow(),
-      tooltip: dayjs(contact.updated_at).format(
-        DateTimeFormat.DATETIME_MERIDIEM,
-      ),
-    },
-  ];
-
+const ContactDetailCard = ({ contact, ...props }: IContactDetailCardProps) => {
   return (
     <Card variant="outlined" {...props}>
       <CardContent component={Stack} spacing={1}>
         <Typography variant="h6">{`${contact.first_name} ${contact.last_name}`}</Typography>
-        <Metadata items={metadata} />
+        <Metadata
+          items={[
+            {
+              id: "email",
+              label: "Email",
+              value: contact.email,
+            },
+            {
+              id: "phone",
+              label: "Phone",
+              value: contact.phone_primary.toPhone(),
+            },
+            {
+              id: "created",
+              label: "Created",
+              value: dayjs(contact.created_at).fromNow(),
+              tooltip: dayjs(contact.created_at).format(
+                DateTimeFormat.DATETIME_MERIDIEM,
+              ),
+            },
+            {
+              id: "updated",
+              label: "Updated",
+              value: dayjs(contact.updated_at).fromNow(),
+              tooltip: dayjs(contact.updated_at).format(
+                DateTimeFormat.DATETIME_MERIDIEM,
+              ),
+            },
+          ]}
+        />
       </CardContent>
     </Card>
   );

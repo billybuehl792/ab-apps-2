@@ -29,5 +29,6 @@ class PhoneNumberField(CharField):
             elif len(digits) == 10:
                 value = f'({digits[:3]}) {digits[3:6]}-{digits[6:]}'
             else:
-                raise ValidationError('Enter a valid 10-digit phone number, with optional country code.')
+                raise ValidationError(
+                    'Enter a valid 10-digit phone number, with optional country code.')
         return value

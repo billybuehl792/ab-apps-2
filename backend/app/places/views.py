@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 class PlaceViewSet(ModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceReadSerializer
+    ordering = ("city",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("country", "state", "city", "postal_code")
     search_fields = ("address_full", "address_short", "google_place_id")

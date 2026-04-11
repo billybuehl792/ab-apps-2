@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { useLocation } from "@tanstack/react-router";
 import {
   Collapse,
   List,
@@ -46,37 +47,44 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
 
   /** Values */
 
+  const location = useLocation();
   const hasChildren =
     item.items?.some(({ render }) => render !== false) ?? false;
 
-  const ListItemContent = useMemo(
-    () => (
-      <Fragment>
-        {(!!item.icon || !!item.Icon) && (
-          <ListItemIcon>{item.Icon ? <item.Icon /> : item.icon}</ListItemIcon>
-        )}
-        <ListItemText>
-          <Typography variant="body2" fontWeight="inherit" noWrap>
-            {item.label}
-          </Typography>
-        </ListItemText>
-      </Fragment>
-    ),
-    [item],
+  const ListItemContent = (
+    <Fragment>
+      {(!!item.icon || !!item.Icon) && (
+        <ListItemIcon>{item.Icon ? <item.Icon /> : item.icon}</ListItemIcon>
+      )}
+      <ListItemText>
+        <Typography variant="body2" fontWeight="inherit" noWrap>
+          {item.label}
+        </Typography>
+      </ListItemText>
+    </Fragment>
   );
 
   /** Callbacks */
 
-  const handleOnClick = () => {
-    item?.onClick?.();
-    if (hasChildren) setExpanded(true);
+  const handleOnExpandChange = (newExpanded: boolean) => {
+    setExpanded(newExpanded);
+    item.onExpandChange?.(newExpanded);
   };
 
   /** Effects */
 
   useEffect(() => {
-    setExpanded(!!item.expanded);
+    if (typeof item.expanded === "boolean") handleOnExpandChange(item.expanded);
   }, [item.expanded]);
+
+  useEffect(() => {
+    if (!hasChildren || !item.link?.to) return;
+    const isChildPath = location.pathname.startsWith(item.link.to);
+    if (isChildPath) {
+      const isExactPath = location.pathname === item.link.to;
+      if (!isExactPath) handleOnExpandChange(true);
+    }
+  }, [location.pathname, item.link?.to, hasChildren]);
 
   return (
     <>
@@ -85,20 +93,20 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
         {...(hasChildren && {
           secondaryAction: (
             <ExpandIconButton
-              expanded={item.expanded || expanded}
-              onChange={setExpanded}
+              expanded={expanded}
+              onChange={handleOnExpandChange}
             />
           ),
         })}
         {...props}
-        sx={[{ ...item.sx }, sxUtils.asArray(props.sx)]}
+        sx={[...sxUtils.asArray(item.sx), ...sxUtils.asArray(props.sx)]}
       >
         {item.link ? (
           <ListItemButtonLink
             {...item.link}
             selected={item.selected}
             disabled={item.disabled}
-            onClick={handleOnClick}
+            onClick={item.onClick}
           >
             {ListItemContent}
           </ListItemButtonLink>
@@ -106,7 +114,7 @@ const NestedListItem: React.FC<INestedListItemProps> = ({ item, ...props }) => {
           <ListItemButton
             selected={item.selected}
             disabled={item.disabled}
-            onClick={handleOnClick}
+            onClick={item.onClick}
           >
             {ListItemContent}
           </ListItemButton>

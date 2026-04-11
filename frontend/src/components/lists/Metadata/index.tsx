@@ -8,18 +8,22 @@ import {
   type StackProps,
 } from "@mui/material";
 
-export interface IMetadataItem {
+interface IMetadataProps extends StackProps {
+  items: IMetadataItem[];
+  slotProps?: {
+    item?: StackProps;
+    label?: TypographyProps;
+    value?: TypographyProps;
+  };
+}
+
+export interface IMetadataItem extends StackProps {
   id: string;
   label: ReactNode;
   value: ReactNode;
   tooltip?: ReactNode;
   render?: boolean;
-}
-
-interface IMetadataProps extends StackProps {
-  items: IMetadataItem[];
   slotProps?: {
-    item?: StackProps;
     label?: TypographyProps;
     value?: TypographyProps;
   };
@@ -31,41 +35,49 @@ const Metadata: React.FC<IMetadataProps> = ({ items, slotProps, ...props }) => {
       {items
         .filter((item) => item.render !== false)
         .map((item) => (
-          <Stack
-            key={item.id}
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            {...slotProps?.item}
-          >
-            {typeof item.label === "string" ||
-            typeof item.label === "number" ? (
-              <Typography variant="caption" noWrap {...slotProps?.label}>
-                {item.label}:
-              </Typography>
-            ) : (
-              item.label
-            )}
-            <Tooltip
-              title={
-                item?.tooltip ||
-                typeof item.value === "string" ||
-                typeof item.value === "number"
-                  ? String(item.value)
-                  : null
-              }
-            >
-              {typeof item.value === "string" ||
-              typeof item.value === "number" ? (
-                <Typography variant="caption" noWrap {...slotProps?.value}>
-                  {item.value}
-                </Typography>
-              ) : (
-                <Box component="span">{item.value}</Box>
-              )}
-            </Tooltip>
-          </Stack>
+          <MetadataItem key={item.id} {...item} {...slotProps?.item} />
         ))}
+    </Stack>
+  );
+};
+
+const MetadataItem: React.FC<IMetadataItem> = ({
+  render,
+  label,
+  value,
+  tooltip,
+  slotProps,
+  ...props
+}) => {
+  /** Components */
+
+  const ValueComponent =
+    typeof value === "string" || typeof value === "number" ? (
+      <Typography variant="caption" noWrap {...slotProps?.value}>
+        {value}
+      </Typography>
+    ) : (
+      <Box component="span">{value}</Box>
+    );
+
+  if (render === false) return null;
+  return (
+    <Stack direction="row" spacing={1} alignItems="center" {...props}>
+      {/* Label */}
+      {typeof label === "string" || typeof label === "number" ? (
+        <Typography variant="caption" noWrap {...slotProps?.label}>
+          {label}:
+        </Typography>
+      ) : (
+        label
+      )}
+
+      {/* Value */}
+      {tooltip ? (
+        <Tooltip title={tooltip}>{ValueComponent}</Tooltip>
+      ) : (
+        ValueComponent
+      )}
     </Stack>
   );
 };

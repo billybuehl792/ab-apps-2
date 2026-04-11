@@ -13,6 +13,7 @@ class DocumentViewSet(ModelViewSet):
 
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+    ordering = ("created_at",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     search_fields = ("label",)
     ordering_fields = ("created_at", "label")
