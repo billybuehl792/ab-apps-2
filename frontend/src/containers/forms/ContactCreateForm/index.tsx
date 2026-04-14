@@ -21,7 +21,7 @@ import type { TContact, TContactCreate } from "@/store/types/contacts";
 
 interface IContactCreateFormProps extends Omit<
   StackProps<"form">,
-  "onSubmit" | "onReset"
+  "component" | "onSubmit" | "onReset"
 > {
   initialValues?: Partial<TContactCreate>;
   onSuccess: (contact: TContact) => void;
@@ -105,7 +105,15 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
   });
 
   return (
-    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
+    <Stack
+      component="form"
+      noValidate
+      onSubmit={(e) => {
+        e.stopPropagation();
+        handleOnSubmit(e);
+      }}
+      {...props}
+    >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         {!!methods.formState.errors.root && (
           <FormHelperText error>

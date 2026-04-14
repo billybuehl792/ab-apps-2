@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { useBlocker } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import {
   Button,
   type ButtonProps,
@@ -18,14 +22,10 @@ import { errorUtils } from "@/store/utils/error";
 import { jobCreateSchema } from "@/store/schemas/jobs";
 import { NULL_ID } from "@/store/constants/api";
 import type { TJob, TJobCreate } from "@/store/types/jobs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import dayjs from "dayjs";
 
 interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
-  "onSubmit" | "onReset"
+  "component" | "onSubmit" | "onReset"
 > {
   initialValues?: Partial<TJobCreate>;
   onSuccess: (res: TJob) => void;
@@ -79,17 +79,22 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit((data) => {
-    createJobMutation.mutate(data, {
-      onSuccess,
-      onError: (error) => {
-        methods.setError("root", {
-          type: "server",
-          message: errorUtils.getErrorMessage(error),
-        });
-      },
-    });
-  });
+  const handleOnSubmit = methods.handleSubmit(
+    (data) => {
+      createJobMutation.mutate(data, {
+        onSuccess,
+        onError: (error) => {
+          methods.setError("root", {
+            type: "server",
+            message: errorUtils.getErrorMessage(error),
+          });
+        },
+      });
+    },
+    (event, e) => {
+      console.log("job submitted", e);
+    },
+  );
 
   /** Effects */
 
@@ -112,7 +117,15 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   });
 
   return (
-    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
+    <Stack
+      component="form"
+      noValidate
+      onSubmit={(e) => {
+        e.stopPropagation();
+        handleOnSubmit(e);
+      }}
+      {...props}
+    >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         {!!methods.formState.errors.root && (
           <FormHelperText error>
@@ -144,6 +157,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           render={({ field: { value, disabled, ...field }, formState }) => (
             <ContactIdAutocomplete
               value={value ?? null}
+              enableCreate
               label="Sales Representative"
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.representative}
@@ -158,6 +172,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           render={({ field: { value, disabled, ...field }, formState }) => (
             <ContactIdAutocomplete
               value={value ?? null}
+              enableCreate
               label="Assignee"
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.assignee}
@@ -172,6 +187,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           render={({ field: { value, disabled, ...field }, formState }) => (
             <ContactIdAutocomplete
               value={value ?? null}
+              enableCreate
               label="Recipient"
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.recipient}
@@ -186,6 +202,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           render={({ field: { value, disabled, ...field }, formState }) => (
             <ContactIdAutocomplete
               value={value ?? null}
+              enableCreate
               label="Referred By"
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.referred_by}
