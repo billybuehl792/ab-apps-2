@@ -1,12 +1,12 @@
 import { type ContextType, useState, type PropsWithChildren } from "react";
 import ConfirmContext from "@/store/context/ConfirmContext";
 import ConfirmDialog, {
-  type ConfirmOptions,
+  type IConfirmOptions,
 } from "@/components/modals/ConfirmDialog";
 
 const ConfirmProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<ConfirmOptions | null>(null);
+  const [options, setOptions] = useState<IConfirmOptions | null>(null);
   const [callback, setCallback] = useState<VoidFunction | null>(null);
   const [resolver, setResolver] = useState<((result: boolean) => void) | null>(
     null,

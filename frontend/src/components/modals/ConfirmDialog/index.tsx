@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import {
   Box,
   Button,
+  type ButtonProps,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,30 +13,30 @@ import {
 } from "@mui/material";
 import CloseIconButton from "@/components/buttons/CloseIconButton";
 
-export interface ConfirmOptions {
+export interface IConfirmOptions {
   title?: ReactNode;
   description?: ReactNode;
   content?: ReactNode;
-  confirmButtonText?: ReactNode;
-  cancelButtonText?: ReactNode;
+  confirmButton?: ButtonProps;
+  cancelButton?: ButtonProps;
 }
 
-interface ConfirmDialogProps
-  extends Omit<DialogProps, "title" | "content" | "onClose">, ConfirmOptions {
+interface IConfirmDialogProps
+  extends Omit<DialogProps, "title" | "content" | "onClose">, IConfirmOptions {
   onConfirm: VoidFunction;
   onClose: VoidFunction;
 }
 
-const ConfirmDialog = ({
+const ConfirmDialog: React.FC<IConfirmDialogProps> = ({
   title = "Confirm",
   description = "Are you sure you want to continue?",
   content,
-  confirmButtonText,
-  cancelButtonText,
+  confirmButton,
+  cancelButton,
   onConfirm,
   onClose,
   ...props
-}: ConfirmDialogProps) => {
+}) => {
   return (
     <Dialog
       aria-labelledby="confirm-dialog-title"
@@ -68,19 +69,26 @@ const ConfirmDialog = ({
         <DialogContentText id="alert-dialog-description" textAlign="center">
           {description}
         </DialogContentText>
-        {typeof content === "string" ? (
+        {typeof content === "string" || typeof content === "number" ? (
           <DialogContentText>{content}</DialogContentText>
         ) : (
           content
         )}
       </DialogContent>
       <DialogActions>
-        <Button variant="text" color="error" onClick={onClose}>
-          {cancelButtonText ?? "Cancel"}
-        </Button>
-        <Button onClick={onConfirm} autoFocus>
-          {confirmButtonText ?? "Confirm"}
-        </Button>
+        <Button
+          variant="text"
+          color="error"
+          children="Cancel"
+          onClick={onClose}
+          {...cancelButton}
+        />
+        <Button
+          autoFocus
+          children="Confirm"
+          onClick={onConfirm}
+          {...confirmButton}
+        />
       </DialogActions>
     </Dialog>
   );

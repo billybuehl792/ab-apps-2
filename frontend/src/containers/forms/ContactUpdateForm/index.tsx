@@ -1,11 +1,6 @@
-import React, { useEffect, type ChangeEventHandler } from "react";
-import {
-  Controller,
-  FormState,
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useBlocker } from "@tanstack/react-router";
 import {
   Button,
   type ButtonProps,
@@ -18,17 +13,17 @@ import PhoneField from "@/components/fields/PhoneField";
 import GoogleAutocompleteSuggestionListAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionListAutocomplete";
 import { contactUpdateSchema } from "@/store/schemas/contacts";
 import { errorUtils } from "@/store/utils/error";
-import type { TContact, TContactUpdate } from "@/store/types/contacts";
+import useConfirm from "@/store/hooks/useConfirm";
+import useContact from "@/store/hooks/useContact";
+import type { TContact } from "@/store/types/contacts";
 
 interface IContactUpdateFormProps extends Omit<
   StackProps<"form">,
   "onSubmit" | "onReset"
 > {
   contact: TContact;
-  onSubmit: SubmitHandler<TContactUpdate>;
-  onSubmitInvalid?: SubmitErrorHandler<TContactUpdate>;
-  onFormStateChange?: (formState: FormState<TContactUpdate>) => void;
-  onCancel?: ButtonProps["onClick"];
+  onSuccess: (contact: TContact) => void;
+  onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
@@ -39,51 +34,41 @@ interface IContactUpdateFormProps extends Omit<
 
 const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
   contact,
-  onSubmit,
-  onSubmitInvalid,
-  onFormStateChange,
+  onSuccess,
   onCancel,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const methods = useForm({
-    resolver: zodResolver(contactUpdateSchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone_primary: "",
-      phone_secondary: "",
-      place: null,
-    },
-  });
+  const confirm = useConfirm();
+  const contactHook = useContact(contact);
+  const methods = useForm({ resolver: zodResolver(contactUpdateSchema) });
 
-  const isFieldDisabled =
-    methods.formState.disabled || methods.formState.isSubmitting;
+  /** Mutations */
+
+  const updateContactMutation = contactHook.mutations.update;
+
+  /** Data */
+
+  const isDirty = methods.formState.isDirty;
+  const isSubmitting = updateContactMutation.isPending;
+  const isDisabled = methods.formState.disabled;
+  const isFieldDisabled = isDisabled || isSubmitting;
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit(async (data) => {
-    try {
-      await onSubmit(data);
-    } catch (error) {
-      setTimeout(() =>
-        methods.setError(
-          "root",
-          { type: "server", message: errorUtils.getErrorMessage(error) },
-          { shouldFocus: true },
-        ),
-      );
-      throw error;
-    }
-  }, onSubmitInvalid);
-
-  const handleOnReset: ChangeEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    methods.reset();
-  };
+  const handleOnSubmit = methods.handleSubmit((data) => {
+    updateContactMutation.mutate(data, {
+      onSuccess,
+      onError: (error) => {
+        methods.setError("root", {
+          type: "server",
+          message: errorUtils.getErrorMessage(error),
+        });
+      },
+    });
+  });
 
   /** Effects */
 
@@ -93,23 +78,27 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
       last_name: contact.last_name,
       email: contact.email,
       phone_primary: contact.phone_primary,
-      phone_secondary: contact.phone_secondary ?? "",
+      phone_secondary: contact.phone_secondary,
       place: contact.place,
     });
   }, [contact]);
 
-  useEffect(() => {
-    onFormStateChange?.(methods.formState);
-  }, [onFormStateChange, methods.formState]);
+  useBlocker({
+    shouldBlockFn: async () => {
+      return isDirty
+        ? !(await confirm({
+            title: "Unsaved Changes",
+            description:
+              "You have unsaved changes. Are you sure you want to leave?",
+            confirmButton: { color: "error", children: "Leave" },
+            cancelButton: { color: "primary", children: "Cancel" },
+          }))
+        : false;
+    },
+  });
 
   return (
-    <Stack
-      component="form"
-      noValidate
-      onSubmit={handleOnSubmit}
-      onReset={handleOnReset}
-      {...props}
-    >
+    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <Stack direction="row" spacing={1}>
           <TextField
@@ -178,25 +167,20 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
         justifyContent="end"
         {...slotProps?.actions}
       >
-        {!!onCancel && (
-          <Button
-            variant="text"
-            color="error"
-            disabled={methods.formState.disabled}
-            onClick={onCancel}
-            {...slotProps?.cancelButton}
-          >
-            Cancel
-          </Button>
-        )}
+        <Button
+          variant="text"
+          color="error"
+          children="Cancel"
+          onClick={onCancel}
+          {...slotProps?.cancelButton}
+        />
         <Button
           type="submit"
-          disabled={methods.formState.disabled}
-          loading={methods.formState.isValid && methods.formState.isSubmitting}
+          disabled={isDisabled}
+          loading={isSubmitting}
+          children="Save"
           {...slotProps?.submitButton}
-        >
-          Submit
-        </Button>
+        />
       </Stack>
     </Stack>
   );

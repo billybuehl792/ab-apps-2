@@ -12,4 +12,17 @@ const paramsSchema = z.object({
 const defaultParams = paramsSchema.parse({});
 const routeParamsSchema = fallback(paramsSchema, defaultParams);
 
-console.log(routeParamsSchema.parse({ page: 2, ids: [212] }));
+const schema = z.object({
+  name: z.string().default("test"),
+  age: z.number().int().positive().default(29),
+  status: z.enum(["active", "inactive"]).optional().catch(undefined),
+});
+
+console.log(schema.safeParse({}).data);
+// { name: 'test', age: 29 }
+
+console.log(schema.safeParse({ invalid_field: true, status: "invalid" }).data);
+// { name: 'test', age: 29, status: undefined }
+
+console.log(schema.safeParse({ name: "billy", status: "inactive" }).data);
+// { name: 'billy', age: 29, status: 'inactive' }

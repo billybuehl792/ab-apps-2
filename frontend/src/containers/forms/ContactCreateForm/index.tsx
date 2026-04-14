@@ -1,11 +1,6 @@
-import React, { useEffect, type ChangeEventHandler } from "react";
-import {
-  Controller,
-  FormState,
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useBlocker } from "@tanstack/react-router";
 import {
   Button,
   type ButtonProps,
@@ -17,18 +12,20 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneField from "@/components/fields/PhoneField";
 import GoogleAutocompleteSuggestionListAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionListAutocomplete";
+import useContact from "@/store/hooks/useContact";
+import useConfirm from "@/store/hooks/useConfirm";
 import { contactCreateSchema } from "@/store/schemas/contacts";
 import { errorUtils } from "@/store/utils/error";
-import type { TContactCreate } from "@/store/types/contacts";
+import { NULL_ID } from "@/store/constants/api";
+import type { TContact, TContactCreate } from "@/store/types/contacts";
 
 interface IContactCreateFormProps extends Omit<
   StackProps<"form">,
   "onSubmit" | "onReset"
 > {
-  onSubmit: SubmitHandler<TContactCreate>;
-  onSubmitInvalid?: SubmitErrorHandler<TContactCreate>;
-  onFormStateChange?: (formState: FormState<TContactCreate>) => void;
-  onCancel?: ButtonProps["onClick"];
+  initialValues?: Partial<TContactCreate>;
+  onSuccess: (contact: TContact) => void;
+  onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
@@ -37,64 +34,78 @@ interface IContactCreateFormProps extends Omit<
   };
 }
 
+const DEFAULT_VALUES: TContactCreate = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone_primary: "",
+  phone_secondary: null,
+  place: null,
+};
+
 const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
-  onSubmit,
-  onSubmitInvalid,
-  onFormStateChange,
+  initialValues,
+  onSuccess,
   onCancel,
   slotProps,
   ...props
 }) => {
   /** Values */
 
+  const confirm = useConfirm();
+  const contactHook = useContact(NULL_ID);
   const methods = useForm({
     resolver: zodResolver(contactCreateSchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone_primary: "",
-      phone_secondary: null,
-      place: null,
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
-  const isFieldDisabled =
-    methods.formState.disabled || methods.formState.isSubmitting;
+  /** Mutations */
+
+  const createContactMutation = contactHook.mutations.create;
+
+  /** Data */
+
+  const isDirty = methods.formState.isDirty;
+  const isSubmitting = createContactMutation.isPending;
+  const isDisabled = methods.formState.disabled;
+  const isFieldDisabled = isDisabled || isSubmitting;
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit(async (data) => {
-    try {
-      await onSubmit(data);
-    } catch (error) {
-      setTimeout(() => {
+  const handleOnSubmit = methods.handleSubmit((data) => {
+    createContactMutation.mutate(data, {
+      onSuccess,
+      onError: (error) => {
         methods.setError("root", {
           type: "server",
           message: errorUtils.getErrorMessage(error),
         });
-      });
-      throw error;
-    }
-  }, onSubmitInvalid);
+      },
+    });
+  });
 
-  const handleOnReset: ChangeEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    methods.reset();
-  };
+  /** Effects */
 
   useEffect(() => {
-    onFormStateChange?.(methods.formState);
-  }, [onFormStateChange, methods.formState]);
+    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
+  }, [initialValues]);
+
+  useBlocker({
+    shouldBlockFn: async () => {
+      return isDirty
+        ? !(await confirm({
+            title: "Unsaved Changes",
+            description:
+              "You have unsaved changes. Are you sure you want to leave?",
+            confirmButton: { color: "error", children: "Leave" },
+            cancelButton: { color: "primary", children: "Cancel" },
+          }))
+        : false;
+    },
+  });
 
   return (
-    <Stack
-      component="form"
-      noValidate
-      onSubmit={handleOnSubmit}
-      onReset={handleOnReset}
-      {...props}
-    >
+    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         {!!methods.formState.errors.root && (
           <FormHelperText error>
@@ -167,25 +178,21 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
         justifyContent="end"
         {...slotProps?.actions}
       >
-        {!!onCancel && (
-          <Button
-            variant="text"
-            color="error"
-            disabled={methods.formState.disabled}
-            onClick={onCancel}
-            {...slotProps?.cancelButton}
-          >
-            Cancel
-          </Button>
-        )}
+        <Button
+          variant="text"
+          color="error"
+          disabled={isDisabled}
+          children="Cancel"
+          onClick={onCancel}
+          {...slotProps?.cancelButton}
+        />
         <Button
           type="submit"
-          disabled={methods.formState.disabled}
-          loading={methods.formState.isValid && methods.formState.isSubmitting}
+          disabled={isDisabled}
+          loading={isSubmitting}
+          children="Submit"
           {...slotProps?.submitButton}
-        >
-          Submit
-        </Button>
+        />
       </Stack>
     </Stack>
   );

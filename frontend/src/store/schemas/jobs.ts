@@ -1,7 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
-import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
+import { googleAutocompleteSuggestionSchema } from "./places";
 import { EJobListOrdering } from "../enums/jobs";
 
 export const jobSchema = z.object({
@@ -18,7 +18,7 @@ export const jobSchema = z.object({
 
 export const jobCreateSchema = z.object({
   label: z.string().max(255).default(""),
-  description: z.string().default(""),
+  description: z.string().trim().min(1, "Description is required").default(""),
   representative: idSchema.nullable().default(null),
   assignee: idSchema.nullable().default(null),
   recipient: idSchema.nullable().default(null),

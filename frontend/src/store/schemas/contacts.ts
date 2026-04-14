@@ -49,7 +49,7 @@ export const contactCreateSchema = z.object({
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable().optional(),
   place: googleAutocompleteSuggestionSchema.nullable().optional(),
-  tags: z.array(idSchema).nullable().optional(),
+  tags: z.array(idSchema).optional(),
 });
 
 export const contactUpdateSchema = z.object({
@@ -59,21 +59,23 @@ export const contactUpdateSchema = z.object({
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
   place: googleAutocompleteSuggestionSchema.nullable().optional(),
-  tags: z.array(idSchema).nullable().optional(),
+  tags: z.array(idSchema).optional(),
 });
 
 export const contactListRequestSchema = listRequestSchema.extend({
-  params: listRequestSchema.shape.params.extend({
-    ordering: z
-      .nativeEnum(EContactListOrdering)
-      .default(EContactListOrdering.FirstNameAsc),
-    city: idOrIdArraySchema
-      .optional()
-      .transform((val) => (val?.length ? val : undefined)),
-    tag: idOrIdArraySchema
-      .optional()
-      .transform((val) => (val?.length ? val : undefined)),
-  }),
+  params: listRequestSchema.shape.params
+    .extend({
+      ordering: z
+        .nativeEnum(EContactListOrdering)
+        .default(EContactListOrdering.FirstNameAsc),
+      city: idOrIdArraySchema
+        .optional()
+        .transform((val) => (val?.length ? val : undefined)),
+      tag: idOrIdArraySchema
+        .optional()
+        .transform((val) => (val?.length ? val : undefined)),
+    })
+    .default({ ordering: EContactListOrdering.FirstNameAsc }),
 });
 
 export const contactListResponseSchema = listResponseSchema.extend({

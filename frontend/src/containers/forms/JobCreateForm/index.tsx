@@ -1,11 +1,6 @@
-import React, { useEffect, type ChangeEventHandler } from "react";
-import {
-  Controller,
-  FormState,
-  useForm,
-  type SubmitErrorHandler,
-  type SubmitHandler,
-} from "react-hook-form";
+import React, { useEffect } from "react";
+import { useBlocker } from "@tanstack/react-router";
+import { Controller, useForm } from "react-hook-form";
 import {
   Button,
   type ButtonProps,
@@ -16,18 +11,25 @@ import {
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import GoogleAutocompleteSuggestionListAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionListAutocomplete";
-import { jobCreateSchema } from "@/store/schemas/jobs";
+import ContactIdAutocomplete from "@/containers/fields/ContactAutocomplete/ContactIdAutocomplete";
+import useConfirm from "@/store/hooks/useConfirm";
+import useJob from "@/store/hooks/useJob";
 import { errorUtils } from "@/store/utils/error";
-import type { TJobCreate } from "@/store/types/jobs";
+import { jobCreateSchema } from "@/store/schemas/jobs";
+import { NULL_ID } from "@/store/constants/api";
+import type { TJob, TJobCreate } from "@/store/types/jobs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import dayjs from "dayjs";
 
 interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "onSubmit" | "onReset"
 > {
-  onSubmit: SubmitHandler<TJobCreate>;
-  onSubmitInvalid?: SubmitErrorHandler<TJobCreate>;
-  onFormStateChange?: (formState: FormState<TJobCreate>) => void;
-  onCancel?: ButtonProps["onClick"];
+  initialValues?: Partial<TJobCreate>;
+  onSuccess: (res: TJob) => void;
+  onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
     actions?: StackProps;
@@ -36,57 +38,81 @@ interface IJobCreateFormProps extends Omit<
   };
 }
 
+const DEFAULT_VALUES: TJobCreate = {
+  label: "",
+  description: "",
+  representative: null,
+  assignee: null,
+  recipient: null,
+  referred_by: null,
+  place: null,
+  scheduled_at: null,
+  completed_at: null,
+};
+
 const JobCreateForm: React.FC<IJobCreateFormProps> = ({
-  onSubmit,
-  onSubmitInvalid,
-  onFormStateChange,
+  initialValues,
+  onSuccess,
   onCancel,
   slotProps,
   ...props
 }) => {
   /** Values */
 
+  const jobHook = useJob(NULL_ID);
+  const confirm = useConfirm();
   const methods = useForm({
     resolver: zodResolver(jobCreateSchema),
-    defaultValues: jobCreateSchema.parse({}),
+    defaultValues: DEFAULT_VALUES,
   });
+
+  /** Mutations */
+
+  const createJobMutation = jobHook.mutations.create;
+
+  /** Data */
+
+  const isDirty = methods.formState.isDirty;
 
   const isFieldDisabled =
     methods.formState.disabled || methods.formState.isSubmitting;
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit(async (data) => {
-    try {
-      await onSubmit(data);
-    } catch (error) {
-      setTimeout(() => {
+  const handleOnSubmit = methods.handleSubmit((data) => {
+    createJobMutation.mutate(data, {
+      onSuccess,
+      onError: (error) => {
         methods.setError("root", {
           type: "server",
           message: errorUtils.getErrorMessage(error),
         });
-      });
-      throw error;
-    }
-  }, onSubmitInvalid);
+      },
+    });
+  });
 
-  const handleOnReset: ChangeEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    methods.reset();
-  };
+  /** Effects */
 
   useEffect(() => {
-    onFormStateChange?.(methods.formState);
-  }, [onFormStateChange, methods.formState]);
+    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
+  }, [initialValues]);
+
+  useBlocker({
+    shouldBlockFn: async () => {
+      return isDirty
+        ? !(await confirm({
+            title: "Unsaved Changes",
+            description:
+              "You have unsaved changes. Are you sure you want to leave?",
+            confirmButton: { color: "error", children: "Leave" },
+            cancelButton: { color: "primary", children: "Cancel" },
+          }))
+        : false;
+    },
+  });
 
   return (
-    <Stack
-      component="form"
-      noValidate
-      onSubmit={handleOnSubmit}
-      onReset={handleOnReset}
-      {...props}
-    >
+    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         {!!methods.formState.errors.root && (
           <FormHelperText error>
@@ -113,11 +139,67 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           {...methods.register("description")}
         />
         <Controller
+          name="representative"
+          control={methods.control}
+          render={({ field: { value, disabled, ...field }, formState }) => (
+            <ContactIdAutocomplete
+              value={value ?? null}
+              label="Sales Representative"
+              disabled={isFieldDisabled || disabled}
+              error={!!formState.errors.representative}
+              helperText={formState.errors.representative?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="assignee"
+          control={methods.control}
+          render={({ field: { value, disabled, ...field }, formState }) => (
+            <ContactIdAutocomplete
+              value={value ?? null}
+              label="Assignee"
+              disabled={isFieldDisabled || disabled}
+              error={!!formState.errors.assignee}
+              helperText={formState.errors.assignee?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="recipient"
+          control={methods.control}
+          render={({ field: { value, disabled, ...field }, formState }) => (
+            <ContactIdAutocomplete
+              value={value ?? null}
+              label="Recipient"
+              disabled={isFieldDisabled || disabled}
+              error={!!formState.errors.recipient}
+              helperText={formState.errors.recipient?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="referred_by"
+          control={methods.control}
+          render={({ field: { value, disabled, ...field }, formState }) => (
+            <ContactIdAutocomplete
+              value={value ?? null}
+              label="Referred By"
+              disabled={isFieldDisabled || disabled}
+              error={!!formState.errors.referred_by}
+              helperText={formState.errors.referred_by?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
           name="place"
           control={methods.control}
           render={({ field, formState }) => (
             <GoogleAutocompleteSuggestionListAutocomplete
-              label="Address"
+              label="Location"
               disabled={isFieldDisabled}
               error={!!formState.errors.place}
               helperText={formState.errors.place?.message}
@@ -125,6 +207,59 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
             />
           )}
         />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Controller
+            name="scheduled_at"
+            control={methods.control}
+            render={({ field: { value, onChange, ...field }, formState }) => (
+              <DateTimePicker
+                label="Scheduled At"
+                value={dayjs(value) ?? null}
+                disabled={isFieldDisabled}
+                onChange={(newValue) =>
+                  onChange(newValue?.toISOString() ?? null)
+                }
+                slotProps={{
+                  field: {
+                    clearable: true,
+                    onClear: () => onChange(null),
+                  },
+                  textField: {
+                    error: !!formState.errors.scheduled_at,
+                    helperText: formState.errors.scheduled_at?.message,
+                  },
+                }}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            name="completed_at"
+            control={methods.control}
+            render={({ field: { value, onChange, ...field }, formState }) => (
+              <DateTimePicker
+                label="Completed At"
+                value={dayjs(value) ?? null}
+                disabled={isFieldDisabled}
+                onChange={(newValue) =>
+                  onChange(newValue?.toISOString() ?? null)
+                }
+                slotProps={{
+                  field: {
+                    clearable: true,
+                    onClear: () => onChange(null),
+                  },
+                  textField: {
+                    error: !!formState.errors.scheduled_at,
+                    helperText: formState.errors.scheduled_at?.message,
+                  },
+                }}
+                {...field}
+              />
+            )}
+          />
+        </LocalizationProvider>
       </Stack>
       <Stack
         direction="row"
@@ -132,25 +267,21 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
         justifyContent="end"
         {...slotProps?.actions}
       >
-        {!!onCancel && (
-          <Button
-            variant="text"
-            color="error"
-            disabled={methods.formState.disabled}
-            onClick={onCancel}
-            {...slotProps?.cancelButton}
-          >
-            Cancel
-          </Button>
-        )}
+        <Button
+          variant="text"
+          color="error"
+          disabled={methods.formState.disabled}
+          children="Cancel"
+          onClick={onCancel}
+          {...slotProps?.cancelButton}
+        />
         <Button
           type="submit"
           disabled={methods.formState.disabled}
           loading={methods.formState.isValid && methods.formState.isSubmitting}
+          children="Submit"
           {...slotProps?.submitButton}
-        >
-          Submit
-        </Button>
+        />
       </Stack>
     </Stack>
   );
