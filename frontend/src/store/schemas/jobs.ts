@@ -1,19 +1,22 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
-import { googleAutocompleteSuggestionSchema } from "./places";
+import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
 import { EJobListOrdering } from "../enums/jobs";
 
 export const jobSchema = z.object({
   id: idSchema,
-  label: z.string().max(255),
-  description: z.string().max(1024).nullable(),
-  assignee: idSchema.nullable(),
-  recipient: idSchema.nullable(),
-  scheduled_at: z.string().datetime().nullable(),
-  completed_at: z.string().datetime().nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  label: z.string().max(255).default(""),
+  description: z.string().max(1024).default(""),
+  representative: idSchema.nullable().default(null),
+  assignee: idSchema.nullable().default(null),
+  recipient: idSchema.nullable().default(null),
+  referred_by: idSchema.nullable().default(null),
+  place: placeBasicSchema.nullable().optional(),
+  scheduled_at: z.string().datetime().nullable().default(null),
+  completed_at: z.string().datetime().nullable().default(null),
+  created_at: z.string().datetime().nullable().default(null),
+  updated_at: z.string().datetime().nullable().default(null),
 });
 
 export const jobCreateSchema = z.object({

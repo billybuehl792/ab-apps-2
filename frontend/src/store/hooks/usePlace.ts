@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
@@ -32,6 +33,7 @@ const usePlace = (
 ) => {
   /** Values */
 
+  const navigate = useNavigate();
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
@@ -110,6 +112,12 @@ const usePlace = (
   const isChangeDisabled = isDisabled || !options?.onChange;
 
   /** Callbacks */
+
+  const handleView = () =>
+    navigate({
+      to: "/app/directory/places/$id",
+      params: { id: String(placeId) },
+    });
 
   const handleCreate = createMutation.mutate;
 
@@ -195,6 +203,7 @@ const usePlace = (
     create: handleCreate,
     update: handleUpdate,
     delete: handleDelete,
+    view: handleView,
   };
 };
 
