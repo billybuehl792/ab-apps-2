@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneField from "@/components/fields/PhoneField";
-import GoogleAutocompleteSuggestionListAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionListAutocomplete";
+import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import { contactUpdateSchema } from "@/store/schemas/contacts";
 import { errorUtils } from "@/store/utils/error";
 import useConfirm from "@/store/hooks/useConfirm";
@@ -150,7 +150,7 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
           name="place"
           control={methods.control}
           render={({ field: { value, ...field }, formState }) => (
-            <GoogleAutocompleteSuggestionListAutocomplete
+            <GoogleAutocompleteSuggestionAutocomplete
               label="Address"
               disabled={isFieldDisabled}
               error={!!formState.errors.place}

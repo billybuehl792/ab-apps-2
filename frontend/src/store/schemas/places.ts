@@ -35,6 +35,18 @@ export const placeUpdateSchema = z.object({
   google_place_id: z.string().describe("Google Places API place ID"),
 });
 
+export const googlePlaceSchema = z.object({
+  google_place_id: z.string().describe("Google Places API place ID"),
+  address_full: z.string(),
+  address_short: z.string(),
+  city: z.string(),
+  state: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  country: z.string(),
+  postal_code: z.string(),
+});
+
 export const googleAutocompleteSuggestionSchema = z.object({
   google_place_id: z.string().describe("Google Places API place ID"),
   address_full: z.string(),
@@ -58,7 +70,10 @@ export const placeListResponseSchema = listResponseSchema.extend({
 
 export const googleAutocompleteSuggestionListRequestSchema = z.object({
   params: z.object({
-    input: z.string().describe("User input for Google Places autocomplete"),
+    input: z
+      .string()
+      .default("")
+      .describe("User input for Google Places autocomplete"),
     sessionToken: z
       .string()
       .optional()

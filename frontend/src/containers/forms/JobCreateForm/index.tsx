@@ -14,7 +14,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
-import GoogleAutocompleteSuggestionListAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionListAutocomplete";
+import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import ContactIdAutocomplete from "@/containers/fields/ContactAutocomplete/ContactIdAutocomplete";
 import useConfirm from "@/store/hooks/useConfirm";
 import useJob from "@/store/hooks/useJob";
@@ -79,22 +79,17 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit(
-    (data) => {
-      createJobMutation.mutate(data, {
-        onSuccess,
-        onError: (error) => {
-          methods.setError("root", {
-            type: "server",
-            message: errorUtils.getErrorMessage(error),
-          });
-        },
-      });
-    },
-    (event, e) => {
-      console.log("job submitted", e);
-    },
-  );
+  const handleOnSubmit = methods.handleSubmit((data) => {
+    createJobMutation.mutate(data, {
+      onSuccess,
+      onError: (error) => {
+        methods.setError("root", {
+          type: "server",
+          message: errorUtils.getErrorMessage(error),
+        });
+      },
+    });
+  });
 
   /** Effects */
 
@@ -121,9 +116,10 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
       component="form"
       noValidate
       onSubmit={(e) => {
-        e.stopPropagation();
+        e.preventDefault();
         handleOnSubmit(e);
       }}
+      onReset={(e) => e.preventDefault()}
       {...props}
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
@@ -215,7 +211,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           name="place"
           control={methods.control}
           render={({ field, formState }) => (
-            <GoogleAutocompleteSuggestionListAutocomplete
+            <GoogleAutocompleteSuggestionAutocomplete
               label="Location"
               disabled={isFieldDisabled}
               error={!!formState.errors.place}

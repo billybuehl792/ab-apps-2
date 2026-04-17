@@ -1,4 +1,3 @@
-import { Stack } from "@mui/material";
 import useJob, { type IUseJobOptions } from "@/store/hooks/useJob";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";

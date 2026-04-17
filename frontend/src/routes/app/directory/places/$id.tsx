@@ -1,5 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Stack, Typography } from "@mui/material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
+import PlaceMapCard from "@/containers/cards/PlaceMapCard";
 import { errorUtils } from "@/store/utils/error";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 import { idSchema } from "@/store/schemas/basic";
@@ -24,4 +26,18 @@ export const Route = createFileRoute("/app/directory/places/$id")({
     }
   },
   pendingComponent: () => <StatusWrapper loading="Loading Place..." my={2} />,
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  /** Values */
+
+  const loaderData = Route.useLoaderData();
+
+  return (
+    <Stack spacing={2}>
+      <Typography>{loaderData.data.address_full}</Typography>
+      <PlaceMapCard place={loaderData.data} />
+    </Stack>
+  );
+}

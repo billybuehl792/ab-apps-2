@@ -7,24 +7,34 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
+  Stack,
   TextField,
   type TextFieldProps,
   Typography,
 } from "@mui/material";
-import { Place as PlaceIcon } from "@mui/icons-material";
-import { placeEndpoints } from "@/store/constants/places";
-import type { TGoogleAutocompleteSuggestion } from "@/store/types/places";
+import { googleAutocompleteSuggestionListRequestSchema } from "@/store/schemas/places";
+import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 import { errorUtils } from "@/store/utils/error";
+import type { TGoogleAutocompleteSuggestion } from "@/store/types/places";
 
-type TPlaceAutocompleteBaseProps = AutocompleteProps<
+type TGoogleAutocompleteSuggestionAutocompleteBaseProps<
+  TMultiple extends boolean | undefined,
+  TDisableClearable extends boolean | undefined,
+> = AutocompleteProps<
   TGoogleAutocompleteSuggestion,
-  false,
-  false,
+  TMultiple,
+  TDisableClearable,
   false
 >;
 
-interface IGoogleAutocompleteSuggestionListAutocompleteProps extends Omit<
-  TPlaceAutocompleteBaseProps,
+export interface IGoogleAutocompleteSuggestionAutocompleteProps<
+  TMultiple extends boolean | undefined,
+  TDisableClearable extends boolean | undefined,
+> extends Omit<
+  TGoogleAutocompleteSuggestionAutocompleteBaseProps<
+    TMultiple,
+    TDisableClearable
+  >,
   | "options"
   | "renderInput"
   | "renderOption"
@@ -32,7 +42,6 @@ interface IGoogleAutocompleteSuggestionListAutocompleteProps extends Omit<
   | "isOptionEqualToValue"
   | "getOptionKey"
   | "slotProps"
-  | "onChange"
 > {
   inputRef?: TextFieldProps["inputRef"];
   name?: string;
@@ -41,46 +50,52 @@ interface IGoogleAutocompleteSuggestionListAutocompleteProps extends Omit<
   error?: boolean;
   helperText?: string;
   required?: boolean;
-  onChange: (place: TGoogleAutocompleteSuggestion | null) => void;
-  sessionToken?: string;
   slotProps?: {
     input?: TextFieldProps;
-  } & TPlaceAutocompleteBaseProps["slotProps"];
+  } & TGoogleAutocompleteSuggestionAutocompleteBaseProps<
+    TMultiple,
+    TDisableClearable
+  >["slotProps"];
 }
 
-const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
-  IGoogleAutocompleteSuggestionListAutocompleteProps
-> = ({
+const GoogleAutocompleteSuggestionAutocomplete = <
+  TMultiple extends boolean | undefined = false,
+  TDisableClearable extends boolean | undefined = false,
+>({
   inputRef,
-  label = "Address",
+  label = "Place",
   name,
-  placeholder = "Search for a location",
+  placeholder = "Search for a place",
   error,
   helperText,
   required,
-  sessionToken,
   onChange,
   slotProps: { input: inputProps, ...slotProps } = {},
   ...props
-}) => {
+}: IGoogleAutocompleteSuggestionAutocompleteProps<
+  TMultiple,
+  TDisableClearable
+>) => {
   /** Values */
 
   const [input, setInput] = useDebounce("", 600);
-  const params = { input: input.trim(), sessionToken };
+
+  const listOptions = googleAutocompleteSuggestionListRequestSchema.parse({
+    params: { input: input || undefined },
+  });
 
   /** Queries */
 
-  const googleAutocompleteSuggestionListQuery = useQuery({
-    queryKey: [...placeEndpoints.googleAutocompleteSuggestions().id],
+  const googleAutocompleteSuggestions = useQuery({
+    queryKey: [placeEndpoints.googleAutocompleteSuggestions().id, listOptions],
     queryFn: () =>
-      placeEndpoints.googleAutocompleteSuggestions().get({ params }),
-    enabled: Boolean(input),
+      placeEndpoints.googleAutocompleteSuggestions().get(listOptions),
   });
 
   return (
     <Autocomplete
-      options={googleAutocompleteSuggestionListQuery.data ?? []}
-      loading={googleAutocompleteSuggestionListQuery.isLoading}
+      options={googleAutocompleteSuggestions.data ?? []}
+      loading={googleAutocompleteSuggestions.isLoading}
       getOptionKey={(option) => option.google_place_id}
       getOptionLabel={(option) => option.address_full}
       onInputChange={(_, newInputValue) => setInput(newInputValue)}
@@ -89,14 +104,14 @@ const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
         option.google_place_id === value.google_place_id
       }
       noOptionsText={
-        googleAutocompleteSuggestionListQuery.isError ? (
+        googleAutocompleteSuggestions.isError ? (
           <Typography color="error">Error retrieving places</Typography>
         ) : (
-          "No places found"
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography>No results found</Typography>
+          </Stack>
         )
       }
-      slotProps={slotProps}
-      {...props}
       renderInput={(params) => (
         <TextField
           label={label}
@@ -104,13 +119,11 @@ const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
           inputRef={inputRef}
           placeholder={placeholder}
           required={required}
-          error={error || googleAutocompleteSuggestionListQuery.isError}
+          error={error || googleAutocompleteSuggestions.isError}
           helperText={
             helperText ||
-            (googleAutocompleteSuggestionListQuery.isError &&
-              errorUtils.getErrorMessage(
-                googleAutocompleteSuggestionListQuery.error,
-              ))
+            (googleAutocompleteSuggestions.isError &&
+              errorUtils.getErrorMessage(googleAutocompleteSuggestions.error))
           }
           {...inputProps}
           {...params}
@@ -121,7 +134,7 @@ const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {googleAutocompleteSuggestionListQuery.isLoading && (
+                  {googleAutocompleteSuggestions.isLoading && (
                     <CircularProgress color="inherit" size={16} />
                   )}
                   {params.InputProps.endAdornment}
@@ -134,7 +147,7 @@ const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
       renderOption={({ key, ...props }, option) => (
         <MenuItem key={key} {...props}>
           <ListItemIcon>
-            <PlaceIcon />
+            <PlaceIcons.Detail />
           </ListItemIcon>
           <ListItemText
             primary={option.address_short}
@@ -142,9 +155,11 @@ const GoogleAutocompleteSuggestionListAutocomplete: React.FC<
           />
         </MenuItem>
       )}
-      onChange={(_, newValue) => onChange(newValue)}
+      slotProps={slotProps}
+      onChange={onChange}
+      {...props}
     />
   );
 };
 
-export default GoogleAutocompleteSuggestionListAutocomplete;
+export default GoogleAutocompleteSuggestionAutocomplete;

@@ -172,6 +172,8 @@ def parse_place_data(google_place: Dict[Any, Any]) -> PlaceData:
     try:
         postal_address = google_place.get("postalAddress", {})
         location = google_place.get("location", {})
+        latitude = location.get("latitude", 0)
+        longitude = location.get("longitude", 0)
 
         return PlaceData(
             google_place_id=google_place.get("id", ""),
@@ -181,8 +183,8 @@ def parse_place_data(google_place: Dict[Any, Any]) -> PlaceData:
             postal_code=postal_address.get("postalCode", ""),
             address_full=google_place.get("formattedAddress", ""),
             address_short=google_place.get("shortFormattedAddress", ""),
-            latitude=location.get("latitude"),
-            longitude=location.get("longitude"),
+            latitude=latitude,
+            longitude=longitude,
         )
     except Exception as e:
         logger.error(f"Error parsing place data: {e}")
