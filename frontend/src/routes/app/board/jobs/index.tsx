@@ -1,19 +1,19 @@
-import { useMemo } from "react";
 import {
   createFileRoute,
   stripSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Stack } from "@mui/material";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import z from "zod";
-import JobList, { type IJobListProps } from "@/containers/lists/JobList";
+import JobCreateButton from "@/containers/buttons/JobCreateButton";
+import JobTable from "@/containers/tables/JobTable";
 import StatusWrapper from "@/components/layout/StatusWrapper";
+import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import { jobEndpoints } from "@/store/constants/jobs";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
-import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
-import JobCreateButton from "@/containers/buttons/JobCreateButton";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -44,13 +44,6 @@ function RouteComponent() {
     queryFn: () => jobEndpoints.get({ params }),
   });
 
-  /** Data */
-
-  const total = useMemo(
-    () => jobListQuery.data?.count ?? false,
-    [jobListQuery.data],
-  );
-
   /** Callbacks */
 
   const handleOnParamsChange = (
@@ -58,54 +51,41 @@ function RouteComponent() {
   ) =>
     navigate({
       to: ".",
-      search: jobListRequestSchema.shape.params.parse({
-        ...params,
-        ...newParams,
-      }),
+      search: jobListRequestSchema.shape.params.parse(newParams),
       replace: true,
     });
 
-  const handleOnCardChange: IJobListProps["onCardChange"] = (job, type) => {
-    if (type === EObjectChangeType.Delete) {
-      const isLastItemOnPage = jobListQuery.data?.results.at(-1)?.id === job.id;
-      const isFirstPage = params.page === 1;
-      if (isLastItemOnPage && !isFirstPage)
-        handleOnParamsChange({ page: params.page - 1 });
-      else jobListQuery.refetch();
-    }
-  };
-
   return (
-    <JobList
-      items={jobListQuery.data?.results ?? []}
-      total={total}
-      options={{ params }}
-      loading={jobListQuery.isLoading}
-      error={jobListQuery.error}
-      renderSkeletonItem
-      mb={2}
-      onCardChange={handleOnCardChange}
-      onPageChange={(_event, page) => handleOnParamsChange({ page })}
-      onSearchChange={(value) =>
-        handleOnParamsChange({ search: value, page: 1 })
-      }
-      onOrderingChange={(value) =>
-        handleOnParamsChange({ ordering: value, page: 1 })
-      }
-      // onFiltersChange={(value) =>
-      //   handleOnParamsChange({
-      //     city: value.city,
-      //     tag: value.tag,
-      //   })
-      // }
-      slotProps={{
-        header: {
-          position: "sticky",
-          top: (theme) => theme.layout.page.header.height,
-          bgcolor: "background.paper",
-          zIndex: 1,
-        },
-      }}
-    />
+    <Stack spacing={2} my={2}>
+      <DebouncedSearchField
+        value={params.search ?? ""}
+        size="small"
+        onChange={(value) =>
+          handleOnParamsChange({ ...params, page: 1, search: value })
+        }
+      />
+      <JobTable
+        rows={jobListQuery.data?.results ?? []}
+        page={params.page}
+        ordering={params.ordering}
+        count={jobListQuery.isSuccess ? jobListQuery.data?.count : -1}
+        loading={jobListQuery.isLoading}
+        rowsPerPage={params.page_size}
+        rowsPerPageOptions={[1, 10, 20, 100]}
+        onPageChange={(_event, page) =>
+          handleOnParamsChange({ ...params, page })
+        }
+        onOrderingChange={(ordering) =>
+          handleOnParamsChange({ ...params, page: 1, ordering })
+        }
+        onRowsPerPageChange={(event) =>
+          handleOnParamsChange({
+            ...params,
+            page: 1,
+            page_size: parseInt(event.target.value, 10),
+          })
+        }
+      />
+    </Stack>
   );
 }

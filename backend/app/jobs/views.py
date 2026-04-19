@@ -16,11 +16,12 @@ class JobViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = JobsFilter
     ordering = ("-created_at",)
-    search_fields = ("label", "description", "assignee__first_name", "assignee__last_name",
-                     "recipient__first_name", "recipient__last_name", "place__address_full")
-    ordering_fields = ("created_at", "updated_at", "label",
-                       "scheduled_at", "completed_at", "assignee__first_name", "assignee__last_name",
-                       "recipient__first_name", "recipient__last_name")
+    search_fields = ("label", "recipient__first_name",
+                     "recipient__last_name", "place__address_full")
+    ordering_fields = ("created_at", "updated_at", "label", "amount",
+                       "scheduled_at", "completed_at", "assignee__last_name",
+                       "recipient__last_name", "representative__last_name",
+                       "place__address_full")
 
     def get_serializer_class(self):  # type: ignore[override]
         if self.action in ("list", "retrieve"):

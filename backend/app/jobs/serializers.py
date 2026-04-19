@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
 
-from .models import Job, JobCategory, JobComment, JobExpense
+from .models import Job, JobCategory, JobComment, JobExpense, JobExpenseCategory
 from app.places.serializers import PlaceReadSerializer, PlaceWriteSerializer
 
 
@@ -12,8 +12,8 @@ class JobReadSerializer(ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ("id", "label", "description", "amount", "representative", "assignee", "recipient", "referred_by",
-                  "place", "scheduled_at", "completed_at", "created_at", "updated_at")
+        fields = ("id", "label", "description", "categories", "amount", "paid", "representative", "assignee", "recipient", "referred_by",
+                  "place", "scheduled_at", "completed_at", "sold_at", "invoiced_at", "created_at", "updated_at")
         read_only_fields = fields
 
 
@@ -27,9 +27,9 @@ class JobWriteSerializer(ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ("id", "label", "description", "amount", "representative", "assignee", "recipient", "referred_by",
-                  "place", "scheduled_at", "completed_at")
-        read_only_fields = ("id",)
+        fields = ("id", "label", "description", "categories", "amount", "paid", "representative", "assignee", "recipient", "referred_by",
+                  "place", "scheduled_at", "completed_at", "sold_at", "invoiced_at", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
 
 
 class JobCategorySerializer(ModelSerializer):
@@ -67,4 +67,13 @@ class JobExpenseSerializer(ModelSerializer):
         model = JobExpense
         fields = ("id", "job", "label", "category", "description",
                   "amount", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
+
+
+class JobExpenseCategorySerializer(ModelSerializer):
+    """Serializer for `JobExpenseCategory` model."""
+
+    class Meta:
+        model = JobExpenseCategory
+        fields = ("id", "label", "description", "created_at", "updated_at")
         read_only_fields = ("id", "created_at", "updated_at")

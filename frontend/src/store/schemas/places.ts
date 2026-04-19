@@ -3,9 +3,13 @@ import { idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EPlaceListOrdering } from "../enums/places";
 
+const googlePlaceIdSchema = z.coerce
+  .string()
+  .describe("Google Places API place ID");
+
 export const placeSchema = z.object({
   id: idSchema,
-  google_place_id: z.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
   address_full: z.string(),
   address_short: z.string(),
   city: z.string(),
@@ -20,23 +24,23 @@ export const placeSchema = z.object({
 
 export const placeBasicSchema = z.object({
   id: idSchema,
-  google_place_id: z.coerce.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
   address_short: z.coerce.string(),
   city: z.coerce.string(),
   state: z.coerce.string(),
 });
 
 export const placeCreateSchema = z.object({
-  google_place_id: z.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
 });
 
 export const placeUpdateSchema = z.object({
   id: idSchema,
-  google_place_id: z.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
 });
 
 export const googlePlaceSchema = z.object({
-  google_place_id: z.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
   address_full: z.string(),
   address_short: z.string(),
   city: z.string(),
@@ -48,7 +52,7 @@ export const googlePlaceSchema = z.object({
 });
 
 export const googleAutocompleteSuggestionSchema = z.object({
-  google_place_id: z.string().describe("Google Places API place ID"),
+  google_place_id: googlePlaceIdSchema,
   address_full: z.string(),
   address_short: z.string(),
   city: z.string(),

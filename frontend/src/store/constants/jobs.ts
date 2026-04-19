@@ -41,8 +41,11 @@ export const jobEndpoints = {
 
 /** Other */
 
-export const jobListOrderingOptions: TOrderingOption<EJobListOrdering>[] = [
-  {
+export const jobListOrderingOptions: Record<
+  string,
+  TOrderingOption<EJobListOrdering>
+> = {
+  label: {
     id: "label",
     label: "Label",
     value: {
@@ -50,23 +53,71 @@ export const jobListOrderingOptions: TOrderingOption<EJobListOrdering>[] = [
       desc: EJobListOrdering.LabelDesc,
     },
   },
-  {
-    id: "created_at",
+  representative: {
+    id: "representative",
+    label: "Representative",
+    value: {
+      asc: EJobListOrdering.RepresentativeAsc,
+      desc: EJobListOrdering.RepresentativeDesc,
+    },
+  },
+  recipient: {
+    id: "recipient",
+    label: "Recipient",
+    value: {
+      asc: EJobListOrdering.RecipientAsc,
+      desc: EJobListOrdering.RecipientDesc,
+    },
+  },
+  assignee: {
+    id: "assignee",
+    label: "Assignee",
+    value: {
+      asc: EJobListOrdering.AssigneeAsc,
+      desc: EJobListOrdering.AssigneeDesc,
+    },
+  },
+  referredBy: {
+    id: "referredBy",
+    label: "Referred By",
+    value: {
+      asc: EJobListOrdering.ReferredByAsc,
+      desc: EJobListOrdering.ReferredByDesc,
+    },
+  },
+  place: {
+    id: "place",
+    label: "Place",
+    value: {
+      asc: EJobListOrdering.PlaceAsc,
+      desc: EJobListOrdering.PlaceDesc,
+    },
+  },
+  amount: {
+    id: "amount",
+    label: "Amount",
+    value: {
+      asc: EJobListOrdering.AmountAsc,
+      desc: EJobListOrdering.AmountDesc,
+    },
+  },
+  createdAt: {
+    id: "createdAt",
     label: "Created",
     value: {
       asc: EJobListOrdering.CreatedAtAsc,
       desc: EJobListOrdering.CreatedAtDesc,
     },
   },
-  {
-    id: "updated_at",
+  updatedAt: {
+    id: "updatedAt",
     label: "Updated",
     value: {
       asc: EJobListOrdering.UpdatedAtAsc,
       desc: EJobListOrdering.UpdatedAtDesc,
     },
   },
-];
+};
 
 export const getPlaceholderJob = (
   data: TWithRequired<Partial<TJob>, "id">,
@@ -81,5 +132,11 @@ export const getPlaceholderJob = (
   referred_by: null,
   created_at: "",
   updated_at: "",
+  place: null,
+  sold_at: null,
+  invoiced_at: null,
+  categories: [],
+  amount: null,
+  paid: null,
   ...data,
 });

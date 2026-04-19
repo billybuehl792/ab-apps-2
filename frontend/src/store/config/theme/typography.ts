@@ -65,7 +65,7 @@ const typography: TypographyVariantsOptions = {
   subtitle1: {
     fontSize: "1rem",
     lineHeight: 1.75,
-    fontWeight: 400,
+    fontWeight: 500,
     letterSpacing: "0.00938em",
   },
   subtitle2: {
