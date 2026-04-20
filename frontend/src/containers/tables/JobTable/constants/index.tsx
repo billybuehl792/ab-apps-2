@@ -18,33 +18,29 @@ export const jobTableColumns: readonly TJobTableColumn[] = [
         alignItems="center"
         justifyContent="space-between"
       >
-        <Typography variant="body2" noWrap>
-          {value.label}
+        <Typography
+          variant="body2"
+          noWrap
+          {...(!value.label && {
+            color: "text.secondary",
+            fontStyle: "italic",
+          })}
+        >
+          {value.label || "Untitled"}
         </Typography>
         <JobMenuOptionIconButton job={value} size="small" />
       </Stack>
     ),
-    slotProps: {
-      headCell: { sx: { zIndex: 3 } },
-    },
-    sx: {
-      position: "sticky",
-      left: 0,
-      zIndex: 1,
-      borderRight: (theme) => `1px solid ${theme.palette.divider}`,
-      backgroundColor: "background.paper",
-    },
-  },
-  {
-    id: "place",
-    label: "Address",
-    orderingOption: jobListOrderingOptions.place,
-    renderCell: (value) =>
-      value.place ? (
-        <PlaceChip place={value.place} size="xxs" />
-      ) : (
-        <EmptyChip size="xxs" />
-      ),
+    // slotProps: {
+    //   headCell: { sx: { zIndex: 3 } },
+    // },
+    // sx: {
+    //   position: "sticky",
+    //   left: 0,
+    //   zIndex: 1,
+    //   borderRight: (theme) => `1px solid ${theme.palette.divider}`,
+    //   backgroundColor: "background.paper",
+    // },
   },
   {
     id: "recipient",
@@ -58,12 +54,34 @@ export const jobTableColumns: readonly TJobTableColumn[] = [
       ),
   },
   {
+    id: "place",
+    label: "Address",
+    orderingOption: jobListOrderingOptions.place,
+    renderCell: (value) =>
+      value.place ? (
+        <PlaceChip place={value.place} size="xxs" />
+      ) : (
+        <EmptyChip size="xxs" />
+      ),
+  },
+  {
     id: "representative",
     label: "Sales Rep.",
     orderingOption: jobListOrderingOptions.representative,
     renderCell: (value) =>
       value.representative ? (
         <ContactChip contact={value.representative} size="xxs" />
+      ) : (
+        <EmptyChip size="xxs" />
+      ),
+  },
+  {
+    id: "assignee",
+    label: "Assignee",
+    orderingOption: jobListOrderingOptions.assignee,
+    renderCell: (value) =>
+      value.assignee ? (
+        <ContactChip contact={value.assignee} size="xxs" />
       ) : (
         <EmptyChip size="xxs" />
       ),

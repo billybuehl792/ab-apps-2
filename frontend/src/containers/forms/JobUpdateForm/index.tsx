@@ -1,34 +1,32 @@
 import React, { useEffect } from "react";
-import { useBlocker } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
-import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { useBlocker } from "@tanstack/react-router";
 import {
   Button,
   type ButtonProps,
   Stack,
   TextField,
   type StackProps,
-  FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import ContactIdAutocomplete from "@/containers/fields/ContactAutocomplete/ContactIdAutocomplete";
+import { jobUpdateSchema } from "@/store/schemas/jobs";
+import { errorUtils } from "@/store/utils/error";
 import useConfirm from "@/store/hooks/useConfirm";
 import useJob from "@/store/hooks/useJob";
-import { errorUtils } from "@/store/utils/error";
-import { jobCreateSchema } from "@/store/schemas/jobs";
-import { NULL_ID } from "@/store/constants/api";
-import type { TJob, TJobCreate } from "@/store/types/jobs";
+import type { TJob } from "@/store/types/jobs";
 
-interface IJobCreateFormProps extends Omit<
+interface IJobUpdateFormProps extends Omit<
   StackProps<"form">,
-  "component" | "onSubmit" | "onReset"
+  "onSubmit" | "onReset"
 > {
-  initialValues?: Partial<TJobCreate>;
-  onSuccess: (res: TJob) => void;
+  job: TJob;
+  onSuccess: (job: TJob) => void;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
@@ -38,10 +36,8 @@ interface IJobCreateFormProps extends Omit<
   };
 }
 
-const DEFAULT_VALUES = jobCreateSchema.parse({});
-
-const JobCreateForm: React.FC<IJobCreateFormProps> = ({
-  initialValues,
+const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
+  job,
   onSuccess,
   onCancel,
   slotProps,
@@ -49,28 +45,25 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
 }) => {
   /** Values */
 
-  const jobHook = useJob(NULL_ID);
   const confirm = useConfirm();
-  const methods = useForm({
-    resolver: zodResolver(jobCreateSchema),
-    defaultValues: DEFAULT_VALUES,
-  });
+  const jobHook = useJob(job);
+  const methods = useForm({ resolver: zodResolver(jobUpdateSchema) });
 
   /** Mutations */
 
-  const createJobMutation = jobHook.mutations.create;
+  const updateJobMutation = jobHook.mutations.update;
 
   /** Data */
 
   const isDirty = methods.formState.isDirty;
-
-  const isFieldDisabled =
-    methods.formState.disabled || methods.formState.isSubmitting;
+  const isSubmitting = updateJobMutation.isPending;
+  const isDisabled = methods.formState.disabled;
+  const isFieldDisabled = isDisabled || isSubmitting;
 
   /** Callbacks */
 
   const handleOnSubmit = methods.handleSubmit((data) => {
-    createJobMutation.mutate(data, {
+    updateJobMutation.mutate(data, {
       onSuccess,
       onError: (error) => {
         methods.setError("root", {
@@ -84,8 +77,8 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   /** Effects */
 
   useEffect(() => {
-    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
-  }, [initialValues]);
+    methods.reset(jobUpdateSchema.parse(job));
+  }, [job]);
 
   useBlocker({
     shouldBlockFn: async () => {
@@ -102,22 +95,8 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   });
 
   return (
-    <Stack
-      component="form"
-      noValidate
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleOnSubmit(e);
-      }}
-      onReset={(e) => e.preventDefault()}
-      {...props}
-    >
+    <Stack component="form" noValidate onSubmit={handleOnSubmit} {...props}>
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
-        {!!methods.formState.errors.root && (
-          <FormHelperText error>
-            {methods.formState.errors.root?.message}
-          </FormHelperText>
-        )}
         <TextField
           label="Label"
           disabled={isFieldDisabled}
@@ -148,6 +127,20 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.representative}
               helperText={formState.errors.representative?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="place"
+          control={methods.control}
+          render={({ field: { value, ...field }, formState }) => (
+            <GoogleAutocompleteSuggestionAutocomplete
+              label="Address"
+              disabled={isFieldDisabled}
+              error={!!formState.errors.place}
+              helperText={formState.errors.place?.message}
+              value={value}
               {...field}
             />
           )}
@@ -272,16 +265,15 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
         <Button
           variant="text"
           color="error"
-          disabled={methods.formState.disabled}
           children="Cancel"
           onClick={onCancel}
           {...slotProps?.cancelButton}
         />
         <Button
           type="submit"
-          disabled={methods.formState.disabled}
-          loading={methods.formState.isValid && methods.formState.isSubmitting}
-          children="Submit"
+          disabled={isDisabled}
+          loading={isSubmitting}
+          children="Save"
           {...slotProps?.submitButton}
         />
       </Stack>
@@ -289,4 +281,4 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   );
 };
 
-export default JobCreateForm;
+export default JobUpdateForm;

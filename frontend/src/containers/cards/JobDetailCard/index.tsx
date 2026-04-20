@@ -18,7 +18,12 @@ const JobDetailCard = ({ job, ...props }: IJobDetailCardProps) => {
   return (
     <Card variant="outlined" {...props}>
       <CardContent component={Stack} spacing={1}>
-        <Typography variant="h5">{job.label || `Job ${job.id}`}</Typography>
+        <Typography
+          variant="h5"
+          {...(!job.label && { color: "text.secondary", fontStyle: "italic" })}
+        >
+          {job.label || "Untitled"}
+        </Typography>
         <Metadata
           items={[
             {

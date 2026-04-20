@@ -14,6 +14,7 @@ export interface IJobTableBodyProps extends TableBodyProps {
   rowsPerPage: number;
   disabled?: boolean;
   loading?: boolean;
+  onRowClick?: (job: TJob) => void;
 }
 
 const JobTableBody: React.FC<IJobTableBodyProps> = ({
@@ -21,8 +22,24 @@ const JobTableBody: React.FC<IJobTableBodyProps> = ({
   loading,
   disabled,
   rowsPerPage,
+  onRowClick,
   ...props
 }) => {
+  /** Callbacks */
+
+  const handleOnRowClick = (
+    event: React.MouseEvent<HTMLTableRowElement>,
+    job: TJob,
+  ) => {
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.closest('button, a, [role="button"], [data-interactive]')
+    )
+      return;
+
+    onRowClick?.(job);
+  };
+
   return (
     <TableBody {...props}>
       {loading
@@ -42,7 +59,13 @@ const JobTableBody: React.FC<IJobTableBodyProps> = ({
             </TableRow>
           ))
         : rows.map((row) => (
-            <TableRow key={row.id} hover tabIndex={-1}>
+            <TableRow
+              key={row.id}
+              hover
+              tabIndex={-1}
+              onClick={(event) => handleOnRowClick(event, row)}
+              sx={{ cursor: onRowClick ? "pointer" : "default" }}
+            >
               {columns.map(
                 ({ id, label, renderCell, orderingOption, ...column }) => (
                   <TableCell

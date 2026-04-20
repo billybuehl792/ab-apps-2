@@ -29,6 +29,7 @@ export interface IJobTableProps
   loading?: boolean;
   disabled?: boolean;
   onOrderingChange?: (ordering: EJobListOrdering | undefined) => void;
+  onRowClick?: (job: TJob) => void;
 }
 
 const JobTable: React.FC<IJobTableProps> = ({
@@ -43,6 +44,7 @@ const JobTable: React.FC<IJobTableProps> = ({
   onPageChange,
   onOrderingChange,
   onRowsPerPageChange,
+  onRowClick,
   ...props
 }) => {
   /** Values */
@@ -65,7 +67,7 @@ const JobTable: React.FC<IJobTableProps> = ({
         ...sxUtils.asArray(props?.sx),
       ]}
     >
-      <TableContainer sx={{ maxHeight: 600 }}>
+      <TableContainer sx={{ minHeight: 400, maxHeight: 400 }}>
         <Table stickyHeader size="small">
           <JobTableHead
             ordering={ordering}
@@ -77,6 +79,7 @@ const JobTable: React.FC<IJobTableProps> = ({
             rowsPerPage={rowsPerPage}
             loading={loading}
             disabled={disabled}
+            onRowClick={onRowClick}
           />
         </Table>
       </TableContainer>
@@ -88,6 +91,7 @@ const JobTable: React.FC<IJobTableProps> = ({
         page={page}
         onPageChange={handleOnPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
+        sx={{ borderTop: (theme) => `1px solid ${theme.palette.divider}` }}
       />
     </Paper>
   );

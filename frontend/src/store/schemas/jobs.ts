@@ -26,7 +26,7 @@ export const jobSchema = z.object({
 
 export const jobCreateSchema = z.object({
   label: z.string().max(255).default(""),
-  description: z.string().trim().min(1, "Description is required").default(""),
+  description: z.string().default(""),
   representative: idSchema.nullable().default(null),
   assignee: idSchema.nullable().default(null),
   recipient: idSchema.nullable().default(null),

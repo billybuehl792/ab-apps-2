@@ -19,7 +19,7 @@ export const Route = createFileRoute("/app/board/jobs/$id")({
       return {
         data: job,
         crumb: {
-          label: job.label || `Job ${job.id}`,
+          label: job.label || "Untitled",
           Icon: JobIcons.Detail,
         },
       };

@@ -14,6 +14,7 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import { jobEndpoints } from "@/store/constants/jobs";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
 import type { TRouteLoaderData } from "@/store/types/router";
+import { TJob } from "@/store/types/jobs";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -55,6 +56,10 @@ function RouteComponent() {
       replace: true,
     });
 
+  const handleOnRowClick = (job: TJob) => {
+    navigate({ to: "/app/board/jobs/$id", params: { id: String(job.id) } });
+  };
+
   return (
     <Stack spacing={2} my={2}>
       <DebouncedSearchField
@@ -85,6 +90,7 @@ function RouteComponent() {
             page_size: parseInt(event.target.value, 10),
           })
         }
+        onRowClick={handleOnRowClick}
       />
     </Stack>
   );
