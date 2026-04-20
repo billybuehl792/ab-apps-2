@@ -1,10 +1,4 @@
-import {
-  type ReactNode,
-  type MouseEvent,
-  type TouchEvent,
-  useState,
-  useEffect,
-} from "react";
+import { type ReactNode, type MouseEvent, type TouchEvent } from "react";
 import { IconButton, type IconButtonProps } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -12,7 +6,7 @@ const DEFAULT_EXPANDED_ICON = <ExpandLess />;
 const DEFAULT_COLLAPSED_ICON = <ExpandMore />;
 
 interface ExpandIconButtonProps extends Omit<IconButtonProps, "onChange"> {
-  expanded?: boolean;
+  expanded: boolean;
   expandedIcon?: ReactNode;
   collapsedIcon?: ReactNode;
   onChange?: (expanded: boolean, event: MouseEvent | TouchEvent) => void;
@@ -22,14 +16,12 @@ interface ExpandIconButtonProps extends Omit<IconButtonProps, "onChange"> {
  * This component renders an expandable `IconButton` that toggles between two states.
  */
 const ExpandIconButton = ({
-  expanded: expandedProp,
+  expanded,
   expandedIcon = DEFAULT_EXPANDED_ICON,
   collapsedIcon = DEFAULT_COLLAPSED_ICON,
   onChange: onChangeProp,
   ...props
 }: ExpandIconButtonProps) => {
-  const [expanded, setExpanded] = useState(!!expandedProp);
-
   /** Callbacks */
 
   const onMouseDown: IconButtonProps["onMouseDown"] = (event) => {
@@ -43,15 +35,8 @@ const ExpandIconButton = ({
   const onClick: IconButtonProps["onClick"] = (event: MouseEvent) => {
     event.stopPropagation();
     const newValue = !expanded;
-    setExpanded(newValue);
     onChangeProp?.(newValue, event);
   };
-
-  /** Effects */
-
-  useEffect(() => {
-    setExpanded(!!expandedProp);
-  }, [expandedProp]);
 
   return (
     <IconButton

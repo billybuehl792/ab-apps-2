@@ -47,21 +47,25 @@ class PlaceWriteSerializer(ModelSerializer):
 
     def to_internal_value(self, data):  # type: ignore
         """
-        Convert incoming data (dict) into a `Place` instance.
-        - If `id` is given, fetch that `Place`
-        - Else if `google_place_id` exists, get or create it
-        - Else create a new one
+        Convert incoming data into a validated dict for the place service.
         """
         if not data.get('id') and not data.get('google_place_id'):
             raise ValidationError(
                 "You must provide either 'id' or 'google_place_id'."
             )
 
-        validated = super().to_internal_value(data)
+        return super().to_internal_value(data)
 
+    def create(self, validated_data):  # type: ignore[override]
         try:
-            place, _ = self._place_service.get_or_create(validated)
+            place, _ = self._place_service.get_or_create(validated_data)
             return place
         except Exception as e:
-            raise ValidationError(
-                f"Place retrieval/creation failed: {str(e)}")
+            raise ValidationError(f"Place retrieval/creation failed: {str(e)}")
+
+    def update(self, instance, validated_data):  # type: ignore[override]
+        try:
+            place, _ = self._place_service.get_or_create(validated_data)
+            return place
+        except Exception as e:
+            raise ValidationError(f"Place retrieval/creation failed: {str(e)}")

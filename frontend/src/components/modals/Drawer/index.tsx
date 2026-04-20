@@ -99,9 +99,9 @@ const Drawer = ({
     >
       <Stack>
         <Stack direction="row" justifyContent="space-between" px={2} py={1.5}>
-          <Stack direction="row" overflow="hidden">
+          <Stack direction="row" alignItems="center" overflow="hidden">
             {!!onBack && <BackIconButton onClick={onBack} />}
-            {typeof title === "string" ? (
+            {typeof title === "string" || typeof title === "number" ? (
               <Typography variant="h6" noWrap>
                 {title}
               </Typography>

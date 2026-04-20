@@ -10,13 +10,13 @@ const typography: TypographyVariantsOptions = {
   body2: {
     fontSize: "0.875rem",
     lineHeight: 1.43,
-    fontWeight: 400,
+    fontWeight: 300,
     letterSpacing: "0.01071em",
   },
   caption: {
     fontSize: "0.75rem",
     lineHeight: 1.66,
-    fontWeight: 300,
+    fontWeight: 200,
     letterSpacing: "0.03333em",
   },
   button: {
@@ -65,7 +65,7 @@ const typography: TypographyVariantsOptions = {
   subtitle1: {
     fontSize: "1rem",
     lineHeight: 1.75,
-    fontWeight: 400,
+    fontWeight: 500,
     letterSpacing: "0.00938em",
   },
   subtitle2: {

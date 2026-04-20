@@ -12,9 +12,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
+      devOptions: { enabled: true },
       manifest: {
         name: "AB Apps",
         short_name: "AB Apps",

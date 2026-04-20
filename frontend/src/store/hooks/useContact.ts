@@ -10,6 +10,7 @@ import { EObjectChangeType } from "../enums/api";
 import { NULL_ID } from "../constants/api";
 import { markdownUtils } from "../utils/markdown";
 import type { TContact } from "../types/contacts";
+import { useNavigate } from "@tanstack/react-router";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -35,6 +36,7 @@ const useContact = (
 
   const snackbar = useSnackbar();
   const confirm = useConfirm();
+  const navigate = useNavigate();
 
   const isId = typeof contact === "number";
   const contactId = isId ? contact : contact.id;
@@ -123,6 +125,18 @@ const useContact = (
 
   /** Callbacks */
 
+  const handleView = () =>
+    navigate({
+      to: "/app/directory/contacts/$id",
+      params: { id: String(contactId) },
+    });
+
+  const handleEdit = () =>
+    navigate({
+      to: "/app/directory/contacts/$id/edit",
+      params: { id: String(contactId) },
+    });
+
   const handleCreate = createMutation.mutate;
 
   const handleUpdate = updateMutation.mutate;
@@ -207,6 +221,8 @@ const useContact = (
     create: handleCreate,
     update: handleUpdate,
     delete: handleDelete,
+    view: handleView,
+    edit: handleEdit,
   };
 };
 

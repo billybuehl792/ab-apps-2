@@ -1,7 +1,11 @@
 from typing import Optional
 
 from app.places.models import Place
-from app.places.services.google_places_service import GooglePlaceResponse, GooglePlacesClient
+from app.places.services.google_places_service import (
+    GooglePlaceResponse,
+    GooglePlacesClient,
+    GooglePlacesError,
+)
 
 
 class PlaceServiceError(Exception):
@@ -48,7 +52,8 @@ class PlaceService:
             else:
                 # Create new place from Google Places API
                 google_place = self.fetch_google_place(google_place_id)
-                created_place = self._create_place_from_google_place(google_place)
+                created_place = self._create_place_from_google_place(
+                    google_place)
                 return (created_place, True)
 
         raise PlaceNotFoundError(
@@ -74,11 +79,18 @@ class PlaceService:
         """Create a new place by fetching data from Google Places API."""
         try:
             place_data = google_place.parse_place_data()
-            place, created = Place.objects.get_or_create(**place_data.__dict__)
+            if place_data.latitude is None or place_data.longitude is None:
+                raise InvalidPlaceDataError(
+                    "Google Places API response is missing required location coordinates."
+                )
 
+            place, created = Place.objects.get_or_create(**place_data.__dict__)
             return place
+        except GooglePlacesError as e:
+            raise InvalidPlaceDataError(
+                f"Invalid place data received from Google Places API: {str(e)}")
         except (AttributeError, ValueError, TypeError) as e:
-            raise PlaceNotFoundError(
+            raise InvalidPlaceDataError(
                 f"Invalid place data received from Google Places API: {str(e)}")
         except Exception as e:
             raise PlaceNotFoundError(

@@ -14,9 +14,11 @@ class CustomUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
+    ordering = ("username",)
     filterset_fields = ("groups",)
     search_fields = ("username", "email")
     ordering_fields = ("username", "email")
+
 
 @api_view(('GET',))
 @permission_classes((IsAuthenticated,))

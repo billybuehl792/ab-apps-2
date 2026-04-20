@@ -76,6 +76,7 @@ declare global {
   > extends IMenuOption<TValue> {
     expanded?: boolean;
     items?: IListItem<TValue>[];
+    onExpandChange?: (expanded: boolean) => void;
   }
 
   type TOrderingOption<T extends TOptionValue = TOptionValue> = Omit<

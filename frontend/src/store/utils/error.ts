@@ -5,13 +5,21 @@ const getErrorMessage = (error: unknown): string => {
 
   if (typeof error === "string") errorMessage = error;
   else if (error instanceof AxiosError) {
-    if (error.response?.data) {
-      if (typeof error.response?.data === "string")
-        errorMessage = error.response.data;
-      else if (typeof error.response?.data.detail === "string")
-        errorMessage = error.response.data.detail;
-      else if (Array.isArray(error.response?.data))
-        errorMessage = error.response.data.join(" ");
+    const data = error.response?.data;
+
+    if (typeof data === "string") errorMessage = data;
+    else if (typeof data?.detail === "string") errorMessage = data.detail;
+    else if (Array.isArray(data)) errorMessage = data.join(" ");
+    else if (data && typeof data === "object") {
+      errorMessage = Object.values(data)
+        .flatMap((value) =>
+          Array.isArray(value)
+            ? value
+            : typeof value === "string"
+              ? [value]
+              : [],
+        )
+        .join(" ");
     }
   } else if (error instanceof Error) errorMessage = error.message;
 

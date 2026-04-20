@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-import { Delete, Edit, Info } from "@mui/icons-material";
+import { Delete, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
 import { getPlaceholderPlace, placeEndpoints } from "../constants/places";
@@ -32,6 +33,7 @@ const usePlace = (
 ) => {
   /** Values */
 
+  const navigate = useNavigate();
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
@@ -111,6 +113,12 @@ const usePlace = (
 
   /** Callbacks */
 
+  const handleView = () =>
+    navigate({
+      to: "/app/directory/places/$id",
+      params: { id: String(placeId) },
+    });
+
   const handleCreate = createMutation.mutate;
 
   const handleUpdate = updateMutation.mutate;
@@ -141,18 +149,6 @@ const usePlace = (
           isDisabled: isDisabled,
           link: {
             to: "/app/directory/places/$id",
-            params: { id: String(placeId) },
-          },
-        },
-        {
-          id: EPlaceOptionId.Edit,
-          render: !options?.hideOptions?.includes(EPlaceOptionId.Edit),
-          value: EPlaceOptionId.Edit,
-          label: "Edit",
-          Icon: Edit,
-          isDisabled: isDisabled,
-          link: {
-            to: "/app/directory/places/$id/edit",
             params: { id: String(placeId) },
           },
         },
@@ -195,6 +191,7 @@ const usePlace = (
     create: handleCreate,
     update: handleUpdate,
     delete: handleDelete,
+    view: handleView,
   };
 };
 
