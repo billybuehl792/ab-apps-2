@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Place(models.Model):
-    street_address = models.TextField(max_length=500)
+    street_address = models.CharField(max_length=500)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
