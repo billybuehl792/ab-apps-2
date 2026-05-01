@@ -40,23 +40,30 @@ export const placeUpdateSchema = z.object({
 });
 
 export const googlePlaceSchema = z.object({
-  google_place_id: googlePlaceIdSchema,
-  address_full: z.string(),
-  address_short: z.string(),
-  city: z.string(),
-  state: z.string(),
-  latitude: z.number(),
-  longitude: z.number(),
-  country: z.string(),
-  postal_code: z.string(),
+  id: googlePlaceIdSchema,
+  formattedAddress: z.string(),
+  shortFormattedAddress: z.string(),
+  postalAddress: z.object({
+    regionCode: z.string(),
+    languageCode: z.string(),
+    postalCode: z.string(),
+    administrativeArea: z.string(),
+    locality: z.string(),
+    addressLines: z.array(z.string()),
+  }),
+  location: z.object({
+    latitude: z.number(),
+    longitude: z.number(),
+  }),
 });
 
 export const googleAutocompleteSuggestionSchema = z.object({
-  google_place_id: googlePlaceIdSchema,
-  address_full: z.string(),
-  address_short: z.string(),
-  city: z.string(),
-  state: z.string(),
+  placePrediction: z.object({
+    placeId: googlePlaceIdSchema,
+    text: z.object({
+      text: z.string(),
+    }),
+  }),
 });
 
 export const placeListRequestSchema = listRequestSchema.extend({
@@ -85,6 +92,6 @@ export const googleAutocompleteSuggestionListRequestSchema = z.object({
   }),
 });
 
-export const googleAutocompleteSuggestionListResponseSchema = z.array(
-  googleAutocompleteSuggestionSchema,
-);
+export const googleAutocompleteSuggestionListResponseSchema = z.object({
+  suggestions: z.array(googleAutocompleteSuggestionSchema),
+});

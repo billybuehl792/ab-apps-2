@@ -94,14 +94,14 @@ const GoogleAutocompleteSuggestionAutocomplete = <
 
   return (
     <Autocomplete
-      options={googleAutocompleteSuggestions.data ?? []}
+      options={googleAutocompleteSuggestions.data?.suggestions ?? []}
       loading={googleAutocompleteSuggestions.isLoading}
-      getOptionKey={(option) => option.google_place_id}
-      getOptionLabel={(option) => option.address_full}
+      getOptionKey={(option) => option.placePrediction.placeId} // Assuming each suggestion has a unique placeId
+      getOptionLabel={(option) => option.placePrediction.text.text} // Assuming the suggestion text is in this path
       onInputChange={(_, newInputValue) => setInput(newInputValue)}
       filterOptions={(options) => options}
       isOptionEqualToValue={(option, value) =>
-        option.google_place_id === value.google_place_id
+        option.placePrediction.placeId === value.placePrediction.placeId
       }
       noOptionsText={
         googleAutocompleteSuggestions.isError ? (
@@ -149,10 +149,7 @@ const GoogleAutocompleteSuggestionAutocomplete = <
           <ListItemIcon>
             <PlaceIcons.Detail />
           </ListItemIcon>
-          <ListItemText
-            primary={option.address_short}
-            secondary={`${option.city}, ${option.state}`}
-          />
+          <ListItemText primary={option.placePrediction.text.text} />
         </MenuItem>
       )}
       slotProps={slotProps}

@@ -1,7 +1,6 @@
 import { AddLocationAlt, Map, Place } from "@mui/icons-material";
 import api from "../config/api";
 import type {
-  TGoogleAutocompleteSuggestion,
   TGoogleAutocompleteSuggestionListRequest,
   TGoogleAutocompleteSuggestionListResponse,
   TGooglePlace,
@@ -55,12 +54,12 @@ export const placeEndpoints = {
         )
         .then((res) => res.data),
   }),
-  googlePlace: (id: TGooglePlace["google_place_id"]) => ({
+  googlePlace: (id: string) => ({
     id: [...placeEndpoints.id, "google-place", id] as const,
     url: `${placeEndpoints.url}google-place/${id}/`,
     get: () =>
       api
-        .get<TGoogleAutocompleteSuggestion>(placeEndpoints.googlePlace(id).url)
+        .get<TGooglePlace>(placeEndpoints.googlePlace(id).url)
         .then((res) => res.data),
   }),
 };
