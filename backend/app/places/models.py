@@ -2,9 +2,6 @@ from django.db import models
 
 
 class Place(models.Model):
-    google_place_id = models.CharField(
-        max_length=255, null=True, blank=True, unique=True)
-    label = models.CharField(max_length=255, blank=True, default="")
     street_address = models.TextField(max_length=500)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
@@ -12,6 +9,11 @@ class Place(models.Model):
     postal_code = models.CharField(max_length=20)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+
+    label = models.CharField(max_length=255, blank=True, default="")
+    google_place_id = models.CharField(
+        max_length=255, null=True, blank=True, unique=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

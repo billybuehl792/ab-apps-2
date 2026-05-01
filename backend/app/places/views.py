@@ -2,97 +2,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.status import HTTP_400_BAD_REQUEST
-import logging
 
+from .serializers import PlaceSerializer
 from .models import Place
-from .serializers import PlaceReadSerializer, PlaceWriteSerializer
-from .services.place_service import PlaceService
-
-logger = logging.getLogger(__name__)
 
 
 class PlaceViewSet(ModelViewSet):
     queryset = Place.objects.all()
-    serializer_class = PlaceReadSerializer
+    serializer_class = PlaceSerializer
     ordering = ("city",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("country", "state", "city", "postal_code")
-    search_fields = ("address_full", "address_short", "google_place_id")
+    search_fields = ("street_address", "city")
     ordering_fields = ("created_at", "updated_at", "country", "state", "city")
     permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):  # type: ignore[override]
-        if self.action in ("list", "retrieve"):
-            return PlaceReadSerializer
-        return PlaceWriteSerializer
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._place_service = PlaceService()
-
-    @action(
-        detail=False,
-        methods=("get",),
-        url_path="google-place/(?P<place_id>[^/.]+)",
-    )
-    def google_place(self, request, place_id=None):
-        """Fetch place details from Google Places API by place ID."""
-        place_id = (place_id or request.query_params.get("id", "")).strip()
-
-        if not place_id:
-            return Response(
-                {"detail": "Place ID is required"},
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            res = self._place_service.fetch_google_place(place_id)
-            place_data = res.parse_place_data()
-            return Response(place_data.data())
-        except Exception as e:
-            logger.error(f"Error fetching Google place {place_id}: {str(e)}")
-            return Response(
-                {"detail": "Failed to fetch place data"},
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-    @action(detail=False, methods=("get",), url_path="google-autocomplete-suggestions")
-    def google_autocomplete_suggestions(self, request):
-        """Get Google Places autocomplete suggestions."""
-        input_text = request.query_params.get("input", "").strip()
-        session_token = request.query_params.get("sessionToken")
-
-        if not input_text:
-            return Response([])
-
-        try:
-            res = self._place_service.fetch_google_autocomplete_suggestions(
-                input_text, session_token
-            )
-            autocomplete_data = res.parse_suggestions()
-
-            return Response([
-                suggestion.data() for suggestion in autocomplete_data])
-        except Exception as e:
-            logger.error(
-                f"Error fetching Google suggestions for '{input_text}': {str(e)}")
-            return Response(
-                {"detail": "Failed to fetch suggestions"},
-                status=HTTP_400_BAD_REQUEST
-            )
-
-    @action(detail=False, methods=("get",), url_path="cities")
-    def list_cities(self, request) -> Response:
-        """List unique cities for all places."""
-        cities = (
-            Place.objects
-            .filter(city__isnull=False)
-            .values_list("city", flat=True)
-            .distinct()
-            .order_by("city")
-        )
-
-        return Response(list(cities))
