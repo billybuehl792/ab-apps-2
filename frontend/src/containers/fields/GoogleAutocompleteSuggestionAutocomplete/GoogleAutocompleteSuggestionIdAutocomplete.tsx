@@ -4,17 +4,11 @@ import GoogleAutocompleteSuggestionAutocomplete from ".";
 import { placeEndpoints } from "@/store/constants/places";
 import { errorUtils } from "@/store/utils/error";
 import type { IGoogleAutocompleteSuggestionAutocompleteProps } from ".";
-import type {
-  TGoogleAutocompleteSuggestion,
-  TGooglePlace,
-} from "@/store/types/places";
-
-type TGoogleAutocompleteSuggestionId =
-  TGoogleAutocompleteSuggestion["google_place_id"];
+import type { TGoogleAutocompleteSuggestion } from "@/store/types/places";
 
 type TValue<TMultiple extends boolean | undefined> = TMultiple extends true
-  ? TGoogleAutocompleteSuggestionId[]
-  : TGoogleAutocompleteSuggestionId | null;
+  ? string[]
+  : string | null;
 
 interface IGoogleAutocompleteSuggestionIdAutocompleteProps<
   TMultiple extends boolean | undefined,
@@ -49,7 +43,7 @@ const GoogleAutocompleteSuggestionIdAutocomplete = <
         ? value
         : value !== null && value !== undefined && value !== ""
           ? [value]
-          : []) as TGoogleAutocompleteSuggestionId[],
+          : []) as string[],
     [value],
   );
 
@@ -71,22 +65,29 @@ const GoogleAutocompleteSuggestionIdAutocomplete = <
     (query) => query.isError,
   )?.error;
 
-  const placesById = useMemo(
+  const placesById: Map<string, TGoogleAutocompleteSuggestion> = useMemo(
     () =>
       new Map(
         googlePlaceQueries
-          .map((query) => query.data)
-          .filter((place): place is TGooglePlace => Boolean(place))
-          .map((place) => [place.google_place_id, place]),
+          .filter((query) => query.isSuccess)
+          .map((query) => [
+            query.data.id,
+            {
+              placePrediction: {
+                placeId: query.data.id,
+                text: { text: query.data.formattedAddress },
+              },
+            },
+          ]),
       ),
     [googlePlaceQueries],
   );
 
   const mappedValue = useMemo(() => {
     if (multiple)
-      return googlePlaceIds
-        .map((googlePlaceId) => placesById.get(googlePlaceId))
-        .filter((place): place is TGooglePlace => Boolean(place));
+      return googlePlaceIds.map((googlePlaceId) =>
+        placesById.get(googlePlaceId),
+      );
 
     const googlePlaceId = googlePlaceIds[0];
     return googlePlaceId ? (placesById.get(googlePlaceId) ?? null) : null;
@@ -114,13 +115,13 @@ const GoogleAutocompleteSuggestionIdAutocomplete = <
         if (multiple)
           onChange(
             (selectedValue as TGoogleAutocompleteSuggestion[]).map(
-              (place) => place.google_place_id,
+              (value) => value.placePrediction.placeId,
             ) as TValue<TMultiple>,
           );
         else
           onChange(
             ((selectedValue as TGoogleAutocompleteSuggestion | null)
-              ?.google_place_id ?? null) as TValue<TMultiple>,
+              ?.placePrediction.placeId ?? null) as TValue<TMultiple>,
           );
       }}
     />
