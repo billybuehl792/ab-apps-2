@@ -55,8 +55,8 @@ export const jobUpdateSchema = z.object({
 export const jobListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
     ordering: z.nativeEnum(EJobListOrdering).optional(),
-    completed: z.boolean().optional(),
-    scheduled: z.boolean().optional(),
+    completed: z.coerce.boolean().optional(),
+    scheduled: z.coerce.boolean().optional(),
   }),
 });
 
