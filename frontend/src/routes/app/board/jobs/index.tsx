@@ -7,12 +7,11 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { Box } from "@mui/material";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import JobCreateButton from "@/containers/buttons/JobCreateButton";
-import JobGrid from "@/containers/tables/JobGrid";
+import JobGrid, { type IJobGridProps } from "@/containers/tables/JobGrid";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { jobEndpoints } from "@/store/constants/jobs";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
 import type { TRouteLoaderData } from "@/store/types/router";
-import type { TJob, TJobListRequest } from "@/store/types/jobs";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -44,7 +43,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleOnParamsChange = (newParams: TJobListRequest["params"]) =>
+  const handleOnParamsChange: IJobGridProps["onParamsChange"] = (newParams) =>
     navigate({
       to: ".",
       search: paramsSchema.parse(newParams),
@@ -52,7 +51,14 @@ function RouteComponent() {
     });
 
   return (
-    <Box sx={{ height: 500, my: 2 }}>
+    <Box
+      sx={{
+        height: (theme) => `calc(100% - ${theme.layout.nav.height}px - 60px)`,
+        minHeight: 400,
+        maxHeight: 1000,
+        my: 2,
+      }}
+    >
       <JobGrid
         rows={jobListQuery.data?.results ?? []}
         rowCount={jobListQuery.data?.count ?? 0}

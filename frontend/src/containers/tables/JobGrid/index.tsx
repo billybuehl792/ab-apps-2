@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Stack } from "@mui/material";
 import {
   DataGrid,
   type DataGridProps,
@@ -84,12 +83,12 @@ const JobGrid: React.FC<IJobGridProps> = ({
       sortModel={sortModel}
       showToolbar
       filterModel={filterModel}
-      // disableColumnFilter
+      disableColumnFilter
+      slots={{ toolbar: JobGridToolbar }}
       onRowClick={handleRowClick}
       onPaginationModelChange={handlePaginationModelChange}
       onSortModelChange={handleSortModelChange}
       onFilterModelChange={(model) => setFilterModel(model)}
-      slots={{ toolbar: JobGridToolbar }}
       {...props}
     />
   );

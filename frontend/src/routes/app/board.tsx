@@ -24,7 +24,7 @@ function RouteComponent() {
   const currentMatch = matches.at(-1);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ height: "100%" }}>
       <PageHeader
         title={<NavBreadcrumbs />}
         {...currentMatch?.loaderData?.slotProps?.pageHeader}
