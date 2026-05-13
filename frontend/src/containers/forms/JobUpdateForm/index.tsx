@@ -77,7 +77,16 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
   /** Effects */
 
   useEffect(() => {
-    methods.reset(jobUpdateSchema.parse(job));
+    methods.reset(
+      jobUpdateSchema.parse({
+        label: job.label,
+        description: job.description,
+        representative: job.representative?.id ?? null,
+        assignee: job.assignee?.id ?? null,
+        recipient: job.recipient?.id ?? null,
+        referred_by: job.referred_by?.id ?? null,
+      }),
+    );
   }, [job]);
 
   useBlocker({

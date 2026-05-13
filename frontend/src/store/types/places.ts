@@ -1,5 +1,7 @@
 import z from "zod";
 import {
+  cityListRequestSchema,
+  cityListResponseSchema,
   googleAutocompleteSuggestionListRequestSchema,
   googleAutocompleteSuggestionListResponseSchema,
   googleAutocompleteSuggestionSchema,
@@ -37,3 +39,7 @@ export type TGoogleAutocompleteSuggestionListRequest = z.infer<
 export type TGoogleAutocompleteSuggestionListResponse = z.infer<
   typeof googleAutocompleteSuggestionListResponseSchema
 >;
+
+export type TCityListRequest = z.infer<typeof cityListRequestSchema>;
+
+export type TCityListResponse = z.infer<typeof cityListResponseSchema>;

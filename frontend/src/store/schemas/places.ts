@@ -68,10 +68,8 @@ export const googleAutocompleteSuggestionSchema = z.object({
 
 export const placeListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    ordering: z
-      .nativeEnum(EPlaceListOrdering)
-      .optional()
-      .default(EPlaceListOrdering.CreatedAtAsc),
+    ordering: z.nativeEnum(EPlaceListOrdering).optional(),
+    city: z.string().optional(),
   }),
 });
 
@@ -95,3 +93,11 @@ export const googleAutocompleteSuggestionListRequestSchema = z.object({
 export const googleAutocompleteSuggestionListResponseSchema = z.object({
   suggestions: z.array(googleAutocompleteSuggestionSchema),
 });
+
+export const cityListRequestSchema = z.object({
+  params: z.object({
+    search: z.string().optional().describe("Search query to filter cities"),
+  }),
+});
+
+export const cityListResponseSchema = z.array(z.string());

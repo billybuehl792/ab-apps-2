@@ -2,10 +2,9 @@ import { type ComponentProps, type ReactNode } from "react";
 import { type StackProps, Stack } from "@mui/material";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import { sxUtils } from "@/store/utils/sx";
-import type { TListRequest } from "@/store/types/api";
 
 interface IPaginatedListHeaderProps extends StackProps {
-  params: TListRequest["params"];
+  search: string;
   loading?: boolean;
   disabled?: boolean;
   startContent?: ReactNode;
@@ -22,7 +21,7 @@ interface IPaginatedListHeaderProps extends StackProps {
 }
 
 const PaginatedListHeader: React.FC<IPaginatedListHeaderProps> = ({
-  params,
+  search,
   loading,
   disabled,
   startContent,
@@ -49,9 +48,9 @@ const PaginatedListHeader: React.FC<IPaginatedListHeaderProps> = ({
         <Stack direction="row" spacing={1} {...slotProps?.mainContent}>
           {startContent}
           <DebouncedSearchField
-            value={params.search}
+            value={search}
             size="small"
-            loading={loading && !!params.search}
+            loading={loading && !!search}
             disabled={disabled || !onSearchChange}
             onChange={(...searchArgs) => onSearchChange?.(...searchArgs)}
             {...slotProps?.searchField}

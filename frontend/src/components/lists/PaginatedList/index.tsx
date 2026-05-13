@@ -1,27 +1,24 @@
-import { type ComponentProps, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import {
-  Pagination,
-  type PaginationProps,
   Skeleton,
   type SkeletonProps,
   Stack,
   type StackProps,
+  TablePagination,
+  type TablePaginationProps,
 } from "@mui/material";
-import PaginatedListHeader from "./components/PaginatedListHeader";
 import StatusWrapper, {
   type IStatusWrapperProps,
 } from "@/components/layout/StatusWrapper";
-import { sxUtils } from "@/store/utils/sx";
-import type { TListRequest } from "@/store/types/api";
 
 type TDefaultItem = { id: number | string };
 
 export interface IPaginatedListProps<
   TItem extends TDefaultItem,
-  TParams extends TListRequest["params"] = TListRequest["params"],
 > extends StackProps {
   items: TItem[];
-  params: TParams;
+  page: number;
+  pageSize: number;
   /** Total items. `false` if unknown */
   total: number | false;
   disabled?: boolean;
@@ -30,22 +27,19 @@ export interface IPaginatedListProps<
   empty?: IStatusWrapperProps["empty"];
   renderItem: (item: TItem, index: number) => ReactNode;
   renderSkeletonItem?: true | ((index: number) => ReactNode);
-  onPageChange: PaginationProps["onChange"];
-  onSearchChange?: ComponentProps<typeof PaginatedListHeader>["onSearchChange"];
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
   slotProps?: {
-    header?: Partial<ComponentProps<typeof PaginatedListHeader>>;
     skeletonItem?: Partial<SkeletonProps>;
     statusWrapper?: Partial<IStatusWrapperProps>;
-    pagination?: Partial<Omit<PaginationProps, "page" | "count" | "onChange">>;
+    pagination?: Partial<TablePaginationProps>;
   };
 }
 
-const PaginatedList = <
-  TItem extends TDefaultItem,
-  TParams extends TListRequest["params"] = TListRequest["params"],
->({
+const PaginatedList = <TItem extends TDefaultItem>({
   items,
-  params,
+  page,
+  pageSize,
   total,
   disabled,
   loading,
@@ -54,29 +48,29 @@ const PaginatedList = <
   renderItem,
   renderSkeletonItem,
   onPageChange,
-  onSearchChange,
+  onPageSizeChange,
   slotProps,
   ...props
-}: IPaginatedListProps<TItem, TParams>) => {
+}: IPaginatedListProps<TItem>) => {
   /** Values */
 
-  const page = params.page;
-  const pageSize = params.page_size;
   const pageCount = typeof total === "number" ? Math.ceil(total / pageSize) : 0;
-
   const empty =
     emptyProp || (!loading && !error && (total === 0 || items.length === 0));
 
+  /** Callbacks */
+
+  const handleOnPageChange: TablePaginationProps["onPageChange"] = (
+    _event,
+    page,
+  ) => onPageChange(Math.min(Math.max(1, page + 1), pageCount));
+
+  const handleOnPageSizeChange: TablePaginationProps["onRowsPerPageChange"] = (
+    event,
+  ) => onPageSizeChange?.(parseInt(event.target.value, 10));
+
   return (
     <Stack position="relative" spacing={1} {...props}>
-      {!!onSearchChange && (
-        <PaginatedListHeader
-          params={params}
-          loading={!!loading}
-          onSearchChange={onSearchChange}
-          {...slotProps?.header}
-        />
-      )}
       {loading || error || empty ? (
         !!loading && !!renderSkeletonItem ? (
           Array(pageSize)
@@ -104,21 +98,20 @@ const PaginatedList = <
       ) : (
         items.map((item, index) => renderItem(item, index))
       )}
-      {pageCount > 1 && (
-        <Pagination
-          count={pageCount}
-          disabled={disabled}
-          page={page}
-          showFirstButton={pageCount > 10}
-          showLastButton={pageCount > 10}
-          onChange={onPageChange}
-          {...slotProps?.pagination}
-          sx={[
-            { alignSelf: "center" },
-            ...sxUtils.asArray(slotProps?.pagination?.sx),
-          ]}
-        />
-      )}
+      <TablePagination
+        component="div"
+        labelRowsPerPage="Items per page"
+        count={total === false ? -1 : total}
+        disabled={disabled || !!loading}
+        page={Math.max(0, page - 1)}
+        showFirstButton
+        showLastButton
+        rowsPerPageOptions={[10, 20, 50, 100]}
+        rowsPerPage={pageSize}
+        onPageChange={handleOnPageChange}
+        onRowsPerPageChange={handleOnPageSizeChange}
+        {...slotProps?.pagination}
+      />
     </Stack>
   );
 };

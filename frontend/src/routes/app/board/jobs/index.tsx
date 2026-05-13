@@ -12,6 +12,7 @@ import StatusWrapper from "@/components/layout/StatusWrapper";
 import { jobEndpoints } from "@/store/constants/jobs";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
 import type { TRouteLoaderData } from "@/store/types/router";
+import JobList from "@/containers/lists/JobList";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -50,6 +51,7 @@ function RouteComponent() {
       replace: true,
     });
 
+  return <JobList params={params} onParamsChange={handleOnParamsChange} />;
   return (
     <Box
       sx={{

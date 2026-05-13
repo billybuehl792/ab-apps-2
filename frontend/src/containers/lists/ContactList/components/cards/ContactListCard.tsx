@@ -3,6 +3,7 @@ import useContact, { type IUseContactOptions } from "@/store/hooks/useContact";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import ContactTagChip from "@/containers/chips/ContactTagChip";
+import EmptyChip from "@/components/chips/EmptyChip";
 import { ContactIcons } from "@/store/constants/contacts";
 import type { TContact } from "@/store/types/contacts";
 
@@ -45,12 +46,17 @@ const ContactListCard: React.FC<IContactListCardProps> = ({
             {
               id: "email",
               label: "Email",
-              value: contact.email ?? "None",
+              value: contact.email || <EmptyChip size="xxs" />,
+            },
+            {
+              id: "phone",
+              label: "Phone",
+              value: contact.phone_primary || <EmptyChip size="xxs" />,
             },
             {
               id: "address",
               label: "Address",
-              value: contact.place?.address_short ?? "None",
+              value: contact.place?.address_short || <EmptyChip size="xxs" />,
             },
             {
               id: "tags",
