@@ -18,7 +18,7 @@ class PlaceViewSet(ModelViewSet):
     serializer_class = PlaceReadSerializer
     ordering = ("city",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
-    filterset_fields = ("country", "state", "city", "postal_code")
+    filterset_fields = ("city",)
     search_fields = ("address_full", "address_short", "google_place_id")
     ordering_fields = ("created_at", "updated_at", "country", "state", "city")
     permission_classes = (IsAuthenticated,)
@@ -88,3 +88,14 @@ class PlaceViewSet(ModelViewSet):
                 {"detail": "Failed to fetch suggestions"},
                 status=HTTP_400_BAD_REQUEST
             )
+
+    @action(detail=False, methods=("get",), url_path="cities")
+    def cities(self, request):
+        """List all unique cities from places."""
+        search_query = request.query_params.get('search', '').strip()
+        cities = Place.objects.values_list('city', flat=True).distinct()
+
+        if search_query:
+            cities = cities.filter(city__icontains=search_query)
+
+        return Response(list(cities))

@@ -26,7 +26,7 @@ const theme = createTheme({
   typography,
 
   layout: {
-    page: { header: { height: 64 } },
+    page: { header: { height: 72 } },
     nav: { height: 56, panelWidth: 240 },
   },
 });

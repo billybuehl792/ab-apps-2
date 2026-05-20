@@ -16,8 +16,10 @@ class JobsFilter(FilterSet):
                              lookup_expr="in", distinct=True)
     assignee = BaseInFilter(field_name="assignee__id",
                             lookup_expr="in", distinct=True)
+    city = BaseInFilter(field_name="place__city",
+                        lookup_expr="in", distinct=True)
 
     class Meta:
         model = Job
-        fields = ("place", "recipient", "assignee",
+        fields = ("place", "recipient", "assignee", "city",
                   "completed", "scheduled")

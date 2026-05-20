@@ -3,13 +3,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from simple_history.models import HistoricalRecords
 
-from app.common.models import TimeStampedModel
-
 
 User = get_user_model()
 
 
-class Job(TimeStampedModel):
+class Job(models.Model):
     label = models.CharField(max_length=255, blank=True, default="")
     description = models.TextField(blank=True, default="")
     categories = models.ManyToManyField(
@@ -34,25 +32,29 @@ class Job(TimeStampedModel):
     completed_at = models.DateTimeField(null=True, blank=True)
     documents = GenericRelation("documents.Document")
     history = HistoricalRecords()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         verbose_name = "Job"
         verbose_name_plural = "Jobs"
 
 
-class JobCategory(TimeStampedModel):
+class JobCategory(models.Model):
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
         self.label = self.label.strip().lower()
 
-    class Meta:  # type: ignore
+    class Meta:
         verbose_name = "Job Category"
         verbose_name_plural = "Job Categories"
 
 
-class JobComment(TimeStampedModel):
+class JobComment(models.Model):
     job = models.ForeignKey(
         Job, on_delete=models.CASCADE, related_name="comments")
     content = models.TextField(blank=True, default="")
@@ -61,13 +63,15 @@ class JobComment(TimeStampedModel):
     updated_by = models.ForeignKey(
         User, blank=True, null=True, on_delete=models.SET_NULL, related_name="job_comments_updated")
     history = HistoricalRecords()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         verbose_name = "Job Comment"
         verbose_name_plural = "Job Comments"
 
 
-class JobExpense(TimeStampedModel):
+class JobExpense(models.Model):
     label = models.CharField(max_length=255, blank=True, default="")
     description = models.TextField(blank=True, default="")
     category = models.ForeignKey(
@@ -79,15 +83,19 @@ class JobExpense(TimeStampedModel):
     job = models.ForeignKey(
         Job, on_delete=models.CASCADE, related_name="expenses")
     history = HistoricalRecords()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         verbose_name = "Job Expense"
         verbose_name_plural = "Job Expenses"
 
 
-class JobExpenseCategory(TimeStampedModel):
+class JobExpenseCategory(models.Model):
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
         self.label = self.label.strip().lower()

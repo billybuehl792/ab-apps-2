@@ -33,13 +33,15 @@ export interface IContactAutocompleteProps<
 > extends Omit<
   TContactAutocompleteBaseProps<TMultiple, TDisableClearable>,
   | "options"
+  | "isOptionEqualToValue"
   | "renderInput"
   | "renderOption"
   | "getOptionLabel"
-  | "isOptionEqualToValue"
   | "getOptionKey"
+  | "onChange"
   | "slotProps"
 > {
+  value: AutocompleteValue<TContact, TMultiple, TDisableClearable, false>;
   inputRef?: TextFieldProps["inputRef"];
   name?: string;
   label?: string;
@@ -48,6 +50,9 @@ export interface IContactAutocompleteProps<
   helperText?: string;
   required?: boolean;
   enableCreate?: boolean;
+  onChange: (
+    value: AutocompleteValue<TContact, TMultiple, TDisableClearable, false>,
+  ) => void;
   slotProps?: {
     input?: TextFieldProps;
   } & TContactAutocompleteBaseProps<TMultiple, TDisableClearable>["slotProps"];
@@ -59,9 +64,11 @@ const ContactAutocomplete = <
 >({
   inputRef,
   label = "Contact",
+  value,
   name,
   placeholder = "Search for a contact",
   error,
+  multiple,
   helperText,
   required,
   enableCreate,
@@ -89,26 +96,17 @@ const ContactAutocomplete = <
   /** Callbacks */
 
   const handleOnCreate = (newContact: TContact) => {
-    onChange?.(
-      { type: "change" } as React.SyntheticEvent,
-      (props.multiple
-        ? [...(props.value as TContact[]), newContact]
-        : newContact) as AutocompleteValue<
-        TContact,
-        TMultiple,
-        TDisableClearable,
-        false
-      >,
-      "createOption",
-    );
+    onChange(value);
     setCreateOpen(false);
   };
 
   return (
     <>
       <Autocomplete
+        value={value}
         options={contactListQuery.data?.results ?? []}
         loading={contactListQuery.isLoading}
+        multiple={multiple}
         getOptionKey={(option) => option.id}
         getOptionLabel={(option) => `${option.first_name} ${option.last_name}`}
         onInputChange={(_, newInputValue) => setInput(newInputValue)}
@@ -137,7 +135,6 @@ const ContactAutocomplete = <
             label={label}
             name={name}
             inputRef={inputRef}
-            placeholder={placeholder}
             required={required}
             error={error || contactListQuery.isError}
             helperText={
@@ -150,6 +147,7 @@ const ContactAutocomplete = <
             slotProps={{
               ...inputProps?.slotProps,
               input: {
+                type: "search",
                 ...inputProps?.slotProps?.input,
                 ...params.InputProps,
                 endAdornment: (
@@ -174,8 +172,17 @@ const ContactAutocomplete = <
             />
           </MenuItem>
         )}
+        renderValue={(value) => {
+          if (Array.isArray(value)) {
+            if (!value.length) return null;
+            return value
+              .map((v) => `${v.first_name} ${v.last_name}`)
+              .join(", ");
+          }
+          return value ? `${value.first_name} ${value.last_name}` : null;
+        }}
         slotProps={slotProps}
-        onChange={onChange}
+        onChange={(_, newValue) => onChange(newValue)}
         {...props}
       />
       {!!enableCreate && (

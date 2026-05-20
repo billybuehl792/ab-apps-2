@@ -20,6 +20,10 @@ import { errorUtils } from "@/store/utils/error";
 import useConfirm from "@/store/hooks/useConfirm";
 import useJob from "@/store/hooks/useJob";
 import type { TJob } from "@/store/types/jobs";
+import { z } from "zod";
+import { contactSchema } from "@/store/schemas/contacts";
+import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
+import ContactAutocomplete from "@/containers/fields/ContactAutocomplete";
 
 interface IJobUpdateFormProps extends Omit<
   StackProps<"form">,
@@ -36,6 +40,20 @@ interface IJobUpdateFormProps extends Omit<
   };
 }
 
+const jobUpdateFormSchema = z.object({
+  label: z.string(),
+  description: z.string(),
+  representative: contactSchema.nullable(),
+  assignee: contactSchema.nullable(),
+  recipient: contactSchema.nullable(),
+  referred_by: contactSchema.nullable(),
+  place: googleAutocompleteSuggestionSchema.nullable(),
+  scheduled_at: z.string().datetime().nullable(),
+  completed_at: z.string().datetime().nullable(),
+  sold_at: z.string().datetime().nullable(),
+  invoiced_at: z.string().datetime().nullable(),
+});
+
 const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
   job,
   onSuccess,
@@ -47,7 +65,7 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
 
   const confirm = useConfirm();
   const jobHook = useJob(job);
-  const methods = useForm({ resolver: zodResolver(jobUpdateSchema) });
+  const methods = useForm({ resolver: zodResolver(jobUpdateFormSchema) });
 
   /** Mutations */
 
@@ -77,7 +95,21 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
   /** Effects */
 
   useEffect(() => {
-    methods.reset(jobUpdateSchema.parse(job));
+    methods.reset(
+      jobUpdateFormSchema.parse({
+        label: job.label,
+        description: job.description,
+        representative: job.representative,
+        assignee: job.assignee,
+        recipient: job.recipient,
+        referred_by: job.referred_by,
+        place: job.place,
+        scheduled_at: job.scheduled_at,
+        completed_at: job.completed_at,
+        sold_at: job.sold_at,
+        invoiced_at: job.invoiced_at,
+      }),
+    );
   }, [job]);
 
   useBlocker({
@@ -119,14 +151,18 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
         <Controller
           name="representative"
           control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
+          render={({
+            field: { value, disabled, onChange, ...field },
+            formState,
+          }) => (
+            <ContactAutocomplete
               enableCreate
+              value={value}
               label="Sales Representative"
               disabled={isFieldDisabled || disabled}
               error={!!formState.errors.representative}
               helperText={formState.errors.representative?.message}
+              onChange={(value) => onChange(value)}
               {...field}
             />
           )}
@@ -148,9 +184,8 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
         <Controller
           name="assignee"
           control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
+          render={({ field: { disabled, ...field }, formState }) => (
+            <ContactAutocomplete
               enableCreate
               label="Assignee"
               disabled={isFieldDisabled || disabled}
@@ -210,7 +245,7 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
             render={({ field: { value, onChange, ...field }, formState }) => (
               <DateTimePicker
                 label="Scheduled At"
-                value={dayjs(value) ?? null}
+                value={value ? dayjs(value) : null}
                 disabled={isFieldDisabled}
                 onChange={(newValue) =>
                   onChange(newValue?.toISOString() ?? null)
@@ -235,7 +270,7 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
             render={({ field: { value, onChange, ...field }, formState }) => (
               <DateTimePicker
                 label="Completed At"
-                value={dayjs(value) ?? null}
+                value={value ? dayjs(value) : null}
                 disabled={isFieldDisabled}
                 onChange={(newValue) =>
                   onChange(newValue?.toISOString() ?? null)

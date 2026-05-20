@@ -21,10 +21,11 @@ type TTOrderingOptionValue<TOptions extends TOrderingOption[]> =
 
 export interface IOrderingButtonGroupProps<
   TOptions extends TOrderingOption[],
+  TAllowEmpty extends boolean | undefined = false,
 > extends Omit<ButtonGroupProps, "onChange"> {
   options: TOptions;
+  allowEmpty?: TAllowEmpty;
   value: TTOrderingOptionValue<TOptions>;
-  width?: number | string;
   onChange: (
     value: TTOrderingOptionValue<TOptions>,
     event: SyntheticEvent,
@@ -35,14 +36,17 @@ export interface IOrderingButtonGroupProps<
   ) => void;
 }
 
-const OrderingButtonGroup = <TOptions extends TOrderingOption[]>({
+const OrderingButtonGroup = <
+  TOptions extends TOrderingOption[],
+  TAllowEmpty extends boolean | undefined = false,
+>({
   value: valueProp,
   options: optionsProp,
-  width,
+  allowEmpty,
   onChange,
   onDirectionChange,
   ...props
-}: IOrderingButtonGroupProps<TOptions>) => {
+}: IOrderingButtonGroupProps<TOptions, TAllowEmpty>) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   /** Values */
@@ -96,13 +100,7 @@ const OrderingButtonGroup = <TOptions extends TOrderingOption[]>({
 
   return (
     <>
-      <ButtonGroup
-        {...props}
-        sx={[
-          { width, minWidth: width, maxWidth: width },
-          ...sxUtils.asArray(props.sx),
-        ]}
-      >
+      <ButtonGroup {...props}>
         <Button
           endIcon={
             <ArrowDropDown

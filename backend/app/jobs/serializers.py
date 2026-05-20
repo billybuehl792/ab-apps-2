@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
-
 from .models import Job, JobCategory, JobComment, JobExpense, JobExpenseCategory
+from app.contacts.serializers import ContactReadSerializer
 from app.places.serializers import PlaceReadSerializer, PlaceWriteSerializer
 
 
@@ -9,6 +9,10 @@ class JobReadSerializer(ModelSerializer):
     """Serializer for Job model."""
 
     place = PlaceReadSerializer(read_only=True)
+    representative = ContactReadSerializer(read_only=True)
+    recipient = ContactReadSerializer(read_only=True)
+    assignee = ContactReadSerializer(read_only=True)
+    referred_by = ContactReadSerializer(read_only=True)
 
     class Meta:
         model = Job

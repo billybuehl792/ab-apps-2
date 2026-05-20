@@ -70,12 +70,12 @@ const components: Components<
       {
         props: { size: "xxs" },
         style: {
-          height: 18,
+          height: 16,
           fontSize: 10,
           padding: 0,
           "& .MuiChip-icon": { fontSize: 10 },
           "& .MuiChip-deleteIcon": { fontSize: 10 },
-          "& .MuiChip-label": { paddingLeft: 10, paddingRight: 10 },
+          "& .MuiChip-label": { paddingLeft: 8, paddingRight: 8 },
         },
       },
       {

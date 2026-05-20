@@ -3,9 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Stack } from "@mui/material";
 import ListCard from "@/components/cards/ListCard";
 import { jobEndpoints, JobIcons } from "@/store/constants/jobs";
+import StatusWrapper from "@/components/layout/StatusWrapper";
 
 export const Route = createFileRoute("/app/board/")({
   component: RouteComponent,
+  pendingComponent: () => <StatusWrapper loading my={2} />,
 });
 
 function RouteComponent() {

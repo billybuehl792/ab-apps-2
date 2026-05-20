@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import {
   CircularProgress,
@@ -19,14 +19,14 @@ interface DebouncedSearchFieldProps extends Omit<
   onChange: (value: string) => void;
 }
 
-const DebouncedSearchField = ({
-  value,
+const DebouncedSearchField: React.FC<DebouncedSearchFieldProps> = ({
+  value = "",
   loading,
   disabled,
   onChange,
   ...props
-}: DebouncedSearchFieldProps) => {
-  const [localValue, setLocalValue] = useState(value ?? "");
+}) => {
+  const [localValue, setLocalValue] = useState(value);
 
   /** Callbacks */
 
@@ -44,6 +44,8 @@ const DebouncedSearchField = ({
     (term: string) => onChange(term),
     500,
   );
+
+  /** Effects */
 
   useEffect(() => {
     setLocalValue(value || "");

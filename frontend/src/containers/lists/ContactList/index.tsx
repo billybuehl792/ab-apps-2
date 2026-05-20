@@ -1,115 +1,135 @@
-import { type ComponentProps } from "react";
-import { Stack } from "@mui/material";
-import PaginatedList, {
-  type IPaginatedListProps,
-} from "@/components/lists/PaginatedList";
+import { useMemo, type ComponentProps } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Divider, Stack, type StackProps } from "@mui/material";
+import PaginatedList from "@/components/lists/PaginatedList";
+import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ContactListCard from "./components/cards/ContactListCard";
 import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
-import ContactListOrderingButtonGroup, {
-  type IContactListOrderingButtonGroupProps,
-} from "./components/buttons/ContactListOrderingButtonGroup";
-import ContactListFiltersIconButton, {
-  type IContactListFiltersIconButtonProps,
-} from "./components/buttons/ContactListFiltersIconButton";
-import { ContactIcons } from "@/store/constants/contacts";
+import ContactListOrderingField from "./components/fields/ContactListOrderingField";
+import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { EObjectChangeType } from "@/store/enums/api";
 import type { TContact, TContactListRequest } from "@/store/types/contacts";
 
-type TPaginatedListProps = IPaginatedListProps<
-  TContact,
-  TContactListRequest["params"]
->;
 type TCardProps = Partial<
   Omit<ComponentProps<typeof ContactListCard>, "contact">
 >;
 
-export interface IContactListProps extends Omit<
-  TPaginatedListProps,
-  "params" | "renderItem" | "onChange" | "slotProps"
-> {
-  options: TContactListRequest;
-  onOrderingChange?: IContactListOrderingButtonGroupProps["onChange"];
-  onFiltersChange?: IContactListFiltersIconButtonProps["form"]["onSubmit"];
-  onCardChange?: TCardProps["onChange"];
+export interface IContactListProps extends StackProps {
+  params: TContactListRequest["params"];
+  onParamsChange: (newParams: TContactListRequest["params"]) => void;
   slotProps?: {
+    header?: StackProps;
     card?: TCardProps | ((contact: TContact) => TCardProps);
-    orderingButtonGroup?: Partial<IContactListOrderingButtonGroupProps>;
-    filtersIconButton?: Partial<IContactListFiltersIconButtonProps>;
-  } & TPaginatedListProps["slotProps"];
+  };
 }
 
 const ContactList: React.FC<IContactListProps> = ({
-  options,
-  total,
-  loading,
-  error,
-  empty,
-  onOrderingChange,
-  onFiltersChange,
-  onCardChange,
-  slotProps: { card: cardProps, ...slotProps } = {},
+  params,
+  onParamsChange,
+  slotProps,
   ...props
 }) => {
+  /** Queries */
+
+  const contactListQuery = useQuery({
+    queryKey: [contactEndpoints.id, { params }],
+    queryFn: () => contactEndpoints.get({ params }),
+  });
+
+  /** Data */
+
+  const total = useMemo(
+    () => contactListQuery.data?.count ?? false,
+    [contactListQuery.data],
+  );
+
+  /** Callbacks */
+
+  const handleOnParamsChange: IContactListProps["onParamsChange"] = (
+    newParams,
+  ) => onParamsChange?.(newParams);
+
+  const handleOnCardChange: TCardProps["onChange"] = (contact, type) => {
+    if (type === EObjectChangeType.Delete) {
+      const isLastItemOnPage =
+        contactListQuery.data?.results.at(-1)?.id === contact.id;
+      const isFirstPage = params.page === 1;
+      if (isLastItemOnPage && !isFirstPage)
+        handleOnParamsChange({ ...params, page: Math.max(1, params.page - 1) });
+      else contactListQuery.refetch();
+    }
+  };
+
   return (
-    <PaginatedList
-      total={total}
-      params={options.params}
-      loading={loading}
-      error={error}
-      empty={
-        total === 0 || empty === true
-          ? {
-              label: "No Contacts Found",
-              icon: <ContactIcons.List fontSize="large" />,
-              ...(options.params.search
-                ? { description: `No results for "${options.params.search}".` }
-                : { actions: [<ContactCreateButton />] }),
+    <Stack position="relative" spacing={2} {...props}>
+      <Stack {...slotProps?.header}>
+        <Stack
+          direction="row"
+          spacing={1}
+          py={2}
+          flexWrap="wrap"
+          useFlexGap
+          alignItems="center"
+          justifyContent="flex-start"
+        >
+          <DebouncedSearchField
+            value={params.search}
+            size="small"
+            loading={!!contactListQuery.isLoading && !!params.search}
+            onChange={(value) =>
+              handleOnParamsChange({ ...params, page: 1, search: value })
             }
-          : empty
-      }
-      renderItem={(contact) => (
-        <ContactListCard
-          key={contact.id}
-          contact={contact}
-          onChange={onCardChange}
-          {...(typeof cardProps === "function"
-            ? cardProps(contact)
-            : cardProps)}
-        />
-      )}
-      renderSkeletonItem
-      slotProps={{
-        ...slotProps,
-        header: {
-          ...((!!onOrderingChange || !!onFiltersChange) && {
-            endContent: (
-              <Stack direction="row" spacing={1}>
-                {!!onOrderingChange && (
-                  <ContactListOrderingButtonGroup
-                    value={options.params.ordering}
-                    onChange={onOrderingChange}
-                    {...slotProps?.orderingButtonGroup}
-                  />
-                )}
-                {!!onFiltersChange && (
-                  <ContactListFiltersIconButton
-                    form={{
-                      values: {
-                        city: options.params.city ?? [],
-                        tag: options.params.tag ?? [],
-                      },
-                      onSubmit: onFiltersChange,
-                    }}
-                    {...slotProps?.filtersIconButton}
-                  />
-                )}
-              </Stack>
-            ),
-          }),
-          ...slotProps?.header,
-        },
-      }}
-      {...props}
-    />
+            sx={{ flex: 1 }}
+          />
+          <ContactListOrderingField
+            value={params.ordering ?? null}
+            disabled={contactListQuery.isLoading}
+            size="small"
+            onChange={(ordering) =>
+              handleOnParamsChange({
+                ...params,
+                page: 1,
+                ordering: ordering ?? undefined,
+              })
+            }
+            sx={{ width: { xs: "100%", sm: 160 } }}
+          />
+        </Stack>
+        <Divider />
+      </Stack>
+      <PaginatedList
+        items={contactListQuery.data?.results ?? []}
+        total={total}
+        page={params.page}
+        pageSize={params.page_size}
+        loading={contactListQuery.isLoading}
+        error={contactListQuery.error}
+        empty={
+          total === 0 && {
+            label: "No Contacts Found",
+            icon: <ContactIcons.List fontSize="large" />,
+            ...(params.search
+              ? { description: `No results for "${params.search}".` }
+              : { actions: [<ContactCreateButton />] }),
+          }
+        }
+        renderItem={(contact) => (
+          <ContactListCard
+            key={contact.id}
+            contact={contact}
+            onChange={handleOnCardChange}
+            {...(typeof slotProps?.card === "function"
+              ? slotProps.card(contact)
+              : slotProps?.card)}
+          />
+        )}
+        renderSkeletonItem
+        onPageChange={(page) => handleOnParamsChange({ ...params, page })}
+        onPageSizeChange={(pageSize) =>
+          handleOnParamsChange({ ...params, page: 1, page_size: pageSize })
+        }
+      />
+    </Stack>
   );
 };
 

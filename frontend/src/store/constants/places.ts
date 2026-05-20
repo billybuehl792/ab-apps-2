@@ -9,6 +9,8 @@ import type {
   TPlaceListRequest,
   TPlaceListResponse,
   TPlaceUpdate,
+  TCityListRequest,
+  TCityListResponse,
 } from "../types/places";
 import { EPlaceListOrdering } from "../enums/places";
 
@@ -60,6 +62,14 @@ export const placeEndpoints = {
     get: () =>
       api
         .get<TGooglePlace>(placeEndpoints.googlePlace(id).url)
+        .then((res) => res.data),
+  }),
+  cities: () => ({
+    id: [...placeEndpoints.id, "cities"] as const,
+    url: `${placeEndpoints.url}cities/`,
+    get: (options?: TCityListRequest) =>
+      api
+        .get<TCityListResponse>(placeEndpoints.cities().url, options)
         .then((res) => res.data),
   }),
 };

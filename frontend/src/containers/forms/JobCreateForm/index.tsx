@@ -23,7 +23,7 @@ import { jobCreateSchema } from "@/store/schemas/jobs";
 import { NULL_ID } from "@/store/constants/api";
 import type { TJob, TJobCreate } from "@/store/types/jobs";
 
-interface IJobCreateFormProps extends Omit<
+export interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {

@@ -65,9 +65,7 @@ export const contactUpdateSchema = z.object({
 export const contactListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params
     .extend({
-      ordering: z
-        .nativeEnum(EContactListOrdering)
-        .default(EContactListOrdering.FirstNameAsc),
+      ordering: z.nativeEnum(EContactListOrdering).optional(),
       city: idOrIdArraySchema
         .optional()
         .transform((val) => (val?.length ? val : undefined)),
