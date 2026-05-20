@@ -3,16 +3,12 @@ import {
   stripSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { Box } from "@mui/material";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import JobCreateButton from "@/containers/buttons/JobCreateButton";
-import JobGrid, { type IJobGridProps } from "@/containers/tables/JobGrid";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { jobEndpoints } from "@/store/constants/jobs";
+import JobCreateButton from "@/containers/buttons/JobCreateButton";
+import JobList, { type IJobListProps } from "@/containers/lists/JobList";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
 import type { TRouteLoaderData } from "@/store/types/router";
-import JobList from "@/containers/lists/JobList";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -34,17 +30,9 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = useNavigate();
 
-  /** Queries */
-
-  const jobListQuery = useQuery({
-    queryKey: [jobEndpoints.id, params],
-    queryFn: () => jobEndpoints.get({ params }),
-    placeholderData: keepPreviousData,
-  });
-
   /** Callbacks */
 
-  const handleOnParamsChange: IJobGridProps["onParamsChange"] = (newParams) =>
+  const handleOnParamsChange: IJobListProps["onParamsChange"] = (newParams) =>
     navigate({
       to: ".",
       search: paramsSchema.parse(newParams),
@@ -52,23 +40,4 @@ function RouteComponent() {
     });
 
   return <JobList params={params} onParamsChange={handleOnParamsChange} />;
-  return (
-    <Box
-      sx={{
-        height: (theme) => `calc(100% - ${theme.layout.nav.height}px - 60px)`,
-        minHeight: 400,
-        maxHeight: 1000,
-        my: 2,
-      }}
-    >
-      <JobGrid
-        rows={jobListQuery.data?.results ?? []}
-        rowCount={jobListQuery.data?.count ?? 0}
-        loading={jobListQuery.isFetching}
-        params={params}
-        showToolbar
-        onParamsChange={handleOnParamsChange}
-      />
-    </Box>
-  );
 }

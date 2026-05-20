@@ -92,27 +92,6 @@ const JobList: React.FC<IJobListProps> = ({
               sx={{ width: { xs: "100%", sm: 160 } }}
             />
           </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            flexWrap="wrap"
-            useFlexGap
-          >
-            <CityAutocomplete
-              value={params.city}
-              disabled={jobListQuery.isLoading}
-              size="small"
-              onChange={(_, city) =>
-                handleOnParamsChange({
-                  ...params,
-                  page: 1,
-                  city: city ?? undefined,
-                })
-              }
-              sx={{ width: 160 }}
-            />
-          </Stack>
         </Stack>
         <Divider />
       </Stack>

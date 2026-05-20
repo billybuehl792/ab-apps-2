@@ -2,10 +2,9 @@ import useJob, { type IUseJobOptions } from "@/store/hooks/useJob";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import EmptyChip from "@/components/chips/EmptyChip";
+import ContactChip from "@/containers/chips/ContactChip";
 import { JobIcons } from "@/store/constants/jobs";
 import type { TJob } from "@/store/types/jobs";
-import ContactChip from "@/containers/chips/ContactChip";
-import { Box } from "@mui/material";
 
 type TListCardProps = Omit<IListCardProps, "options" | "onClick" | "onChange">;
 

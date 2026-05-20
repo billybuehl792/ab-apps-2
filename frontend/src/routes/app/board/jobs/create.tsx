@@ -1,4 +1,3 @@
-import { type ComponentProps } from "react";
 import {
   createFileRoute,
   useCanGoBack,
@@ -7,7 +6,10 @@ import {
 } from "@tanstack/react-router";
 import { Stack, Typography } from "@mui/material";
 import { JobIcons } from "@/store/constants/jobs";
-import JobCreateForm from "@/containers/forms/JobCreateForm";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import JobCreateForm, {
+  type IJobCreateFormProps,
+} from "@/containers/forms/JobCreateForm";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/board/jobs/create")({
@@ -15,6 +17,7 @@ export const Route = createFileRoute("/app/board/jobs/create")({
     crumb: { label: "Create Job", Icon: JobIcons.Create },
   }),
   component: RouteComponent,
+  pendingComponent: () => <StatusWrapper loading my={2} />,
 });
 
 function RouteComponent() {
@@ -26,9 +29,7 @@ function RouteComponent() {
 
   /** Callbacks */
 
-  const handleOnSuccess: ComponentProps<typeof JobCreateForm>["onSuccess"] = (
-    newJob,
-  ) =>
+  const handleOnSuccess: IJobCreateFormProps["onSuccess"] = (newJob) =>
     navigate({
       to: "/app/board/jobs/$id",
       params: { id: String(newJob.id) },
@@ -41,7 +42,7 @@ function RouteComponent() {
   };
 
   return (
-    <Stack spacing={2} my={2}>
+    <Stack py={2} spacing={2}>
       <Typography variant="h5">Create New Job</Typography>
       <JobCreateForm onSuccess={handleOnSuccess} onCancel={handleOnCancel} />
     </Stack>
