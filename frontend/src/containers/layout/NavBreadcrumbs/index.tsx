@@ -4,9 +4,7 @@ import { Breadcrumbs, type BreadcrumbsProps } from "@mui/material";
 import ButtonLink from "@/components/links/ButtonLink";
 
 interface INavBreadcrumbProps extends Omit<BreadcrumbsProps, "slotProps"> {
-  slotProps?: {
-    crumb?: ComponentProps<typeof ButtonLink>;
-  };
+  slotProps?: { crumb?: ComponentProps<typeof ButtonLink> };
 }
 
 const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({

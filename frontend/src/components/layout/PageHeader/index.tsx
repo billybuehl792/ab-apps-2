@@ -15,15 +15,11 @@ const PageHeader: React.FC<IPageHeaderProps> = ({
     <Stack
       direction="row"
       spacing={2}
-      position="sticky"
       justifyContent="space-between"
       alignItems="center"
-      height={({ layout }) => layout.page.header.height}
+      height={(theme) => theme.layout.page.header.height}
       boxSizing="border-box"
-      top={0}
-      py={2}
       bgcolor="background.paper"
-      zIndex={2}
       borderBottom={(theme) => `1px solid ${theme.palette.divider}`}
       {...props}
     >

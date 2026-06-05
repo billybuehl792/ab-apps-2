@@ -139,7 +139,7 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
         Icon: Info,
         isDisabled: isDisabled,
         link: {
-          to: "/app/board/jobs/$id",
+          to: "/app/jobs/$id",
           params: { id: String(jobId) },
         },
       },
@@ -151,7 +151,7 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
         Icon: Edit,
         isDisabled: isDisabled,
         link: {
-          to: "/app/board/jobs/$id/edit",
+          to: "/app/jobs/$id/edit",
           params: { id: String(jobId) },
         },
       },

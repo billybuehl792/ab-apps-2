@@ -6,7 +6,7 @@ type TJobCreateButtonProps = Omit<ComponentProps<typeof ButtonLink>, "to">;
 
 const JobCreateButton: React.FC<TJobCreateButtonProps> = (props) => {
   return (
-    <ButtonLink to="/app/board/jobs/create" startIcon={<Add />} {...props}>
+    <ButtonLink to="/app/jobs/create" startIcon={<Add />} {...props}>
       Create
     </ButtonLink>
   );

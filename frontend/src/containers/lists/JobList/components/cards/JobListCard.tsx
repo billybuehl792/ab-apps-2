@@ -65,7 +65,7 @@ const JobListCard: React.FC<IJobListCardProps> = ({
         />
       }
       link={{
-        to: "/app/board/jobs/$id",
+        to: "/app/jobs/$id",
         params: { id: String(job.id) },
       }}
       disabled={jobHook.disabled}

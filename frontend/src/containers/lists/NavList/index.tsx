@@ -25,7 +25,14 @@ const NavList = (props: Partial<INestedListProps>) => {
       value: "home",
       label: "Home",
       Icon: Home,
-      link: { to: "/app/dashboard", activeOptions: { exact: true } },
+      link: { to: "/app", activeOptions: { exact: true } },
+    },
+    {
+      id: "jobs",
+      value: "jobs",
+      label: "Jobs",
+      Icon: JobIcons.List,
+      link: { to: "/app/jobs", activeOptions: { exact: true } },
     },
     {
       id: "board",
