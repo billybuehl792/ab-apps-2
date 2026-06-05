@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-from app.common.models import TimeStampedModel
 
 User = get_user_model()
 
@@ -24,7 +23,7 @@ def thumbnail_upload_to(instance, filename):
     return os.path.join("documents/thumbnails/", filename)
 
 
-class Document(TimeStampedModel):
+class Document(models.Model):
     label = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     file = models.FileField(upload_to=document_upload_to)
@@ -39,8 +38,10 @@ class Document(TimeStampedModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     uploaded_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
         ]

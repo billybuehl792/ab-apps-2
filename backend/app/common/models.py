@@ -1,14 +1,6 @@
 import re
-from django.db.models import CharField, Model, DateTimeField
+from django.db.models import CharField
 from django.forms import ValidationError
-
-
-class TimeStampedModel(Model):
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
 
 
 class PhoneNumberField(CharField):

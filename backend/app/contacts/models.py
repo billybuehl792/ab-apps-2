@@ -2,12 +2,12 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 
-from app.common.models import PhoneNumberField, TimeStampedModel
+from app.common.models import PhoneNumberField
 from app.documents.models import Document
 from app.places.models import Place
 
 
-class Contact(TimeStampedModel):
+class Contact(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -23,6 +23,8 @@ class Contact(TimeStampedModel):
     documents = GenericRelation(Document, related_query_name='contact')
     tags = models.ManyToManyField(
         'ContactTag', related_name='contacts', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:  # type: ignore
         constraints = [
@@ -73,12 +75,14 @@ class Contact(TimeStampedModel):
         return f"{self.first_name} {self.last_name} <{self.email}>"
 
 
-class ContactTag(TimeStampedModel):
+class ContactTag(models.Model):
     label = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, blank=True, null=True)
     color = models.CharField(max_length=7, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         verbose_name = "Contact Tag"
         verbose_name_plural = "Contact Tags"
         ordering = ("label",)
