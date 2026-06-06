@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { Stack, Tab, Tabs } from "@mui/material";
+import { Container, Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
-import { idSchema } from "@/store/schemas/basic";
-import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
+import ContactDetailCard from "@/containers/cards/ContactDetailCard";
+import { idSchema } from "@/store/schemas/basic";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/directory/contacts/$id/")({
+export const Route = createFileRoute("/app/contacts/$id/")({
   loader: ({ params }): TRouteLoaderData => ({
     slotProps: {
       pageHeader: {
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/app/directory/contacts/$id/")({
             hideOptions={[EContactOptionId.Detail]}
             onChange={(_, type) => {
               if (type === EObjectChangeType.Delete)
-                router.navigate({ to: "/app/directory/contacts" });
+                router.navigate({ to: "/app/contacts" });
             }}
           />
         ),
@@ -34,12 +34,12 @@ function RouteComponent() {
 
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/directory/contacts/$id" });
+  const loaderData = useLoaderData({ from: "/app/contacts/$id" });
 
   const contact = loaderData.data;
 
   return (
-    <Stack spacing={1} my={2}>
+    <Stack component={Container} spacing={1} py={2}>
       <ContactDetailCard contact={contact} />
       <Stack spacing={2}>
         <Tabs

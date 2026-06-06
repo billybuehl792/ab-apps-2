@@ -50,12 +50,6 @@ function RouteComponent() {
     <Stack component={Container} spacing={2} py={2}>
       <Stack>
         <Typography variant="h5">Edit Job</Typography>
-        <Typography
-          variant="caption"
-          {...(!job.label && { color: "text.secondary", fontStyle: "italic" })}
-        >
-          {job.label || "Untitled"}
-        </Typography>
       </Stack>
       {/* <JobUpdateForm
         job={job}

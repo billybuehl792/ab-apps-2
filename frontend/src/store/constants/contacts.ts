@@ -18,6 +18,7 @@ import type {
   TContactTag,
   TContactTagCreateOrUpdate,
 } from "../types/contacts";
+import { queryUtils } from "../utils/queries";
 
 /** Icons */
 

@@ -58,25 +58,10 @@ const ContactListCard: React.FC<IContactListCardProps> = ({
               label: "Address",
               value: contact.place?.address_short || <EmptyChip size="xxs" />,
             },
-            {
-              id: "tags",
-              label: "Tags",
-              render: Boolean(contact.tags?.length),
-              value: (
-                <Stack direction="row" spacing={1}>
-                  {contact.tags.map((tag) => (
-                    <ContactTagChip key={tag.id} contactTag={tag} size="xxs" />
-                  ))}
-                </Stack>
-              ),
-            },
           ]}
         />
       }
-      link={{
-        to: "/app/directory/contacts/$id",
-        params: { id: String(contact.id) },
-      }}
+      link={{ to: "/app/contacts/$id", params: { id: String(contact.id) } }}
       disabled={contactHook.disabled}
       options={contactHook.options}
       {...(onClick && { onClick: (event) => onClick(contact, event) })}

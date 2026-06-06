@@ -37,7 +37,6 @@ export const contactSchema = z.object({
   phone_secondary: phoneSchema.nullable(),
   place: placeBasicSchema.nullable(),
   documents: z.array(idSchema),
-  tags: z.array(contactTagSchema),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
 });
@@ -48,7 +47,7 @@ export const contactCreateSchema = z.object({
   email: emailSchema,
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable().optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
+  google_place_id: z.string().optional(),
   tags: z.array(idSchema).optional(),
 });
 
@@ -58,7 +57,7 @@ export const contactUpdateSchema = z.object({
   email: emailSchema.optional(),
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
+  google_place_id: z.string().optional(),
   tags: z.array(idSchema).optional(),
 });
 

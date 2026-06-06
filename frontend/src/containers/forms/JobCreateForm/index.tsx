@@ -14,20 +14,27 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import ContactIdAutocomplete from "@/containers/fields/ContactAutocomplete/ContactIdAutocomplete";
 import useConfirm from "@/store/hooks/useConfirm";
-import useJob from "@/store/hooks/useJob";
 import { errorUtils } from "@/store/utils/error";
 import { jobCreateSchema } from "@/store/schemas/jobs";
-import { NULL_ID } from "@/store/constants/api";
 import type { TJob, TJobCreate } from "@/store/types/jobs";
+import { jobEndpoints } from "@/store/constants/jobs";
+import { EObjectChangeType } from "@/store/enums/api";
+import { z } from "zod";
+import { contactSchema } from "@/store/schemas/contacts";
+import ContactAutocomplete from "@/containers/fields/ContactAutocomplete";
+
+type TJobCreateFormValues = z.infer<typeof jobCreateSchema>;
 
 export interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  initialValues?: Partial<TJobCreate>;
+  initialValues?: Partial<TJobCreateFormValues>;
   onSuccess: (res: TJob) => void;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
@@ -38,7 +45,15 @@ export interface IJobCreateFormProps extends Omit<
   };
 }
 
-const DEFAULT_VALUES = jobCreateSchema.parse({});
+const formSchema = z.object({
+  description: z.string().default(""),
+  representatives: z.array(contactSchema).default([]),
+  assignee: z.array(contactSchema).default([]),
+  recipient: z.array(contactSchema).default([]),
+  referred_by: z.array(contactSchema).default([]),
+});
+
+const DEFAULT_VALUES = formSchema.parse({});
 
 const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   initialValues,
@@ -49,16 +64,27 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
 }) => {
   /** Values */
 
-  const jobHook = useJob(NULL_ID);
+  const snackbar = useSnackbar();
   const confirm = useConfirm();
   const methods = useForm({
-    resolver: zodResolver(jobCreateSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: DEFAULT_VALUES,
   });
 
   /** Mutations */
 
-  const createJobMutation = jobHook.mutations.create;
+  const createMutation = useMutation({
+    mutationKey: [jobEndpoints.id, EObjectChangeType.Create],
+    mutationFn: jobEndpoints.post,
+    onSuccess: () =>
+      snackbar.enqueueSnackbar(`Job created successfully`, {
+        variant: "success",
+      }),
+    onError: (error) =>
+      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
+        variant: "error",
+      }),
+  });
 
   /** Data */
 
@@ -70,22 +96,22 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
   /** Callbacks */
 
   const handleOnSubmit = methods.handleSubmit((data) => {
-    createJobMutation.mutate(data, {
-      onSuccess,
-      onError: (error) => {
-        methods.setError("root", {
-          type: "server",
-          message: errorUtils.getErrorMessage(error),
-        });
-      },
-    });
+    // createMutation.mutate(data, {
+    //   onSuccess,
+    //   onError: (error) => {
+    //     methods.setError("root", {
+    //       type: "server",
+    //       message: errorUtils.getErrorMessage(error),
+    //     });
+    //   },
+    // });
   });
 
   /** Effects */
 
-  useEffect(() => {
-    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
-  }, [initialValues]);
+  // useEffect(() => {
+  //   methods.reset({ ...DEFAULT_VALUES, ...initialValues });
+  // }, [initialValues]);
 
   useBlocker({
     shouldBlockFn: async () => {
@@ -119,14 +145,6 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           </FormHelperText>
         )}
         <TextField
-          label="Label"
-          disabled={isFieldDisabled}
-          error={!!methods.formState.errors.label}
-          helperText={methods.formState.errors.label?.message}
-          fullWidth
-          {...methods.register("label")}
-        />
-        <TextField
           label="Description"
           multiline
           minRows={3}
@@ -138,21 +156,21 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           {...methods.register("description")}
         />
         <Controller
-          name="representative"
+          name="representatives"
           control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
+          render={({ field, formState }) => (
+            <ContactAutocomplete
+              multiple
               enableCreate
               label="Sales Representative"
-              disabled={isFieldDisabled || disabled}
-              error={!!formState.errors.representative}
-              helperText={formState.errors.representative?.message}
+              disabled={isFieldDisabled}
+              error={!!formState.errors.representatives}
+              helperText={formState.errors.representatives?.message}
               {...field}
             />
           )}
         />
-        <Controller
+        {/* <Controller
           name="assignee"
           control={methods.control}
           render={({ field: { value, disabled, ...field }, formState }) => (
@@ -261,7 +279,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
               />
             )}
           />
-        </LocalizationProvider>
+        </LocalizationProvider> */}
       </Stack>
       <Stack
         direction="row"

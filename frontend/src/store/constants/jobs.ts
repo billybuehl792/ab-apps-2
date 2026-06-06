@@ -1,5 +1,6 @@
 import { Cases, MedicalServices, Work } from "@mui/icons-material";
 import api from "../config/api";
+import { EJobListOrdering } from "../enums/jobs";
 import type {
   TJob,
   TJobCreate,
@@ -7,7 +8,6 @@ import type {
   TJobListRequest,
   TJobListResponse,
 } from "../types/jobs";
-import { EJobListOrdering } from "../enums/jobs";
 
 /** Icons */
 
@@ -118,25 +118,3 @@ export const jobListOrderingOptions: Record<
     },
   },
 };
-
-export const getPlaceholderJob = (
-  data: TWithRequired<Partial<TJob>, "id">,
-): TJob => ({
-  label: "",
-  description: "",
-  assignee: null,
-  recipient: null,
-  representative: null,
-  scheduled_at: null,
-  completed_at: null,
-  referred_by: null,
-  created_at: "",
-  updated_at: "",
-  place: null,
-  sold_at: null,
-  invoiced_at: null,
-  categories: [],
-  amount: null,
-  paid: null,
-  ...data,
-});

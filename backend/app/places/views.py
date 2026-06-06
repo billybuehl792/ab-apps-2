@@ -9,13 +9,13 @@ from dataclasses import asdict
 
 
 from .models import Place
-from .serializers import PlaceReadSerializer, PlaceWriteSerializer
+from .serializers import PlaceSerializer
 from .services.google_places_service import GooglePlacesClient
 
 
 class PlaceViewSet(ModelViewSet):
     queryset = Place.objects.all()
-    serializer_class = PlaceReadSerializer
+    serializer_class = PlaceSerializer
     ordering = ("city",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_fields = ("city",)
@@ -23,24 +23,19 @@ class PlaceViewSet(ModelViewSet):
     ordering_fields = ("created_at", "updated_at", "country", "state", "city")
     permission_classes = (IsAuthenticated,)
 
-    def get_serializer_class(self):  # type: ignore
-        if self.action in ("list", "retrieve"):
-            return PlaceReadSerializer
-        return PlaceWriteSerializer
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
 
-        return Response(PlaceReadSerializer(instance).data)
+        return Response(self.serializer_class(instance).data)
 
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
 
-        return Response(PlaceReadSerializer(instance).data)
+        return Response(self.serializer_class(instance).data)
 
     @action(
         detail=False,

@@ -13,7 +13,7 @@ import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/create")({
   loader: (): TRouteLoaderData => ({
-    crumb: { label: "Create Job", Icon: JobIcons.Create },
+    crumb: { label: "Create", Icon: JobIcons.Create },
   }),
   component: RouteComponent,
 });

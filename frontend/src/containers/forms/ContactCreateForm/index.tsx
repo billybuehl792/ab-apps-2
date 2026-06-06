@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React from "react";
 import { useBlocker } from "@tanstack/react-router";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   type ButtonProps,
@@ -9,22 +11,19 @@ import {
   type StackProps,
   FormHelperText,
 } from "@mui/material";
-import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneField from "@/components/fields/PhoneField";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
-import useContact from "@/store/hooks/useContact";
 import useConfirm from "@/store/hooks/useConfirm";
-import { contactCreateSchema } from "@/store/schemas/contacts";
-import { errorUtils } from "@/store/utils/error";
-import { NULL_ID } from "@/store/constants/api";
-import type { TContact, TContactCreate } from "@/store/types/contacts";
+import { emailSchema, phoneSchema } from "@/store/schemas/basic";
+import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 
-interface IContactCreateFormProps extends Omit<
+type TContactCreateFormValues = z.infer<typeof formSchema>;
+
+export interface IContactCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  initialValues?: Partial<TContactCreate>;
-  onSuccess: (contact: TContact) => void;
+  onSubmit: SubmitHandler<TContactCreateFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
@@ -34,18 +33,26 @@ interface IContactCreateFormProps extends Omit<
   };
 }
 
-const DEFAULT_VALUES: TContactCreate = {
-  first_name: "",
-  last_name: "",
+const formSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: emailSchema,
+  phonePrimary: phoneSchema,
+  phoneSecondary: phoneSchema.optional(),
+  place: googleAutocompleteSuggestionSchema.optional(),
+});
+
+const DEFAULT_VALUES: TContactCreateFormValues = {
+  firstName: "",
+  lastName: "",
   email: "",
-  phone_primary: "",
-  phone_secondary: null,
-  place: null,
+  phonePrimary: "",
+  phoneSecondary: undefined,
+  place: undefined,
 };
 
 const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
-  initialValues,
-  onSuccess,
+  onSubmit,
   onCancel,
   slotProps,
   ...props
@@ -53,42 +60,24 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
   /** Values */
 
   const confirm = useConfirm();
-  const contactHook = useContact(NULL_ID);
   const methods = useForm({
-    resolver: zodResolver(contactCreateSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: DEFAULT_VALUES,
   });
-
-  /** Mutations */
-
-  const createContactMutation = contactHook.mutations.create;
 
   /** Data */
 
   const isDirty = methods.formState.isDirty;
-  const isSubmitting = createContactMutation.isPending;
   const isDisabled = methods.formState.disabled;
+  const isSubmitting =
+    methods.formState.isValid && methods.formState.isSubmitting;
   const isFieldDisabled = isDisabled || isSubmitting;
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit((data) => {
-    createContactMutation.mutate(data, {
-      onSuccess,
-      onError: (error) => {
-        methods.setError("root", {
-          type: "server",
-          message: errorUtils.getErrorMessage(error),
-        });
-      },
-    });
-  });
+  const handleOnSubmit = methods.handleSubmit(onSubmit);
 
   /** Effects */
-
-  useEffect(() => {
-    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
-  }, [initialValues]);
 
   useBlocker({
     shouldBlockFn: async () => {
@@ -125,19 +114,19 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
             label="First Name"
             required
             disabled={isFieldDisabled}
-            error={!!methods.formState.errors.first_name}
-            helperText={methods.formState.errors.first_name?.message}
+            error={!!methods.formState.errors.firstName}
+            helperText={methods.formState.errors.firstName?.message}
             fullWidth
-            {...methods.register("first_name")}
+            {...methods.register("firstName")}
           />
           <TextField
             label="Last Name"
             required
             disabled={isFieldDisabled}
-            error={!!methods.formState.errors.last_name}
-            helperText={methods.formState.errors.last_name?.message}
+            error={!!methods.formState.errors.lastName}
+            helperText={methods.formState.errors.lastName?.message}
             fullWidth
-            {...methods.register("last_name")}
+            {...methods.register("lastName")}
           />
         </Stack>
         <TextField
@@ -153,17 +142,17 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
           label="Phone Primary"
           required
           disabled={isFieldDisabled}
-          error={!!methods.formState.errors.phone_primary}
-          helperText={methods.formState.errors.phone_primary?.message}
-          {...methods.register("phone_primary")}
+          error={!!methods.formState.errors.phonePrimary}
+          helperText={methods.formState.errors.phonePrimary?.message}
+          {...methods.register("phonePrimary")}
         />
         <PhoneField
           label="Phone Secondary"
           disabled={isFieldDisabled}
-          error={!!methods.formState.errors.phone_secondary}
-          helperText={methods.formState.errors.phone_secondary?.message}
-          {...methods.register("phone_secondary", {
-            setValueAs: (value) => value || null,
+          error={!!methods.formState.errors.phoneSecondary}
+          helperText={methods.formState.errors.phoneSecondary?.message}
+          {...methods.register("phoneSecondary", {
+            setValueAs: (value) => value || undefined,
           })}
         />
         <Controller
@@ -189,7 +178,7 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
         <Button
           variant="text"
           color="error"
-          disabled={isDisabled}
+          disabled={isFieldDisabled}
           children="Cancel"
           onClick={onCancel}
           {...slotProps?.cancelButton}

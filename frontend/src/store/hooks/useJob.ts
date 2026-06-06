@@ -1,14 +1,12 @@
 import { useCallback, useMemo } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import { jobEndpoints, getPlaceholderJob } from "../constants/jobs";
+import { jobEndpoints } from "../constants/jobs";
 import { EJobOptionId } from "../enums/jobs";
 import { EObjectChangeType } from "../enums/api";
-import { NULL_ID } from "../constants/api";
-import { markdownUtils } from "../utils/markdown";
 import type { TJob } from "../types/jobs";
 
 type TJobMenuOption = IMenuOption<EJobOptionId, EJobOptionId>;
@@ -24,71 +22,20 @@ export interface IUseJobOptions {
 
 export type TUseJob = ReturnType<typeof useJob>;
 
-const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
+const useJob = (job: TJob, options?: IUseJobOptions) => {
   /** Values */
 
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
-  const isId = typeof job === "number";
-  const jobId = isId ? job : job.id;
-  const isNonExistentJob = jobId === NULL_ID;
-
-  /** Queries */
-
-  const jobQuery = useQuery({
-    queryKey: jobEndpoints.job(jobId).id,
-    queryFn: jobEndpoints.job(jobId).get,
-    initialData: getPlaceholderJob({
-      id: jobId,
-      ...(isId ? {} : job),
-    }),
-    enabled: isId && !isNonExistentJob,
-  });
-
   /** Mutations */
 
-  const createMutation = useMutation({
-    mutationKey: [jobEndpoints.id, EObjectChangeType.Create],
-    mutationFn: jobEndpoints.post,
-    onSuccess: (res) => {
-      const label = res.label ?? `Job ${res.id}`;
-      options?.onChange?.(res, EObjectChangeType.Create);
-      snackbar.enqueueSnackbar(
-        `${markdownUtils.bold(label)} created successfully`,
-        { variant: "success" },
-      );
-    },
-    onError: (error) =>
-      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
-        variant: "error",
-      }),
-  });
-
   const updateMutation = useMutation({
-    mutationKey: [jobEndpoints.job(jobId).id, EObjectChangeType.Update],
-    mutationFn: jobEndpoints.job(jobId).patch,
+    mutationKey: [jobEndpoints.job(job.id).id, EObjectChangeType.Update],
+    mutationFn: jobEndpoints.job(job.id).patch,
     onSuccess: (res) => {
-      const label = res.label ?? `Job ${res.id}`;
       options?.onChange?.(res, EObjectChangeType.Update);
-      snackbar.enqueueSnackbar(
-        `${markdownUtils.bold(label)} updated successfully`,
-        { variant: "success" },
-      );
-    },
-    onError: (error) =>
-      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
-        variant: "error",
-      }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationKey: [jobEndpoints.job(jobId).id, EObjectChangeType.Delete],
-    mutationFn: jobEndpoints.job(jobId).delete,
-    onSuccess: () => {
-      const label = jobQuery.data.label ?? `Job ${jobQuery.data.id}`;
-      options?.onChange?.(jobQuery.data, EObjectChangeType.Delete);
-      snackbar.enqueueSnackbar(`${markdownUtils.bold(label)} deleted`, {
+      snackbar.enqueueSnackbar(`Job updated successfully`, {
         variant: "success",
       });
     },
@@ -98,20 +45,26 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
       }),
   });
 
+  const deleteMutation = useMutation({
+    mutationKey: [jobEndpoints.job(job.id).id, EObjectChangeType.Delete],
+    mutationFn: jobEndpoints.job(job.id).delete,
+    onSuccess: () => {
+      options?.onChange?.(job, EObjectChangeType.Delete);
+      snackbar.enqueueSnackbar(`Job deleted`, { variant: "success" });
+    },
+    onError: (error) =>
+      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
+        variant: "error",
+      }),
+  });
+
   /** Data */
 
-  const isMutating = isNonExistentJob
-    ? createMutation.isPending
-    : updateMutation.isPending || deleteMutation.isPending;
-  const isDisabled =
-    options?.disabled ||
-    isMutating ||
-    (jobQuery.isEnabled && !jobQuery.isSuccess);
+  const isMutating = updateMutation.isPending || deleteMutation.isPending;
+  const isDisabled = options?.disabled || isMutating;
   const isChangeDisabled = isDisabled || !options?.onChange;
 
   /** Callbacks */
-
-  const handleCreate = createMutation.mutate;
 
   const handleUpdate = updateMutation.mutate;
 
@@ -119,7 +72,7 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
     (...options: Parameters<typeof deleteMutation.mutate>) =>
       confirm(
         {
-          title: `Delete ${jobQuery.data.label ?? `Job ${jobQuery.data.id}`}?`,
+          title: `Delete Job?`,
           description: `Are you sure you want to delete this job? This operation is irreversible.`,
         },
         () => deleteMutation.mutate(...options),
@@ -138,10 +91,7 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
         label: "Detail",
         Icon: Info,
         isDisabled: isDisabled,
-        link: {
-          to: "/app/jobs/$id",
-          params: { id: String(jobId) },
-        },
+        link: { to: "/app/jobs/$id", params: { id: String(job.id) } },
       },
       {
         id: EJobOptionId.Edit,
@@ -150,10 +100,7 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
         label: "Edit",
         Icon: Edit,
         isDisabled: isDisabled,
-        link: {
-          to: "/app/jobs/$id/edit",
-          params: { id: String(jobId) },
-        },
+        link: { to: "/app/jobs/$id/edit", params: { id: String(job.id) } },
       },
       {
         id: EJobOptionId.Delete,
@@ -173,25 +120,18 @@ const useJob = (job: TJob | TJob["id"], options?: IUseJobOptions) => {
     () =>
       options?.options
         ? typeof options.options === "function"
-          ? options.options(jobQuery.data, baseMenuOptions)
+          ? options.options(job, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [jobQuery.data, options?.options, baseMenuOptions],
+    [job, options?.options, baseMenuOptions],
   );
 
   return {
-    job: jobQuery.data,
+    job,
     options: menuOptions,
     disabled: isDisabled,
-    isLoading: jobQuery.isLoading,
     isMutating: isMutating,
-    queries: { job: jobQuery },
-    mutations: {
-      create: createMutation,
-      update: updateMutation,
-      delete: deleteMutation,
-    },
-    create: handleCreate,
+    mutations: { update: updateMutation, delete: deleteMutation },
     update: handleUpdate,
     delete: handleDelete,
   };

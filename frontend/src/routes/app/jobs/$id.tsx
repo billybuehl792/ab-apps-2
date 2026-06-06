@@ -16,10 +16,7 @@ export const Route = createFileRoute("/app/jobs/$id")({
 
       return {
         data: job,
-        crumb: {
-          label: job.label || "Untitled",
-          Icon: JobIcons.Detail,
-        },
+        crumb: { label: String(job.id), Icon: JobIcons.Detail },
       };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });
