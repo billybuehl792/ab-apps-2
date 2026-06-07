@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-
 from .models import Job, JobComment
 from app.contacts.serializers import ContactSerializer
 from app.places.serializers import PlaceSerializer

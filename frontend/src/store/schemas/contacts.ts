@@ -46,9 +46,8 @@ export const contactCreateSchema = z.object({
   last_name: nameSchema,
   email: emailSchema,
   phone_primary: phoneSchema,
-  phone_secondary: phoneSchema.nullable().optional(),
+  phone_secondary: phoneSchema.optional(),
   google_place_id: z.string().optional(),
-  tags: z.array(idSchema).optional(),
 });
 
 export const contactUpdateSchema = z.object({

@@ -1,8 +1,8 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
-import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
-import { EJobListOrdering } from "../enums/jobs";
+import { placeBasicSchema } from "./places";
+import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 import { contactSchema } from "./contacts";
 
 export const jobSchema = z.object({
@@ -29,22 +29,22 @@ export const jobSchema = z.object({
 });
 
 export const jobCreateSchema = z.object({
-  description: z.string().default(""),
-  categories: z.array(z.string()).default([]),
-  amount: z.number().nullable().default(null),
-  paid: z.number().nullable().default(null),
-  representatives: z.array(idSchema).default([]),
-  assignees: z.array(idSchema).default([]),
-  recipients: z.array(idSchema).default([]),
-  referred_by: z.array(idSchema).default([]),
-  place: googleAutocompleteSuggestionSchema.nullable().default(null),
-  signed_at: z.string().datetime().nullable().default(null),
-  estimated_at: z.string().datetime().nullable().default(null),
-  scheduled_at: z.string().datetime().nullable().default(null),
-  completed_at: z.string().datetime().nullable().default(null),
-  sold_at: z.string().datetime().nullable().default(null),
-  invoiced_at: z.string().datetime().nullable().default(null),
-  paid_at: z.string().datetime().nullable().default(null),
+  description: z.string().optional(),
+  categories: z.array(z.nativeEnum(EJobCategory)).optional(),
+  amount: z.number().optional(),
+  paid: z.number().optional(),
+  representatives: z.array(idSchema).optional(),
+  assignees: z.array(idSchema).optional(),
+  recipients: z.array(idSchema).optional(),
+  referred_by: z.array(idSchema).optional(),
+  google_place_id: z.string().max(500).optional(),
+  signed_at: z.string().datetime().optional(),
+  estimated_at: z.string().datetime().optional(),
+  scheduled_at: z.string().datetime().optional(),
+  completed_at: z.string().datetime().optional(),
+  sold_at: z.string().datetime().optional(),
+  invoiced_at: z.string().datetime().optional(),
+  paid_at: z.string().datetime().optional(),
 });
 
 export const jobUpdateSchema = z.object({
@@ -56,7 +56,7 @@ export const jobUpdateSchema = z.object({
   assignees: z.array(idSchema).optional(),
   recipients: z.array(idSchema).optional(),
   referred_by: z.array(idSchema).optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
+  google_place_id: z.string().max(500).optional(),
   signed_at: z.string().datetime().nullable().optional(),
   estimated_at: z.string().datetime().nullable().optional(),
   scheduled_at: z.string().datetime().nullable().optional(),

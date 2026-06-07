@@ -63,8 +63,8 @@ const GoogleAutocompleteSuggestionAutocomplete = <
   TDisableClearable extends boolean | undefined = false,
 >({
   inputRef,
-  label = "Place",
-  placeholder = "Search for a place",
+  label = "Address",
+  placeholder = "Search for an address",
   error,
   helperText,
   required,

@@ -162,7 +162,6 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
           control={methods.control}
           render={({ field: { onChange, ...field }, formState }) => (
             <GoogleAutocompleteSuggestionAutocomplete
-              label="Address"
               disabled={isFieldDisabled}
               error={!!formState.errors.place}
               helperText={formState.errors.place?.message}

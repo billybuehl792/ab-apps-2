@@ -57,14 +57,15 @@ export const googlePlaceSchema = z.object({
   }),
 });
 
-export const googleAutocompleteSuggestionSchema = z.object({
-  placePrediction: z.object({
-    placeId: googlePlaceIdSchema,
-    text: z.object({
-      text: z.string(),
+export const googleAutocompleteSuggestionSchema = z.object(
+  {
+    placePrediction: z.object({
+      placeId: googlePlaceIdSchema,
+      text: z.object({ text: z.string() }),
     }),
-  }),
-});
+  },
+  { required_error: "Address is required" },
+);
 
 export const placeListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({

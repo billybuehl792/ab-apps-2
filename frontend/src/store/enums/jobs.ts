@@ -4,6 +4,17 @@ export enum EJobOptionId {
   Delete = "delete",
 }
 
+export enum EJobCategory {
+  Roof = "Roof",
+  Gutters = "Gutters",
+  Siding = "Siding",
+  Windows = "Windows",
+  Skylights = "Skylights",
+  Doors = "Doors",
+  Repair = "Repair",
+  Other = "Other",
+}
+
 /** API */
 
 export enum EJobListOrdering {
