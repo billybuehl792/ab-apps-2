@@ -43,15 +43,6 @@ const formSchema = z.object({
   place: googleAutocompleteSuggestionSchema.nullable(),
 });
 
-const DEFAULT_VALUES: TContactUpdateFormValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phonePrimary: "",
-  phoneSecondary: null,
-  place: null,
-};
-
 const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
   values,
   onSubmit,
@@ -65,7 +56,14 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
   const methods = useForm({
     resolver: zodResolver(formSchema),
     values,
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phonePrimary: "",
+      phoneSecondary: null,
+      place: null,
+    },
   });
 
   /** Data */
@@ -162,14 +160,13 @@ const ContactUpdateForm: React.FC<IContactUpdateFormProps> = ({
         <Controller
           name="place"
           control={methods.control}
-          render={({ field: { value, onChange, ...field }, formState }) => (
+          render={({ field: { onChange, ...field }, formState }) => (
             <GoogleAutocompleteSuggestionAutocomplete
-              value={value}
-              onChange={(_, newValue) => onChange(newValue ?? null)}
               label="Address"
               disabled={isFieldDisabled}
               error={!!formState.errors.place}
               helperText={formState.errors.place?.message}
+              onChange={(_, newValue) => onChange(newValue)}
               {...field}
             />
           )}

@@ -23,6 +23,7 @@ export interface IContactCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
+  values?: TContactCreateFormValues;
   onSubmit: SubmitHandler<TContactCreateFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
@@ -42,16 +43,8 @@ const formSchema = z.object({
   place: googleAutocompleteSuggestionSchema.optional(),
 });
 
-const DEFAULT_VALUES: TContactCreateFormValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phonePrimary: "",
-  phoneSecondary: undefined,
-  place: undefined,
-};
-
 const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
+  values,
   onSubmit,
   onCancel,
   slotProps,
@@ -62,7 +55,15 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
   const confirm = useConfirm();
   const methods = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: DEFAULT_VALUES,
+    values,
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phonePrimary: "",
+      phoneSecondary: undefined,
+      place: undefined,
+    },
   });
 
   /** Data */
@@ -158,12 +159,14 @@ const ContactCreateForm: React.FC<IContactCreateFormProps> = ({
         <Controller
           name="place"
           control={methods.control}
-          render={({ field, formState }) => (
+          render={({ field: { value, onChange, ...field }, formState }) => (
             <GoogleAutocompleteSuggestionAutocomplete
               label="Address"
+              value={value || null}
               disabled={isFieldDisabled}
               error={!!formState.errors.place}
               helperText={formState.errors.place?.message}
+              onChange={(_, newValue) => onChange(newValue || undefined)}
               {...field}
             />
           )}

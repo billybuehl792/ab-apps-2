@@ -10,8 +10,9 @@ import {
   Stack,
   TextField,
   type TextFieldProps,
-  Typography,
+  Tooltip,
 } from "@mui/material";
+import { Error } from "@mui/icons-material";
 import { googleAutocompleteSuggestionListRequestSchema } from "@/store/schemas/places";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 import { errorUtils } from "@/store/utils/error";
@@ -44,7 +45,6 @@ export interface IGoogleAutocompleteSuggestionAutocompleteProps<
   | "slotProps"
 > {
   inputRef?: TextFieldProps["inputRef"];
-  name?: string;
   label?: string;
   placeholder?: string;
   error?: boolean;
@@ -64,12 +64,10 @@ const GoogleAutocompleteSuggestionAutocomplete = <
 >({
   inputRef,
   label = "Place",
-  name,
   placeholder = "Search for a place",
   error,
   helperText,
   required,
-  onChange,
   slotProps: { input: inputProps, ...slotProps } = {},
   ...props
 }: IGoogleAutocompleteSuggestionAutocompleteProps<
@@ -80,22 +78,30 @@ const GoogleAutocompleteSuggestionAutocomplete = <
 
   const [input, setInput] = useDebounce("", 600);
 
-  const listOptions = googleAutocompleteSuggestionListRequestSchema.parse({
-    params: { input: input || undefined },
-  });
-
   /** Queries */
 
-  const googleAutocompleteSuggestions = useQuery({
-    queryKey: [placeEndpoints.googleAutocompleteSuggestions().id, listOptions],
-    queryFn: () =>
-      placeEndpoints.googleAutocompleteSuggestions().get(listOptions),
+  const listQuery = useQuery({
+    queryKey: [
+      placeEndpoints.googleAutocompleteSuggestions().id,
+      googleAutocompleteSuggestionListRequestSchema.parse({
+        params: { input: input || undefined },
+      }),
+    ] as const,
+    queryFn: ({ queryKey }) =>
+      placeEndpoints.googleAutocompleteSuggestions().get(queryKey[1]),
+    enabled: !!input,
   });
+
+  /** Data */
+
+  const options = listQuery.data?.suggestions ?? [];
+  const optionsError = listQuery.error;
+  const isOptionsLoading = listQuery.isLoading;
 
   return (
     <Autocomplete
-      options={googleAutocompleteSuggestions.data?.suggestions ?? []}
-      loading={googleAutocompleteSuggestions.isLoading}
+      options={options}
+      loading={isOptionsLoading}
       getOptionKey={(option) => option.placePrediction.placeId} // Assuming each suggestion has a unique placeId
       getOptionLabel={(option) => option.placePrediction.text.text} // Assuming the suggestion text is in this path
       onInputChange={(_, newInputValue) => setInput(newInputValue)}
@@ -103,28 +109,14 @@ const GoogleAutocompleteSuggestionAutocomplete = <
       isOptionEqualToValue={(option, value) =>
         option.placePrediction.placeId === value.placePrediction.placeId
       }
-      noOptionsText={
-        googleAutocompleteSuggestions.isError ? (
-          <Typography color="error">Error retrieving places</Typography>
-        ) : (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>No results found</Typography>
-          </Stack>
-        )
-      }
       renderInput={(params) => (
         <TextField
           label={label}
-          name={name}
           inputRef={inputRef}
           placeholder={placeholder}
           required={required}
-          error={error || googleAutocompleteSuggestions.isError}
-          helperText={
-            helperText ||
-            (googleAutocompleteSuggestions.isError &&
-              errorUtils.getErrorMessage(googleAutocompleteSuggestions.error))
-          }
+          error={error}
+          helperText={helperText}
           {...inputProps}
           {...params}
           slotProps={{
@@ -133,19 +125,24 @@ const GoogleAutocompleteSuggestionAutocomplete = <
               ...inputProps?.slotProps?.input,
               ...params.InputProps,
               endAdornment: (
-                <>
-                  {googleAutocompleteSuggestions.isLoading && (
+                <Stack direction="row" spacing={1} alignItems="center">
+                  {isOptionsLoading && (
                     <CircularProgress color="inherit" size={16} />
                   )}
                   {params.InputProps.endAdornment}
-                </>
+                  {!!optionsError && (
+                    <Tooltip title={errorUtils.getErrorMessage(optionsError)}>
+                      <Error color="error" />
+                    </Tooltip>
+                  )}
+                </Stack>
               ),
             },
           }}
         />
       )}
-      renderOption={({ key, ...props }, option) => (
-        <MenuItem key={key} {...props}>
+      renderOption={(props, option) => (
+        <MenuItem {...props}>
           <ListItemIcon>
             <PlaceIcons.Detail />
           </ListItemIcon>
@@ -153,7 +150,6 @@ const GoogleAutocompleteSuggestionAutocomplete = <
         </MenuItem>
       )}
       slotProps={slotProps}
-      onChange={onChange}
       {...props}
     />
   );
