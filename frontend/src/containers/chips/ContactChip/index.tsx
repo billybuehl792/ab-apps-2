@@ -1,43 +1,16 @@
-import { Chip, Skeleton, type ChipProps } from "@mui/material";
-import useContact from "@/store/hooks/useContact";
+import { Chip, type ChipProps } from "@mui/material";
 import { ContactIcons } from "@/store/constants/contacts";
-import type { IUseContactOptions, TUseContact } from "@/store/hooks/useContact";
 import type { TContact } from "@/store/types/contacts";
 
-interface IContactChipProps extends Omit<ChipProps, "onClick"> {
-  contact: TContact | TContact["id"];
-  options?: IUseContactOptions;
-  onClick?: (contactHook: TUseContact) => void;
+interface IContactChipProps extends ChipProps {
+  contact: TContact;
 }
 
-const ContactChip = ({
-  contact,
-  options,
-  onClick,
-  ...props
-}: IContactChipProps) => {
-  /** Values */
-
-  const contactHook = useContact(contact, options);
-  const contactFullName = `${contactHook.contact.first_name} ${contactHook.contact?.last_name}`;
-
+const ContactChip = ({ contact, ...props }: IContactChipProps) => {
   return (
     <Chip
-      icon={<ContactIcons.Detail fontSize={props.size} />}
-      label={
-        contactHook.isLoading ? (
-          <Skeleton height={24} width={100} />
-        ) : (
-          contactFullName
-        )
-      }
-      {...(props?.clickable !== false
-        ? {
-            onClick: !!onClick
-              ? () => onClick(contactHook)
-              : () => contactHook.view(),
-          }
-        : {})}
+      icon={<ContactIcons.Detail />}
+      label={`${contact.first_name} ${contact.last_name}`}
       {...props}
     />
   );

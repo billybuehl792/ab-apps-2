@@ -39,19 +39,21 @@ function RouteComponent() {
   const job = loaderData.data;
 
   return (
-    <Stack component={Container} spacing={1} py={2}>
-      <JobDetailCard job={job} />
-      <Stack spacing={2}>
-        <Tabs
-          value={tabValue}
-          variant="scrollable"
-          scrollButtons={false}
-          onChange={(_, newValue) => setTabValue(newValue)}
-        >
-          <Tab label="Documents" />
-          <Tab label="History" />
-        </Tabs>
+    <Container maxWidth="md">
+      <Stack spacing={1} py={2}>
+        <JobDetailCard job={job} />
+        <Stack spacing={2}>
+          <Tabs
+            value={tabValue}
+            variant="scrollable"
+            scrollButtons={false}
+            onChange={(_, newValue) => setTabValue(newValue)}
+          >
+            <Tab label="Documents" />
+            <Tab label="History" />
+          </Tabs>
+        </Stack>
       </Stack>
-    </Stack>
+    </Container>
   );
 }

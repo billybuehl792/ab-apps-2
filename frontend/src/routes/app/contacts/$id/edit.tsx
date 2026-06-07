@@ -59,31 +59,31 @@ function RouteComponent() {
   };
 
   return (
-    <Stack component={Container} spacing={2} py={2}>
-      <Stack>
+    <Container maxWidth="md">
+      <Stack spacing={2} py={2}>
         <Typography variant="h5">Edit Contact</Typography>
-      </Stack>
-      <ContactUpdateForm
-        values={{
-          firstName: contact.first_name,
-          lastName: contact.last_name,
-          email: contact.email,
-          phonePrimary: contact.phone_primary,
-          phoneSecondary: contact.phone_secondary ?? null,
-          place: contact.place
-            ? {
-                placePrediction: {
-                  placeId: contact.place.google_place_id,
-                  text: {
-                    text: contact.place.address_short,
+        <ContactUpdateForm
+          values={{
+            firstName: contact.first_name,
+            lastName: contact.last_name,
+            email: contact.email,
+            phonePrimary: contact.phone_primary,
+            phoneSecondary: contact.phone_secondary ?? null,
+            place: contact.place
+              ? {
+                  placePrediction: {
+                    placeId: contact.place.google_place_id,
+                    text: {
+                      text: contact.place.address_short,
+                    },
                   },
-                },
-              }
-            : null,
-        }}
-        onSubmit={handleOnSubmit}
-        onCancel={handleOnCancel}
-      />
-    </Stack>
+                }
+              : null,
+          }}
+          onSubmit={handleOnSubmit}
+          onCancel={handleOnCancel}
+        />
+      </Stack>
+    </Container>
   );
 }

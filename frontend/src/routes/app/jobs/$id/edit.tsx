@@ -47,15 +47,17 @@ function RouteComponent() {
   };
 
   return (
-    <Stack component={Container} spacing={2} py={2}>
-      <Stack>
-        <Typography variant="h5">Edit Job</Typography>
-      </Stack>
-      {/* <JobUpdateForm
+    <Container maxWidth="md">
+      <Stack spacing={2} py={2}>
+        <Stack>
+          <Typography variant="h5">Edit Job</Typography>
+        </Stack>
+        {/* <JobUpdateForm
         job={job}
         onSuccess={handleOnSuccess}
         onCancel={handleOnCancel}
       /> */}
-    </Stack>
+      </Stack>
+    </Container>
   );
 }

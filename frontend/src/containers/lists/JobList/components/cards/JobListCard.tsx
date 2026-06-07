@@ -43,12 +43,20 @@ const JobListCard: React.FC<IJobListCardProps> = ({
           items={[
             {
               id: "recipients",
-              label: "Recipients",
+              label: `Recipient${job.recipients.length > 1 ? "s" : ""}`,
               value: (
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {job.recipients.map((recipient) => (
-                    <ContactChip key={recipient.id} contact={recipient} />
-                  ))}
+                  {job.recipients.length ? (
+                    job.recipients.map((recipient) => (
+                      <ContactChip
+                        key={recipient.id}
+                        contact={recipient}
+                        size="xxs"
+                      />
+                    ))
+                  ) : (
+                    <EmptyChip size="xxs" />
+                  )}
                 </Stack>
               ),
             },
@@ -56,11 +64,6 @@ const JobListCard: React.FC<IJobListCardProps> = ({
               id: "address",
               label: "Address",
               value: job.place?.address_short || <EmptyChip size="xxs" />,
-            },
-            {
-              id: "amount",
-              label: "Amount",
-              value: job.amount || "-",
             },
           ]}
         />

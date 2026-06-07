@@ -75,9 +75,11 @@ function RouteComponent() {
   };
 
   return (
-    <Stack component={Container} py={2} spacing={2}>
-      <Typography variant="h5">Create New Job</Typography>
-      <JobCreateForm onSubmit={handleOnSubmit} onCancel={handleOnCancel} />
-    </Stack>
+    <Container maxWidth="md">
+      <Stack spacing={2} py={2}>
+        <Typography variant="h5">Create New Job</Typography>
+        <JobCreateForm onSubmit={handleOnSubmit} onCancel={handleOnCancel} />
+      </Stack>
+    </Container>
   );
 }
