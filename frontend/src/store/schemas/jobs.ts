@@ -1,56 +1,69 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
-import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
-import { EJobListOrdering } from "../enums/jobs";
+import { placeSchema } from "./places";
+import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 import { contactSchema } from "./contacts";
 
 export const jobSchema = z.object({
   id: idSchema,
-  label: z.string().max(255).default(""),
   description: z.string().default(""),
-  categories: z.array(idSchema).default([]),
+  categories: z.array(z.nativeEnum(EJobCategory)).default([]),
   amount: z.number().nullable().default(null),
   paid: z.number().nullable().default(null),
-  representative: contactSchema.nullable().default(null),
-  assignee: contactSchema.nullable().default(null),
-  recipient: contactSchema.nullable().default(null),
-  referred_by: contactSchema.nullable().default(null),
-  place: placeBasicSchema.nullable().default(null),
+  representatives: z.array(contactSchema).default([]),
+  assignees: z.array(contactSchema).default([]),
+  recipients: z.array(contactSchema).default([]),
+  referred_by: z.array(contactSchema).default([]),
+  place: placeSchema.nullable().default(null),
+  documents: z.array(idSchema).default([]),
+  signed_at: z.string().datetime().nullable().default(null),
+  estimated_at: z.string().datetime().nullable().default(null),
   sold_at: z.string().datetime().nullable().default(null),
   invoiced_at: z.string().datetime().nullable().default(null),
   scheduled_at: z.string().datetime().nullable().default(null),
   completed_at: z.string().datetime().nullable().default(null),
+  paid_at: z.string().datetime().nullable().default(null),
   created_at: z.string().datetime().nullable().default(null),
   updated_at: z.string().datetime().nullable().default(null),
 });
 
 export const jobCreateSchema = z.object({
-  label: z.string().max(255).default(""),
-  description: z.string().default(""),
-  representative: idSchema.nullable().default(null),
-  assignee: idSchema.nullable().default(null),
-  recipient: idSchema.nullable().default(null),
-  referred_by: idSchema.nullable().default(null),
-  place: googleAutocompleteSuggestionSchema.nullable().default(null),
-  scheduled_at: z.string().datetime().nullable().default(null),
-  completed_at: z.string().datetime().nullable().default(null),
-  sold_at: z.string().datetime().nullable().default(null),
-  invoiced_at: z.string().datetime().nullable().default(null),
+  description: z.string().optional(),
+  categories: z.array(z.nativeEnum(EJobCategory)).optional(),
+  amount: z.number().optional(),
+  paid: z.number().optional(),
+  representatives: z.array(idSchema).optional(),
+  assignees: z.array(idSchema).optional(),
+  recipients: z.array(idSchema).optional(),
+  referred_by: z.array(idSchema).optional(),
+  google_place_id: z.string().max(500).optional(),
+  signed_at: z.string().datetime().optional(),
+  estimated_at: z.string().datetime().optional(),
+  scheduled_at: z.string().datetime().optional(),
+  completed_at: z.string().datetime().optional(),
+  sold_at: z.string().datetime().optional(),
+  invoiced_at: z.string().datetime().optional(),
+  paid_at: z.string().datetime().optional(),
 });
 
 export const jobUpdateSchema = z.object({
-  label: z.string().max(255).nullable().optional(),
   description: z.string().max(1024).nullable().optional(),
-  representative: idSchema.nullable().optional(),
-  assignee: idSchema.nullable().optional(),
-  recipient: idSchema.nullable().optional(),
-  referred_by: idSchema.nullable().optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
+  categories: z.array(z.string()).optional(),
+  amount: z.number().nullable().optional(),
+  paid: z.number().nullable().optional(),
+  representatives: z.array(idSchema).optional(),
+  assignees: z.array(idSchema).optional(),
+  recipients: z.array(idSchema).optional(),
+  referred_by: z.array(idSchema).optional(),
+  google_place_id: z.string().max(500).optional(),
+  signed_at: z.string().datetime().nullable().optional(),
+  estimated_at: z.string().datetime().nullable().optional(),
   scheduled_at: z.string().datetime().nullable().optional(),
   completed_at: z.string().datetime().nullable().optional(),
   sold_at: z.string().datetime().nullable().optional(),
   invoiced_at: z.string().datetime().nullable().optional(),
+  paid_at: z.string().datetime().nullable().optional(),
 });
 
 export const jobListRequestSchema = listRequestSchema.extend({

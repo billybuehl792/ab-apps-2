@@ -5,10 +5,8 @@ import type {
   TGoogleAutocompleteSuggestionListResponse,
   TGooglePlace,
   TPlace,
-  TPlaceCreate,
   TPlaceListRequest,
   TPlaceListResponse,
-  TPlaceUpdate,
   TCityListRequest,
   TCityListResponse,
 } from "../types/places";
@@ -31,17 +29,11 @@ export const placeEndpoints = {
     api
       .get<TPlaceListResponse>(placeEndpoints.url, options)
       .then((res) => res.data),
-  post: (body: TPlaceCreate) =>
-    api.post<TPlace>(placeEndpoints.url, body).then((res) => res.data),
   place: (id: TPlace["id"]) => ({
     id: [...placeEndpoints.id, "place", id] as const,
     url: `${placeEndpoints.url}${id}/`,
     get: () =>
       api.get<TPlace>(placeEndpoints.place(id).url).then((res) => res.data),
-    patch: (body: TPlaceUpdate) =>
-      api
-        .patch<TPlace>(placeEndpoints.place(id).url, body)
-        .then((res) => res.data),
     delete: () =>
       api.delete<void>(placeEndpoints.place(id).url).then((res) => res.data),
   }),
@@ -102,20 +94,3 @@ export const placeListOrderingOptions: TOrderingOption<EPlaceListOrdering>[] = [
     },
   },
 ];
-
-export const getPlaceholderPlace = (
-  data: TWithRequired<Partial<TPlace>, "id">,
-): TPlace => ({
-  google_place_id: "",
-  address_full: "",
-  address_short: "",
-  city: "",
-  postal_code: "",
-  state: "",
-  country: "",
-  latitude: 0,
-  longitude: 0,
-  created_at: "",
-  updated_at: "",
-  ...data,
-});

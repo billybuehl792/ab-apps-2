@@ -1,10 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
-import {
-  EContactListOrdering,
-  EContactTagListOrdering,
-} from "../enums/contacts";
-import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
+import { EContactListOrdering } from "../enums/contacts";
+import { placeSchema } from "./places";
 import {
   emailSchema,
   idOrIdArraySchema,
@@ -13,21 +10,6 @@ import {
   phoneSchema,
 } from "./basic";
 
-export const contactTagSchema = z.object({
-  id: idSchema,
-  label: z.string().max(255),
-  description: z.string().max(1024).nullable(),
-  color: z.string().max(7).nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
-});
-
-export const contactTagCreateOrUpdateSchema = z.object({
-  label: z.string().max(255),
-  description: z.string().max(1024).nullable().optional(),
-  color: z.string().max(7).nullable().optional(),
-});
-
 export const contactSchema = z.object({
   id: idSchema,
   first_name: nameSchema,
@@ -35,9 +17,8 @@ export const contactSchema = z.object({
   email: emailSchema,
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable(),
-  place: placeBasicSchema.nullable(),
+  place: placeSchema.nullable(),
   documents: z.array(idSchema),
-  tags: z.array(contactTagSchema),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
 });
@@ -47,9 +28,8 @@ export const contactCreateSchema = z.object({
   last_name: nameSchema,
   email: emailSchema,
   phone_primary: phoneSchema,
-  phone_secondary: phoneSchema.nullable().optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
-  tags: z.array(idSchema).optional(),
+  phone_secondary: phoneSchema.optional(),
+  google_place_id: z.string().optional(),
 });
 
 export const contactUpdateSchema = z.object({
@@ -58,7 +38,7 @@ export const contactUpdateSchema = z.object({
   email: emailSchema.optional(),
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
-  place: googleAutocompleteSuggestionSchema.nullable().optional(),
+  google_place_id: z.string().optional(),
   tags: z.array(idSchema).optional(),
 });
 
@@ -78,16 +58,4 @@ export const contactListRequestSchema = listRequestSchema.extend({
 
 export const contactListResponseSchema = listResponseSchema.extend({
   results: z.array(contactSchema),
-});
-
-export const contactTagListRequestSchema = listRequestSchema.extend({
-  params: listRequestSchema.shape.params.extend({
-    ordering: z
-      .nativeEnum(EContactTagListOrdering)
-      .default(EContactTagListOrdering.LabelAsc),
-  }),
-});
-
-export const contactTagListResponseSchema = listResponseSchema.extend({
-  results: z.array(contactTagSchema),
 });

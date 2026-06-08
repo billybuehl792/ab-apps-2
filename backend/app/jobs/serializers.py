@@ -1,51 +1,118 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
-from .models import Job, JobCategory, JobComment, JobExpense, JobExpenseCategory
-from app.contacts.serializers import ContactReadSerializer
-from app.places.serializers import PlaceReadSerializer, PlaceWriteSerializer
+from .models import Job, JobComment
+from app.contacts.serializers import ContactSerializer
+from app.places.serializers import PlaceSerializer
+from app.places.services.place_factory import create_or_update_place_by_google_place_id
 
 
-class JobReadSerializer(ModelSerializer):
+class JobReadSerializer(serializers.ModelSerializer):
     """Serializer for Job model."""
 
-    place = PlaceReadSerializer(read_only=True)
-    representative = ContactReadSerializer(read_only=True)
-    recipient = ContactReadSerializer(read_only=True)
-    assignee = ContactReadSerializer(read_only=True)
-    referred_by = ContactReadSerializer(read_only=True)
+    place = PlaceSerializer(read_only=True)
+    representatives = ContactSerializer(many=True, read_only=True)
+    recipients = ContactSerializer(many=True, read_only=True)
+    assignees = ContactSerializer(many=True, read_only=True)
+    referred_by = ContactSerializer(many=True, read_only=True)
+    documents = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Job
-        fields = ("id", "label", "description", "categories", "amount", "paid", "representative", "assignee", "recipient", "referred_by",
-                  "place", "scheduled_at", "completed_at", "sold_at", "invoiced_at", "created_at", "updated_at")
+        fields = (
+            "id",
+            "description",
+            "categories",
+            "amount",
+            "paid",
+            "representatives",
+            "assignees",
+            "recipients",
+            "referred_by",
+            "place",
+            "documents",
+            "signed_at",
+            "estimated_at",
+            "sold_at",
+            "scheduled_at",
+            "completed_at",
+            "invoiced_at",
+            "paid_at",
+            "created_at",
+            "updated_at",
+        )
         read_only_fields = fields
 
 
-class JobWriteSerializer(ModelSerializer):
+class JobWriteSerializer(serializers.ModelSerializer):
     """Serializer for creating/updating `Job` instances."""
 
-    place = PlaceWriteSerializer(
-        allow_null=True,
+    google_place_id = serializers.CharField(
+        max_length=500,
         required=False,
+        allow_blank=True,
+        write_only=True,
     )
 
     class Meta:
         model = Job
-        fields = ("id", "label", "description", "categories", "amount", "paid", "representative", "assignee", "recipient", "referred_by",
-                  "place", "scheduled_at", "completed_at", "sold_at", "invoiced_at", "created_at", "updated_at")
-        read_only_fields = ("id", "created_at", "updated_at")
+        fields = (
+            "id",
+            "description",
+            "categories",
+            "amount",
+            "paid",
+            "representatives",
+            "assignees",
+            "recipients",
+            "referred_by",
+            "google_place_id",
+            "signed_at",
+            "estimated_at",
+            "sold_at",
+            "scheduled_at",
+            "completed_at",
+            "invoiced_at",
+            "paid_at",
+        )
+        read_only_fields = ("id",)
+
+    def _apply_google_place_id(self, validated_data):
+        google_place_id = validated_data.pop("google_place_id", None)
+
+        if isinstance(google_place_id, str):
+            google_place_id = google_place_id.strip()
+
+        if google_place_id:
+            try:
+                validated_data["place"] = create_or_update_place_by_google_place_id(
+                    google_place_id
+                )
+            except Exception:
+                raise serializers.ValidationError(
+                    {"google_place_id": [
+                        "Unable to resolve place from google_place_id."]}
+                )
+
+        return validated_data
+
+    def create(self, validated_data):
+        validated_data = self._apply_google_place_id(validated_data)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data = self._apply_google_place_id(validated_data)
+        return super().update(instance, validated_data)
+
+    def validate(self, attrs):
+        google_place_id = attrs.get("google_place_id", None)
+
+        if isinstance(google_place_id, str):
+            attrs["google_place_id"] = google_place_id.strip()
+
+        return super().validate(attrs)
 
 
-class JobCategorySerializer(ModelSerializer):
-    """Serializer for `JobCategory` model."""
-
-    class Meta:
-        model = JobCategory
-        fields = ("id", "label", "description", "created_at", "updated_at")
-        read_only_fields = ("id", "created_at", "updated_at")
-
-
-class JobCommentSerializer(ModelSerializer):
+class JobCommentSerializer(serializers.ModelSerializer):
     """Serializer for `JobComment` model."""
 
     class Meta:
@@ -54,30 +121,3 @@ class JobCommentSerializer(ModelSerializer):
                   "updated_by", "created_at", "updated_at")
         read_only_fields = ("id", "created_by", "updated_by",
                             "created_at", "updated_at")
-
-    def create(self, validated_data):
-        validated_data["created_by"] = self.context["request"].user
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        validated_data["updated_by"] = self.context["request"].user
-        return super().update(instance, validated_data)
-
-
-class JobExpenseSerializer(ModelSerializer):
-    """Serializer for `JobExpense` model."""
-
-    class Meta:
-        model = JobExpense
-        fields = ("id", "job", "label", "category", "description",
-                  "amount", "created_at", "updated_at")
-        read_only_fields = ("id", "created_at", "updated_at")
-
-
-class JobExpenseCategorySerializer(ModelSerializer):
-    """Serializer for `JobExpenseCategory` model."""
-
-    class Meta:
-        model = JobExpenseCategory
-        fields = ("id", "label", "description", "created_at", "updated_at")
-        read_only_fields = ("id", "created_at", "updated_at")

@@ -1,4 +1,4 @@
-from django_filters import BaseInFilter, FilterSet, CharFilter
+from django_filters import BaseInFilter, BooleanFilter, FilterSet
 
 from .models import Job
 
@@ -6,20 +6,20 @@ from .models import Job
 class JobsFilter(FilterSet):
     """Filter set for `Job` model."""
 
-    completed = CharFilter(field_name="completed",
-                           lookup_expr="isnull", exclude=True)
-    scheduled = CharFilter(field_name="scheduled",
-                           lookup_expr="isnull", exclude=True)
+    completed = BooleanFilter(field_name="completed_at",
+                              lookup_expr="isnull", exclude=True)
+    scheduled = BooleanFilter(field_name="scheduled_at",
+                              lookup_expr="isnull", exclude=True)
     place = BaseInFilter(field_name="place__id",
                          lookup_expr="in", distinct=True)
-    recipient = BaseInFilter(field_name="recipient__id",
+    recipients = BaseInFilter(field_name="recipients__id",
+                              lookup_expr="in", distinct=True)
+    assignees = BaseInFilter(field_name="assignees__id",
                              lookup_expr="in", distinct=True)
-    assignee = BaseInFilter(field_name="assignee__id",
-                            lookup_expr="in", distinct=True)
     city = BaseInFilter(field_name="place__city",
                         lookup_expr="in", distinct=True)
 
     class Meta:
         model = Job
-        fields = ("place", "recipient", "assignee", "city",
+        fields = ("place", "recipients", "assignees", "city",
                   "completed", "scheduled")

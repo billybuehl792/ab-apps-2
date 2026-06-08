@@ -4,9 +4,6 @@ import { Divider, Stack, type StackProps } from "@mui/material";
 import PaginatedList from "@/components/lists/PaginatedList";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import PlaceListCard from "./components/cards/PlaceListCard";
-import PlaceCreateButton from "@/containers/buttons/PlaceCreateButton";
-import PlaceListOrderingField from "./components/fields/PlaceListOrderingField";
-import CityAutocomplete from "@/containers/fields/CityAutocomplete";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TPlace, TPlaceListRequest } from "@/store/types/places";
@@ -79,40 +76,6 @@ const PlaceList: React.FC<IPlaceListProps> = ({
               }
               sx={{ flex: 1 }}
             />
-            <PlaceListOrderingField
-              value={params.ordering ?? null}
-              size="small"
-              disabled={placeListQuery.isLoading}
-              onChange={(ordering) =>
-                handleOnParamsChange({
-                  ...params,
-                  page: 1,
-                  ordering: ordering ?? undefined,
-                })
-              }
-              sx={{ width: { xs: "100%", sm: 160 } }}
-            />
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            flexWrap="wrap"
-            useFlexGap
-          >
-            <CityAutocomplete
-              value={params.city}
-              disabled={placeListQuery.isLoading}
-              size="small"
-              onChange={(_, city) =>
-                handleOnParamsChange({
-                  ...params,
-                  page: 1,
-                  city: city ?? undefined,
-                })
-              }
-              sx={{ width: 160 }}
-            />
           </Stack>
         </Stack>
         <Divider />
@@ -128,9 +91,9 @@ const PlaceList: React.FC<IPlaceListProps> = ({
           total === 0 && {
             label: "No Places Found",
             icon: <PlaceIcons.List fontSize="large" />,
-            ...(params.search
-              ? { description: `No results for "${params.search}".` }
-              : { actions: [<PlaceCreateButton />] }),
+            ...(params.search && {
+              description: `No results for "${params.search}".`,
+            }),
           }
         }
         renderItem={(place) => (

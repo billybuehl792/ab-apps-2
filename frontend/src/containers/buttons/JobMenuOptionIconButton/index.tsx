@@ -14,7 +14,7 @@ type TMenuOptionIconButtonProps = Omit<
 
 interface IJobMenuOptionIconButtonProps
   extends TMenuOptionIconButtonProps, IUseJobOptions {
-  job: TJob | TJob["id"];
+  job: TJob;
 }
 
 const JobMenuOptionIconButton: React.FC<IJobMenuOptionIconButtonProps> = ({
@@ -36,9 +36,8 @@ const JobMenuOptionIconButton: React.FC<IJobMenuOptionIconButtonProps> = ({
 
   return (
     <MenuOptionIconButton
-      title={jobHook.job.label || `Job ${jobHook.job.id}`}
+      title={`Job ${job.id}`}
       disabled={jobHook.disabled}
-      loading={jobHook.isLoading}
       options={jobHook.options}
       {...props}
     />

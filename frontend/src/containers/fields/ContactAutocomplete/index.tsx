@@ -1,25 +1,31 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { type SyntheticEvent, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import {
   Autocomplete,
   type AutocompleteProps,
-  AutocompleteValue,
-  Button,
+  type AutocompleteValue,
   CircularProgress,
+  IconButton,
+  InputAdornment,
   ListItemIcon,
   ListItemText,
   MenuItem,
   Stack,
   TextField,
   type TextFieldProps,
-  Typography,
+  Tooltip,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import ContactCreateFormDrawer from "@/containers/modals/ContactCreateFormDrawer";
+import { Add, Error } from "@mui/icons-material";
+import ContactCreateFormDrawer, {
+  type IContactCreateFormDrawerProps,
+} from "@/containers/modals/ContactCreateFormDrawer";
 import { contactListRequestSchema } from "@/store/schemas/contacts";
 import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
 import { errorUtils } from "@/store/utils/error";
+import { useSnackbar } from "notistack";
+import { markdownUtils } from "@/store/utils/markdown";
+import { EObjectChangeType } from "@/store/enums/api";
 import type { TContact } from "@/store/types/contacts";
 
 type TContactAutocompleteBaseProps<
@@ -33,26 +39,20 @@ export interface IContactAutocompleteProps<
 > extends Omit<
   TContactAutocompleteBaseProps<TMultiple, TDisableClearable>,
   | "options"
-  | "isOptionEqualToValue"
   | "renderInput"
   | "renderOption"
   | "getOptionLabel"
+  | "isOptionEqualToValue"
   | "getOptionKey"
-  | "onChange"
   | "slotProps"
 > {
-  value: AutocompleteValue<TContact, TMultiple, TDisableClearable, false>;
   inputRef?: TextFieldProps["inputRef"];
-  name?: string;
   label?: string;
   placeholder?: string;
   error?: boolean;
   helperText?: string;
   required?: boolean;
   enableCreate?: boolean;
-  onChange: (
-    value: AutocompleteValue<TContact, TMultiple, TDisableClearable, false>,
-  ) => void;
   slotProps?: {
     input?: TextFieldProps;
   } & TContactAutocompleteBaseProps<TMultiple, TDisableClearable>["slotProps"];
@@ -63,100 +63,142 @@ const ContactAutocomplete = <
   TDisableClearable extends boolean | undefined = false,
 >({
   inputRef,
-  label = "Contact",
   value,
-  name,
+  label = "Contact",
   placeholder = "Search for a contact",
   error,
-  multiple,
   helperText,
   required,
-  enableCreate,
+  multiple,
+  enableCreate = false,
   onChange,
   slotProps: { input: inputProps, ...slotProps } = {},
   ...props
 }: IContactAutocompleteProps<TMultiple, TDisableClearable>) => {
-  const [createOpen, setCreateOpen] = useState(false);
-
   /** Values */
 
-  const [input, setInput] = useDebounce("", 600);
+  const snackbar = useSnackbar();
 
-  const listOptions = contactListRequestSchema.parse({
-    params: { search: input || undefined },
-  });
+  const [search, setSearch] = useDebounce("", 600);
+  const [createOpen, setCreateOpen] = useState(false);
 
   /** Queries */
 
-  const contactListQuery = useQuery({
-    queryKey: [contactEndpoints.id, listOptions],
-    queryFn: () => contactEndpoints.get(listOptions),
+  const listQuery = useQuery({
+    queryKey: [
+      contactEndpoints.id,
+      contactListRequestSchema.parse({ params: { search } }),
+    ] as const,
+    queryFn: ({ queryKey }) => contactEndpoints.get(queryKey[1]),
   });
+
+  /** Mutations */
+
+  const createContactMutation = useMutation({
+    mutationKey: [contactEndpoints.id, EObjectChangeType.Create],
+    mutationFn: contactEndpoints.post,
+    onSuccess: (res) =>
+      snackbar.enqueueSnackbar(
+        `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} created successfully`,
+        { variant: "success" },
+      ),
+    onError: (error) =>
+      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
+        variant: "error",
+      }),
+  });
+
+  /** Data */
+
+  const options = listQuery.data?.results ?? [];
+  const optionsError = listQuery.error;
+  const isOptionsLoading = listQuery.isLoading;
 
   /** Callbacks */
 
-  const handleOnCreate = (newContact: TContact) => {
-    onChange(value);
-    setCreateOpen(false);
-  };
+  const handleOnCreateSubmit: IContactCreateFormDrawerProps["form"]["onSubmit"] =
+    (data, event) =>
+      createContactMutation.mutateAsync(
+        {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone_primary: data.phonePrimary,
+          phone_secondary: data.phoneSecondary,
+          google_place_id: data.place?.placePrediction.placeId,
+        },
+        {
+          onSuccess: (res) => {
+            const newValue = (
+              multiple ? [...(Array.isArray(value) ? value : []), res] : res
+            ) as AutocompleteValue<
+              TContact,
+              TMultiple,
+              TDisableClearable,
+              false
+            >;
+            setCreateOpen(false);
+            onChange?.(
+              event as SyntheticEvent,
+              newValue,
+              "selectOption",
+              undefined,
+            );
+          },
+        },
+      );
 
   return (
     <>
       <Autocomplete
+        options={options}
         value={value}
-        options={contactListQuery.data?.results ?? []}
-        loading={contactListQuery.isLoading}
         multiple={multiple}
+        loading={isOptionsLoading}
         getOptionKey={(option) => option.id}
         getOptionLabel={(option) => `${option.first_name} ${option.last_name}`}
-        onInputChange={(_, newInputValue) => setInput(newInputValue)}
+        onInputChange={(_, newInputValue) => setSearch(newInputValue)}
         filterOptions={(options) => options}
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        noOptionsText={
-          contactListQuery.isError ? (
-            <Typography color="error">Error retrieving contacts</Typography>
-          ) : (
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography>No results found</Typography>
-              {!!enableCreate && (
-                <Button
-                  size="small"
-                  startIcon={<Add />}
-                  onClick={() => setCreateOpen(true)}
-                >
-                  Create New
-                </Button>
-              )}
-            </Stack>
-          )
-        }
         renderInput={(params) => (
           <TextField
             label={label}
-            name={name}
             inputRef={inputRef}
+            placeholder={placeholder}
             required={required}
-            error={error || contactListQuery.isError}
-            helperText={
-              helperText ||
-              (contactListQuery.isError &&
-                errorUtils.getErrorMessage(contactListQuery.error))
-            }
+            error={error}
+            helperText={helperText}
             {...inputProps}
             {...params}
             slotProps={{
               ...inputProps?.slotProps,
               input: {
-                type: "search",
                 ...inputProps?.slotProps?.input,
                 ...params.InputProps,
                 endAdornment: (
-                  <>
-                    {contactListQuery.isLoading && (
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {isOptionsLoading && (
                       <CircularProgress color="inherit" size={16} />
                     )}
+                    {enableCreate && (
+                      <InputAdornment position="end">
+                        <Tooltip title="Create new contact">
+                          <IconButton
+                            onClick={() => setCreateOpen(true)}
+                            edge="end"
+                          >
+                            <Add />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    )}
                     {params.InputProps.endAdornment}
-                  </>
+                    {!!optionsError && (
+                      <Tooltip title={errorUtils.getErrorMessage(optionsError)}>
+                        <Error color="error" />
+                      </Tooltip>
+                    )}
+                  </Stack>
                 ),
               },
             }}
@@ -169,29 +211,21 @@ const ContactAutocomplete = <
             </ListItemIcon>
             <ListItemText
               primary={`${option.first_name} ${option.last_name}`}
+              secondary={option.place?.address_short}
             />
           </MenuItem>
         )}
-        renderValue={(value) => {
-          if (Array.isArray(value)) {
-            if (!value.length) return null;
-            return value
-              .map((v) => `${v.first_name} ${v.last_name}`)
-              .join(", ");
-          }
-          return value ? `${value.first_name} ${value.last_name}` : null;
-        }}
+        onChange={onChange}
         slotProps={slotProps}
-        onChange={(_, newValue) => onChange(newValue)}
         {...props}
       />
       {!!enableCreate && (
         <ContactCreateFormDrawer
-          open={createOpen}
           form={{
-            onSuccess: handleOnCreate,
+            onSubmit: handleOnCreateSubmit,
             onCancel: () => setCreateOpen(false),
           }}
+          open={createOpen}
           onClose={() => setCreateOpen(false)}
         />
       )}

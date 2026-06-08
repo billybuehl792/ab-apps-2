@@ -1,14 +1,13 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { Stack, Typography } from "@mui/material";
-import StatusWrapper from "@/components/layout/StatusWrapper";
-import PlaceMapCard from "@/containers/cards/PlaceMapCard";
-import { errorUtils } from "@/store/utils/error";
+import { Container, Stack } from "@mui/material";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
+import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
-import type { TPlace } from "@/store/types/places";
+import PlaceDetailCard from "@/containers/cards/PlaceMapCard";
 import type { TRouteLoaderData } from "@/store/types/router";
+import type { TPlace } from "@/store/types/places";
 
-export const Route = createFileRoute("/app/directory/places/$id")({
+export const Route = createFileRoute("/app/places/$id")({
   loader: async ({ context, params }): Promise<TRouteLoaderData<TPlace>> => {
     try {
       const placeId = idSchema.parse(params.id);
@@ -25,7 +24,6 @@ export const Route = createFileRoute("/app/directory/places/$id")({
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
   },
-  pendingComponent: () => <StatusWrapper loading="Loading Place..." my={2} />,
   component: RouteComponent,
 });
 
@@ -34,10 +32,13 @@ function RouteComponent() {
 
   const loaderData = Route.useLoaderData();
 
+  const place = loaderData.data;
+
   return (
-    <Stack spacing={2}>
-      <Typography>{loaderData.data.address_full}</Typography>
-      <PlaceMapCard place={loaderData.data} />
-    </Stack>
+    <Container maxWidth="md">
+      <Stack spacing={1} py={2}>
+        <PlaceDetailCard place={place} />
+      </Stack>
+    </Container>
   );
 }

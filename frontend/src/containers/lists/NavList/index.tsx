@@ -1,4 +1,4 @@
-import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
+import { Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
 } from "@/components/lists/NestedList";
@@ -25,46 +25,28 @@ const NavList = (props: Partial<INestedListProps>) => {
       value: "home",
       label: "Home",
       Icon: Home,
-      link: { to: "/app/dashboard", activeOptions: { exact: true } },
+      link: { to: "/app", activeOptions: { exact: true } },
     },
     {
-      id: "board",
-      value: "board",
-      label: "Board",
-      Icon: CalendarViewMonth,
-      link: { to: "/app/board" },
-      items: [
-        {
-          id: "jobs",
-          value: "jobs",
-          label: "Jobs",
-          Icon: JobIcons.List,
-          link: { to: "/app/board/jobs" },
-        },
-      ],
+      id: "jobs",
+      value: "jobs",
+      label: "Jobs",
+      Icon: JobIcons.List,
+      link: { to: "/app/jobs" },
     },
     {
-      id: "directory",
-      value: "directory",
-      label: "Directory",
-      Icon: Groups,
-      link: { to: "/app/directory" },
-      items: [
-        {
-          id: "contacts",
-          value: "contacts",
-          label: "Contacts",
-          Icon: ContactIcons.List,
-          link: { to: "/app/directory/contacts" },
-        },
-        {
-          id: "places",
-          value: "places",
-          label: "Places",
-          Icon: PlaceIcons.List,
-          link: { to: "/app/directory/places" },
-        },
-      ],
+      id: "contacts",
+      value: "contacts",
+      label: "Contacts",
+      Icon: ContactIcons.List,
+      link: { to: "/app/contacts" },
+    },
+    {
+      id: "places",
+      value: "places",
+      label: "Places",
+      Icon: PlaceIcons.List,
+      link: { to: "/app/places" },
     },
     {
       id: "profile",

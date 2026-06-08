@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useBlocker } from "@tanstack/react-router";
-import { Controller, useForm } from "react-hook-form";
-import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
   type ButtonProps,
@@ -12,23 +10,28 @@ import {
   TextField,
   type StackProps,
   FormHelperText,
+  Select,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  MenuItem,
+  Divider,
 } from "@mui/material";
-import { zodResolver } from "@hookform/resolvers/zod";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
-import ContactIdAutocomplete from "@/containers/fields/ContactAutocomplete/ContactIdAutocomplete";
+import ContactAutocomplete from "@/containers/fields/ContactAutocomplete";
 import useConfirm from "@/store/hooks/useConfirm";
-import useJob from "@/store/hooks/useJob";
-import { errorUtils } from "@/store/utils/error";
-import { jobCreateSchema } from "@/store/schemas/jobs";
-import { NULL_ID } from "@/store/constants/api";
-import type { TJob, TJobCreate } from "@/store/types/jobs";
+import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
+import { contactSchema } from "@/store/schemas/contacts";
+import { EJobCategory } from "@/store/enums/jobs";
+
+type TJobCreateFormValues = z.infer<typeof formSchema>;
 
 export interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  initialValues?: Partial<TJobCreate>;
-  onSuccess: (res: TJob) => void;
+  values?: TJobCreateFormValues;
+  onSubmit: SubmitHandler<TJobCreateFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
@@ -38,54 +41,53 @@ export interface IJobCreateFormProps extends Omit<
   };
 }
 
-const DEFAULT_VALUES = jobCreateSchema.parse({});
+const formSchema = z.object({
+  categories: z
+    .array(z.nativeEnum(EJobCategory))
+    .min(1, "At least one category is required"),
+  description: z.string().min(1, "Description is required"),
+  recipients: z
+    .array(contactSchema)
+    .min(1, "At least one recipient is required"),
+  representatives: z.array(contactSchema),
+  place: googleAutocompleteSuggestionSchema,
+});
 
 const JobCreateForm: React.FC<IJobCreateFormProps> = ({
-  initialValues,
-  onSuccess,
+  values,
+  onSubmit,
   onCancel,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const jobHook = useJob(NULL_ID);
   const confirm = useConfirm();
   const methods = useForm({
-    resolver: zodResolver(jobCreateSchema),
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(formSchema),
+    values,
+    defaultValues: {
+      categories: [],
+      description: "",
+      recipients: [],
+      representatives: [],
+      place: undefined,
+    },
   });
-
-  /** Mutations */
-
-  const createJobMutation = jobHook.mutations.create;
 
   /** Data */
 
   const isDirty = methods.formState.isDirty;
-
-  const isFieldDisabled =
-    methods.formState.disabled || methods.formState.isSubmitting;
+  const isDisabled = methods.formState.disabled;
+  const isSubmitting =
+    methods.formState.isValid && methods.formState.isSubmitting;
+  const isFieldDisabled = isDisabled || isSubmitting;
 
   /** Callbacks */
 
-  const handleOnSubmit = methods.handleSubmit((data) => {
-    createJobMutation.mutate(data, {
-      onSuccess,
-      onError: (error) => {
-        methods.setError("root", {
-          type: "server",
-          message: errorUtils.getErrorMessage(error),
-        });
-      },
-    });
-  });
+  const handleOnSubmit = methods.handleSubmit(onSubmit);
 
   /** Effects */
-
-  useEffect(() => {
-    methods.reset({ ...DEFAULT_VALUES, ...initialValues });
-  }, [initialValues]);
 
   useBlocker({
     shouldBlockFn: async () => {
@@ -106,25 +108,78 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
       component="form"
       noValidate
       onSubmit={(e) => {
-        e.preventDefault();
+        e.stopPropagation();
         handleOnSubmit(e);
       }}
-      onReset={(e) => e.preventDefault()}
       {...props}
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
-        {!!methods.formState.errors.root && (
-          <FormHelperText error>
-            {methods.formState.errors.root?.message}
-          </FormHelperText>
-        )}
-        <TextField
-          label="Label"
-          disabled={isFieldDisabled}
-          error={!!methods.formState.errors.label}
-          helperText={methods.formState.errors.label?.message}
-          fullWidth
-          {...methods.register("label")}
+        <Controller
+          name="categories"
+          control={methods.control}
+          render={({ field }) => (
+            <FormControl>
+              <InputLabel id="job-categories-label" required>
+                Categories
+              </InputLabel>
+              <Select
+                id="job-categories"
+                labelId="job-categories-label"
+                multiple
+                value={field.value}
+                input={<OutlinedInput label="Categories" />}
+                onChange={(e) =>
+                  field.onChange(e.target.value as EJobCategory[])
+                }
+                disabled={isFieldDisabled}
+                error={!!methods.formState.errors.categories}
+              >
+                {Object.values(EJobCategory).map((name) => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!methods.formState.errors.categories && (
+                <FormHelperText error>
+                  {methods.formState.errors.categories.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="recipients"
+          control={methods.control}
+          render={({ field: { onChange, ...field } }) => (
+            <ContactAutocomplete
+              label="Recipient(s)"
+              required
+              multiple
+              disabled={isFieldDisabled}
+              error={!!methods.formState.errors.recipients}
+              enableCreate
+              helperText={methods.formState.errors.recipients?.message}
+              onChange={(_, newValue) => onChange(newValue)}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          name="place"
+          control={methods.control}
+          render={({ field: { value, onChange, ...field }, formState }) => (
+            <GoogleAutocompleteSuggestionAutocomplete
+              label="Address"
+              value={value || null}
+              required
+              disabled={isFieldDisabled}
+              error={!!formState.errors.place}
+              helperText={formState.errors.place?.message}
+              onChange={(_, newValue) => onChange(newValue || undefined)}
+              {...field}
+            />
+          )}
         />
         <TextField
           label="Description"
@@ -134,134 +189,26 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
           disabled={isFieldDisabled}
           error={!!methods.formState.errors.description}
           helperText={methods.formState.errors.description?.message}
+          placeholder="Description of requested work"
           fullWidth
           {...methods.register("description")}
         />
+        <Divider />
         <Controller
-          name="representative"
+          name="representatives"
           control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
-              enableCreate
-              label="Sales Representative"
-              disabled={isFieldDisabled || disabled}
-              error={!!formState.errors.representative}
-              helperText={formState.errors.representative?.message}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          name="assignee"
-          control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
-              enableCreate
-              label="Assignee"
-              disabled={isFieldDisabled || disabled}
-              error={!!formState.errors.assignee}
-              helperText={formState.errors.assignee?.message}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          name="recipient"
-          control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
-              enableCreate
-              label="Recipient"
-              disabled={isFieldDisabled || disabled}
-              error={!!formState.errors.recipient}
-              helperText={formState.errors.recipient?.message}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          name="referred_by"
-          control={methods.control}
-          render={({ field: { value, disabled, ...field }, formState }) => (
-            <ContactIdAutocomplete
-              value={value ?? null}
-              enableCreate
-              label="Referred By"
-              disabled={isFieldDisabled || disabled}
-              error={!!formState.errors.referred_by}
-              helperText={formState.errors.referred_by?.message}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          name="place"
-          control={methods.control}
-          render={({ field, formState }) => (
-            <GoogleAutocompleteSuggestionAutocomplete
-              label="Location"
+          render={({ field: { onChange, ...field } }) => (
+            <ContactAutocomplete
+              label="Representative(s)"
+              multiple
               disabled={isFieldDisabled}
-              error={!!formState.errors.place}
-              helperText={formState.errors.place?.message}
+              error={!!methods.formState.errors.representatives}
+              helperText={methods.formState.errors.representatives?.message}
+              onChange={(_, newValue) => onChange(newValue)}
               {...field}
             />
           )}
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Controller
-            name="scheduled_at"
-            control={methods.control}
-            render={({ field: { value, onChange, ...field }, formState }) => (
-              <DateTimePicker
-                label="Scheduled At"
-                value={dayjs(value) ?? null}
-                disabled={isFieldDisabled}
-                onChange={(newValue) =>
-                  onChange(newValue?.toISOString() ?? null)
-                }
-                slotProps={{
-                  field: {
-                    clearable: true,
-                    onClear: () => onChange(null),
-                  },
-                  textField: {
-                    error: !!formState.errors.scheduled_at,
-                    helperText: formState.errors.scheduled_at?.message,
-                  },
-                }}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="completed_at"
-            control={methods.control}
-            render={({ field: { value, onChange, ...field }, formState }) => (
-              <DateTimePicker
-                label="Completed At"
-                value={dayjs(value) ?? null}
-                disabled={isFieldDisabled}
-                onChange={(newValue) =>
-                  onChange(newValue?.toISOString() ?? null)
-                }
-                slotProps={{
-                  field: {
-                    clearable: true,
-                    onClear: () => onChange(null),
-                  },
-                  textField: {
-                    error: !!formState.errors.scheduled_at,
-                    helperText: formState.errors.scheduled_at?.message,
-                  },
-                }}
-                {...field}
-              />
-            )}
-          />
-        </LocalizationProvider>
       </Stack>
       <Stack
         direction="row"
@@ -272,15 +219,15 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
         <Button
           variant="text"
           color="error"
-          disabled={methods.formState.disabled}
+          disabled={isFieldDisabled}
           children="Cancel"
           onClick={onCancel}
           {...slotProps?.cancelButton}
         />
         <Button
           type="submit"
-          disabled={methods.formState.disabled}
-          loading={methods.formState.isValid && methods.formState.isSubmitting}
+          disabled={isDisabled}
+          loading={isSubmitting}
           children="Submit"
           {...slotProps?.submitButton}
         />

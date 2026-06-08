@@ -19,7 +19,6 @@ export const Route = createFileRoute("/app/profile/$id")({
         queryKey: userEndpoints.user(userId).id,
         queryFn: userEndpoints.user(userId).get,
       });
-
       return {
         data: user,
         crumb: { label: user.username, Icon: AccountIcons.Detail },

@@ -21,12 +21,11 @@ class Contact(models.Model):
         related_name="contacts",
     )
     documents = GenericRelation(Document, related_query_name='contact')
-    tags = models.ManyToManyField(
-        'ContactTag', related_name='contacts', blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['first_name', 'last_name'],
@@ -73,19 +72,3 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} <{self.email}>"
-
-
-class ContactTag(models.Model):
-    label = models.CharField(max_length=255, unique=True)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    color = models.CharField(max_length=7, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Contact Tag"
-        verbose_name_plural = "Contact Tags"
-        ordering = ("label",)
-
-    def __str__(self):
-        return self.label

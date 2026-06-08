@@ -1,10 +1,16 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useMatches,
+} from "@tanstack/react-router";
 import { Box, Container, Paper, useMediaQuery } from "@mui/material";
+import { Home } from "@mui/icons-material";
 import NavBar from "@/containers/layout/NavBar";
-import FullScreen from "@/components/layout/FullScreen";
-import StatusWrapper from "@/components/layout/StatusWrapper";
 import NavList from "@/containers/lists/NavList";
-import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
+import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
+import PageHeader from "@/components/layout/PageHeader";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -16,17 +22,8 @@ export const Route = createFileRoute("/app")({
         replace: true,
       });
   },
+  loader: (): TRouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
   component: RouteComponent,
-  pendingComponent: () => (
-    <FullScreen>
-      <StatusWrapper loading="Loading app..." />
-    </FullScreen>
-  ),
-  notFoundComponent: () => (
-    <Container sx={{ my: 2 }}>
-      <PageNotFoundCard />
-    </Container>
-  ),
 });
 
 function RouteComponent() {
@@ -34,9 +31,12 @@ function RouteComponent() {
 
   const isDesktop = useMediaQuery(({ breakpoints }) => breakpoints.up("sm"));
 
+  const matches = useMatches();
+  const currentMatch = matches.at(-1);
+
   return (
     <>
-      <NavBar sx={{ height: (theme) => theme.layout.nav.height }} />
+      <NavBar sx={(theme) => ({ height: theme.layout.nav.height })} />
       {isDesktop && (
         <Paper
           component="nav"
@@ -57,16 +57,40 @@ function RouteComponent() {
       )}
       <Box
         component="main"
-        sx={({ layout }) => ({
+        sx={(theme) => ({
           position: "absolute",
-          top: layout.nav.height,
-          height: `calc(100vh - ${layout.nav.height}px)`,
-          width: `calc(100% - ${isDesktop ? layout.nav.panelWidth : 0}px)`,
-          left: isDesktop ? layout.nav.panelWidth : 0,
-          overflow: "auto",
+          top: theme.layout.nav.height,
+          left: isDesktop ? theme.layout.nav.panelWidth : 0,
+          width: isDesktop
+            ? `calc(100% - ${theme.layout.nav.panelWidth}px)`
+            : "100%",
+          height: `calc(100% - ${theme.layout.nav.height}px)`,
         })}
       >
-        <Outlet />
+        <Container
+          maxWidth="md"
+          sx={(theme) => ({
+            position: "relative",
+            width: "100%",
+            height: theme.layout.page.header.height,
+          })}
+        >
+          <PageHeader
+            title={<NavBreadcrumbs />}
+            {...currentMatch?.loaderData?.slotProps?.pageHeader}
+          />
+        </Container>
+        <Box
+          component="main"
+          position="relative"
+          width="100%"
+          height={(theme) =>
+            `calc(100% - ${theme.layout.page.header.height}px)`
+          }
+          overflow="auto"
+        >
+          <Outlet />
+        </Box>
       </Box>
     </>
   );

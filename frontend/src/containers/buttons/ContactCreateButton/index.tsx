@@ -6,11 +6,7 @@ type TContactCreateButtonProps = Omit<ComponentProps<typeof ButtonLink>, "to">;
 
 const ContactCreateButton: React.FC<TContactCreateButtonProps> = (props) => {
   return (
-    <ButtonLink
-      to="/app/directory/contacts/create"
-      startIcon={<Add />}
-      {...props}
-    >
+    <ButtonLink to="/app/contacts/create" startIcon={<Add />} {...props}>
       Create
     </ButtonLink>
   );

@@ -66,6 +66,7 @@ const components: Components<
     },
   },
   MuiChip: {
+    defaultProps: { size: "xs" },
     variants: [
       {
         props: { size: "xxs" },
@@ -83,7 +84,7 @@ const components: Components<
         style: ({ theme }) => ({
           height: theme.spacing(3),
           padding: 0,
-          ...theme.typography.caption,
+          fontSize: 12,
           "& .MuiChip-icon": { fontSize: 12 },
           "& .MuiChip-deleteIcon": { fontSize: 12 },
           "& .MuiChip-label": { paddingLeft: 12, paddingRight: 12 },
