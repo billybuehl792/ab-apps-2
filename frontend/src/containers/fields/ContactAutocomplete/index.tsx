@@ -62,14 +62,14 @@ const ContactAutocomplete = <
 }: IContactAutocompleteProps<TMultiple, TDisableClearable>) => {
   /** Values */
 
-  const [input, setInput] = useDebounce("", 600);
+  const [search, setSearch] = useDebounce("", 600);
 
   /** Queries */
 
   const listQuery = useQuery({
     queryKey: [
       contactEndpoints.id,
-      contactListRequestSchema.parse({ params: { input: input || undefined } }),
+      contactListRequestSchema.parse({ params: { search } }),
     ] as const,
     queryFn: ({ queryKey }) => contactEndpoints.get(queryKey[1]),
   });
@@ -86,7 +86,7 @@ const ContactAutocomplete = <
       loading={isOptionsLoading}
       getOptionKey={(option) => option.id}
       getOptionLabel={(option) => `${option.first_name} ${option.last_name}`}
-      onInputChange={(_, newInputValue) => setInput(newInputValue)}
+      onInputChange={(_, newInputValue) => setSearch(newInputValue)}
       filterOptions={(options) => options}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (

@@ -9,13 +9,13 @@ import { JobIcons } from "@/store/constants/jobs";
 import JobCreateForm, {
   type IJobCreateFormProps,
 } from "@/containers/forms/JobCreateForm";
-import type { TRouteLoaderData } from "@/store/types/router";
 import { jobEndpoints } from "@/store/constants/jobs";
-import { EObjectChangeType } from "@/store/enums/api";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
+import { EObjectChangeType } from "@/store/enums/api";
+import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/create")({
   loader: (): TRouteLoaderData => ({
