@@ -5,10 +5,8 @@ import type {
   TGoogleAutocompleteSuggestionListResponse,
   TGooglePlace,
   TPlace,
-  TPlaceCreate,
   TPlaceListRequest,
   TPlaceListResponse,
-  TPlaceUpdate,
   TCityListRequest,
   TCityListResponse,
 } from "../types/places";
@@ -31,17 +29,11 @@ export const placeEndpoints = {
     api
       .get<TPlaceListResponse>(placeEndpoints.url, options)
       .then((res) => res.data),
-  post: (body: TPlaceCreate) =>
-    api.post<TPlace>(placeEndpoints.url, body).then((res) => res.data),
   place: (id: TPlace["id"]) => ({
     id: [...placeEndpoints.id, "place", id] as const,
     url: `${placeEndpoints.url}${id}/`,
     get: () =>
       api.get<TPlace>(placeEndpoints.place(id).url).then((res) => res.data),
-    patch: (body: TPlaceUpdate) =>
-      api
-        .patch<TPlace>(placeEndpoints.place(id).url, body)
-        .then((res) => res.data),
     delete: () =>
       api.delete<void>(placeEndpoints.place(id).url).then((res) => res.data),
   }),

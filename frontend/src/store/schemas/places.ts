@@ -22,23 +22,6 @@ export const placeSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const placeBasicSchema = z.object({
-  id: idSchema,
-  google_place_id: googlePlaceIdSchema,
-  address_short: z.coerce.string(),
-  city: z.coerce.string(),
-  state: z.coerce.string(),
-});
-
-export const placeCreateSchema = z.object({
-  google_place_id: googlePlaceIdSchema,
-});
-
-export const placeUpdateSchema = z.object({
-  id: idSchema,
-  google_place_id: googlePlaceIdSchema,
-});
-
 export const googlePlaceSchema = z.object({
   id: googlePlaceIdSchema,
   formattedAddress: z.string(),

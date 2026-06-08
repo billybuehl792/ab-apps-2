@@ -1,7 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EContactListOrdering } from "../enums/contacts";
-import { placeBasicSchema } from "./places";
+import { placeSchema } from "./places";
 import {
   emailSchema,
   idOrIdArraySchema,
@@ -17,7 +17,7 @@ export const contactSchema = z.object({
   email: emailSchema,
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable(),
-  place: placeBasicSchema.nullable(),
+  place: placeSchema.nullable(),
   documents: z.array(idSchema),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),

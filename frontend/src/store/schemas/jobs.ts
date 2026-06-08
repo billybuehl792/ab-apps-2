@@ -1,21 +1,21 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { idSchema } from "./basic";
-import { placeBasicSchema } from "./places";
+import { placeSchema } from "./places";
 import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 import { contactSchema } from "./contacts";
 
 export const jobSchema = z.object({
   id: idSchema,
   description: z.string().default(""),
-  categories: z.array(z.string()).default([]),
+  categories: z.array(z.nativeEnum(EJobCategory)).default([]),
   amount: z.number().nullable().default(null),
   paid: z.number().nullable().default(null),
   representatives: z.array(contactSchema).default([]),
   assignees: z.array(contactSchema).default([]),
   recipients: z.array(contactSchema).default([]),
   referred_by: z.array(contactSchema).default([]),
-  place: placeBasicSchema.nullable().default(null),
+  place: placeSchema.nullable().default(null),
   documents: z.array(idSchema).default([]),
   signed_at: z.string().datetime().nullable().default(null),
   estimated_at: z.string().datetime().nullable().default(null),
