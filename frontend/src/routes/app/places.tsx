@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { JobIcons } from "@/store/constants/jobs";
+import { PlaceIcons } from "@/store/constants/places";
 import type { TRouteLoaderData } from "@/store/types/router";
 
-export const Route = createFileRoute("/app/board/jobs")({
+export const Route = createFileRoute("/app/places")({
   loader: (): TRouteLoaderData => ({
-    crumb: { label: "Jobs", Icon: JobIcons.List },
+    crumb: { label: "Places", Icon: PlaceIcons.List },
   }),
 });

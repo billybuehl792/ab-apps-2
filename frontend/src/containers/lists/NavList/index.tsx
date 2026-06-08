@@ -1,4 +1,4 @@
-import { CalendarViewMonth, Groups, Home } from "@mui/icons-material";
+import { Home } from "@mui/icons-material";
 import NestedList, {
   type INestedListProps,
 } from "@/components/lists/NestedList";
@@ -40,6 +40,13 @@ const NavList = (props: Partial<INestedListProps>) => {
       label: "Contacts",
       Icon: ContactIcons.List,
       link: { to: "/app/contacts" },
+    },
+    {
+      id: "places",
+      value: "places",
+      label: "Places",
+      Icon: PlaceIcons.List,
+      link: { to: "/app/places" },
     },
     {
       id: "profile",

@@ -5,10 +5,9 @@ import { useSnackbar } from "notistack";
 import { Delete, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import { getPlaceholderPlace, placeEndpoints } from "../constants/places";
+import { placeEndpoints } from "../constants/places";
 import { EObjectChangeType } from "../enums/api";
 import { EPlaceOptionId } from "../enums/places";
-import { NULL_ID } from "../constants/api";
 import type { TPlaceBasic } from "../types/places";
 
 type TPlaceMenuOption = IMenuOption<EPlaceOptionId, EPlaceOptionId>;
@@ -27,52 +26,25 @@ export interface IUsePlaceOptions {
 
 export type TUsePlace = ReturnType<typeof usePlace>;
 
-const usePlace = (
-  place: TPlaceBasic | TPlaceBasic["id"],
-  options?: IUsePlaceOptions,
-) => {
+const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
   /** Values */
 
   const navigate = useNavigate();
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
-  const isId = typeof place === "number";
-  const placeId = isId ? place : place.id;
-  const isNonExistentPlace = placeId === NULL_ID;
-
   /** Queries */
 
   const placeQuery = useQuery({
-    queryKey: placeEndpoints.place(placeId).id,
-    queryFn: placeEndpoints.place(placeId).get,
-    initialData: getPlaceholderPlace({
-      id: placeId,
-      ...(isId ? {} : place),
-    }),
-    enabled: isId && !isNonExistentPlace,
+    queryKey: placeEndpoints.place(place.id).id,
+    queryFn: placeEndpoints.place(place.id).get,
   });
 
   /** Mutations */
 
-  const createMutation = useMutation({
-    mutationKey: [placeEndpoints.id, EObjectChangeType.Create],
-    mutationFn: placeEndpoints.post,
-    onSuccess: (res) => {
-      options?.onChange?.(res, EObjectChangeType.Create);
-      snackbar.enqueueSnackbar(`'${res.address_short}' created successfully`, {
-        variant: "success",
-      });
-    },
-    onError: (error) =>
-      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
-        variant: "error",
-      }),
-  });
-
   const updateMutation = useMutation({
-    mutationKey: [placeEndpoints.place(placeId).id, EObjectChangeType.Update],
-    mutationFn: placeEndpoints.place(placeId).patch,
+    mutationKey: [placeEndpoints.place(place.id).id, EObjectChangeType.Update],
+    mutationFn: placeEndpoints.place(place.id).patch,
     onSuccess: (res) => {
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(`'${res.address_short}' updated successfully`, {
@@ -86,11 +58,11 @@ const usePlace = (
   });
 
   const deleteMutation = useMutation({
-    mutationKey: [placeEndpoints.place(placeId).id, EObjectChangeType.Delete],
-    mutationFn: placeEndpoints.place(placeId).delete,
+    mutationKey: [placeEndpoints.place(place.id).id, EObjectChangeType.Delete],
+    mutationFn: placeEndpoints.place(place.id).delete,
     onSuccess: () => {
-      options?.onChange?.(placeQuery.data, EObjectChangeType.Delete);
-      snackbar.enqueueSnackbar(`${placeQuery.data.address_short} deleted`, {
+      options?.onChange?.(place, EObjectChangeType.Delete);
+      snackbar.enqueueSnackbar(`${place.address_short} deleted`, {
         variant: "success",
       });
     },
@@ -102,9 +74,7 @@ const usePlace = (
 
   /** Data */
 
-  const isMutating = isNonExistentPlace
-    ? createMutation.isPending
-    : updateMutation.isPending || deleteMutation.isPending;
+  const isMutating = updateMutation.isPending || deleteMutation.isPending;
   const isDisabled =
     options?.disabled ||
     isMutating ||
@@ -114,12 +84,7 @@ const usePlace = (
   /** Callbacks */
 
   const handleView = () =>
-    navigate({
-      to: "/app/directory/places/$id",
-      params: { id: String(placeId) },
-    });
-
-  const handleCreate = createMutation.mutate;
+    navigate({ to: "/app/places/$id", params: { id: String(place.id) } });
 
   const handleUpdate = updateMutation.mutate;
 
@@ -127,7 +92,7 @@ const usePlace = (
     (...options: Parameters<typeof deleteMutation.mutate>) =>
       confirm(
         {
-          title: `Delete ${placeQuery.data.address_short}?`,
+          title: `Delete ${place.address_short}?`,
           description: `Are you sure you want to delete this place? This operation is irreversible.`,
         },
         () => deleteMutation.mutate(...options),
@@ -148,8 +113,8 @@ const usePlace = (
           Icon: Info,
           isDisabled: isDisabled,
           link: {
-            to: "/app/directory/places/$id",
-            params: { id: String(placeId) },
+            to: "/app/places/$id",
+            params: { id: String(place.id) },
           },
         },
         {
@@ -170,25 +135,23 @@ const usePlace = (
     () =>
       options?.options
         ? typeof options.options === "function"
-          ? options.options(placeQuery.data, baseMenuOptions)
+          ? options.options(place, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [placeQuery.data, options?.options, baseMenuOptions],
+    [place, options?.options, baseMenuOptions],
   );
 
   return {
-    place: placeQuery.data,
+    place: place,
     options: menuOptions,
     disabled: isDisabled,
     isLoading: placeQuery.isLoading,
     isMutating: isMutating,
     queries: { place: placeQuery },
     mutations: {
-      create: createMutation,
       update: updateMutation,
       delete: deleteMutation,
     },
-    create: handleCreate,
     update: handleUpdate,
     delete: handleDelete,
     view: handleView,

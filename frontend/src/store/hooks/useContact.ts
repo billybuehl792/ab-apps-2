@@ -1,16 +1,15 @@
 import { useCallback, useMemo } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
+import { contactEndpoints } from "../constants/contacts";
 import { errorUtils } from "../utils/error";
-import { contactEndpoints, getPlaceholderContact } from "../constants/contacts";
+import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
-import { NULL_ID } from "../constants/api";
-import { markdownUtils } from "../utils/markdown";
 import type { TContact } from "../types/contacts";
-import { useNavigate } from "@tanstack/react-router";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -28,59 +27,24 @@ export interface IUseContactOptions {
 
 export type TUseContact = ReturnType<typeof useContact>;
 
-const useContact = (
-  contact: TContact | TContact["id"],
-  options?: IUseContactOptions,
-) => {
+const useContact = (contact: TContact, options?: IUseContactOptions) => {
   /** Values */
 
   const snackbar = useSnackbar();
   const confirm = useConfirm();
   const navigate = useNavigate();
 
-  const isId = typeof contact === "number";
-  const contactId = isId ? contact : contact.id;
-  const isNonExistentContact = contactId === NULL_ID;
-
-  /** Queries */
-
-  const contactQuery = useQuery({
-    queryKey: contactEndpoints.contact(contactId).id,
-    queryFn: contactEndpoints.contact(contactId).get,
-    initialData: getPlaceholderContact({
-      id: contactId,
-      ...(isId ? {} : contact),
-    }),
-    enabled: isId && !isNonExistentContact,
-  });
+  const fullName = `${contact.first_name} ${contact.last_name}`;
 
   /** Mutations */
 
-  const createMutation = useMutation({
-    mutationKey: [contactEndpoints.id, EObjectChangeType.Create],
-    mutationFn: contactEndpoints.post,
-    onSuccess: (res) => {
-      const fullName = `${res.first_name} ${res.last_name}`;
-      options?.onChange?.(res, EObjectChangeType.Create);
-      snackbar.enqueueSnackbar(
-        `${markdownUtils.bold(fullName)} created successfully`,
-        { variant: "success" },
-      );
-    },
-    onError: (error) =>
-      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
-        variant: "error",
-      }),
-  });
-
   const updateMutation = useMutation({
     mutationKey: [
-      contactEndpoints.contact(contactId).id,
+      contactEndpoints.contact(contact.id).id,
       EObjectChangeType.Update,
     ],
-    mutationFn: contactEndpoints.contact(contactId).patch,
+    mutationFn: contactEndpoints.contact(contact.id).patch,
     onSuccess: (res) => {
-      const fullName = `${res.first_name} ${res.last_name}`;
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(fullName)} updated successfully`,
@@ -95,13 +59,12 @@ const useContact = (
 
   const deleteMutation = useMutation({
     mutationKey: [
-      contactEndpoints.contact(contactId).id,
+      contactEndpoints.contact(contact.id).id,
       EObjectChangeType.Delete,
     ],
-    mutationFn: contactEndpoints.contact(contactId).delete,
+    mutationFn: contactEndpoints.contact(contact.id).delete,
     onSuccess: () => {
-      const fullName = `${contactQuery.data.first_name} ${contactQuery.data.last_name}`;
-      options?.onChange?.(contactQuery.data, EObjectChangeType.Delete);
+      options?.onChange?.(contact, EObjectChangeType.Delete);
       snackbar.enqueueSnackbar(`${markdownUtils.bold(fullName)} deleted`, {
         variant: "success",
       });
@@ -114,30 +77,23 @@ const useContact = (
 
   /** Data */
 
-  const isMutating = isNonExistentContact
-    ? createMutation.isPending
-    : updateMutation.isPending || deleteMutation.isPending;
-  const isDisabled =
-    options?.disabled ||
-    isMutating ||
-    (contactQuery.isEnabled && !contactQuery.isSuccess);
+  const isMutating = updateMutation.isPending || deleteMutation.isPending;
+  const isDisabled = options?.disabled || isMutating;
   const isChangeDisabled = isDisabled || !options?.onChange;
 
   /** Callbacks */
 
   const handleView = () =>
     navigate({
-      to: "/app/directory/contacts/$id",
-      params: { id: String(contactId) },
+      to: "/app/contacts/$id",
+      params: { id: String(contact.id) },
     });
 
   const handleEdit = () =>
     navigate({
-      to: "/app/directory/contacts/$id/edit",
-      params: { id: String(contactId) },
+      to: "/app/contacts/$id/edit",
+      params: { id: String(contact.id) },
     });
-
-  const handleCreate = createMutation.mutate;
 
   const handleUpdate = updateMutation.mutate;
 
@@ -145,7 +101,7 @@ const useContact = (
     (...options: Parameters<typeof deleteMutation.mutate>) =>
       confirm(
         {
-          title: `Delete ${contactQuery.data.first_name} ${contactQuery.data.last_name}?`,
+          title: `Delete ${fullName}?`,
           description: `Are you sure you want to delete this contact? This operation is irreversible.`,
         },
         () => deleteMutation.mutate(...options),
@@ -167,7 +123,7 @@ const useContact = (
           isDisabled: isDisabled,
           link: {
             to: "/app/contacts/$id",
-            params: { id: String(contactId) },
+            params: { id: String(contact.id) },
           },
         },
         {
@@ -179,7 +135,7 @@ const useContact = (
           isDisabled: isDisabled,
           link: {
             to: "/app/contacts/$id/edit",
-            params: { id: String(contactId) },
+            params: { id: String(contact.id) },
           },
         },
         {
@@ -200,25 +156,18 @@ const useContact = (
     () =>
       options?.options
         ? typeof options.options === "function"
-          ? options.options(contactQuery.data, baseMenuOptions)
+          ? options.options(contact, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [contactQuery.data, options?.options, baseMenuOptions],
+    [contact, options?.options, baseMenuOptions],
   );
 
   return {
-    contact: contactQuery.data,
+    contact,
     options: menuOptions,
     disabled: isDisabled,
-    isLoading: contactQuery.isLoading,
     isMutating: isMutating,
-    queries: { contact: contactQuery },
-    mutations: {
-      create: createMutation,
-      update: updateMutation,
-      delete: deleteMutation,
-    },
-    create: handleCreate,
+    mutations: { update: updateMutation, delete: deleteMutation },
     update: handleUpdate,
     delete: handleDelete,
     view: handleView,

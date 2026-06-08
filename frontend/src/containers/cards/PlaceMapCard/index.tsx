@@ -9,7 +9,7 @@ import {
 import { Card, Stack, type StackProps } from "@mui/material";
 import type { TPlace } from "@/store/types/places";
 
-interface IPlaceMapCardProps extends StackProps<typeof Card> {
+interface IPlaceDetailCardProps extends StackProps<typeof Card> {
   place: TPlace;
   slotProps?: {
     content?: StackProps;
@@ -18,14 +18,13 @@ interface IPlaceMapCardProps extends StackProps<typeof Card> {
   };
 }
 
-const PlaceMapCard: React.FC<IPlaceMapCardProps> = ({
+const PlaceDetailCard: React.FC<IPlaceDetailCardProps> = ({
   place,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const mapId = place.google_place_id;
   const position: MarkerProps["position"] = {
     lat: place.latitude,
     lng: place.longitude,
@@ -42,7 +41,7 @@ const PlaceMapCard: React.FC<IPlaceMapCardProps> = ({
       <Stack width="100%" height="100%">
         <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
           <Map
-            mapId={mapId}
+            mapId={place.google_place_id}
             defaultCenter={position}
             defaultZoom={15}
             {...slotProps?.map}
@@ -55,4 +54,4 @@ const PlaceMapCard: React.FC<IPlaceMapCardProps> = ({
   );
 };
 
-export default PlaceMapCard;
+export default PlaceDetailCard;

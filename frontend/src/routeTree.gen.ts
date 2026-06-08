@@ -15,35 +15,30 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppPlacesRouteImport } from './routes/app/places'
 import { Route as AppJobsRouteImport } from './routes/app/jobs'
-import { Route as AppDirectoryRouteImport } from './routes/app/directory'
 import { Route as AppContactsRouteImport } from './routes/app/contacts'
 import { Route as AppBoardRouteImport } from './routes/app/board'
 import { Route as AppAdminRouteImport } from './routes/app/admin'
+import { Route as AppPlacesIndexRouteImport } from './routes/app/places/index'
 import { Route as AppJobsIndexRouteImport } from './routes/app/jobs/index'
 import { Route as AppContactsIndexRouteImport } from './routes/app/contacts/index'
-import { Route as AppBoardIndexRouteImport } from './routes/app/board/index'
 import { Route as AppAdminIndexRouteImport } from './routes/app/admin/index'
 import { Route as ResetPasswordEncodedUserIdTokenRouteImport } from './routes/reset-password.$encodedUserId.$token'
 import { Route as AppProfileIdRouteImport } from './routes/app/profile.$id'
+import { Route as AppPlacesIdRouteImport } from './routes/app/places/$id'
 import { Route as AppJobsCreateRouteImport } from './routes/app/jobs/create'
 import { Route as AppJobsIdRouteImport } from './routes/app/jobs/$id'
 import { Route as AppContactsCreateRouteImport } from './routes/app/contacts/create'
 import { Route as AppContactsIdRouteImport } from './routes/app/contacts/$id'
-import { Route as AppBoardJobsRouteImport } from './routes/app/board/jobs'
 import { Route as AppAdminUsersRouteImport } from './routes/app/admin/users'
 import { Route as AppJobsIdIndexRouteImport } from './routes/app/jobs/$id/index'
 import { Route as AppContactsIdIndexRouteImport } from './routes/app/contacts/$id/index'
-import { Route as AppBoardJobsIndexRouteImport } from './routes/app/board/jobs/index'
 import { Route as AppAdminUsersIndexRouteImport } from './routes/app/admin/users/index'
 import { Route as AppJobsIdEditRouteImport } from './routes/app/jobs/$id/edit'
 import { Route as AppContactsIdEditRouteImport } from './routes/app/contacts/$id/edit'
-import { Route as AppBoardJobsCreateRouteImport } from './routes/app/board/jobs/create'
-import { Route as AppBoardJobsIdRouteImport } from './routes/app/board/jobs/$id'
 import { Route as AppAdminUsersCreateRouteImport } from './routes/app/admin/users/create'
 import { Route as AppAdminUsersIdRouteImport } from './routes/app/admin/users/$id'
-import { Route as AppBoardJobsIdIndexRouteImport } from './routes/app/board/jobs/$id/index'
-import { Route as AppBoardJobsIdEditRouteImport } from './routes/app/board/jobs/$id/edit'
 
 const SignOutRoute = SignOutRouteImport.update({
   id: '/sign-out',
@@ -75,14 +70,14 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPlacesRoute = AppPlacesRouteImport.update({
+  id: '/places',
+  path: '/places',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppJobsRoute = AppJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDirectoryRoute = AppDirectoryRouteImport.update({
-  id: '/directory',
-  path: '/directory',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContactsRoute = AppContactsRouteImport.update({
@@ -100,6 +95,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPlacesIndexRoute = AppPlacesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPlacesRoute,
+} as any)
 const AppJobsIndexRoute = AppJobsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -109,11 +109,6 @@ const AppContactsIndexRoute = AppContactsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppContactsRoute,
-} as any)
-const AppBoardIndexRoute = AppBoardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppBoardRoute,
 } as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/',
@@ -130,6 +125,11 @@ const AppProfileIdRoute = AppProfileIdRouteImport.update({
   id: '/profile/$id',
   path: '/profile/$id',
   getParentRoute: () => AppRoute,
+} as any)
+const AppPlacesIdRoute = AppPlacesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppPlacesRoute,
 } as any)
 const AppJobsCreateRoute = AppJobsCreateRouteImport.update({
   id: '/create',
@@ -151,11 +151,6 @@ const AppContactsIdRoute = AppContactsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppContactsRoute,
 } as any)
-const AppBoardJobsRoute = AppBoardJobsRouteImport.update({
-  id: '/jobs',
-  path: '/jobs',
-  getParentRoute: () => AppBoardRoute,
-} as any)
 const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -170,11 +165,6 @@ const AppContactsIdIndexRoute = AppContactsIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppContactsIdRoute,
-} as any)
-const AppBoardJobsIndexRoute = AppBoardJobsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppBoardJobsRoute,
 } as any)
 const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
   id: '/',
@@ -191,16 +181,6 @@ const AppContactsIdEditRoute = AppContactsIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => AppContactsIdRoute,
 } as any)
-const AppBoardJobsCreateRoute = AppBoardJobsCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => AppBoardJobsRoute,
-} as any)
-const AppBoardJobsIdRoute = AppBoardJobsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AppBoardJobsRoute,
-} as any)
 const AppAdminUsersCreateRoute = AppAdminUsersCreateRouteImport.update({
   id: '/create',
   path: '/create',
@@ -211,16 +191,6 @@ const AppAdminUsersIdRoute = AppAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppAdminUsersRoute,
 } as any)
-const AppBoardJobsIdIndexRoute = AppBoardJobsIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppBoardJobsIdRoute,
-} as any)
-const AppBoardJobsIdEditRoute = AppBoardJobsIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => AppBoardJobsIdRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,62 +199,54 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
-  '/app/board': typeof AppBoardRouteWithChildren
+  '/app/board': typeof AppBoardRoute
   '/app/contacts': typeof AppContactsRouteWithChildren
-  '/app/directory': typeof AppDirectoryRoute
   '/app/jobs': typeof AppJobsRouteWithChildren
+  '/app/places': typeof AppPlacesRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/admin/users': typeof AppAdminUsersRouteWithChildren
-  '/app/board/jobs': typeof AppBoardJobsRouteWithChildren
   '/app/contacts/$id': typeof AppContactsIdRouteWithChildren
   '/app/contacts/create': typeof AppContactsCreateRoute
   '/app/jobs/$id': typeof AppJobsIdRouteWithChildren
   '/app/jobs/create': typeof AppJobsCreateRoute
+  '/app/places/$id': typeof AppPlacesIdRoute
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin/': typeof AppAdminIndexRoute
-  '/app/board/': typeof AppBoardIndexRoute
   '/app/contacts/': typeof AppContactsIndexRoute
   '/app/jobs/': typeof AppJobsIndexRoute
+  '/app/places/': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
-  '/app/board/jobs/$id': typeof AppBoardJobsIdRouteWithChildren
-  '/app/board/jobs/create': typeof AppBoardJobsCreateRoute
   '/app/contacts/$id/edit': typeof AppContactsIdEditRoute
   '/app/jobs/$id/edit': typeof AppJobsIdEditRoute
   '/app/admin/users/': typeof AppAdminUsersIndexRoute
-  '/app/board/jobs/': typeof AppBoardJobsIndexRoute
   '/app/contacts/$id/': typeof AppContactsIdIndexRoute
   '/app/jobs/$id/': typeof AppJobsIdIndexRoute
-  '/app/board/jobs/$id/edit': typeof AppBoardJobsIdEditRoute
-  '/app/board/jobs/$id/': typeof AppBoardJobsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
-  '/app/directory': typeof AppDirectoryRoute
+  '/app/board': typeof AppBoardRoute
   '/app': typeof AppIndexRoute
   '/app/contacts/create': typeof AppContactsCreateRoute
   '/app/jobs/create': typeof AppJobsCreateRoute
+  '/app/places/$id': typeof AppPlacesIdRoute
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin': typeof AppAdminIndexRoute
-  '/app/board': typeof AppBoardIndexRoute
   '/app/contacts': typeof AppContactsIndexRoute
   '/app/jobs': typeof AppJobsIndexRoute
+  '/app/places': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
-  '/app/board/jobs/create': typeof AppBoardJobsCreateRoute
   '/app/contacts/$id/edit': typeof AppContactsIdEditRoute
   '/app/jobs/$id/edit': typeof AppJobsIdEditRoute
   '/app/admin/users': typeof AppAdminUsersIndexRoute
-  '/app/board/jobs': typeof AppBoardJobsIndexRoute
   '/app/contacts/$id': typeof AppContactsIdIndexRoute
   '/app/jobs/$id': typeof AppJobsIdIndexRoute
-  '/app/board/jobs/$id/edit': typeof AppBoardJobsIdEditRoute
-  '/app/board/jobs/$id': typeof AppBoardJobsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -294,35 +256,30 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
-  '/app/board': typeof AppBoardRouteWithChildren
+  '/app/board': typeof AppBoardRoute
   '/app/contacts': typeof AppContactsRouteWithChildren
-  '/app/directory': typeof AppDirectoryRoute
   '/app/jobs': typeof AppJobsRouteWithChildren
+  '/app/places': typeof AppPlacesRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/admin/users': typeof AppAdminUsersRouteWithChildren
-  '/app/board/jobs': typeof AppBoardJobsRouteWithChildren
   '/app/contacts/$id': typeof AppContactsIdRouteWithChildren
   '/app/contacts/create': typeof AppContactsCreateRoute
   '/app/jobs/$id': typeof AppJobsIdRouteWithChildren
   '/app/jobs/create': typeof AppJobsCreateRoute
+  '/app/places/$id': typeof AppPlacesIdRoute
   '/app/profile/$id': typeof AppProfileIdRoute
   '/reset-password/$encodedUserId/$token': typeof ResetPasswordEncodedUserIdTokenRoute
   '/app/admin/': typeof AppAdminIndexRoute
-  '/app/board/': typeof AppBoardIndexRoute
   '/app/contacts/': typeof AppContactsIndexRoute
   '/app/jobs/': typeof AppJobsIndexRoute
+  '/app/places/': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
   '/app/admin/users/create': typeof AppAdminUsersCreateRoute
-  '/app/board/jobs/$id': typeof AppBoardJobsIdRouteWithChildren
-  '/app/board/jobs/create': typeof AppBoardJobsCreateRoute
   '/app/contacts/$id/edit': typeof AppContactsIdEditRoute
   '/app/jobs/$id/edit': typeof AppJobsIdEditRoute
   '/app/admin/users/': typeof AppAdminUsersIndexRoute
-  '/app/board/jobs/': typeof AppBoardJobsIndexRoute
   '/app/contacts/$id/': typeof AppContactsIdIndexRoute
   '/app/jobs/$id/': typeof AppJobsIdIndexRoute
-  '/app/board/jobs/$id/edit': typeof AppBoardJobsIdEditRoute
-  '/app/board/jobs/$id/': typeof AppBoardJobsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -335,60 +292,52 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/board'
     | '/app/contacts'
-    | '/app/directory'
     | '/app/jobs'
+    | '/app/places'
     | '/app/'
     | '/app/admin/users'
-    | '/app/board/jobs'
     | '/app/contacts/$id'
     | '/app/contacts/create'
     | '/app/jobs/$id'
     | '/app/jobs/create'
+    | '/app/places/$id'
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin/'
-    | '/app/board/'
     | '/app/contacts/'
     | '/app/jobs/'
+    | '/app/places/'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
-    | '/app/board/jobs/$id'
-    | '/app/board/jobs/create'
     | '/app/contacts/$id/edit'
     | '/app/jobs/$id/edit'
     | '/app/admin/users/'
-    | '/app/board/jobs/'
     | '/app/contacts/$id/'
     | '/app/jobs/$id/'
-    | '/app/board/jobs/$id/edit'
-    | '/app/board/jobs/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/sign-in'
     | '/sign-out'
-    | '/app/directory'
+    | '/app/board'
     | '/app'
     | '/app/contacts/create'
     | '/app/jobs/create'
+    | '/app/places/$id'
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin'
-    | '/app/board'
     | '/app/contacts'
     | '/app/jobs'
+    | '/app/places'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
-    | '/app/board/jobs/create'
     | '/app/contacts/$id/edit'
     | '/app/jobs/$id/edit'
     | '/app/admin/users'
-    | '/app/board/jobs'
     | '/app/contacts/$id'
     | '/app/jobs/$id'
-    | '/app/board/jobs/$id/edit'
-    | '/app/board/jobs/$id'
   id:
     | '__root__'
     | '/'
@@ -399,33 +348,28 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/board'
     | '/app/contacts'
-    | '/app/directory'
     | '/app/jobs'
+    | '/app/places'
     | '/app/'
     | '/app/admin/users'
-    | '/app/board/jobs'
     | '/app/contacts/$id'
     | '/app/contacts/create'
     | '/app/jobs/$id'
     | '/app/jobs/create'
+    | '/app/places/$id'
     | '/app/profile/$id'
     | '/reset-password/$encodedUserId/$token'
     | '/app/admin/'
-    | '/app/board/'
     | '/app/contacts/'
     | '/app/jobs/'
+    | '/app/places/'
     | '/app/admin/users/$id'
     | '/app/admin/users/create'
-    | '/app/board/jobs/$id'
-    | '/app/board/jobs/create'
     | '/app/contacts/$id/edit'
     | '/app/jobs/$id/edit'
     | '/app/admin/users/'
-    | '/app/board/jobs/'
     | '/app/contacts/$id/'
     | '/app/jobs/$id/'
-    | '/app/board/jobs/$id/edit'
-    | '/app/board/jobs/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -481,18 +425,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/places': {
+      id: '/app/places'
+      path: '/places'
+      fullPath: '/app/places'
+      preLoaderRoute: typeof AppPlacesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/jobs': {
       id: '/app/jobs'
       path: '/jobs'
       fullPath: '/app/jobs'
       preLoaderRoute: typeof AppJobsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/directory': {
-      id: '/app/directory'
-      path: '/directory'
-      fullPath: '/app/directory'
-      preLoaderRoute: typeof AppDirectoryRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/contacts': {
@@ -516,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/places/': {
+      id: '/app/places/'
+      path: '/'
+      fullPath: '/app/places/'
+      preLoaderRoute: typeof AppPlacesIndexRouteImport
+      parentRoute: typeof AppPlacesRoute
+    }
     '/app/jobs/': {
       id: '/app/jobs/'
       path: '/'
@@ -529,13 +480,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/contacts/'
       preLoaderRoute: typeof AppContactsIndexRouteImport
       parentRoute: typeof AppContactsRoute
-    }
-    '/app/board/': {
-      id: '/app/board/'
-      path: '/'
-      fullPath: '/app/board/'
-      preLoaderRoute: typeof AppBoardIndexRouteImport
-      parentRoute: typeof AppBoardRoute
     }
     '/app/admin/': {
       id: '/app/admin/'
@@ -557,6 +501,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/profile/$id'
       preLoaderRoute: typeof AppProfileIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/app/places/$id': {
+      id: '/app/places/$id'
+      path: '/$id'
+      fullPath: '/app/places/$id'
+      preLoaderRoute: typeof AppPlacesIdRouteImport
+      parentRoute: typeof AppPlacesRoute
     }
     '/app/jobs/create': {
       id: '/app/jobs/create'
@@ -586,13 +537,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContactsIdRouteImport
       parentRoute: typeof AppContactsRoute
     }
-    '/app/board/jobs': {
-      id: '/app/board/jobs'
-      path: '/jobs'
-      fullPath: '/app/board/jobs'
-      preLoaderRoute: typeof AppBoardJobsRouteImport
-      parentRoute: typeof AppBoardRoute
-    }
     '/app/admin/users': {
       id: '/app/admin/users'
       path: '/users'
@@ -613,13 +557,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/contacts/$id/'
       preLoaderRoute: typeof AppContactsIdIndexRouteImport
       parentRoute: typeof AppContactsIdRoute
-    }
-    '/app/board/jobs/': {
-      id: '/app/board/jobs/'
-      path: '/'
-      fullPath: '/app/board/jobs/'
-      preLoaderRoute: typeof AppBoardJobsIndexRouteImport
-      parentRoute: typeof AppBoardJobsRoute
     }
     '/app/admin/users/': {
       id: '/app/admin/users/'
@@ -642,20 +579,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContactsIdEditRouteImport
       parentRoute: typeof AppContactsIdRoute
     }
-    '/app/board/jobs/create': {
-      id: '/app/board/jobs/create'
-      path: '/create'
-      fullPath: '/app/board/jobs/create'
-      preLoaderRoute: typeof AppBoardJobsCreateRouteImport
-      parentRoute: typeof AppBoardJobsRoute
-    }
-    '/app/board/jobs/$id': {
-      id: '/app/board/jobs/$id'
-      path: '/$id'
-      fullPath: '/app/board/jobs/$id'
-      preLoaderRoute: typeof AppBoardJobsIdRouteImport
-      parentRoute: typeof AppBoardJobsRoute
-    }
     '/app/admin/users/create': {
       id: '/app/admin/users/create'
       path: '/create'
@@ -669,20 +592,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/admin/users/$id'
       preLoaderRoute: typeof AppAdminUsersIdRouteImport
       parentRoute: typeof AppAdminUsersRoute
-    }
-    '/app/board/jobs/$id/': {
-      id: '/app/board/jobs/$id/'
-      path: '/'
-      fullPath: '/app/board/jobs/$id/'
-      preLoaderRoute: typeof AppBoardJobsIdIndexRouteImport
-      parentRoute: typeof AppBoardJobsIdRoute
-    }
-    '/app/board/jobs/$id/edit': {
-      id: '/app/board/jobs/$id/edit'
-      path: '/edit'
-      fullPath: '/app/board/jobs/$id/edit'
-      preLoaderRoute: typeof AppBoardJobsIdEditRouteImport
-      parentRoute: typeof AppBoardJobsIdRoute
     }
   }
 }
@@ -715,50 +624,6 @@ const AppAdminRouteChildren: AppAdminRouteChildren = {
 
 const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
   AppAdminRouteChildren,
-)
-
-interface AppBoardJobsIdRouteChildren {
-  AppBoardJobsIdEditRoute: typeof AppBoardJobsIdEditRoute
-  AppBoardJobsIdIndexRoute: typeof AppBoardJobsIdIndexRoute
-}
-
-const AppBoardJobsIdRouteChildren: AppBoardJobsIdRouteChildren = {
-  AppBoardJobsIdEditRoute: AppBoardJobsIdEditRoute,
-  AppBoardJobsIdIndexRoute: AppBoardJobsIdIndexRoute,
-}
-
-const AppBoardJobsIdRouteWithChildren = AppBoardJobsIdRoute._addFileChildren(
-  AppBoardJobsIdRouteChildren,
-)
-
-interface AppBoardJobsRouteChildren {
-  AppBoardJobsIdRoute: typeof AppBoardJobsIdRouteWithChildren
-  AppBoardJobsCreateRoute: typeof AppBoardJobsCreateRoute
-  AppBoardJobsIndexRoute: typeof AppBoardJobsIndexRoute
-}
-
-const AppBoardJobsRouteChildren: AppBoardJobsRouteChildren = {
-  AppBoardJobsIdRoute: AppBoardJobsIdRouteWithChildren,
-  AppBoardJobsCreateRoute: AppBoardJobsCreateRoute,
-  AppBoardJobsIndexRoute: AppBoardJobsIndexRoute,
-}
-
-const AppBoardJobsRouteWithChildren = AppBoardJobsRoute._addFileChildren(
-  AppBoardJobsRouteChildren,
-)
-
-interface AppBoardRouteChildren {
-  AppBoardJobsRoute: typeof AppBoardJobsRouteWithChildren
-  AppBoardIndexRoute: typeof AppBoardIndexRoute
-}
-
-const AppBoardRouteChildren: AppBoardRouteChildren = {
-  AppBoardJobsRoute: AppBoardJobsRouteWithChildren,
-  AppBoardIndexRoute: AppBoardIndexRoute,
-}
-
-const AppBoardRouteWithChildren = AppBoardRoute._addFileChildren(
-  AppBoardRouteChildren,
 )
 
 interface AppContactsIdRouteChildren {
@@ -820,22 +685,36 @@ const AppJobsRouteChildren: AppJobsRouteChildren = {
 const AppJobsRouteWithChildren =
   AppJobsRoute._addFileChildren(AppJobsRouteChildren)
 
+interface AppPlacesRouteChildren {
+  AppPlacesIdRoute: typeof AppPlacesIdRoute
+  AppPlacesIndexRoute: typeof AppPlacesIndexRoute
+}
+
+const AppPlacesRouteChildren: AppPlacesRouteChildren = {
+  AppPlacesIdRoute: AppPlacesIdRoute,
+  AppPlacesIndexRoute: AppPlacesIndexRoute,
+}
+
+const AppPlacesRouteWithChildren = AppPlacesRoute._addFileChildren(
+  AppPlacesRouteChildren,
+)
+
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
-  AppBoardRoute: typeof AppBoardRouteWithChildren
+  AppBoardRoute: typeof AppBoardRoute
   AppContactsRoute: typeof AppContactsRouteWithChildren
-  AppDirectoryRoute: typeof AppDirectoryRoute
   AppJobsRoute: typeof AppJobsRouteWithChildren
+  AppPlacesRoute: typeof AppPlacesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppProfileIdRoute: typeof AppProfileIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
-  AppBoardRoute: AppBoardRouteWithChildren,
+  AppBoardRoute: AppBoardRoute,
   AppContactsRoute: AppContactsRouteWithChildren,
-  AppDirectoryRoute: AppDirectoryRoute,
   AppJobsRoute: AppJobsRouteWithChildren,
+  AppPlacesRoute: AppPlacesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppProfileIdRoute: AppProfileIdRoute,
 }

@@ -1,10 +1,7 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
-import {
-  EContactListOrdering,
-  EContactTagListOrdering,
-} from "../enums/contacts";
-import { googleAutocompleteSuggestionSchema, placeBasicSchema } from "./places";
+import { EContactListOrdering } from "../enums/contacts";
+import { placeBasicSchema } from "./places";
 import {
   emailSchema,
   idOrIdArraySchema,
@@ -12,21 +9,6 @@ import {
   nameSchema,
   phoneSchema,
 } from "./basic";
-
-export const contactTagSchema = z.object({
-  id: idSchema,
-  label: z.string().max(255),
-  description: z.string().max(1024).nullable(),
-  color: z.string().max(7).nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
-});
-
-export const contactTagCreateOrUpdateSchema = z.object({
-  label: z.string().max(255),
-  description: z.string().max(1024).nullable().optional(),
-  color: z.string().max(7).nullable().optional(),
-});
 
 export const contactSchema = z.object({
   id: idSchema,
@@ -76,16 +58,4 @@ export const contactListRequestSchema = listRequestSchema.extend({
 
 export const contactListResponseSchema = listResponseSchema.extend({
   results: z.array(contactSchema),
-});
-
-export const contactTagListRequestSchema = listRequestSchema.extend({
-  params: listRequestSchema.shape.params.extend({
-    ordering: z
-      .nativeEnum(EContactTagListOrdering)
-      .default(EContactTagListOrdering.LabelAsc),
-  }),
-});
-
-export const contactTagListResponseSchema = listResponseSchema.extend({
-  results: z.array(contactTagSchema),
 });

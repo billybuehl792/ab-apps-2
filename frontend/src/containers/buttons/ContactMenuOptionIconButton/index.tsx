@@ -14,7 +14,7 @@ type TMenuOptionIconButtonProps = Omit<
 
 interface IContactMenuOptionIconButtonProps
   extends TMenuOptionIconButtonProps, IUseContactOptions {
-  contact: TContact | TContact["id"];
+  contact: TContact;
 }
 
 const ContactMenuOptionIconButton: React.FC<
@@ -33,7 +33,6 @@ const ContactMenuOptionIconButton: React.FC<
     <MenuOptionIconButton
       title={`${contactHook.contact.first_name} ${contactHook.contact.last_name}`}
       disabled={contactHook.disabled}
-      loading={contactHook.isLoading}
       options={contactHook.options}
       {...props}
     />

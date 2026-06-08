@@ -4,28 +4,30 @@ import { Container, Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
 import JobMenuOptionIconButton from "@/containers/buttons/JobMenuOptionIconButton";
 import JobDetailCard from "@/containers/cards/JobDetailCard";
-import { idSchema } from "@/store/schemas/basic";
 import { EJobOptionId } from "@/store/enums/jobs";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/$id/")({
-  loader: ({ params }): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: {
-        endContent: (
-          <JobMenuOptionIconButton
-            job={idSchema.parse(params.id)}
-            hideOptions={[EJobOptionId.Detail]}
-            onChange={(_, type) => {
-              if (type === EObjectChangeType.Delete)
-                router.navigate({ to: "/app/jobs" });
-            }}
-          />
-        ),
+  loader: async ({ parentMatchPromise }): Promise<TRouteLoaderData> => {
+    const job = (await parentMatchPromise).loaderData?.data;
+    return {
+      slotProps: {
+        pageHeader: {
+          endContent: !!job && (
+            <JobMenuOptionIconButton
+              job={job}
+              hideOptions={[EJobOptionId.Detail]}
+              onChange={(_, type) => {
+                if (type === EObjectChangeType.Delete)
+                  router.navigate({ to: "/app/jobs" });
+              }}
+            />
+          ),
+        },
       },
-    },
-  }),
+    };
+  },
   component: RouteComponent,
 });
 

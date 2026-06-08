@@ -4,7 +4,6 @@ import { Divider, Stack, type StackProps } from "@mui/material";
 import PaginatedList from "@/components/lists/PaginatedList";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import PlaceListCard from "./components/cards/PlaceListCard";
-import PlaceCreateButton from "@/containers/buttons/PlaceCreateButton";
 import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TPlace, TPlaceListRequest } from "@/store/types/places";
@@ -92,9 +91,9 @@ const PlaceList: React.FC<IPlaceListProps> = ({
           total === 0 && {
             label: "No Places Found",
             icon: <PlaceIcons.List fontSize="large" />,
-            ...(params.search
-              ? { description: `No results for "${params.search}".` }
-              : { actions: [<PlaceCreateButton />] }),
+            ...(params.search && {
+              description: `No results for "${params.search}".`,
+            }),
           }
         }
         renderItem={(place) => (

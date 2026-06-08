@@ -102,20 +102,3 @@ export const placeListOrderingOptions: TOrderingOption<EPlaceListOrdering>[] = [
     },
   },
 ];
-
-export const getPlaceholderPlace = (
-  data: TWithRequired<Partial<TPlace>, "id">,
-): TPlace => ({
-  google_place_id: "",
-  address_full: "",
-  address_short: "",
-  city: "",
-  postal_code: "",
-  state: "",
-  country: "",
-  latitude: 0,
-  longitude: 0,
-  created_at: "",
-  updated_at: "",
-  ...data,
-});

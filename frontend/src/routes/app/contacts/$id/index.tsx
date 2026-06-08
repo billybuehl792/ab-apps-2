@@ -4,28 +4,30 @@ import { Container, Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
-import { idSchema } from "@/store/schemas/basic";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/contacts/$id/")({
-  loader: ({ params }): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: {
-        endContent: (
-          <ContactMenuOptionIconButton
-            contact={idSchema.parse(params.id)}
-            hideOptions={[EContactOptionId.Detail]}
-            onChange={(_, type) => {
-              if (type === EObjectChangeType.Delete)
-                router.navigate({ to: "/app/contacts" });
-            }}
-          />
-        ),
+  loader: async ({ parentMatchPromise }): Promise<TRouteLoaderData> => {
+    const contact = (await parentMatchPromise).loaderData?.data;
+    return {
+      slotProps: {
+        pageHeader: {
+          endContent: !!contact && (
+            <ContactMenuOptionIconButton
+              contact={contact}
+              hideOptions={[EContactOptionId.Detail]}
+              onChange={(_, type) => {
+                if (type === EObjectChangeType.Delete)
+                  router.navigate({ to: "/app/contacts" });
+              }}
+            />
+          ),
+        },
       },
-    },
-  }),
+    };
+  },
   component: RouteComponent,
 });
 

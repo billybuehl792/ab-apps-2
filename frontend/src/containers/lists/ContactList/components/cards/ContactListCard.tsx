@@ -1,8 +1,6 @@
-import { Stack } from "@mui/material";
 import useContact, { type IUseContactOptions } from "@/store/hooks/useContact";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
-import ContactTagChip from "@/containers/chips/ContactTagChip";
 import EmptyChip from "@/components/chips/EmptyChip";
 import { ContactIcons } from "@/store/constants/contacts";
 import type { TContact } from "@/store/types/contacts";

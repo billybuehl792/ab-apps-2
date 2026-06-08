@@ -3,6 +3,7 @@ import { Container, Stack, Typography } from "@mui/material";
 import ListCard from "@/components/cards/ListCard";
 import { JobIcons } from "@/store/constants/jobs";
 import { ContactIcons } from "@/store/constants/contacts";
+import { PlaceIcons } from "@/store/constants/places";
 
 export const Route = createFileRoute("/app/")({
   component: RouteComponent,
@@ -27,6 +28,12 @@ function RouteComponent() {
             label="Contacts"
             description="Manage your Contacts"
             link={{ to: "/app/contacts" }}
+          />
+          <ListCard
+            startContent={<PlaceIcons.List fontSize="large" color="disabled" />}
+            label="Places"
+            description="Manage your Places"
+            link={{ to: "/app/places" }}
           />
         </Stack>
       </Stack>

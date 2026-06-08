@@ -48,10 +48,7 @@ const PlaceListCard: React.FC<IPlaceListCardProps> = ({
           ]}
         />
       }
-      link={{
-        to: "/app/directory/places/$id",
-        params: { id: String(place.id) },
-      }}
+      link={{ to: "/app/places/$id", params: { id: String(place.id) } }}
       disabled={placeHook.disabled}
       options={placeHook.options}
       {...(onClick && { onClick: (event) => onClick(place, event) })}
