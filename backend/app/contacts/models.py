@@ -25,7 +25,7 @@ class Contact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:  # type: ignore
+    class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['first_name', 'last_name'],

@@ -1,9 +1,11 @@
-import React, { type ComponentProps } from "react";
+import React from "react";
 import Drawer, { type IDrawerProps } from "@/components/modals/Drawer";
-import ContactCreateForm from "@/containers/forms/ContactCreateForm";
+import ContactCreateForm, {
+  type IContactCreateFormProps,
+} from "@/containers/forms/ContactCreateForm";
 
-interface IContactCreateFormDrawerProps extends IDrawerProps {
-  form: ComponentProps<typeof ContactCreateForm>;
+export interface IContactCreateFormDrawerProps extends IDrawerProps {
+  form: IContactCreateFormProps;
 }
 
 const ContactCreateFormDrawer: React.FC<IContactCreateFormDrawerProps> = ({

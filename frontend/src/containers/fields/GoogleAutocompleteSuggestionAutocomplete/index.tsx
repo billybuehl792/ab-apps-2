@@ -141,8 +141,8 @@ const GoogleAutocompleteSuggestionAutocomplete = <
           }}
         />
       )}
-      renderOption={(props, option) => (
-        <MenuItem {...props}>
+      renderOption={({ key, ...props }, option) => (
+        <MenuItem key={key} {...props}>
           <ListItemIcon>
             <PlaceIcons.Detail />
           </ListItemIcon>

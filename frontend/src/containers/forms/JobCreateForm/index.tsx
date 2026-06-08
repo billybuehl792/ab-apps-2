@@ -158,6 +158,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
               multiple
               disabled={isFieldDisabled}
               error={!!methods.formState.errors.recipients}
+              enableCreate
               helperText={methods.formState.errors.recipients?.message}
               onChange={(_, newValue) => onChange(newValue)}
               {...field}
