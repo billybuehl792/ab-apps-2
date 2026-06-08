@@ -42,12 +42,14 @@ function RouteComponent() {
         google_place_id: data.place?.placePrediction.placeId,
       },
       {
-        onSuccess: (newJob) =>
+        onSuccess: (newJob) => {
+          router.invalidate();
           navigate({
             to: "/app/jobs/$id",
             params: { id: String(newJob.id) },
             ignoreBlocker: true,
-          }),
+          });
+        },
       },
     );
 
