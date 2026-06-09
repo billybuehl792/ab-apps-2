@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Chip, Stack } from "@mui/material";
 import useJob, { type IUseJobOptions } from "@/store/hooks/useJob";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
@@ -43,27 +43,44 @@ const JobListCard: React.FC<IJobListCardProps> = ({
           items={[
             {
               id: "recipients",
-              label: `Recipient${job.recipients.length > 1 ? "s" : ""}`,
-              value: (
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {job.recipients.length ? (
-                    job.recipients.map((recipient) => (
+              label: "Recipient(s)",
+              value:
+                job.recipients.length > 0 ? (
+                  <Stack spacing={0.5} direction="row" flexWrap="wrap">
+                    {job.recipients.map((recipient) => (
                       <ContactChip
                         key={recipient.id}
                         contact={recipient}
                         size="xxs"
                       />
-                    ))
-                  ) : (
-                    <EmptyChip size="xxs" />
-                  )}
-                </Stack>
-              ),
+                    ))}
+                  </Stack>
+                ) : (
+                  <EmptyChip size="xxs" />
+                ),
             },
             {
               id: "address",
               label: "Address",
-              value: job.place?.address_short || <EmptyChip size="xxs" />,
+              value: job.place ? (
+                job.place.address_short
+              ) : (
+                <EmptyChip size="xxs" />
+              ),
+            },
+            {
+              id: "categories",
+              label: "Categories",
+              value:
+                job.categories.length > 0 ? (
+                  <Stack spacing={0.5} direction="row" flexWrap="wrap">
+                    {job.categories.map((category) => (
+                      <Chip key={category} label={category} size="xxs" />
+                    ))}
+                  </Stack>
+                ) : (
+                  <EmptyChip size="xxs" />
+                ),
             },
           ]}
         />

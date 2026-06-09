@@ -30,7 +30,12 @@ const MUILinkComponent = forwardRef<HTMLAnchorElement, MUILinkComponentProps>(
 const CreatedLinkComponent = createLink(MUILinkComponent);
 
 const CustomLink: LinkComponent<typeof MUILinkComponent> = (props) => {
-  return <CreatedLinkComponent {...props} />;
+  return (
+    <CreatedLinkComponent
+      activeProps={{ className: "Mui-selected" }}
+      {...props}
+    />
+  );
 };
 
 export default CustomLink;

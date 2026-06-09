@@ -9,12 +9,14 @@ declare module "@mui/material/styles" {
     layout: {
       page: { header: { height: number } };
       nav: { height: number; panelWidth: number };
+      footer: { height: number };
     };
   }
   interface ThemeOptions {
     layout?: {
       page?: { header?: { height?: number } };
       nav?: { height?: number; panelWidth?: number };
+      footer?: { height?: number };
     };
   }
 }
@@ -28,6 +30,7 @@ const theme = createTheme({
   layout: {
     page: { header: { height: 72 } },
     nav: { height: 56, panelWidth: 240 },
+    footer: { height: 56 },
   },
 });
 

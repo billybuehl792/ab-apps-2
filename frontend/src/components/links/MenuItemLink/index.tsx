@@ -13,7 +13,12 @@ const CreatedMenuItemLinkComponent = createLink(MenuItemLinkComponent);
 const MenuItemLink: LinkComponent<typeof CreatedMenuItemLinkComponent> = (
   props,
 ) => {
-  return <CreatedMenuItemLinkComponent {...props} />;
+  return (
+    <CreatedMenuItemLinkComponent
+      activeProps={{ className: "Mui-selected" }}
+      {...props}
+    />
+  );
 };
 
 export default MenuItemLink;

@@ -12,7 +12,12 @@ const CreatedButtonLinkComponent = createLink(ButtonLinkComponent);
 const ButtonLink: LinkComponent<typeof CreatedButtonLinkComponent> = (
   props,
 ) => {
-  return <CreatedButtonLinkComponent {...props} />;
+  return (
+    <CreatedButtonLinkComponent
+      activeProps={{ className: "Mui-selected" }}
+      {...props}
+    />
+  );
 };
 
 export default ButtonLink;

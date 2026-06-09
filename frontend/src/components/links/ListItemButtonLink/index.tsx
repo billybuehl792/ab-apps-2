@@ -15,7 +15,12 @@ const CreatedListItemButtonLinkComponent = createLink(
 const ListItemButtonLink: LinkComponent<
   typeof CreatedListItemButtonLinkComponent
 > = (props) => {
-  return <CreatedListItemButtonLinkComponent {...props} />;
+  return (
+    <CreatedListItemButtonLinkComponent
+      activeProps={{ className: "Mui-selected" }}
+      {...props}
+    />
+  );
 };
 
 export default ListItemButtonLink;

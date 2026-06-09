@@ -53,7 +53,7 @@ const NavBar: React.FC<AppBarProps> = (props: AppBarProps) => {
               )}
               <Link
                 label="AB Sandbox App"
-                to="/app/dashboard"
+                to="/app"
                 variant="h6"
                 color="primary.contrastText"
                 underline="none"

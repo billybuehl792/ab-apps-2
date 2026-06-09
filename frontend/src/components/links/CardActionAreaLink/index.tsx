@@ -15,7 +15,12 @@ const CreatedCardActionAreaLinkComponent = createLink(
 const CardActionAreaLink: LinkComponent<
   typeof CreatedCardActionAreaLinkComponent
 > = (props) => {
-  return <CreatedCardActionAreaLinkComponent {...props} />;
+  return (
+    <CreatedCardActionAreaLinkComponent
+      activeProps={{ className: "Mui-selected" }}
+      {...props}
+    />
+  );
 };
 
 export default CardActionAreaLink;

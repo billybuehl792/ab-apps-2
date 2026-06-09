@@ -11,6 +11,7 @@ import NavList from "@/containers/lists/NavList";
 import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
 import PageHeader from "@/components/layout/PageHeader";
 import type { TRouteLoaderData } from "@/store/types/router";
+import Footer from "@/containers/layout/Footer";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -60,11 +61,12 @@ function RouteComponent() {
         sx={(theme) => ({
           position: "absolute",
           top: theme.layout.nav.height,
+          bottom: isDesktop ? 0 : theme.layout.footer.height,
           left: isDesktop ? theme.layout.nav.panelWidth : 0,
           width: isDesktop
             ? `calc(100% - ${theme.layout.nav.panelWidth}px)`
             : "100%",
-          height: `calc(100% - ${theme.layout.nav.height}px)`,
+          height: `calc(100% - ${theme.layout.nav.height}px - ${isDesktop ? 0 : theme.layout.footer.height}px)`,
         })}
       >
         <Container
@@ -81,7 +83,6 @@ function RouteComponent() {
           />
         </Container>
         <Box
-          component="main"
           position="relative"
           width="100%"
           height={(theme) =>
@@ -92,6 +93,17 @@ function RouteComponent() {
           <Outlet />
         </Box>
       </Box>
+      {!isDesktop && (
+        <Footer
+          sx={(theme) => ({
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: theme.layout.footer.height,
+          })}
+        />
+      )}
     </>
   );
 }

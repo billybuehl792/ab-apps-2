@@ -22,20 +22,6 @@ const JobDetailCard = ({ job, ...props }: IJobDetailCardProps) => {
         <Metadata
           items={[
             {
-              id: "categories",
-              label: "Categories",
-              value:
-                job.categories.length > 0 ? (
-                  <Stack spacing={0.5} direction="row" flexWrap="wrap">
-                    {job.categories.map((category) => (
-                      <Chip key={category} label={category} size="xxs" />
-                    ))}
-                  </Stack>
-                ) : (
-                  <EmptyChip size="xxs" />
-                ),
-            },
-            {
               id: "recipients",
               label: "Recipient(s)",
               value:
@@ -61,6 +47,20 @@ const JobDetailCard = ({ job, ...props }: IJobDetailCardProps) => {
               ) : (
                 <EmptyChip size="xxs" />
               ),
+            },
+            {
+              id: "categories",
+              label: "Categories",
+              value:
+                job.categories.length > 0 ? (
+                  <Stack spacing={0.5} direction="row" flexWrap="wrap">
+                    {job.categories.map((category) => (
+                      <Chip key={category} label={category} size="xxs" />
+                    ))}
+                  </Stack>
+                ) : (
+                  <EmptyChip size="xxs" />
+                ),
             },
           ]}
         />

@@ -4,7 +4,7 @@ const typography: TypographyVariantsOptions = {
   body1: {
     fontSize: "1rem",
     lineHeight: 1.5,
-    fontWeight: 500,
+    fontWeight: 400,
     letterSpacing: "0.00938em",
   },
   body2: {
