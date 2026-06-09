@@ -13,7 +13,6 @@ import MenuOptionModal, {
   type IMenuOptionModalProps,
 } from "@/components/modals/MenuOptionModal";
 import { EOrderingDirection } from "@/store/enums/api";
-import { sxUtils } from "@/store/utils/sx";
 
 type TTOrderingOptionValue<TOptions extends TOrderingOption[]> =
   | TOptions[number]["value"][EOrderingDirection.ASC]

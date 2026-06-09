@@ -18,7 +18,6 @@ const PlaceListOrderingButtonGroup: React.FC<
     <OrderingButtonGroup
       options={optionsProp ?? placeListOrderingOptions}
       size="small"
-      width={160}
       {...props}
     />
   );

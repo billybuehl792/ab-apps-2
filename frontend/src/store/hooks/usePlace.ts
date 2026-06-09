@@ -42,21 +42,6 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
 
   /** Mutations */
 
-  const updateMutation = useMutation({
-    mutationKey: [placeEndpoints.place(place.id).id, EObjectChangeType.Update],
-    mutationFn: placeEndpoints.place(place.id).patch,
-    onSuccess: (res) => {
-      options?.onChange?.(res, EObjectChangeType.Update);
-      snackbar.enqueueSnackbar(`'${res.address_short}' updated successfully`, {
-        variant: "success",
-      });
-    },
-    onError: (error) =>
-      snackbar.enqueueSnackbar(errorUtils.getErrorMessage(error), {
-        variant: "error",
-      }),
-  });
-
   const deleteMutation = useMutation({
     mutationKey: [placeEndpoints.place(place.id).id, EObjectChangeType.Delete],
     mutationFn: placeEndpoints.place(place.id).delete,
@@ -74,7 +59,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
 
   /** Data */
 
-  const isMutating = updateMutation.isPending || deleteMutation.isPending;
+  const isMutating = deleteMutation.isPending;
   const isDisabled =
     options?.disabled ||
     isMutating ||
@@ -85,8 +70,6 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
 
   const handleView = () =>
     navigate({ to: "/app/places/$id", params: { id: String(place.id) } });
-
-  const handleUpdate = updateMutation.mutate;
 
   const handleDelete = useCallback(
     (...options: Parameters<typeof deleteMutation.mutate>) =>
@@ -148,11 +131,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
     isLoading: placeQuery.isLoading,
     isMutating: isMutating,
     queries: { place: placeQuery },
-    mutations: {
-      update: updateMutation,
-      delete: deleteMutation,
-    },
-    update: handleUpdate,
+    mutations: { delete: deleteMutation },
     delete: handleDelete,
     view: handleView,
   };
