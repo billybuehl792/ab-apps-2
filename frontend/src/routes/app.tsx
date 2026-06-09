@@ -72,8 +72,10 @@ function RouteComponent() {
         <Container
           maxWidth="md"
           sx={(theme) => ({
-            position: "relative",
-            width: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
             height: theme.layout.page.header.height,
           })}
         >
@@ -83,12 +85,15 @@ function RouteComponent() {
           />
         </Container>
         <Box
-          position="relative"
-          width="100%"
-          height={(theme) =>
-            `calc(100% - ${theme.layout.page.header.height}px)`
-          }
-          overflow="auto"
+          sx={(theme) => ({
+            position: "absolute",
+            top: theme.layout.page.header.height,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: `calc(100% - ${theme.layout.page.header.height}px)`,
+            overflow: "auto",
+          })}
         >
           <Outlet />
         </Box>
