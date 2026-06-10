@@ -12,32 +12,35 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
-import environ
+import os
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+WSGI_APPLICATION = "config.wsgi.application"
+ROOT_URLCONF = "config.urls"
+FORCE_SCRIPT_NAME = "/api"
+DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env(str(BASE_DIR / ".env"))
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-SECRET_KEY = env("SECRET_KEY")
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-ROOT_URLCONF = "config.urls"
-FORCE_SCRIPT_NAME = "/api"
-
-WSGI_APPLICATION = "config.wsgi.application"
+# Media files
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
-DEBUG = True
-
-# For development, allow all hosts. Change in production.
-ALLOWED_HOSTS = ["*"]
+# Database
 
 DATABASES = {
-    "default": env.db(),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
     # "default": {
     #     "ENGINE": "django.db.backends.postgresql",
     #     "NAME": env("DB_NAME"),
@@ -47,6 +50,9 @@ DATABASES = {
     #     "PORT": env("DB_PORT"),
     # }
 }
+
+# For development, allow all hosts. Change in production.
+ALLOWED_HOSTS = ["*"]
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
@@ -68,7 +74,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
 
 # Application definition
 
@@ -141,11 +146,11 @@ PASSWORD_RESET_TIMEOUT = 86_400  # 1 day (24 hours)
 # Email settings
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = env("EMAIL_PORT")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 EMAIL_USE_TLS = True
 
 # Internationalization
@@ -155,13 +160,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -187,4 +185,4 @@ REST_FRAMEWORK = {
 
 # Additional settings
 
-GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
