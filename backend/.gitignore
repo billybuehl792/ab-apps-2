@@ -13,6 +13,8 @@ static/
 *.pyo
 *.pyd
 *.env
+*.env.*
+!.env.sample
 *.venv
 env/
 venv/

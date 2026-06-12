@@ -21,7 +21,7 @@ export const ContactIcons = {
 
 export const contactEndpoints = {
   id: ["contacts"] as const,
-  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/contacts/`,
+  url: "/contacts/",
   get: (options?: TContactListRequest) =>
     api
       .get<TContactListResponse>(contactEndpoints.url, options)

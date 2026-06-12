@@ -34,7 +34,7 @@ export const AccountIcons = {
 
 export const accountEndpoints = {
   id: ["account"] as const,
-  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/account/`,
+  url: "/account/",
   auth: () => ({
     id: [...accountEndpoints.id, "auth"] as const,
     url: `${accountEndpoints.url}auth/`,

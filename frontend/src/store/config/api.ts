@@ -5,7 +5,7 @@ import { authUtils } from "../utils/auth";
 import { tokenEndpoints } from "../constants/account";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
+  baseURL: "/api",
   withCredentials: true,
   paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
 });

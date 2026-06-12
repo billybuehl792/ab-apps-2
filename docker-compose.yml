@@ -3,8 +3,6 @@ services:
     build: ./backend
     env_file:
       - ./backend/.env
-    # depends_on:
-    #   - db
     expose:
       - "8000"
     volumes:
@@ -12,12 +10,14 @@ services:
       - static_volume:/app/staticfiles
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
       - "80:80"
     volumes:
       - static_volume:/static
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
 
@@ -29,9 +29,6 @@ services:
   #     POSTGRES_PASSWORD: secret
   #   volumes:
   #     - postgres_data:/var/lib/postgresql/data
-
-  # frontend:
-  #   build: ./frontend
 
 volumes:
   # postgres_data:

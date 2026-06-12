@@ -12,16 +12,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
-import os
+import environ
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-WSGI_APPLICATION = "config.wsgi.application"
-ROOT_URLCONF = "config.urls"
-FORCE_SCRIPT_NAME = "/api"
-DEBUG = True
+env = environ.Env()
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+SECRET_KEY = env("SECRET_KEY")
+
+WSGI_APPLICATION = "config.wsgi.application"
+ROOT_URLCONF = "config.urls"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -51,9 +54,6 @@ DATABASES = {
     # }
 }
 
-# For development, allow all hosts. Change in production.
-ALLOWED_HOSTS = ["*"]
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -61,19 +61,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
-CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
-
-SESSION_COOKIE_SECURE = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://localhost:5173",
-]
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -142,15 +129,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Default is 259200 (3 days)
 PASSWORD_RESET_TIMEOUT = 86_400  # 1 day (24 hours)
 
-
 # Email settings
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 EMAIL_USE_TLS = True
 
 # Internationalization
@@ -185,4 +171,4 @@ REST_FRAMEWORK = {
 
 # Additional settings
 
-GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = env("GOOGLE_MAPS_API_KEY")
