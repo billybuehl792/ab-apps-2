@@ -3,6 +3,7 @@ import qs from "qs";
 import { router } from "@/main";
 import { authUtils } from "../utils/auth";
 import { tokenEndpoints } from "../constants/account";
+import type { TAccessTokenResponse } from "../types/account";
 
 const api = axios.create({
   baseURL: "/api",
@@ -15,6 +16,26 @@ api.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+let refreshPromise: Promise<TAccessTokenResponse> | null = null;
+let reauthPromise: Promise<void> | null = null;
+
+const fetchRefreshToken = () =>
+  refreshPromise ??
+  tokenEndpoints
+    .refresh()
+    .post()
+    .finally(() => (refreshPromise = null));
+
+const handleReauth = () =>
+  reauthPromise ??
+  router
+    .navigate({
+      to: "/sign-in",
+      replace: true,
+      search: { force: true, redirect: router.state.location.pathname },
+    })
+    .finally(() => (reauthPromise = null));
 
 api.interceptors.response.use(
   (response) => response,
@@ -29,7 +50,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshTokenResponse = await tokenEndpoints.refresh().post();
+        const refreshTokenResponse = await fetchRefreshToken();
 
         authUtils.setAccessToken(refreshTokenResponse.access);
         originalRequest.headers.Authorization = `Bearer ${refreshTokenResponse.access}`;
@@ -38,11 +59,7 @@ api.interceptors.response.use(
       } catch (refreshErr) {
         authUtils.setAccessToken(null);
 
-        router.navigate({
-          to: "/sign-out",
-          replace: true,
-          search: { redirect: router.state.location.pathname },
-        });
+        void handleReauth();
 
         return Promise.reject(refreshErr);
       }

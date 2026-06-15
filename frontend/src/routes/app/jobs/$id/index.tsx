@@ -9,14 +9,13 @@ import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/$id/")({
-  loader: async ({ parentMatchPromise }): Promise<TRouteLoaderData> => {
-    const job = (await parentMatchPromise).loaderData?.data;
+  loader: async ({ context }): Promise<TRouteLoaderData> => {
     return {
       slotProps: {
         pageHeader: {
-          endContent: !!job && (
+          endContent: (
             <JobMenuOptionIconButton
-              job={job}
+              job={context.job}
               hideOptions={[EJobOptionId.Detail]}
               onChange={(_, type) => {
                 if (type === EObjectChangeType.Delete)
@@ -36,14 +35,12 @@ function RouteComponent() {
 
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/jobs/$id" });
-
-  const job = loaderData.data;
+  const context = Route.useRouteContext();
 
   return (
     <Container maxWidth="md">
       <Stack spacing={1} py={2}>
-        <JobDetailCard job={job} />
+        <JobDetailCard job={context.job} />
         <Stack spacing={2}>
           <Tabs
             value={tabValue}

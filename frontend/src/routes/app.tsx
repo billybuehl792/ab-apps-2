@@ -10,8 +10,11 @@ import NavBar from "@/containers/layout/NavBar";
 import NavList from "@/containers/lists/NavList";
 import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
 import PageHeader from "@/components/layout/PageHeader";
-import type { TRouteLoaderData } from "@/store/types/router";
 import Footer from "@/containers/layout/Footer";
+import FullScreen from "@/components/layout/FullScreen";
+import StatusWrapper from "@/components/layout/StatusWrapper";
+import type { TRouteLoaderData } from "@/store/types/router";
+import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -25,6 +28,21 @@ export const Route = createFileRoute("/app")({
   },
   loader: (): TRouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
   component: RouteComponent,
+  pendingComponent: () => (
+    <FullScreen>
+      <StatusWrapper
+        loading={{
+          label: "Loading...",
+          description: "Initializing the application...",
+        }}
+      />
+    </FullScreen>
+  ),
+  notFoundComponent: () => (
+    <Container maxWidth="md">
+      <PageNotFoundCard my={2} />
+    </Container>
+  ),
 });
 
 function RouteComponent() {

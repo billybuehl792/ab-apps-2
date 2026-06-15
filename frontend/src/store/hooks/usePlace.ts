@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
@@ -33,13 +33,6 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
-  /** Queries */
-
-  const placeQuery = useQuery({
-    queryKey: placeEndpoints.place(place.id).id,
-    queryFn: placeEndpoints.place(place.id).get,
-  });
-
   /** Mutations */
 
   const deleteMutation = useMutation({
@@ -60,10 +53,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
   /** Data */
 
   const isMutating = deleteMutation.isPending;
-  const isDisabled =
-    options?.disabled ||
-    isMutating ||
-    (placeQuery.isEnabled && !placeQuery.isSuccess);
+  const isDisabled = options?.disabled || isMutating;
   const isChangeDisabled = isDisabled || !options?.onChange;
 
   /** Callbacks */
@@ -128,9 +118,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
     place: place,
     options: menuOptions,
     disabled: isDisabled,
-    isLoading: placeQuery.isLoading,
     isMutating: isMutating,
-    queries: { place: placeQuery },
     mutations: { delete: deleteMutation },
     delete: handleDelete,
     view: handleView,
