@@ -1,7 +1,6 @@
 import {
   createFileRoute,
   useCanGoBack,
-  useLoaderData,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
@@ -21,12 +20,12 @@ export const Route = createFileRoute("/app/jobs/$id/edit")({
 function RouteComponent() {
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/jobs/$id" });
+  const context = Route.useRouteContext();
   const navigate = useNavigate();
   const canGoBack = useCanGoBack();
   const router = useRouter();
 
-  const jobHook = useJob(loaderData.data);
+  const jobHook = useJob(context.job);
   const job = jobHook.job;
 
   /** Callbacks */

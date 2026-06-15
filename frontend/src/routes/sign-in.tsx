@@ -4,7 +4,7 @@ import {
   type FileRoutesByPath,
   redirect,
   stripSearchParams,
-  useRouter,
+  useNavigate,
 } from "@tanstack/react-router";
 import z from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
@@ -17,6 +17,11 @@ import CustomLink from "@/components/links/CustomLink";
 
 const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
 const paramsSchema = z.object({
+  force: z.coerce
+    .boolean()
+    .optional()
+    .transform((value) => !!value || undefined)
+    .catch(undefined),
   redirect: z.coerce
     .string()
     .optional()
@@ -30,9 +35,13 @@ const defaultParams = paramsSchema.parse({});
 export const Route = createFileRoute("/sign-in")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
-  beforeLoad: ({ context, search }) => {
-    const isAuthenticated = !!context.auth.me;
-    if (isAuthenticated) throw redirect({ to: search.redirect, replace: true });
+  beforeLoad: async ({ context, search }) => {
+    if (search.force) await context.auth.signOut();
+    else {
+      const isAuthenticated = !!context.auth.me;
+      if (isAuthenticated)
+        throw redirect({ to: search.redirect, replace: true });
+    }
   },
   component: RouteComponent,
   pendingComponent: () => (
@@ -46,7 +55,7 @@ function RouteComponent() {
   /** Values */
 
   const auth = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
   const params = Route.useSearch();
 
   /** Callbacks */
@@ -55,7 +64,7 @@ function RouteComponent() {
     data,
   ) => {
     await auth.signIn(data);
-    router.navigate({ to: params.redirect, replace: true });
+    navigate({ to: params.redirect, replace: true });
   };
 
   return (

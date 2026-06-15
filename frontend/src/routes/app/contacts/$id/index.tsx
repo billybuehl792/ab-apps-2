@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Container, Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
@@ -9,14 +9,13 @@ import { EObjectChangeType } from "@/store/enums/api";
 import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/contacts/$id/")({
-  loader: async ({ parentMatchPromise }): Promise<TRouteLoaderData> => {
-    const contact = (await parentMatchPromise).loaderData?.data;
+  loader: ({ context }): TRouteLoaderData => {
     return {
       slotProps: {
         pageHeader: {
-          endContent: !!contact && (
+          endContent: (
             <ContactMenuOptionIconButton
-              contact={contact}
+              contact={context.contact}
               hideOptions={[EContactOptionId.Detail]}
               onChange={(_, type) => {
                 if (type === EObjectChangeType.Delete)
@@ -36,14 +35,12 @@ function RouteComponent() {
 
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/contacts/$id" });
-
-  const contact = loaderData.data;
+  const context = Route.useRouteContext();
 
   return (
     <Container maxWidth="md">
       <Stack spacing={1} py={2}>
-        <ContactDetailCard contact={contact} />
+        <ContactDetailCard contact={context.contact} />
         <Stack spacing={2}>
           <Tabs
             value={tabValue}

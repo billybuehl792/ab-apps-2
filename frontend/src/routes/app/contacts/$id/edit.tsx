@@ -1,7 +1,6 @@
 import {
   createFileRoute,
   useCanGoBack,
-  useLoaderData,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
@@ -21,12 +20,12 @@ export const Route = createFileRoute("/app/contacts/$id/edit")({
 function RouteComponent() {
   /** Values */
 
-  const loaderData = useLoaderData({ from: "/app/contacts/$id" });
+  const context = Route.useRouteContext();
   const navigate = useNavigate();
   const canGoBack = useCanGoBack();
   const router = useRouter();
 
-  const contactHook = useContact(loaderData.data);
+  const contactHook = useContact(context.contact);
   const contact = contactHook.contact;
 
   /** Callbacks */

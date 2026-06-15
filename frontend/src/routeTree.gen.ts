@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignOutRouteImport } from './routes/sign-out'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
@@ -18,7 +17,6 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppPlacesRouteImport } from './routes/app/places'
 import { Route as AppJobsRouteImport } from './routes/app/jobs'
 import { Route as AppContactsRouteImport } from './routes/app/contacts'
-import { Route as AppBoardRouteImport } from './routes/app/board'
 import { Route as AppAdminRouteImport } from './routes/app/admin'
 import { Route as AppPlacesIndexRouteImport } from './routes/app/places/index'
 import { Route as AppJobsIndexRouteImport } from './routes/app/jobs/index'
@@ -40,11 +38,6 @@ import { Route as AppContactsIdEditRouteImport } from './routes/app/contacts/$id
 import { Route as AppAdminUsersCreateRouteImport } from './routes/app/admin/users/create'
 import { Route as AppAdminUsersIdRouteImport } from './routes/app/admin/users/$id'
 
-const SignOutRoute = SignOutRouteImport.update({
-  id: '/sign-out',
-  path: '/sign-out',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -83,11 +76,6 @@ const AppJobsRoute = AppJobsRouteImport.update({
 const AppContactsRoute = AppContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBoardRoute = AppBoardRouteImport.update({
-  id: '/board',
-  path: '/board',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminRoute = AppAdminRouteImport.update({
@@ -197,9 +185,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
-  '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
-  '/app/board': typeof AppBoardRoute
   '/app/contacts': typeof AppContactsRouteWithChildren
   '/app/jobs': typeof AppJobsRouteWithChildren
   '/app/places': typeof AppPlacesRouteWithChildren
@@ -228,8 +214,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
-  '/sign-out': typeof SignOutRoute
-  '/app/board': typeof AppBoardRoute
   '/app': typeof AppIndexRoute
   '/app/contacts/create': typeof AppContactsCreateRoute
   '/app/jobs/create': typeof AppJobsCreateRoute
@@ -254,9 +238,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/sign-in': typeof SignInRoute
-  '/sign-out': typeof SignOutRoute
   '/app/admin': typeof AppAdminRouteWithChildren
-  '/app/board': typeof AppBoardRoute
   '/app/contacts': typeof AppContactsRouteWithChildren
   '/app/jobs': typeof AppJobsRouteWithChildren
   '/app/places': typeof AppPlacesRouteWithChildren
@@ -288,9 +270,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/sign-in'
-    | '/sign-out'
     | '/app/admin'
-    | '/app/board'
     | '/app/contacts'
     | '/app/jobs'
     | '/app/places'
@@ -319,8 +299,6 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/sign-in'
-    | '/sign-out'
-    | '/app/board'
     | '/app'
     | '/app/contacts/create'
     | '/app/jobs/create'
@@ -344,9 +322,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/forgot-password'
     | '/sign-in'
-    | '/sign-out'
     | '/app/admin'
-    | '/app/board'
     | '/app/contacts'
     | '/app/jobs'
     | '/app/places'
@@ -377,19 +353,11 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   SignInRoute: typeof SignInRoute
-  SignOutRoute: typeof SignOutRoute
   ResetPasswordEncodedUserIdTokenRoute: typeof ResetPasswordEncodedUserIdTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sign-out': {
-      id: '/sign-out'
-      path: '/sign-out'
-      fullPath: '/sign-out'
-      preLoaderRoute: typeof SignOutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sign-in': {
       id: '/sign-in'
       path: '/sign-in'
@@ -444,13 +412,6 @@ declare module '@tanstack/react-router' {
       path: '/contacts'
       fullPath: '/app/contacts'
       preLoaderRoute: typeof AppContactsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/board': {
-      id: '/app/board'
-      path: '/board'
-      fullPath: '/app/board'
-      preLoaderRoute: typeof AppBoardRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin': {
@@ -701,7 +662,6 @@ const AppPlacesRouteWithChildren = AppPlacesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
-  AppBoardRoute: typeof AppBoardRoute
   AppContactsRoute: typeof AppContactsRouteWithChildren
   AppJobsRoute: typeof AppJobsRouteWithChildren
   AppPlacesRoute: typeof AppPlacesRouteWithChildren
@@ -711,7 +671,6 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
-  AppBoardRoute: AppBoardRoute,
   AppContactsRoute: AppContactsRouteWithChildren,
   AppJobsRoute: AppJobsRouteWithChildren,
   AppPlacesRoute: AppPlacesRouteWithChildren,
@@ -726,7 +685,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   SignInRoute: SignInRoute,
-  SignOutRoute: SignOutRoute,
   ResetPasswordEncodedUserIdTokenRoute: ResetPasswordEncodedUserIdTokenRoute,
 }
 export const routeTree = rootRouteImport

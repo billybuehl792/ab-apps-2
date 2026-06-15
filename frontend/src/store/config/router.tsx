@@ -5,6 +5,7 @@ import { Container } from "@mui/material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import type { IGlobalRouterContext } from "../types/router";
+import FullScreen from "@/components/layout/FullScreen";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -32,9 +33,9 @@ const router = createRouter({
     </Container>
   ),
   defaultNotFoundComponent: () => (
-    <Container maxWidth="md" sx={{ my: 2 }}>
+    <FullScreen>
       <PageNotFoundCard />
-    </Container>
+    </FullScreen>
   ),
 });
 

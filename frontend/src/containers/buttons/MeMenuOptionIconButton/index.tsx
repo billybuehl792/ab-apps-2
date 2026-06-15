@@ -39,7 +39,10 @@ const MeMenuOptionIconButton: React.FC<Partial<IMenuOptionIconButtonProps>> = (
       label: "Sign Out",
       icon: <Logout />,
       color: "error",
-      onClick: () => confirm("Sign Out", () => navigate({ to: "/sign-out" })),
+      onClick: () =>
+        confirm("Sign Out", () =>
+          navigate({ to: "/sign-in", search: { force: true } }),
+        ),
     },
   ];
 

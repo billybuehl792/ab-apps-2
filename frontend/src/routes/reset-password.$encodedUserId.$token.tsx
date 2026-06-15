@@ -8,17 +8,16 @@ import {
   Typography,
 } from "@mui/material";
 import FullScreen from "@/components/layout/FullScreen";
-import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { authEndpoints } from "@/store/constants/account";
 import { ArrowBack, CheckCircle } from "@mui/icons-material";
+import ButtonLink from "@/components/links/ButtonLink";
 import CustomLink from "@/components/links/CustomLink";
 import ResetPasswordForm from "@/containers/forms/ResetPasswordForm";
 import { ComponentProps } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { errorUtils } from "@/store/utils/error";
-import ButtonLink from "@/components/links/ButtonLink";
 
 export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
   beforeLoad: ({ context }) => {
@@ -51,11 +50,6 @@ export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
           ],
         }}
       />
-    </FullScreen>
-  ),
-  notFoundComponent: () => (
-    <FullScreen>
-      <PageNotFoundCard />
     </FullScreen>
   ),
 });
