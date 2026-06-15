@@ -21,7 +21,7 @@ export const JobIcons = {
 
 export const jobEndpoints = {
   id: ["jobs"] as const,
-  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/jobs/`,
+  url: "/jobs/",
   get: (options?: TJobListRequest) =>
     api
       .get<TJobListResponse>(jobEndpoints.url, options)

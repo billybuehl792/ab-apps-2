@@ -24,7 +24,7 @@ export const PlaceIcons = {
 
 export const placeEndpoints = {
   id: ["places"] as const,
-  url: `${import.meta.env.VITE_BACKEND_BASE_URL}/api/places/`,
+  url: "/places/",
   get: (options?: TPlaceListRequest) =>
     api
       .get<TPlaceListResponse>(placeEndpoints.url, options)

@@ -1,5 +1,6 @@
 import os
 import logging
+from urllib.parse import urlsplit
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
@@ -180,6 +181,19 @@ class RequestPasswordResetView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
+    def _get_frontend_url(self, request):
+        origin = request.headers.get("Origin")
+        if origin:
+            return origin.rstrip("/")
+
+        referer = request.headers.get("Referer")
+        if referer:
+            parsed_referer = urlsplit(referer)
+            if parsed_referer.scheme and parsed_referer.netloc:
+                return f"{parsed_referer.scheme}://{parsed_referer.netloc}"
+
+        return None
+
     def post(self, request):
         email = request.data.get('email')
 
@@ -198,10 +212,10 @@ class RequestPasswordResetView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             # Build reset link
-            frontend_url = os.environ.get("FRONTEND_URL")
+            frontend_url = self._get_frontend_url(request)
             if (not frontend_url):
                 raise ValueError(
-                    "FRONTEND_URL environment variable is not set")
+                    "Frontend URL could not be determined from the request")
 
             reset_link = f"{frontend_url}/reset-password/{uid}/{token}"
 

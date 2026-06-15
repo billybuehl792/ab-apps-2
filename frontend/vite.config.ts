@@ -37,7 +37,13 @@ export default defineConfig({
     }),
   ],
   server: {
-    open: "/app", // Opens /app in dev mode
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   build: {
     sourcemap: true, // Source map generation must be turned on for Sentry
