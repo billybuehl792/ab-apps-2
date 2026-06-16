@@ -33,7 +33,7 @@ function RouteComponent() {
     });
 
   return (
-    <Container maxWidth="md" sx={{ pb: 2 }}>
+    <Container sx={{ pb: 2 }}>
       <PlaceList
         params={params}
         onParamsChange={handleOnParamsChange}

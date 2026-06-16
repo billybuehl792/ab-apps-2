@@ -4,8 +4,8 @@ import { createRouter } from "@tanstack/react-router";
 import { Container } from "@mui/material";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
-import type { IGlobalRouterContext } from "../types/router";
 import FullScreen from "@/components/layout/FullScreen";
+import type { IGlobalRouterContext } from "../types/router";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -23,12 +23,12 @@ const router = createRouter({
     return str ? `?${str}` : "";
   },
   defaultPendingComponent: () => (
-    <Container maxWidth="md" sx={{ my: 2 }}>
+    <Container sx={{ my: 2 }}>
       <StatusWrapper loading />
     </Container>
   ),
   defaultErrorComponent: ({ error }) => (
-    <Container maxWidth="md" sx={{ my: 2 }}>
+    <Container sx={{ my: 2 }}>
       <StatusWrapper error={error} />
     </Container>
   ),

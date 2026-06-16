@@ -38,7 +38,7 @@ function RouteComponent() {
   const context = Route.useRouteContext();
 
   return (
-    <Container maxWidth="md">
+    <Container>
       <Stack spacing={1} py={2}>
         <ContactDetailCard contact={context.contact} />
         <Stack spacing={2}>

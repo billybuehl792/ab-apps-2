@@ -39,7 +39,7 @@ export const Route = createFileRoute("/app")({
     </FullScreen>
   ),
   notFoundComponent: () => (
-    <Container maxWidth="md">
+    <Container>
       <PageNotFoundCard my={2} />
     </Container>
   ),
