@@ -57,7 +57,7 @@ function RouteComponent() {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container>
       <Stack spacing={2} py={2}>
         <Stack>
           <Typography variant="h5">Edit Job</Typography>

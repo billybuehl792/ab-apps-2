@@ -38,7 +38,7 @@ function RouteComponent() {
   const context = Route.useRouteContext();
 
   return (
-    <Container maxWidth="md">
+    <Container>
       <Stack spacing={1} py={2}>
         <JobDetailCard job={context.job} />
         <Stack spacing={2}>

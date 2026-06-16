@@ -75,7 +75,7 @@ function RouteComponent() {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container>
       <Stack spacing={2} py={2}>
         <Typography variant="h5">Create New Contact</Typography>
         <ContactCreateForm

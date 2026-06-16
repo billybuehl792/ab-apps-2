@@ -39,7 +39,7 @@ function RouteComponent() {
   const loaderData = Route.useLoaderData();
 
   return (
-    <Container maxWidth="md">
+    <Container>
       <PageHeader title={<Typography variant="h4">Profile</Typography>} />
       <Stack mt={2}>
         <UserDetailCard user={loaderData.data} />

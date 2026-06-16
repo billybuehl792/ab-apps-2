@@ -40,7 +40,7 @@ function RouteComponent() {
     });
 
   return (
-    <Container maxWidth="md" sx={{ pb: 2 }}>
+    <Container sx={{ pb: 2 }}>
       <JobList
         params={params}
         onParamsChange={handleOnParamsChange}
