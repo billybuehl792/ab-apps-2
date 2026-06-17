@@ -7,18 +7,20 @@ import theme from "./src/store/config/theme";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/app/",
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: { enabled: true },
+      devOptions: { enabled: process.env.NODE_ENV === "production" },
+      workbox: { navigateFallbackDenylist: [/^\/api\//] },
       manifest: {
         name: "AB Apps",
         short_name: "AB Apps",
         description: "Utility Apps and Tools",
         display: "standalone",
-        start_url: "/",
+        start_url: "/app/",
         background_color: theme.palette.primary.contrastText,
         theme_color: theme.palette.primary.main,
         icons: [
@@ -39,7 +41,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: "http://127.0.0.1:8000",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

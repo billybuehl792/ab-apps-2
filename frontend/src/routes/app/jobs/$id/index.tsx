@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Container, Stack, Tab, Tabs } from "@mui/material";
 import { router } from "@/main";
 import JobMenuOptionIconButton from "@/containers/buttons/JobMenuOptionIconButton";

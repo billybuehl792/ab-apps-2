@@ -1,4 +1,4 @@
-import { Chip, Skeleton, type ChipProps } from "@mui/material";
+import { Chip, type ChipProps } from "@mui/material";
 import usePlace from "@/store/hooks/usePlace";
 import { PlaceIcons } from "@/store/constants/places";
 import type { IUsePlaceOptions, TUsePlace } from "@/store/hooks/usePlace";
@@ -18,13 +18,7 @@ const PlaceChip = ({ place, options, onClick, ...props }: IPlaceChipProps) => {
   return (
     <Chip
       icon={<PlaceIcons.Detail fontSize={props.size} />}
-      label={
-        placeHook.isLoading ? (
-          <Skeleton height={24} width={100} />
-        ) : (
-          placeHook.place.address_short
-        )
-      }
+      label={place.address_short}
       {...(props?.clickable !== false
         ? {
             onClick: !!onClick

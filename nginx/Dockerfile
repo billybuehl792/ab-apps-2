@@ -13,8 +13,8 @@ RUN npm run build
 # Final nginx image
 FROM nginx:alpine
 
-WORKDIR /
-
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
+COPY --from=frontend-builder \
+    /app/frontend/dist \
+    /usr/share/nginx/html/app
