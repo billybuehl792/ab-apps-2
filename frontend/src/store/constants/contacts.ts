@@ -8,6 +8,7 @@ import type {
   TContactListRequest,
   TContactListResponse,
 } from "../types/contacts";
+import type { TDocument, TDocumentCreate } from "../types/documents";
 
 /** Icons */
 
@@ -43,6 +44,19 @@ export const contactEndpoints = {
       api
         .delete<void>(contactEndpoints.contact(id).url)
         .then((res) => res.data),
+    uploadDocument: (body: TDocumentCreate) => {
+      const formData = new FormData();
+      formData.append("file", body.file);
+      if (body.label) formData.append("label", body.label);
+      if (body.description) formData.append("description", body.description);
+      return api
+        .post<TDocument>(
+          `${contactEndpoints.contact(id).url}documents/`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } },
+        )
+        .then((res) => res.data);
+    },
   }),
 };
 

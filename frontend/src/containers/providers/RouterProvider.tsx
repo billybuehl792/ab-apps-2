@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "@/store/hooks/useAuth";
-import router from "@/store/config/router";
+import { router } from "@/main";
 
 const RouterProvider: React.FC<Omit<RouterProps, "router" | "context">> = (
   props,
