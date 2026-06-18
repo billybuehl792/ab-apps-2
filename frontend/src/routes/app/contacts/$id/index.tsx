@@ -9,13 +9,13 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
-import { router } from "@/main";
 import contactEndpoints from "@/store/apps/contacts/contact/endpoints";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useDropzone } from "react-dropzone";
+import router from "@/store/config/router";
 import { sxUtils } from "@/store/utils/sx";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";

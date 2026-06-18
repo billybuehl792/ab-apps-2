@@ -11,10 +11,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-import router from "./store/config/router";
 import RootProvider from "./containers/providers/RootProvider";
-
-export { router };
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

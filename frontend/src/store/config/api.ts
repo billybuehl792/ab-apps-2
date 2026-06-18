@@ -1,6 +1,6 @@
 import axios from "axios";
 import qs from "qs";
-import { router } from "@/main";
+import router from "@/store/config/router";
 import { authUtils } from "../utils/auth";
 import { tokenEndpoints } from "../constants/account";
 import type { TAccessTokenResponse } from "../types/account";
