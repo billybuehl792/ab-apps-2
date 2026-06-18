@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Container, Stack, Tab, Tabs } from "@mui/material";
-import { router } from "@/main";
+import router from "@/store/config/router";
 import JobMenuOptionIconButton from "@/containers/buttons/JobMenuOptionIconButton";
 import JobDetailCard from "@/containers/cards/JobDetailCard";
 import { EJobOptionId } from "@/store/enums/jobs";
