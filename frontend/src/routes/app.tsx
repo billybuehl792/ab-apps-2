@@ -88,7 +88,6 @@ function RouteComponent() {
         })}
       >
         <Container
-          maxWidth="md"
           sx={(theme) => ({
             position: "absolute",
             top: 0,

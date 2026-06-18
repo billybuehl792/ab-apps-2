@@ -36,7 +36,7 @@ const NavBar: React.FC<AppBarProps> = (props: AppBarProps) => {
   return (
     <>
       <AppBar variant="outlined" {...props}>
-        <Container maxWidth="lg" sx={{ width: "100%", height: "100%" }}>
+        <Container sx={{ width: "100%", height: "100%" }}>
           <Stack
             component={Toolbar}
             direction="row"

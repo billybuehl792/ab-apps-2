@@ -11,7 +11,7 @@ export const Route = createFileRoute("/app/")({
 
 function RouteComponent() {
   return (
-    <Container maxWidth="md">
+    <Container>
       <Stack spacing={2} my={2}>
         <Typography variant="h5">Welcome to AB Apps</Typography>
         <Stack spacing={1}>
