@@ -50,11 +50,9 @@ export const contactEndpoints = {
       if (body.label) formData.append("label", body.label);
       if (body.description) formData.append("description", body.description);
       return api
-        .post<TDocument>(
-          `${contactEndpoints.contact(id).url}documents/`,
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } },
-        )
+        .post<TDocument>(`/contacts/${id}/documents/`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         .then((res) => res.data);
     },
   }),

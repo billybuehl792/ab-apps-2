@@ -1,83 +1,110 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { type SyntheticEvent } from "react";
+import {
+  createFileRoute,
+  stripSearchParams,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import {
   Card,
   CardContent,
+  CardMedia,
   Container,
-  type ContainerProps,
+  Grid,
   Stack,
   Tab,
   Tabs,
 } from "@mui/material";
+import { z } from "zod";
 import contactEndpoints from "@/store/apps/contacts/contact/endpoints";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useDropzone } from "react-dropzone";
-import router from "@/store/config/router";
-import { sxUtils } from "@/store/utils/sx";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
-import type { TRouteLoaderData } from "@/store/types/router";
+
+const TABS = ["overview", "documents", "history"] as const;
+const paramsSchema = z.object({ tab: z.enum(TABS).catch(TABS[0]) });
+const defaultParams = paramsSchema.parse({});
+
+const PageOptionsIconButton: React.FC = () => {
+  /** Values */
+
+  const { contact } = Route.useRouteContext();
+  const navigate = useNavigate();
+
+  return (
+    <ContactMenuOptionIconButton
+      contact={contact}
+      hideOptions={[EContactOptionId.Detail]}
+      onChange={(_, type) => {
+        if (type === EObjectChangeType.Delete)
+          navigate({ to: "/app/contacts" });
+      }}
+    />
+  );
+};
 
 export const Route = createFileRoute("/app/contacts/$id/")({
-  loader: ({ context }): TRouteLoaderData => {
-    return {
-      slotProps: {
-        pageHeader: {
-          endContent: (
-            <ContactMenuOptionIconButton
-              contact={context.contact}
-              hideOptions={[EContactOptionId.Detail]}
-              onChange={(_, type) => {
-                if (type === EObjectChangeType.Delete)
-                  router.navigate({ to: "/app/contacts" });
-              }}
-            />
-          ),
-        },
-      },
-    };
-  },
+  search: { middlewares: [stripSearchParams(defaultParams)] },
+  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  beforeLoad: () => ({
+    crumb: null,
+    pageHeaderEndContent: <PageOptionsIconButton />,
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [tabValue, setTabValue] = useState(0);
-
   /** Values */
 
-  const context = Route.useRouteContext();
+  const { contact } = Route.useRouteContext();
+  const { tab } = Route.useSearch();
+  const navigate = useNavigate();
+
+  /** Callbacks */
+
+  const handleOnTabChange = (
+    _: SyntheticEvent<Element, Event>,
+    newValue: number,
+  ) => {
+    const value = parseInt(String(newValue), 10);
+    navigate({ to: ".", search: (s) => ({ ...s, tab: TABS[value] }) });
+  };
 
   return (
     <Stack height="100%">
       <Container>
         <Stack spacing={1} py={2}>
-          <ContactDetailCard contact={context.contact} />
+          <ContactDetailCard contact={contact} />
           <Stack spacing={2}>
             <Tabs
-              value={tabValue}
+              value={TABS.indexOf(tab)}
               variant="scrollable"
               scrollButtons={false}
-              onChange={(_, newValue) => setTabValue(newValue)}
+              onChange={handleOnTabChange}
             >
+              <Tab label="Overview" />
               <Tab label="Documents" />
               <Tab label="History" />
             </Tabs>
           </Stack>
         </Stack>
       </Container>
-      {tabValue === 0 && <FilesTab />}
+      {tab === "documents" && <DocumentsTab />}
     </Stack>
   );
 }
 
-const FilesTab: React.FC<ContainerProps> = ({ sx, ...props }) => {
+const DocumentsTab: React.FC = () => {
   /** Values */
 
   const snackbar = useSnackbar();
   const context = Route.useRouteContext();
+  const router = useRouter();
 
   const uploadMutation = useMutation({
     mutationKey: ["uploadDocument", context.contact.id],
@@ -101,26 +128,30 @@ const FilesTab: React.FC<ContainerProps> = ({ sx, ...props }) => {
   });
 
   return (
-    <Container
-      {...props}
-      sx={[
-        { display: "flex", flexGrow: 1, overflow: "auto" },
-        ...sxUtils.asArray(sx),
-      ]}
-    >
-      <Stack
+    <Container sx={{ display: "flex", flexGrow: 1, overflow: "auto" }}>
+      <Grid
+        container
+        spacing={2}
         {...getRootProps()}
         sx={[
           { flexGrow: 1, mb: 2 },
-          isDragActive && { bgcolor: "rgba(0,0,0,0.05)" },
+          isDragActive && { bgcolor: "rgba(0,0,0,0.05)", opacity: 0.5 },
         ]}
       >
         {context.contact.documents.map((document) => (
-          <Card key={document}>
-            <CardContent>{document}</CardContent>
-          </Card>
+          <Grid key={document.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image={document.thumbnail ?? undefined}
+                alt={document.original_filename}
+              />
+              <CardContent>{document.label}</CardContent>
+            </Card>
+          </Grid>
         ))}
-      </Stack>
+      </Grid>
     </Container>
   );
 };

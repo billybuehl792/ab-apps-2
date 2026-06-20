@@ -1,16 +1,16 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import QuerySet
+from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
+
+from app.documents.models import Document
 
 from .models import Contact
-from .serializers import ContactSerializer
+from .serializers import ContactDocumentSerializer, ContactSerializer
 from .filters import ContactsFilter
-from app.documents.serializers import DocumentSerializer
 
 
 class ContactViewSet(ModelViewSet):
@@ -27,15 +27,30 @@ class ContactViewSet(ModelViewSet):
 
     serializer_class = ContactSerializer
 
-    @action(detail=True, methods=["post"], url_path="documents")
-    def upload_document(self, request, pk=None):
-        contact = self.get_object()
-        serializer = DocumentSerializer(
-            data=request.data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save(
-            uploaded_by=request.user if request.user.is_authenticated else None,
-            content_type=ContentType.objects.get_for_model(Contact),
-            object_id=contact.pk,
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class ContactDocumentViewSet(ModelViewSet):
+    """CRUD documents attached to a single contact."""
+
+    permission_classes = (IsAuthenticated,)
+    queryset = Document.objects.all()
+    serializer_class = ContactDocumentSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering = ("created_at",)
+    ordering_fields = ("created_at", "updated_at", "label")
+    search_fields = ("label", "description", "original_filename", "mime_type")
+
+    def _get_contact(self):
+        if not hasattr(self, "_contact"):
+            self._contact = get_object_or_404(
+                Contact, pk=self.kwargs.get("contact_pk"))
+        return self._contact
+
+    def get_queryset(self) -> QuerySet[Document]:  # type: ignore[override]
+        contact = self._get_contact()
+        contact_type = ContentType.objects.get_for_model(Contact)
+        return Document.objects.filter(content_type=contact_type, object_id=contact.pk)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["contact"] = self._get_contact()
+        return context

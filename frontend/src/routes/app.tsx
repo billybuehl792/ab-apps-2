@@ -2,18 +2,16 @@ import {
   createFileRoute,
   Outlet,
   redirect,
-  useMatches,
+  useRouterState,
 } from "@tanstack/react-router";
-import { Box, Container, Paper, useMediaQuery } from "@mui/material";
+import { Box, Container, Paper, Stack, useMediaQuery } from "@mui/material";
 import { Home } from "@mui/icons-material";
 import NavBar from "@/containers/layout/NavBar";
 import NavList from "@/containers/lists/NavList";
 import NavBreadcrumbs from "@/containers/layout/NavBreadcrumbs";
-import PageHeader from "@/components/layout/PageHeader";
 import Footer from "@/containers/layout/Footer";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import type { TRouteLoaderData } from "@/store/types/router";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 
 export const Route = createFileRoute("/app")({
@@ -25,8 +23,11 @@ export const Route = createFileRoute("/app")({
         search: { redirect: location.href },
         replace: true,
       });
+
+    return {
+      crumb: { label: "Home", Icon: Home, pathname: location.pathname },
+    };
   },
-  loader: (): TRouteLoaderData => ({ crumb: { label: "Home", Icon: Home } }),
   component: RouteComponent,
   pendingComponent: () => (
     <FullScreen>
@@ -48,10 +49,10 @@ export const Route = createFileRoute("/app")({
 function RouteComponent() {
   /** Values */
 
-  const isDesktop = useMediaQuery(({ breakpoints }) => breakpoints.up("sm"));
-
-  const matches = useMatches();
+  const matches = useRouterState({ select: (s) => s.matches });
   const currentMatch = matches.at(-1);
+
+  const isDesktop = useMediaQuery(({ breakpoints }) => breakpoints.up("sm"));
 
   return (
     <>
@@ -96,10 +97,21 @@ function RouteComponent() {
             height: theme.layout.page.header.height,
           })}
         >
-          <PageHeader
-            title={<NavBreadcrumbs />}
-            {...currentMatch?.loaderData?.slotProps?.pageHeader}
-          />
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={(theme) => ({
+              justifyContent: "space-between",
+              alignItems: "center",
+              height: theme.layout.page.header.height,
+              boxSizing: "border-box",
+              bgcolor: "background.paper",
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            })}
+          >
+            <NavBreadcrumbs matches={matches} />
+            {currentMatch?.context.pageHeaderEndContent}
+          </Stack>
         </Container>
         <Box
           sx={(theme) => ({

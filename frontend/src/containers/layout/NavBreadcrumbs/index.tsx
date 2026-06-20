@@ -1,5 +1,9 @@
 import { type MouseEventHandler, useState, type ComponentProps } from "react";
-import { useLocation, useMatches, useNavigate } from "@tanstack/react-router";
+import {
+  type MakeRouteMatchUnion,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import {
   Breadcrumbs,
   ListItemIcon,
@@ -17,12 +21,14 @@ interface INavBreadcrumbProps extends Omit<
   BreadcrumbsProps,
   "maxItems" | "itemsBeforeCollapse" | "itemsAfterCollapse" | "slotProps"
 > {
+  matches: MakeRouteMatchUnion[];
   slotProps?: {
     crumb?: ComponentProps<typeof ButtonLink>;
   } & BreadcrumbsProps["slotProps"];
 }
 
 const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
+  matches,
   sx,
   slotProps: { crumb: crumbProps, ...slotProps } = {},
   ...props
@@ -33,20 +39,18 @@ const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
 
   const location = useLocation();
   const navigate = useNavigate();
-  const matches = useMatches();
+
+  const crumbs = matches
+    .map(({ context, status, pathname }) =>
+      !!context.crumb && status === "success"
+        ? { ...context.crumb, pathname }
+        : null,
+    )
+    .filter((crumb) => !!crumb);
 
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
   const maxCrumbs = isSm ? 1 : 2;
-  const itemsAfterCollapse = isSm ? 1 : 2;
-
-  const crumbs = matches
-    .map((match) =>
-      match.loaderData?.crumb
-        ? { ...match.loaderData.crumb, pathname: match.pathname }
-        : undefined,
-    )
-    .filter((crumb) => !!crumb);
-  const menuCrumbs = crumbs.slice(0, crumbs.length - itemsAfterCollapse);
+  const menuCrumbs = crumbs.slice(0, crumbs.length - maxCrumbs);
 
   /** Callbacks */
 
@@ -62,7 +66,7 @@ const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
       <Breadcrumbs
         maxItems={maxCrumbs}
         itemsBeforeCollapse={0}
-        itemsAfterCollapse={itemsAfterCollapse}
+        itemsAfterCollapse={maxCrumbs}
         slotProps={{
           ...slotProps,
           collapsedIcon: { onClick: handleOnMenuOpen },

@@ -8,13 +8,12 @@ import { Container, Stack, Typography } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import useJob from "@/store/hooks/useJob";
 import JobUpdateForm, {
-  IJobUpdateFormProps,
+  type IJobUpdateFormProps,
 } from "@/containers/forms/JobUpdateForm";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/$id/edit")({
   component: RouteComponent,
-  loader: (): TRouteLoaderData => ({ crumb: { label: "Edit", Icon: Edit } }),
+  beforeLoad: () => ({ crumb: { label: "Edit", Icon: Edit } }),
 });
 
 function RouteComponent() {

@@ -15,6 +15,7 @@ export const Route = createFileRoute("/app/places/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
   component: RouteComponent,
+  beforeLoad: () => ({ crumb: null }),
 });
 
 function RouteComponent() {

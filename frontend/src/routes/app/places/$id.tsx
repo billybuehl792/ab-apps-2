@@ -5,7 +5,6 @@ import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
 import PlaceDetailCard from "@/containers/cards/PlaceMapCard";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/places/$id")({
   beforeLoad: async ({ context, params }) => {
@@ -15,17 +14,14 @@ export const Route = createFileRoute("/app/places/$id")({
         queryKey: placeEndpoints.place(id).id,
         queryFn: placeEndpoints.place(id).get,
       });
-      return { place };
+      return {
+        place,
+        crumb: { label: place.address_short, Icon: PlaceIcons.Detail },
+      };
     } catch (error) {
       throw notFound({ data: errorUtils.getErrorMessage(error) });
     }
   },
-  loader: ({ context: { place } }): TRouteLoaderData => ({
-    crumb: {
-      label: place.address_short,
-      Icon: PlaceIcons.Detail,
-    },
-  }),
   component: RouteComponent,
   notFoundComponent: () => (
     <Container>

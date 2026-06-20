@@ -14,10 +14,9 @@ import { EObjectChangeType } from "@/store/enums/api";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/contacts/create")({
-  loader: (): TRouteLoaderData => ({
+  beforeLoad: () => ({
     crumb: { label: "Create", Icon: ContactIcons.Create },
   }),
   component: RouteComponent,

@@ -15,10 +15,9 @@ import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
 import { EObjectChangeType } from "@/store/enums/api";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/create")({
-  loader: (): TRouteLoaderData => ({
+  beforeLoad: () => ({
     crumb: { label: "Create", Icon: JobIcons.Create },
   }),
   component: RouteComponent,

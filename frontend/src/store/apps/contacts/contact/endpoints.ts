@@ -7,6 +7,7 @@ const contactEndpoints = {
     api.patch<TContact>(`/contacts/${id}/`, body),
   delete: (id: string) => api.delete<void>(`/contacts/${id}/`),
   documents: {
+    get: (id: string) => api.get(`/contacts/${id}/documents/`),
     post: ({ id, file }: TContactUploadFile) => {
       const formData = new FormData();
       formData.append("file", file);

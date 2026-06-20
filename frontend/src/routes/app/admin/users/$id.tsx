@@ -4,11 +4,9 @@ import UserDetailCard from "@/containers/cards/UserDetailCard";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
-import type { TRouteLoaderData } from "@/store/types/router";
-import type { TUser } from "@/store/types/account";
 
 export const Route = createFileRoute("/app/admin/users/$id")({
-  loader: async ({ context, params }): Promise<TRouteLoaderData<TUser>> => {
+  beforeLoad: async ({ context, params }) => {
     try {
       const userId = idSchema.parse(params.id);
       const user = await context.queryClient.fetchQuery({
@@ -17,7 +15,7 @@ export const Route = createFileRoute("/app/admin/users/$id")({
       });
 
       return {
-        data: user,
+        user,
         crumb: { label: user.username, Icon: AccountIcons.users.Detail },
       };
     } catch (error) {
@@ -31,7 +29,7 @@ export const Route = createFileRoute("/app/admin/users/$id")({
 function RouteComponent() {
   /** Values */
 
-  const loaderData = Route.useLoaderData();
+  const { user } = Route.useRouteContext();
 
-  return <UserDetailCard user={loaderData.data} />;
+  return <UserDetailCard user={user} />;
 }

@@ -5,10 +5,9 @@ import {
 } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Container } from "@mui/material";
-import JobCreateButton from "@/containers/buttons/JobCreateButton";
 import JobList, { type IJobListProps } from "@/containers/lists/JobList";
+import JobCreateButton from "@/containers/buttons/JobCreateButton";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -16,12 +15,11 @@ const defaultParams = paramsSchema.parse({});
 export const Route = createFileRoute("/app/jobs/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
-  component: RouteComponent,
-  loader: (): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: { endContent: <JobCreateButton variant="text" /> },
-    },
+  beforeLoad: () => ({
+    crumb: null,
+    pageHeaderEndContent: <JobCreateButton variant="text" />,
   }),
+  component: RouteComponent,
 });
 
 function RouteComponent() {

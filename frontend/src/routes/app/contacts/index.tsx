@@ -5,12 +5,11 @@ import {
 } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Container } from "@mui/material";
-import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactList, {
   type IContactListProps,
 } from "@/containers/lists/ContactList";
+import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import { contactListRequestSchema } from "@/store/schemas/contacts";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 const paramsSchema = contactListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
@@ -18,12 +17,11 @@ const defaultParams = paramsSchema.parse({});
 export const Route = createFileRoute("/app/contacts/")({
   validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   search: { middlewares: [stripSearchParams(defaultParams)] },
-  component: RouteComponent,
-  loader: (): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: { endContent: <ContactCreateButton variant="text" /> },
-    },
+  beforeLoad: () => ({
+    crumb: null,
+    pageHeaderEndContent: <ContactCreateButton variant="text" />,
   }),
+  component: RouteComponent,
 });
 
 function RouteComponent() {

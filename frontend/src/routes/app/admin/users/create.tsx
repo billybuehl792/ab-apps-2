@@ -1,9 +1,15 @@
+import { Container, Stack } from "@mui/material";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app/admin/users/create")({
   component: RouteComponent,
+  beforeLoad: () => ({ crumb: { label: "Create" } }),
 });
 
 function RouteComponent() {
-  return <div>Hello "/app/admin/users/create"!</div>;
+  return (
+    <Container sx={{ mt: 2 }}>
+      <Stack>TODO: Add User Create</Stack>
+    </Container>
+  );
 }

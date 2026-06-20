@@ -10,11 +10,10 @@ import useContact from "@/store/hooks/useContact";
 import ContactUpdateForm, {
   type IContactUpdateFormProps,
 } from "@/containers/forms/ContactUpdateForm";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/contacts/$id/edit")({
   component: RouteComponent,
-  loader: (): TRouteLoaderData => ({ crumb: { label: "Edit", Icon: Edit } }),
+  beforeLoad: () => ({ crumb: { label: "Edit", Icon: Edit } }),
 });
 
 function RouteComponent() {
