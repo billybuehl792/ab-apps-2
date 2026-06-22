@@ -1,9 +1,21 @@
+import { FileCopy, InsertDriveFile, UploadFile } from "@mui/icons-material";
+
 import api from "../config/api";
 import type {
   TDocument,
   TDocumentCreate,
   TDocumentUpdate,
 } from "../types/documents";
+
+/** Icons */
+
+export const DocumentIcons = {
+  List: FileCopy,
+  Detail: InsertDriveFile,
+  Create: UploadFile,
+};
+
+/** API */
 
 export const documentEndpoints = {
   id: ["documents"] as const,

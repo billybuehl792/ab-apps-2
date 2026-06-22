@@ -1,5 +1,6 @@
 import z from "zod";
 import { idSchema } from "./basic";
+import { listRequestSchema, listResponseSchema } from "./api";
 
 export const documentSchema = z.object({
   id: idSchema,
@@ -16,6 +17,12 @@ export const documentSchema = z.object({
 
 export const documentCreateSchema = z.object({
   label: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   file: z.instanceof(File),
+});
+
+export const documentListRequestSchema = listRequestSchema;
+
+export const documentListResponseSchema = listResponseSchema.extend({
+  results: z.array(documentSchema),
 });

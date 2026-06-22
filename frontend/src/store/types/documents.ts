@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { documentCreateSchema } from "../schemas/documents";
+import {
+  documentCreateSchema,
+  documentListRequestSchema,
+  documentListResponseSchema,
+} from "../schemas/documents";
 
 export interface TDocument {
   id: number;
@@ -20,3 +24,7 @@ export interface TDocumentUpdate {
   label?: string;
   description?: string;
 }
+
+export type TDocumentListRequest = z.infer<typeof documentListRequestSchema>;
+
+export type TDocumentListResponse = z.infer<typeof documentListResponseSchema>;

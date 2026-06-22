@@ -1,11 +1,14 @@
 import { type ReactNode } from "react";
 import {
+  Card,
+  CardContent,
   Skeleton,
   type SkeletonProps,
   Stack,
   type StackProps,
   TablePagination,
   type TablePaginationProps,
+  Typography,
 } from "@mui/material";
 import StatusWrapper, {
   type IStatusWrapperProps,
@@ -13,22 +16,29 @@ import StatusWrapper, {
 
 type TDefaultItem = { id: number | string };
 
-export interface IPaginatedListProps<
-  TItem extends TDefaultItem,
-> extends StackProps {
-  items: TItem[];
+export interface IPaginatedListBaseProps<
+  TItem extends TDefaultItem = TDefaultItem,
+> {
+  /** Current page. Starts from 1 */
   page: number;
+  /** Items per page */
   pageSize: number;
+  /** Items to be displayed on the current page */
+  items: TItem[];
   /** Total items. `false` if unknown */
   total: number | false;
   disabled?: boolean;
   loading?: IStatusWrapperProps["loading"];
   error?: IStatusWrapperProps["error"];
   empty?: IStatusWrapperProps["empty"];
-  renderItem: (item: TItem, index: number) => ReactNode;
-  renderSkeletonItem?: true | ((index: number) => ReactNode);
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+}
+
+export interface IPaginatedListProps<TItem extends TDefaultItem = TDefaultItem>
+  extends IPaginatedListBaseProps<TItem>, StackProps {
+  renderItem: (item: TItem, index: number) => ReactNode;
+  renderSkeletonItem?: true | ((index: number) => ReactNode);
   slotProps?: {
     skeletonItem?: Partial<SkeletonProps>;
     statusWrapper?: Partial<IStatusWrapperProps>;
@@ -96,7 +106,16 @@ const PaginatedList = <TItem extends TDefaultItem>({
           />
         )
       ) : (
-        items.map((item, index) => renderItem(item, index))
+        items.map(
+          (item, index) =>
+            renderItem?.(item, index) ?? (
+              <Card key={item.id}>
+                <CardContent>
+                  <Typography>{item.id}</Typography>
+                </CardContent>
+              </Card>
+            ),
+        )
       )}
       <TablePagination
         component="div"

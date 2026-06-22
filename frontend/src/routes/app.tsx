@@ -115,7 +115,7 @@ function RouteComponent() {
         </Container>
         <Box
           sx={(theme) => ({
-            position: "absolute",
+            position: "relative",
             top: theme.layout.page.header.height,
             bottom: 0,
             left: 0,

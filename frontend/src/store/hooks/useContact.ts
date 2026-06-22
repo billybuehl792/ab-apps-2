@@ -75,6 +75,37 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
       }),
   });
 
+  const createDocumentMutation = useMutation({
+    mutationKey: [
+      contactEndpoints.contact(contact.id).documents().id,
+      EObjectChangeType.Create,
+    ],
+    mutationFn: contactEndpoints.contact(contact.id).documents().post,
+    onSuccess: (res) => {
+      options?.onChange?.(contact, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar(`${res.label} uploaded`, {
+        variant: "success",
+      });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Upload failed", { variant: "error" }),
+  });
+
+  const deleteDocumentMutation = useMutation({
+    mutationKey: [
+      contactEndpoints.contact(contact.id).documents().id,
+      "delete",
+    ],
+    mutationFn: (id: number) =>
+      contactEndpoints.contact(contact.id).documents().document(id).delete(),
+    onSuccess: () => {
+      options?.onChange?.(contact, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar("Document deleted", { variant: "success" });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Document delete failed", { variant: "error" }),
+  });
+
   /** Data */
 
   const isMutating = updateMutation.isPending || deleteMutation.isPending;
@@ -107,6 +138,20 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
         () => deleteMutation.mutate(...options),
       ),
     [confirm, deleteMutation],
+  );
+
+  const handleCreateDocument = createDocumentMutation.mutate;
+
+  const handleDeleteDocument = useCallback(
+    (...options: Parameters<typeof deleteDocumentMutation.mutate>) =>
+      confirm(
+        {
+          title: `Delete ${fullName}?`,
+          description: `Are you sure you want to delete this document? This operation is irreversible.`,
+        },
+        () => deleteDocumentMutation.mutate(...options),
+      ),
+    [confirm, deleteDocumentMutation],
   );
 
   /** Options */
@@ -167,9 +212,18 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
     options: menuOptions,
     disabled: isDisabled,
     isMutating: isMutating,
-    mutations: { update: updateMutation, delete: deleteMutation },
+    mutations: {
+      update: updateMutation,
+      delete: deleteMutation,
+      documents: {
+        create: createDocumentMutation,
+        delete: deleteDocumentMutation,
+      },
+    },
     update: handleUpdate,
     delete: handleDelete,
+    createDocument: handleCreateDocument,
+    deleteDocument: handleDeleteDocument,
     view: handleView,
     edit: handleEdit,
   };

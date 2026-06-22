@@ -53,7 +53,7 @@ export const contactEndpoints = {
         const formData = new FormData();
         formData.append("file", body.file);
         formData.append("label", body.label);
-        formData.append("description", body.description);
+        if (body.description) formData.append("description", body.description);
         return api
           .post<TDocument>(`/contacts/${id}/documents/`, formData)
           .then(({ data }) => data);

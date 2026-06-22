@@ -4,36 +4,33 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
-import { useDropzone } from "react-dropzone";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Container,
-  Grid,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { Container, Stack, Tab, Tabs } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { useDropzone } from "react-dropzone";
+import useContact from "@/store/hooks/useContact";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
-import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
+import DocumentList from "@/containers/lists/DocumentList";
 import { contactEndpoints } from "@/store/constants/contacts";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
-import type { TDocumentCreate } from "@/store/types/documents";
+import { EListVariant } from "@/store/enums/layout";
+import type { TDocument } from "@/store/types/documents";
 
 enum ETabs {
   Overview = "overview",
   Documents = "documents",
   History = "history",
 }
+
 const paramsSchema = z.object({
   tab: z.nativeEnum(ETabs).catch(ETabs.Overview),
+  variant: z.nativeEnum(EListVariant).catch(EListVariant.List),
+  search: z.string().optional(),
+  page: z.number().min(1).catch(1),
+  pageSize: z.number().min(1).catch(20),
 });
 const defaultParams = paramsSchema.parse({});
 
@@ -101,8 +98,10 @@ function RouteComponent() {
 const DocumentsTab: React.FC = () => {
   /** Values */
 
-  const snackbar = useSnackbar();
+  const navigate = useNavigate();
   const { contact } = Route.useRouteContext();
+  const { variant, search, page, pageSize } = Route.useSearch();
+  const { createDocument, deleteDocument } = useContact(contact);
 
   /** Queries */
 
@@ -111,41 +110,11 @@ const DocumentsTab: React.FC = () => {
     queryFn: () => contactEndpoints.contact(contact.id).documents().get(),
   });
 
-  /** Mutations */
-
-  const contactDocumentUploadMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).documents().id,
-      "upload",
-    ],
-    mutationFn: (body: TDocumentCreate) =>
-      contactEndpoints.contact(contact.id).documents().post(body),
-    onSuccess: () =>
-      snackbar.enqueueSnackbar("Upload successful", { variant: "success" }),
-    onError: () =>
-      snackbar.enqueueSnackbar("Upload failed", { variant: "error" }),
-  });
-
-  const contactDocumentDeleteMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).documents().id,
-      "delete",
-    ],
-    mutationFn: (id: number) =>
-      contactEndpoints.contact(contact.id).documents().document(id).delete(),
-    onSuccess: () => {
-      snackbar.enqueueSnackbar("Delete successful", { variant: "success" });
-      contactDocumentListQuery.refetch();
-    },
-    onError: () =>
-      snackbar.enqueueSnackbar("Delete failed", { variant: "error" }),
-  });
-
   const { getRootProps, isDragActive } = useDropzone({
     multiple: true,
     onDrop: (acceptedFiles) => {
       acceptedFiles.forEach((file) =>
-        contactDocumentUploadMutation.mutate(
+        createDocument(
           { label: file.name, description: "", file },
           { onSuccess: () => contactDocumentListQuery.refetch() },
         ),
@@ -153,54 +122,71 @@ const DocumentsTab: React.FC = () => {
     },
   });
 
+  /** Options */
+
+  const getCardOptions = (document: TDocument): IMenuOption[] => [
+    {
+      id: "delete",
+      label: "Delete",
+      value: "delete",
+      color: "error.main",
+      Icon: Delete,
+      onClick: () =>
+        deleteDocument(document.id, {
+          onSuccess: () => contactDocumentListQuery.refetch(),
+        }),
+    },
+  ];
+
   return (
     <Container sx={{ display: "flex", flexGrow: 1, overflow: "auto" }}>
-      <Grid
-        container
-        spacing={2}
-        {...getRootProps()}
-        sx={[
-          { flexGrow: 1, mb: 2 },
-          isDragActive && {
-            bgcolor: ({ palette }) => palette.action.hover,
-            opacity: 0.5,
+      <DocumentList
+        items={contactDocumentListQuery.data?.results ?? []}
+        count={contactDocumentListQuery.data?.count ?? -1}
+        page={page}
+        pageSize={pageSize}
+        search={search}
+        loading={contactDocumentListQuery.isLoading}
+        error={contactDocumentListQuery.error}
+        variant={variant}
+        onSearchChange={(search) =>
+          navigate({ to: ".", search: (s) => ({ ...s, search }) })
+        }
+        onPageChange={(page) =>
+          navigate({ to: ".", search: (s) => ({ ...s, page }) })
+        }
+        onPageSizeChange={(pageSize) =>
+          navigate({ to: ".", search: (s) => ({ ...s, pageSize }) })
+        }
+        onVariantChange={(variant) =>
+          navigate({ to: ".", search: (s) => ({ ...s, variant }) })
+        }
+        slotProps={{
+          header: {
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            bgcolor: "background.paper",
           },
-        ]}
-      >
-        {contactDocumentListQuery.data?.results.map((document) => (
-          <Grid key={document.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="140"
-                image={document.thumbnail ?? undefined}
-                alt={document.original_filename}
-              />
-              <CardContent>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography>{document.label}</Typography>
-                  <MenuOptionIconButton
-                    options={[
-                      {
-                        id: "delete",
-                        label: "Delete",
-                        value: "delete",
-                        onClick: () =>
-                          contactDocumentDeleteMutation.mutate(document.id),
-                      },
-                    ]}
-                  />
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+          list: {
+            ...getRootProps(),
+            sx: [
+              { flexGrow: 1 },
+              isDragActive && {
+                opacity: 0.5,
+                bgcolor: (theme) => theme.palette.action.hover,
+              },
+            ],
+          },
+          card: (document) => ({
+            options: getCardOptions(document),
+            onClick: () => {
+              console.log("Document clicked:", document);
+            },
+          }),
+        }}
+        sx={{ flexGrow: 1, mb: 2 }}
+      />
     </Container>
   );
 };
