@@ -13,3 +13,9 @@ export const documentSchema = z.object({
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
 });
+
+export const documentCreateSchema = z.object({
+  label: z.string(),
+  description: z.string(),
+  file: z.instanceof(File),
+});

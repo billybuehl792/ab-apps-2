@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { documentCreateSchema } from "../schemas/documents";
+
 export interface TDocument {
   id: number;
   label: string;
@@ -11,11 +14,7 @@ export interface TDocument {
   updated_at: string;
 }
 
-export interface TDocumentCreate {
-  file: File;
-  label?: string;
-  description?: string;
-}
+export type TDocumentCreate = z.infer<typeof documentCreateSchema>;
 
 export interface TDocumentUpdate {
   label?: string;

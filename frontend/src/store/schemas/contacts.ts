@@ -60,3 +60,9 @@ export const contactListRequestSchema = listRequestSchema.extend({
 export const contactListResponseSchema = listResponseSchema.extend({
   results: z.array(contactSchema),
 });
+
+export const contactDocumentListRequestSchema = listRequestSchema;
+
+export const contactDocumentListResponseSchema = listResponseSchema.extend({
+  results: z.array(documentSchema),
+});

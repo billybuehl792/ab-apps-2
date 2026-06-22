@@ -7,8 +7,14 @@ import type {
   TContactUpdate,
   TContactListRequest,
   TContactListResponse,
+  TContactDocumentListRequest,
+  TContactDocumentListResponse,
 } from "../types/contacts";
-import type { TDocument, TDocumentCreate } from "../types/documents";
+import type {
+  TDocument,
+  TDocumentCreate,
+  TDocumentUpdate,
+} from "../types/documents";
 
 /** Icons */
 
@@ -22,39 +28,52 @@ export const ContactIcons = {
 
 export const contactEndpoints = {
   id: ["contacts"] as const,
-  url: "/contacts/",
   get: (options?: TContactListRequest) =>
     api
-      .get<TContactListResponse>(contactEndpoints.url, options)
-      .then((res) => res.data),
+      .get<TContactListResponse>(`/contacts/`, options)
+      .then(({ data }) => data),
   post: (body: TContactCreate) =>
-    api.post<TContact>(contactEndpoints.url, body).then((res) => res.data),
+    api.post<TContact>(`/contacts/`, body).then(({ data }) => data),
   contact: (id: TContact["id"]) => ({
-    id: [...contactEndpoints.id, "contact", id] as const,
-    url: `${contactEndpoints.url}${id}/`,
-    get: () =>
-      api
-        .get<TContact>(contactEndpoints.contact(id).url)
-        .then((res) => res.data),
+    id: ["contacts", "contact", id] as const,
+    get: () => api.get<TContact>(`/contacts/${id}/`).then(({ data }) => data),
     patch: (body: TContactUpdate) =>
-      api
-        .patch<TContact>(contactEndpoints.contact(id).url, body)
-        .then((res) => res.data),
-    delete: () =>
-      api
-        .delete<void>(contactEndpoints.contact(id).url)
-        .then((res) => res.data),
-    uploadDocument: (body: TDocumentCreate) => {
-      const formData = new FormData();
-      formData.append("file", body.file);
-      if (body.label) formData.append("label", body.label);
-      if (body.description) formData.append("description", body.description);
-      return api
-        .post<TDocument>(`/contacts/${id}/documents/`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-        .then((res) => res.data);
-    },
+      api.patch<TContact>(`/contacts/${id}/`, body).then(({ data }) => data),
+    delete: () => api.delete<void>(`/contacts/${id}/`).then(({ data }) => data),
+    documents: () => ({
+      id: ["contacts", "contact", id, "documents"] as const,
+      get: (options?: TContactDocumentListRequest) =>
+        api
+          .get<TContactDocumentListResponse>(
+            `/contacts/${id}/documents/`,
+            options,
+          )
+          .then(({ data }) => data),
+      post: (body: TDocumentCreate) => {
+        const formData = new FormData();
+        formData.append("file", body.file);
+        formData.append("label", body.label);
+        formData.append("description", body.description);
+        return api
+          .post<TDocument>(`/contacts/${id}/documents/`, formData)
+          .then(({ data }) => data);
+      },
+      document: (documentId: TDocument["id"]) => ({
+        id: ["contacts", "contact", id, "documents", documentId] as const,
+        get: () =>
+          api
+            .get<TDocument>(`/contacts/${id}/documents/${documentId}/`)
+            .then(({ data }) => data),
+        patch: (body: TDocumentUpdate) =>
+          api
+            .patch<TDocument>(`/contacts/${id}/documents/${documentId}/`, body)
+            .then(({ data }) => data),
+        delete: () =>
+          api
+            .delete<void>(`/contacts/${id}/documents/${documentId}/`)
+            .then(({ data }) => data),
+      }),
+    }),
   }),
 };
 
