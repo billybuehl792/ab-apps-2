@@ -28,7 +28,7 @@ enum ETabs {
 
 const paramsSchema = documentListRequestSchema.shape.params.extend({
   tab: z.nativeEnum(ETabs).catch(ETabs.Overview),
-  variant: z.nativeEnum(EListVariant).catch(EListVariant.List),
+  listVariant: z.nativeEnum(EListVariant).catch(EListVariant.List),
 });
 const defaultParams = paramsSchema.parse({});
 
@@ -68,25 +68,21 @@ function RouteComponent() {
   const navigate = useNavigate();
 
   return (
-    <Stack height="100%">
-      <Container>
-        <Stack spacing={1} py={2}>
-          <ContactDetailCard contact={contact} />
-          <Stack spacing={2}>
-            <Tabs
-              value={tab}
-              variant="scrollable"
-              scrollButtons={false}
-              onChange={(_, tab) =>
-                navigate({ to: ".", replace: true, search: { tab } })
-              }
-            >
-              {Object.values(ETabs).map((tab) => (
-                <Tab key={tab} label={tab.toTitleCase()} value={tab} />
-              ))}
-            </Tabs>
-          </Stack>
-        </Stack>
+    <Stack width="100%" height="100%" overflow="auto">
+      <Container sx={{ mt: 2, mb: 2 }}>
+        <ContactDetailCard contact={contact} sx={{ mb: 1 }} />
+        <Tabs
+          value={tab}
+          variant="scrollable"
+          scrollButtons={false}
+          onChange={(_, tab) =>
+            navigate({ to: ".", replace: true, search: { tab } })
+          }
+        >
+          {Object.values(ETabs).map((tab) => (
+            <Tab key={tab} label={tab.toTitleCase()} value={tab} />
+          ))}
+        </Tabs>
       </Container>
       {tab === "documents" && <DocumentsTab />}
     </Stack>
@@ -98,7 +94,7 @@ const DocumentsTab: React.FC = () => {
 
   const navigate = useNavigate();
   const { contact } = Route.useRouteContext();
-  const { tab, variant, ...params } = Route.useSearch();
+  const { tab, listVariant, ...params } = Route.useSearch();
   const { createDocument, deleteDocument } = useContact(contact);
 
   /** Queries */
@@ -149,7 +145,7 @@ const DocumentsTab: React.FC = () => {
   ];
 
   return (
-    <Container sx={{ display: "flex", flexGrow: 1, overflow: "auto" }}>
+    <Container sx={{ display: "flex", flexGrow: 1 }}>
       <DocumentList
         items={contactDocumentListQuery.data?.results ?? []}
         count={contactDocumentListQuery.data?.count ?? -1}
@@ -158,22 +154,16 @@ const DocumentsTab: React.FC = () => {
         search={params.search}
         loading={contactDocumentListQuery.isLoading}
         error={contactDocumentListQuery.error}
-        variant={variant}
+        listVariant={listVariant}
         onSearchChange={(search) => handleOnParamsChange({ search })}
         onPageChange={(page) => handleOnParamsChange({ page })}
         onPageSizeChange={(page_size) => handleOnParamsChange({ page_size })}
-        onVariantChange={(variant) => handleOnParamsChange({ variant })}
+        onVariantChange={(listVariant) => handleOnParamsChange({ listVariant })}
         slotProps={{
-          header: {
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-            bgcolor: "background.paper",
-          },
           list: {
             ...getRootProps(),
             sx: [
-              { flexGrow: 1, pb: 2 },
+              { flexGrow: 1 },
               isDragActive && {
                 opacity: 0.5,
                 bgcolor: (theme) => theme.palette.action.hover,
@@ -187,7 +177,7 @@ const DocumentsTab: React.FC = () => {
             },
           }),
         }}
-        sx={{ flexGrow: 1, width: "100%" }}
+        sx={{ flexGrow: 1, width: "100%", pb: 2 }}
       />
     </Container>
   );

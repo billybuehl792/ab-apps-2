@@ -14,18 +14,20 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ListVariantSwitch from "@/components/fields/ListVariantSwitch";
 import { EListVariant } from "@/store/enums/layout";
 import type { TDocument } from "@/store/types/documents";
+import StatusWrapper, {
+  type IStatusWrapperBaseProps,
+} from "@/components/layout/StatusWrapper";
 
 type TCardProps = Partial<Omit<IDocumentListCardProps, "document">>;
 
-export interface IDocumentListProps extends StackProps {
+export interface IDocumentListProps
+  extends StackProps, IStatusWrapperBaseProps {
   items: TDocument[];
   count: number;
-  variant?: EListVariant;
+  listVariant?: EListVariant;
   page: number;
   pageSize: number;
   search?: string;
-  loading?: boolean;
-  error?: Error | null;
   disabled?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
@@ -41,12 +43,13 @@ export interface IDocumentListProps extends StackProps {
 const DocumentList: React.FC<IDocumentListProps> = ({
   items,
   count,
-  variant,
+  listVariant,
   page,
   pageSize,
   search,
   loading,
   error,
+  empty,
   disabled,
   onSearchChange,
   onPageChange,
@@ -58,7 +61,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   /** Values */
 
   const showHeader = !!onSearchChange || !!onVariantChange;
-  const isGrid = variant === EListVariant.Grid;
+  const isGrid = listVariant === EListVariant.Grid;
   const pageCount = Math.ceil(count / pageSize);
 
   /** Callbacks */
@@ -66,7 +69,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   const renderCard = (document: TDocument) => (
     <DocumentListCard
       document={document}
-      listVariant={variant}
+      listVariant={listVariant}
       {...(typeof slotProps?.card === "function"
         ? slotProps.card(document)
         : slotProps?.card)}
@@ -115,26 +118,39 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           ? { component: Grid, container: true }
           : { component: Stack })}
       >
-        {items.map((document) =>
-          isGrid ? (
-            <Grid key={document.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              {renderCard(document)}
-            </Grid>
-          ) : (
-            <Fragment key={document.id}>{renderCard(document)}</Fragment>
-          ),
-        )}
+        <StatusWrapper
+          loading={loading}
+          error={error}
+          empty={
+            empty ||
+            (items.length === 0 && {
+              label: "No Documents",
+              description: !!search?.trim()
+                ? `No documents found for "${search}"`
+                : undefined,
+            })
+          }
+        >
+          {items.map((document) =>
+            isGrid ? (
+              <Grid key={document.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                {renderCard(document)}
+              </Grid>
+            ) : (
+              <Fragment key={document.id}>{renderCard(document)}</Fragment>
+            ),
+          )}
+        </StatusWrapper>
       </Box>
-      {pageCount > 1 && (
-        <Stack direction="row" justifyContent="center">
-          <Pagination
-            count={pageCount}
-            variant="outlined"
-            page={page}
-            onChange={(_, newPage) => onPageChange?.(newPage)}
-          />
-        </Stack>
-      )}
+      <Stack direction="row" justifyContent="center">
+        <Pagination
+          page={page}
+          count={pageCount}
+          variant="outlined"
+          disabled={disabled}
+          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
+        />
+      </Stack>
     </Stack>
   );
 };
