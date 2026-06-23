@@ -13,7 +13,8 @@ import useContact from "@/store/hooks/useContact";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import DocumentList from "@/containers/lists/DocumentList";
-import { contactEndpoints } from "@/store/constants/contacts";
+import { documentListRequestSchema } from "@/store/schemas/documents";
+import contactEndpoints from "@/store/endpoints/contacts";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import { EListVariant } from "@/store/enums/layout";
@@ -25,12 +26,9 @@ enum ETabs {
   History = "history",
 }
 
-const paramsSchema = z.object({
+const paramsSchema = documentListRequestSchema.shape.params.extend({
   tab: z.nativeEnum(ETabs).catch(ETabs.Overview),
   variant: z.nativeEnum(EListVariant).catch(EListVariant.List),
-  search: z.string().optional(),
-  page: z.number().min(1).catch(1),
-  pageSize: z.number().min(1).catch(20),
 });
 const defaultParams = paramsSchema.parse({});
 
@@ -79,8 +77,8 @@ function RouteComponent() {
               value={tab}
               variant="scrollable"
               scrollButtons={false}
-              onChange={(_, newValue) =>
-                navigate({ to: ".", search: (s) => ({ ...s, tab: newValue }) })
+              onChange={(_, tab) =>
+                navigate({ to: ".", replace: true, search: { tab } })
               }
             >
               {Object.values(ETabs).map((tab) => (
@@ -100,14 +98,15 @@ const DocumentsTab: React.FC = () => {
 
   const navigate = useNavigate();
   const { contact } = Route.useRouteContext();
-  const { variant, search, page, pageSize } = Route.useSearch();
+  const { tab, variant, ...params } = Route.useSearch();
   const { createDocument, deleteDocument } = useContact(contact);
 
   /** Queries */
 
   const contactDocumentListQuery = useQuery({
-    queryKey: ["contactDocuments", contact.id],
-    queryFn: () => contactEndpoints.contact(contact.id).documents().get(),
+    queryKey: ["contactDocuments", contact.id, { params }],
+    queryFn: () =>
+      contactEndpoints.contact(contact.id).documents().get({ params }),
   });
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -121,6 +120,17 @@ const DocumentsTab: React.FC = () => {
       );
     },
   });
+
+  /** Callbacks */
+
+  const handleOnParamsChange = (
+    newParams: Partial<z.infer<typeof paramsSchema>>,
+  ) =>
+    navigate({
+      to: ".",
+      replace: true,
+      search: (s) => ({ ...s, ...newParams }),
+    });
 
   /** Options */
 
@@ -143,24 +153,16 @@ const DocumentsTab: React.FC = () => {
       <DocumentList
         items={contactDocumentListQuery.data?.results ?? []}
         count={contactDocumentListQuery.data?.count ?? -1}
-        page={page}
-        pageSize={pageSize}
-        search={search}
+        page={params.page}
+        pageSize={params.page_size}
+        search={params.search}
         loading={contactDocumentListQuery.isLoading}
         error={contactDocumentListQuery.error}
         variant={variant}
-        onSearchChange={(search) =>
-          navigate({ to: ".", search: (s) => ({ ...s, search }) })
-        }
-        onPageChange={(page) =>
-          navigate({ to: ".", search: (s) => ({ ...s, page }) })
-        }
-        onPageSizeChange={(pageSize) =>
-          navigate({ to: ".", search: (s) => ({ ...s, pageSize }) })
-        }
-        onVariantChange={(variant) =>
-          navigate({ to: ".", search: (s) => ({ ...s, variant }) })
-        }
+        onSearchChange={(search) => handleOnParamsChange({ search })}
+        onPageChange={(page) => handleOnParamsChange({ page })}
+        onPageSizeChange={(page_size) => handleOnParamsChange({ page_size })}
+        onVariantChange={(variant) => handleOnParamsChange({ variant })}
         slotProps={{
           header: {
             position: "sticky",
@@ -171,7 +173,7 @@ const DocumentsTab: React.FC = () => {
           list: {
             ...getRootProps(),
             sx: [
-              { flexGrow: 1 },
+              { flexGrow: 1, pb: 2 },
               isDragActive && {
                 opacity: 0.5,
                 bgcolor: (theme) => theme.palette.action.hover,
@@ -185,7 +187,7 @@ const DocumentsTab: React.FC = () => {
             },
           }),
         }}
-        sx={{ flexGrow: 1, mb: 2 }}
+        sx={{ flexGrow: 1, width: "100%" }}
       />
     </Container>
   );

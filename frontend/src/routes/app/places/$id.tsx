@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container, Stack } from "@mui/material";
-import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
+import { PlaceIcons } from "@/store/constants/places";
+import placeEndpoints from "@/store/endpoints/places";
 import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
 import PlaceDetailCard from "@/containers/cards/PlaceMapCard";

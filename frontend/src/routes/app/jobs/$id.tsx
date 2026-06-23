@@ -1,7 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container } from "@mui/material";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
-import { jobEndpoints, JobIcons } from "@/store/constants/jobs";
+import { JobIcons } from "@/store/constants/jobs";
+import jobEndpoints from "@/store/endpoints/jobs";
 import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
 

@@ -1,6 +1,6 @@
 import { Autocomplete, type AutocompleteProps, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { placeEndpoints } from "@/store/constants/places";
+import placeEndpoints from "@/store/endpoints/places";
 
 type TCityAutocompleteProps<
   Multiple extends boolean = false,

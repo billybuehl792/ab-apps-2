@@ -6,7 +6,8 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import JobListCard from "./components/cards/JobListCard";
 import JobCreateButton from "@/containers/buttons/JobCreateButton";
 import JobListOrderingField from "./components/fields/JobListOrderingField";
-import { jobEndpoints, JobIcons } from "@/store/constants/jobs";
+import { JobIcons } from "@/store/constants/jobs";
+import jobEndpoints from "@/store/endpoints/jobs";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TJob, TJobListRequest } from "@/store/types/jobs";
 

@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container } from "@mui/material";
-import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
+import contactEndpoints from "@/store/endpoints/contacts";
 import { errorUtils } from "@/store/utils/error";
 import { idSchema } from "@/store/schemas/basic";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";

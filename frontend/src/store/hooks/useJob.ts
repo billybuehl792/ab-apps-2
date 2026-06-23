@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import { jobEndpoints } from "../constants/jobs";
+import jobEndpoints from "../endpoints/jobs";
 import { EJobOptionId } from "../enums/jobs";
 import { EObjectChangeType } from "../enums/api";
 import type { TJob } from "../types/jobs";

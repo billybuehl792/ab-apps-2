@@ -26,7 +26,6 @@ interface IGridCardBaseProps {
   headerContent?: ReactNode;
   label?: ReactNode;
   description?: ReactNode;
-  footerContent?: ReactNode;
 }
 
 export interface IGridCardProps
@@ -62,12 +61,14 @@ interface IGridCardActionsProps extends StackProps<typeof CardActions> {
   };
 }
 
+const CARD_CONTENT_HEIGHT = 48;
+const CARD_ACTIONS_WIDTH = 32;
+
 const GridCard: React.FC<IGridCardProps> = ({
   image,
   headerContent,
   label,
   description,
-  footerContent,
   link,
   disabled,
   selected,
@@ -80,13 +81,42 @@ const GridCard: React.FC<IGridCardProps> = ({
 
   const Content = useMemo(
     () => (
-      <GridCardContent
-        label={label}
-        description={description}
-        {...slotProps?.cardContent}
-      />
+      <>
+        {headerContent && (
+          <CardHeader
+            title={headerContent}
+            {...slotProps?.cardHeader}
+            sx={[
+              { pt: 1, pb: 0 },
+              ...sxUtils.asArray(slotProps?.cardHeader?.sx),
+            ]}
+          />
+        )}
+        {image && (
+          <CardMedia
+            component="img"
+            height="200"
+            image={image}
+            alt={typeof label === "string" ? label : "Card image"}
+            {...slotProps?.cardMedia}
+          />
+        )}
+        <GridCardContent
+          label={label}
+          description={description}
+          {...slotProps?.cardContent}
+        />
+      </>
     ),
-    [label, description, slotProps?.cardContent],
+    [
+      label,
+      image,
+      headerContent,
+      description,
+      slotProps?.cardContent,
+      slotProps?.cardHeader,
+      slotProps?.cardMedia,
+    ],
   );
 
   return (
@@ -97,22 +127,6 @@ const GridCard: React.FC<IGridCardProps> = ({
       data-disabled={disabled}
       {...props}
     >
-      {image && (
-        <CardMedia
-          component="img"
-          height="200"
-          image={image}
-          alt={typeof label === "string" ? label : "Card image"}
-          {...slotProps?.cardMedia}
-        />
-      )}
-      {headerContent && (
-        <CardHeader
-          title={headerContent}
-          {...slotProps?.cardHeader}
-          sx={[{ pt: 1, pb: 0 }, ...sxUtils.asArray(slotProps?.cardHeader?.sx)]}
-        />
-      )}
       {link ? (
         <CardActionAreaLink {...link} disabled={disabled} onClick={onClick}>
           {Content}
@@ -131,11 +145,6 @@ const GridCard: React.FC<IGridCardProps> = ({
           {...slotProps?.cardActions}
         />
       )}
-      {footerContent && (
-        <Stack component={CardContent} spacing={1} sx={{ pt: 0 }}>
-          {footerContent}
-        </Stack>
-      )}
     </Stack>
   );
 };
@@ -147,20 +156,32 @@ const GridCardContent: React.FC<IGridCardContentProps> = ({
   ...props
 }) => {
   return (
-    <CardContent component={Stack} spacing={1} {...props}>
+    <CardContent
+      component={Stack}
+      spacing={0.5}
+      {...props}
+      sx={[
+        {
+          height: CARD_CONTENT_HEIGHT,
+          justifyContent: "center",
+          pr: CARD_ACTIONS_WIDTH / 4,
+        },
+        ...sxUtils.asArray(props.sx),
+      ]}
+    >
       {!!label && (
         <GridCardContentElement
           value={label}
-          variant="subtitle1"
-          fontWeight={600}
+          variant="body1"
+          noWrap
           {...slotProps?.title}
         />
       )}
       {!!description && (
         <GridCardContentElement
           value={description}
-          variant="body2"
-          color="text.secondary"
+          variant="caption"
+          noWrap
           {...slotProps?.description}
         />
       )}
@@ -177,20 +198,25 @@ const GridCardActions: React.FC<IGridCardActionsProps> = ({
   return (
     <Stack
       component={CardActions}
-      position="absolute"
-      top={0}
-      right={0}
-      p={1}
       direction="row"
-      alignItems="center"
-      justifyContent="center"
       {...props}
-      sx={[{ pointerEvents: "none" }, ...sxUtils.asArray(props.sx)]}
+      sx={[
+        {
+          position: "absolute",
+          height: CARD_CONTENT_HEIGHT,
+          width: CARD_ACTIONS_WIDTH,
+          bottom: 0,
+          right: 0,
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "none",
+        },
+        ...sxUtils.asArray(props.sx),
+      ]}
     >
       {!!options?.length && (
         <MenuOptionIconButton
           options={options}
-          size="medium"
           disabled={disabled}
           {...slotProps?.optionsIconButton}
           sx={[

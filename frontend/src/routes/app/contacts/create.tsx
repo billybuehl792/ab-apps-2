@@ -5,7 +5,8 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
-import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
+import contactEndpoints from "@/store/endpoints/contacts";
 import ContactCreateForm, {
   type IContactCreateFormProps,
 } from "@/containers/forms/ContactCreateForm";

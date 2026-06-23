@@ -4,7 +4,8 @@ import { Divider, Stack, type StackProps } from "@mui/material";
 import PaginatedList from "@/components/lists/PaginatedList";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import PlaceListCard from "./components/cards/PlaceListCard";
-import { placeEndpoints, PlaceIcons } from "@/store/constants/places";
+import { PlaceIcons } from "@/store/constants/places";
+import placeEndpoints from "@/store/endpoints/places";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TPlace, TPlaceListRequest } from "@/store/types/places";
 

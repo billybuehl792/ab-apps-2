@@ -99,10 +99,8 @@ const DocumentList: React.FC<IDocumentListProps> = ({
             {!!onVariantChange && (
               <ListVariantSwitch
                 checked={isGrid}
-                onChange={(_, checked) =>
-                  onVariantChange?.(
-                    checked ? EListVariant.Grid : EListVariant.List,
-                  )
+                onChange={(_, v) =>
+                  onVariantChange(v ? EListVariant.Grid : EListVariant.List)
                 }
               />
             )}

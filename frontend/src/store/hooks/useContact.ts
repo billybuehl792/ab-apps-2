@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
-import { contactEndpoints } from "../constants/contacts";
+import contactEndpoints from "../endpoints/contacts";
 import { errorUtils } from "../utils/error";
 import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";

@@ -6,10 +6,10 @@ import {
 } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
 import { JobIcons } from "@/store/constants/jobs";
+import jobEndpoints from "@/store/endpoints/jobs";
 import JobCreateForm, {
   type IJobCreateFormProps,
 } from "@/containers/forms/JobCreateForm";
-import { jobEndpoints } from "@/store/constants/jobs";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";

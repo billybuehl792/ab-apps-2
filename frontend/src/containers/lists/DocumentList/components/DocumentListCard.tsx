@@ -38,7 +38,7 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
         label={document.label}
         description={document.original_filename}
         options={options}
-        onClick={() => onClick?.(document)}
+        {...(!!onClick && { onClick: () => onClick?.(document) })}
         {...props}
       />
     );
@@ -54,7 +54,7 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
           sx={{ width: 48, height: 48, borderRadius: 1 }}
         />
       }
-      onClick={() => onClick?.(document)}
+      {...(!!onClick && { onClick: () => onClick?.(document) })}
       {...props}
     />
   );
