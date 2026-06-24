@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   createFileRoute,
   stripSearchParams,
@@ -6,13 +7,14 @@ import {
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { Container, Stack, Tab, Tabs } from "@mui/material";
+import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import useContact from "@/store/hooks/useContact";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import DocumentList from "@/containers/lists/DocumentList";
+import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import { documentListRequestSchema } from "@/store/schemas/documents";
 import contactEndpoints from "@/store/endpoints/contacts";
 import { EContactOptionId } from "@/store/enums/contacts";
@@ -91,6 +93,11 @@ function RouteComponent() {
 
 const DocumentsTab: React.FC = () => {
   /** Values */
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TDocument | null>(
+    null,
+  );
 
   const navigate = useNavigate();
   const { contact } = Route.useRouteContext();
@@ -173,12 +180,29 @@ const DocumentsTab: React.FC = () => {
           card: (document) => ({
             options: getCardOptions(document),
             onClick: () => {
-              console.log("Document clicked:", document);
+              setSelectedDocument(document);
+              setDialogOpen(true);
             },
           }),
         }}
         sx={{ flexGrow: 1, width: "100%", pb: 2 }}
       />
+      <FullScreenDialog
+        open={dialogOpen}
+        label={selectedDocument?.label ?? ""}
+        onClose={() => setDialogOpen(false)}
+        onTransitionExited={() => setSelectedDocument(null)}
+        slotProps={{
+          backdrop: { sx: { opacity: 0.5 } },
+        }}
+      >
+        <Box
+          component="img"
+          src={selectedDocument?.file ?? ""}
+          alt={selectedDocument?.label ?? ""}
+          sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+        />
+      </FullScreenDialog>
     </Container>
   );
 };

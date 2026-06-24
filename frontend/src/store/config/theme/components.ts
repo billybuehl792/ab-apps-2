@@ -21,6 +21,16 @@ declare module "@mui/material/SvgIcon" {
 const components: Components<
   Omit<Theme, "palette" | "components"> & CssVarsTheme
 > = {
+  MuiAppBar: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        height: theme.layout.nav.height,
+      }),
+    },
+    defaultProps: {
+      variant: "outlined",
+    },
+  },
   MuiAvatar: {
     defaultProps: {
       sx: {

@@ -56,7 +56,7 @@ function RouteComponent() {
 
   return (
     <>
-      <NavBar sx={(theme) => ({ height: theme.layout.nav.height })} />
+      <NavBar />
       {isDesktop && (
         <Paper
           component="nav"
