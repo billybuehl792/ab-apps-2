@@ -1,9 +1,4 @@
-import {
-  createFileRoute,
-  stripSearchParams,
-  useNavigate,
-} from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { Container } from "@mui/material";
 import JobList, { type IJobListProps } from "@/containers/lists/JobList";
 import JobCreateButton from "@/containers/buttons/JobCreateButton";
@@ -13,7 +8,7 @@ const paramsSchema = jobListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/jobs/")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  validateSearch: paramsSchema,
   search: { middlewares: [stripSearchParams(defaultParams)] },
   beforeLoad: () => ({
     crumb: null,
@@ -26,14 +21,14 @@ function RouteComponent() {
   /* Values */
 
   const params = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   /** Callbacks */
 
   const handleOnParamsChange: IJobListProps["onParamsChange"] = (newParams) =>
     navigate({
       to: ".",
-      search: paramsSchema.parse(newParams),
+      search: newParams,
       replace: true,
     });
 

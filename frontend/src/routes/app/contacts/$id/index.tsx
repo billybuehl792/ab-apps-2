@@ -4,7 +4,6 @@ import {
   stripSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
@@ -29,8 +28,11 @@ enum ETabs {
 }
 
 const paramsSchema = documentListRequestSchema.shape.params.extend({
-  tab: z.nativeEnum(ETabs).catch(ETabs.Overview),
-  listVariant: z.nativeEnum(EListVariant).catch(EListVariant.List),
+  tab: z.enum(ETabs).default(ETabs.Overview).catch(ETabs.Overview),
+  listVariant: z
+    .enum(EListVariant)
+    .default(EListVariant.List)
+    .catch(EListVariant.List),
 });
 const defaultParams = paramsSchema.parse({});
 
@@ -46,15 +48,15 @@ const PageOptionsIconButton: React.FC = () => {
       hideOptions={[EContactOptionId.Detail]}
       onChange={(_, type) => {
         if (type === EObjectChangeType.Delete)
-          navigate({ to: "/app/contacts" });
+          navigate({ to: "/app/contacts", replace: true });
       }}
     />
   );
 };
 
 export const Route = createFileRoute("/app/contacts/$id/")({
+  validateSearch: paramsSchema,
   search: { middlewares: [stripSearchParams(defaultParams)] },
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
   beforeLoad: () => ({
     crumb: null,
     pageHeaderEndContent: <PageOptionsIconButton />,
@@ -67,7 +69,7 @@ function RouteComponent() {
 
   const { contact } = Route.useRouteContext();
   const { tab } = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   return (
     <Stack width="100%" height="100%" overflow="auto">
@@ -99,7 +101,7 @@ const DocumentsTab: React.FC = () => {
     null,
   );
 
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
   const { contact } = Route.useRouteContext();
   const { tab, listVariant, ...params } = Route.useSearch();
   const { createDocument, deleteDocument } = useContact(contact);

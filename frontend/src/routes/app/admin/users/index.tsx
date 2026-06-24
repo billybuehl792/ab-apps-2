@@ -1,5 +1,4 @@
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Add } from "@mui/icons-material";
 import { userListRequestSchema } from "@/store/schemas/account";
 import StatusWrapper from "@/components/layout/StatusWrapper";
@@ -10,7 +9,7 @@ const paramsSchema = userListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/admin/users/")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  validateSearch: paramsSchema,
   search: { middlewares: [stripSearchParams(defaultParams)] },
   beforeLoad: () => ({
     crumb: null,

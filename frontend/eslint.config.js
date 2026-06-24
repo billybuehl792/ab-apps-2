@@ -12,7 +12,7 @@ export default defineConfig([
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
-      reactHooks.configs["recommended-latest"],
+      reactHooks.configs.flat["recommended-latest"],
       reactRefresh.configs.vite,
     ],
     languageOptions: {
@@ -35,6 +35,10 @@ export default defineConfig([
           varsIgnorePattern: "^_",
           ignoreRestSiblings: true,
         },
+      ],
+      "react-refresh/only-export-components": [
+        "off",
+        { allowExportNames: ["Route"] },
       ],
     },
   },

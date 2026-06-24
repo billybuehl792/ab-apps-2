@@ -1,9 +1,4 @@
-import {
-  createFileRoute,
-  stripSearchParams,
-  useNavigate,
-} from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { Container } from "@mui/material";
 import PlaceList, { type IPlaceListProps } from "@/containers/lists/PlaceList";
 import { placeListRequestSchema } from "@/store/schemas/places";
@@ -12,7 +7,7 @@ const paramsSchema = placeListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/places/")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  validateSearch: paramsSchema,
   search: { middlewares: [stripSearchParams(defaultParams)] },
   component: RouteComponent,
   beforeLoad: () => ({ crumb: null }),
@@ -22,14 +17,14 @@ function RouteComponent() {
   /* Values */
 
   const params = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   /** Callbacks */
 
   const handleOnParamsChange: IPlaceListProps["onParamsChange"] = (newParams) =>
     navigate({
       to: ".",
-      search: paramsSchema.parse(newParams),
+      search: newParams,
       replace: true,
     });
 

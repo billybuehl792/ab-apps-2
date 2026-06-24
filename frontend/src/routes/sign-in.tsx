@@ -4,10 +4,8 @@ import {
   type FileRoutesByPath,
   redirect,
   stripSearchParams,
-  useNavigate,
 } from "@tanstack/react-router";
 import z from "zod";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { Card, CardContent, CardHeader, Divider, Stack } from "@mui/material";
 import useAuth from "@/store/hooks/useAuth";
 import FullScreen from "@/components/layout/FullScreen";
@@ -33,7 +31,7 @@ const paramsSchema = z.object({
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/sign-in")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
+  validateSearch: paramsSchema,
   search: { middlewares: [stripSearchParams(defaultParams)] },
   beforeLoad: async ({ context, search }) => {
     if (search.force) await context.auth.signOut();
@@ -55,7 +53,7 @@ function RouteComponent() {
   /** Values */
 
   const auth = useAuth();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
   const params = Route.useSearch();
 
   /** Callbacks */
