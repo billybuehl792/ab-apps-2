@@ -1,4 +1,4 @@
-import { People, Person, PersonAdd } from "@mui/icons-material";
+import { Delete, Edit, People, Person, PersonAdd } from "@mui/icons-material";
 import { EContactListOrdering } from "../enums/contacts";
 
 /** Icons */
@@ -6,6 +6,8 @@ import { EContactListOrdering } from "../enums/contacts";
 export const ContactIcons = {
   List: People,
   Detail: Person,
+  Edit: Edit,
+  Delete: Delete,
   Create: PersonAdd,
 };
 

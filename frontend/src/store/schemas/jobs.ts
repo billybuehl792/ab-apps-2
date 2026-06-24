@@ -17,15 +17,15 @@ export const jobSchema = z.object({
   referred_by: z.array(contactSchema).default([]),
   place: placeSchema.nullable().default(null),
   documents: z.array(idSchema).default([]),
-  signed_at: z.string().datetime().nullable().default(null),
-  estimated_at: z.string().datetime().nullable().default(null),
-  sold_at: z.string().datetime().nullable().default(null),
-  invoiced_at: z.string().datetime().nullable().default(null),
-  scheduled_at: z.string().datetime().nullable().default(null),
-  completed_at: z.string().datetime().nullable().default(null),
-  paid_at: z.string().datetime().nullable().default(null),
-  created_at: z.string().datetime().nullable().default(null),
-  updated_at: z.string().datetime().nullable().default(null),
+  signed_at: z.iso.datetime().nullable().default(null),
+  estimated_at: z.iso.datetime().nullable().default(null),
+  sold_at: z.iso.datetime().nullable().default(null),
+  invoiced_at: z.iso.datetime().nullable().default(null),
+  scheduled_at: z.iso.datetime().nullable().default(null),
+  completed_at: z.iso.datetime().nullable().default(null),
+  paid_at: z.iso.datetime().nullable().default(null),
+  created_at: z.iso.datetime().nullable().default(null),
+  updated_at: z.iso.datetime().nullable().default(null),
 });
 
 export const jobCreateSchema = z.object({
@@ -38,13 +38,13 @@ export const jobCreateSchema = z.object({
   recipients: z.array(idSchema).optional(),
   referred_by: z.array(idSchema).optional(),
   google_place_id: z.string().max(500).optional(),
-  signed_at: z.string().datetime().optional(),
-  estimated_at: z.string().datetime().optional(),
-  scheduled_at: z.string().datetime().optional(),
-  completed_at: z.string().datetime().optional(),
-  sold_at: z.string().datetime().optional(),
-  invoiced_at: z.string().datetime().optional(),
-  paid_at: z.string().datetime().optional(),
+  signed_at: z.iso.datetime().optional(),
+  estimated_at: z.iso.datetime().optional(),
+  scheduled_at: z.iso.datetime().optional(),
+  completed_at: z.iso.datetime().optional(),
+  sold_at: z.iso.datetime().optional(),
+  invoiced_at: z.iso.datetime().optional(),
+  paid_at: z.iso.datetime().optional(),
 });
 
 export const jobUpdateSchema = z.object({
@@ -57,21 +57,21 @@ export const jobUpdateSchema = z.object({
   recipients: z.array(idSchema).optional(),
   referred_by: z.array(idSchema).optional(),
   google_place_id: z.string().max(500).optional(),
-  signed_at: z.string().datetime().nullable().optional(),
-  estimated_at: z.string().datetime().nullable().optional(),
-  scheduled_at: z.string().datetime().nullable().optional(),
-  completed_at: z.string().datetime().nullable().optional(),
-  sold_at: z.string().datetime().nullable().optional(),
-  invoiced_at: z.string().datetime().nullable().optional(),
-  paid_at: z.string().datetime().nullable().optional(),
+  signed_at: z.iso.datetime().nullable().optional(),
+  estimated_at: z.iso.datetime().nullable().optional(),
+  scheduled_at: z.iso.datetime().nullable().optional(),
+  completed_at: z.iso.datetime().nullable().optional(),
+  sold_at: z.iso.datetime().nullable().optional(),
+  invoiced_at: z.iso.datetime().nullable().optional(),
+  paid_at: z.iso.datetime().nullable().optional(),
 });
 
 export const jobListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    ordering: z.nativeEnum(EJobListOrdering).optional(),
+    ordering: z.enum(EJobListOrdering).optional(),
     city: z.string().optional(),
-    completed: z.coerce.boolean().optional(),
-    scheduled: z.coerce.boolean().optional(),
+    completed: z.boolean().optional(),
+    scheduled: z.boolean().optional(),
   }),
 });
 

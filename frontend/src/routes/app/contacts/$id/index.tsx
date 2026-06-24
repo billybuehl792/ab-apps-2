@@ -73,7 +73,7 @@ function RouteComponent() {
 
   return (
     <Stack width="100%" height="100%" overflow="auto">
-      <Container sx={{ mt: 2, mb: 2 }}>
+      <Container sx={{ mt: 2 }}>
         <ContactDetailCard contact={contact} sx={{ mb: 1 }} />
         <Tabs
           value={tab}

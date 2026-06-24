@@ -1,16 +1,16 @@
 import { z } from "zod";
 import { idSchema } from "./basic";
 
-const pageParamSchema = z.coerce.number().int().positive().default(1);
+const pageParamSchema = z.number().int().positive().default(1);
 
-const pageSizeParamSchema = z.coerce
+const pageSizeParamSchema = z
   .number()
   .int()
   .positive()
   .max(100, "Cannot exceed a page size of 100")
   .default(20);
 
-const searchParamSchema = z.coerce
+const searchParamSchema = z
   .string()
   .trim()
   .max(100, "Cannot exceed a search length of 100 characters")

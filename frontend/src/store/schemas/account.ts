@@ -1,5 +1,5 @@
 import z from "zod";
-import { emailSchema, nameSchema, objectSchema } from "./basic";
+import { objectSchema } from "./basic";
 import { EUserGroup, EUserListOrdering } from "../enums/account";
 import { listRequestSchema, listResponseSchema } from "./api";
 
@@ -27,36 +27,33 @@ export const credentialsSchema = z.object({
 
 export const userSchema = objectSchema.extend({
   username: usernameSchema,
-  full_name: nameSchema,
-  first_name: nameSchema,
-  last_name: nameSchema,
-  email: emailSchema,
+  full_name: z.string().min(1, "Full name is required"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.email("Invalid email address"),
   groups: z.array(z.nativeEnum(EUserGroup)),
 });
 
 export const userCreateSchema = z.object({
   username: usernameSchema,
-  first_name: nameSchema,
-  last_name: nameSchema,
-  email: emailSchema,
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.email("Invalid email address"),
   password: passwordSchema,
-  groups: z.array(z.nativeEnum(EUserGroup)).optional(),
+  groups: z.array(z.enum(EUserGroup)).optional(),
 });
 
 export const userUpdateSchema = z.object({
   username: usernameSchema.optional(),
-  first_name: nameSchema.optional(),
-  last_name: nameSchema.optional(),
-  email: emailSchema.optional(),
-  groups: z.array(z.nativeEnum(EUserGroup)).optional(),
+  first_name: z.string().min(1, "First name is required").optional(),
+  last_name: z.string().min(1, "Last name is required").optional(),
+  email: z.email("Invalid email address").optional(),
+  groups: z.array(z.enum(EUserGroup)).optional(),
 });
 
 export const userListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    ordering: z
-      .nativeEnum(EUserListOrdering)
-      .optional()
-      .default(EUserListOrdering.FirstNameAsc),
+    ordering: z.enum(EUserListOrdering).optional().catch(undefined),
   }),
 });
 
@@ -72,7 +69,7 @@ export const accessTokenResponseSchema = z.object({
 });
 
 export const requestPasswordResetRequestSchema = z.object({
-  email: emailSchema,
+  email: z.email("Invalid email address"),
 });
 
 export const resetPasswordRequestSchema = z

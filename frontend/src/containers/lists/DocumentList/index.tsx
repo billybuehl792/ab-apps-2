@@ -80,7 +80,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           {...slotProps?.header}
           sx={[
             {
-              pb: 2,
+              py: 2,
               borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
             },
             ...sxUtils.asArray(slotProps?.header?.sx),

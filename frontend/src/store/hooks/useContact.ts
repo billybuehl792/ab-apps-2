@@ -137,7 +137,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
         },
         () => deleteMutation.mutate(...options),
       ),
-    [confirm, deleteMutation],
+    [confirm, deleteMutation, fullName],
   );
 
   const handleCreateDocument = createDocumentMutation.mutate;
@@ -151,7 +151,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
         },
         () => deleteDocumentMutation.mutate(...options),
       ),
-    [confirm, deleteDocumentMutation],
+    [confirm, deleteDocumentMutation, fullName],
   );
 
   /** Options */
@@ -194,7 +194,13 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           onClick: handleDelete,
         },
       ],
-      [isDisabled, isChangeDisabled, handleDelete, options],
+      [
+        options?.hideOptions,
+        isDisabled,
+        contact.id,
+        isChangeDisabled,
+        handleDelete,
+      ],
     );
 
   const menuOptions = useMemo(
@@ -204,7 +210,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           ? options.options(contact, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [contact, options?.options, baseMenuOptions],
+    [options, contact, baseMenuOptions],
   );
 
   return {

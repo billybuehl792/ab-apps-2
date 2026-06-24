@@ -15,12 +15,12 @@ import CustomLink from "@/components/links/CustomLink";
 
 const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
 const paramsSchema = z.object({
-  force: z.coerce
+  force: z
     .boolean()
     .optional()
     .transform((value) => !!value || undefined)
     .catch(undefined),
-  redirect: z.coerce
+  redirect: z
     .string()
     .optional()
     .transform((value) =>

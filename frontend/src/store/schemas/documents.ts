@@ -11,8 +11,8 @@ export const documentSchema = z.object({
   original_filename: z.string(),
   mime_type: z.string(),
   uploaded_by: idSchema.nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime(),
 });
 
 export const documentCreateSchema = z.object({
