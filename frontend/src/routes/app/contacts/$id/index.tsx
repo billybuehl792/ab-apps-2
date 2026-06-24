@@ -167,7 +167,9 @@ const DocumentsTab: React.FC = () => {
         onSearchChange={(search) => handleOnParamsChange({ search })}
         onPageChange={(page) => handleOnParamsChange({ page })}
         onPageSizeChange={(page_size) => handleOnParamsChange({ page_size })}
-        onVariantChange={(listVariant) => handleOnParamsChange({ listVariant })}
+        onListVariantChange={(listVariant) =>
+          handleOnParamsChange({ listVariant })
+        }
         slotProps={{
           list: {
             ...getRootProps(),

@@ -1,22 +1,16 @@
 import React, { Fragment } from "react";
-import {
-  Box,
-  Divider,
-  Grid,
-  Pagination,
-  Stack,
-  type StackProps,
-} from "@mui/material";
+import { Box, Grid, Pagination, Stack, type StackProps } from "@mui/material";
 import DocumentListCard, {
   type IDocumentListCardProps,
 } from "./components/DocumentListCard";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ListVariantSwitch from "@/components/fields/ListVariantSwitch";
-import { EListVariant } from "@/store/enums/layout";
-import type { TDocument } from "@/store/types/documents";
 import StatusWrapper, {
   type IStatusWrapperBaseProps,
 } from "@/components/layout/StatusWrapper";
+import { sxUtils } from "@/store/utils/sx";
+import { EListVariant } from "@/store/enums/layout";
+import type { TDocument } from "@/store/types/documents";
 
 type TCardProps = Partial<Omit<IDocumentListCardProps, "document">>;
 
@@ -32,7 +26,7 @@ export interface IDocumentListProps
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onSearchChange?: (search: string) => void;
-  onVariantChange?: (variant: EListVariant) => void;
+  onListVariantChange?: (variant: EListVariant) => void;
   slotProps?: {
     header?: StackProps;
     list?: StackProps;
@@ -54,13 +48,13 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   onSearchChange,
   onPageChange,
   onPageSizeChange,
-  onVariantChange,
+  onListVariantChange,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const showHeader = !!onSearchChange || !!onVariantChange;
+  const showHeader = !!onSearchChange || !!onListVariantChange;
   const isGrid = listVariant === EListVariant.Grid;
   const pageCount = Math.ceil(count / pageSize);
 
@@ -79,44 +73,43 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   return (
     <Stack position="relative" spacing={2} {...props}>
       {!!showHeader && (
-        <Stack {...slotProps?.header}>
-          <Stack
-            direction="row"
-            spacing={1}
-            pt={0.5}
-            pb={2}
-            flexWrap="wrap"
-            useFlexGap
-            alignItems="center"
-            justifyContent="flex-start"
-          >
-            {!!onSearchChange && (
-              <DebouncedSearchField
-                value={search}
-                size="small"
-                loading={!!loading && !!search}
-                onChange={onSearchChange}
-                sx={{ flex: 1 }}
-              />
-            )}
-            {!!onVariantChange && (
-              <ListVariantSwitch
-                checked={isGrid}
-                onChange={(_, v) =>
-                  onVariantChange(v ? EListVariant.Grid : EListVariant.List)
-                }
-              />
-            )}
-          </Stack>
-          <Divider />
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          {...slotProps?.header}
+          sx={[
+            {
+              pb: 2,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            },
+            ...sxUtils.asArray(slotProps?.header?.sx),
+          ]}
+        >
+          {!!onSearchChange && (
+            <DebouncedSearchField
+              value={search}
+              size="small"
+              loading={!!loading && !!search}
+              onChange={onSearchChange}
+              sx={{ flex: 1 }}
+            />
+          )}
+          {!!onListVariantChange && (
+            <ListVariantSwitch
+              checked={isGrid}
+              onChange={(_, v) =>
+                onListVariantChange(v ? EListVariant.Grid : EListVariant.List)
+              }
+            />
+          )}
         </Stack>
       )}
       <Box
-        spacing={1}
         {...slotProps?.list}
         {...(isGrid
-          ? { component: Grid, container: true }
-          : { component: Stack })}
+          ? { component: Grid, container: true, spacing: 1 }
+          : { component: Stack, spacing: 1 })}
       >
         <StatusWrapper
           loading={loading}
@@ -125,7 +118,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
             empty ||
             (items.length === 0 && {
               label: "No Documents",
-              description: !!search?.trim()
+              description: search?.trim()
                 ? `No documents found for "${search}"`
                 : undefined,
             })
@@ -142,12 +135,12 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           )}
         </StatusWrapper>
       </Box>
-      <Stack direction="row" justifyContent="center">
+      <Stack direction="row" justifyContent="center" alignItems="center">
         <Pagination
           page={page}
           count={pageCount}
           variant="outlined"
-          disabled={disabled}
+          disabled={disabled || !!loading}
           onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
         />
       </Stack>
