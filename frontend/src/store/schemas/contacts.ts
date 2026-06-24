@@ -3,10 +3,10 @@ import { listRequestSchema, listResponseSchema } from "./api";
 import { EContactListOrdering } from "../enums/contacts";
 import { documentSchema } from "./documents";
 import { placeSchema } from "./places";
-import { idOrIdArraySchema, idSchema, phoneSchema } from "./basic";
+import { idOrIdArraySchema, phoneSchema } from "./basic";
 
 export const contactSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
   email: z.email("Invalid email address"),
@@ -34,21 +34,23 @@ export const contactUpdateSchema = z.object({
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
   google_place_id: z.string().optional(),
-  tags: z.array(idSchema).optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const contactListRequestSchema = listRequestSchema.extend({
-  params: listRequestSchema.shape.params.extend({
-    ordering: z.enum(EContactListOrdering).optional().catch(undefined),
-    city: idOrIdArraySchema
-      .optional()
-      .transform((val) => (val?.length ? val : undefined))
-      .catch(undefined),
-    tag: idOrIdArraySchema
-      .optional()
-      .transform((val) => (val?.length ? val : undefined))
-      .catch(undefined),
-  }),
+  params: listRequestSchema.shape.params
+    .extend({
+      ordering: z.enum(EContactListOrdering).optional().catch(undefined),
+      city: idOrIdArraySchema
+        .optional()
+        .transform((val) => (val?.length ? val : undefined))
+        .catch(undefined),
+      tag: idOrIdArraySchema
+        .optional()
+        .transform((val) => (val?.length ? val : undefined))
+        .catch(undefined),
+    })
+    .strip(),
 });
 
 export const contactListResponseSchema = listResponseSchema.extend({

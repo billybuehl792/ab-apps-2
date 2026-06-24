@@ -3,16 +3,14 @@ import { Container } from "@mui/material";
 import { ContactIcons } from "@/store/constants/contacts";
 import contactEndpoints from "@/store/endpoints/contacts";
 import { errorUtils } from "@/store/utils/error";
-import { idSchema } from "@/store/schemas/basic";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 
 export const Route = createFileRoute("/app/contacts/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const id = idSchema.parse(params.id);
       const contact = await context.queryClient.fetchQuery({
-        queryKey: contactEndpoints.contact(id).id,
-        queryFn: contactEndpoints.contact(id).get,
+        queryKey: contactEndpoints.contact(params.id).id,
+        queryFn: contactEndpoints.contact(params.id).get,
       });
 
       return {

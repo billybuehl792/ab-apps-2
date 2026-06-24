@@ -3,15 +3,13 @@ import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { errorUtils } from "@/store/utils/error";
-import { idSchema } from "@/store/schemas/basic";
 
 export const Route = createFileRoute("/app/admin/users/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const userId = idSchema.parse(params.id);
       const user = await context.queryClient.fetchQuery({
-        queryKey: userEndpoints.user(userId).id,
-        queryFn: userEndpoints.user(userId).get,
+        queryKey: userEndpoints.user(params.id).id,
+        queryFn: userEndpoints.user(params.id).get,
       });
 
       return {

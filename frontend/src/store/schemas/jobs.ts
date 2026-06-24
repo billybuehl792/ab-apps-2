@@ -1,14 +1,13 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
-import { idSchema } from "./basic";
 import { placeSchema } from "./places";
 import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 import { contactSchema } from "./contacts";
 
 export const jobSchema = z.object({
-  id: idSchema,
+  id: z.string(),
   description: z.string().default(""),
-  categories: z.array(z.nativeEnum(EJobCategory)).default([]),
+  categories: z.array(z.enum(EJobCategory)).default([]),
   amount: z.number().nullable().default(null),
   paid: z.number().nullable().default(null),
   representatives: z.array(contactSchema).default([]),
@@ -16,7 +15,7 @@ export const jobSchema = z.object({
   recipients: z.array(contactSchema).default([]),
   referred_by: z.array(contactSchema).default([]),
   place: placeSchema.nullable().default(null),
-  documents: z.array(idSchema).default([]),
+  documents: z.array(z.string()).default([]),
   signed_at: z.iso.datetime().nullable().default(null),
   estimated_at: z.iso.datetime().nullable().default(null),
   sold_at: z.iso.datetime().nullable().default(null),
@@ -30,13 +29,13 @@ export const jobSchema = z.object({
 
 export const jobCreateSchema = z.object({
   description: z.string().optional(),
-  categories: z.array(z.nativeEnum(EJobCategory)).optional(),
+  categories: z.array(z.enum(EJobCategory)).optional(),
   amount: z.number().optional(),
   paid: z.number().optional(),
-  representatives: z.array(idSchema).optional(),
-  assignees: z.array(idSchema).optional(),
-  recipients: z.array(idSchema).optional(),
-  referred_by: z.array(idSchema).optional(),
+  representatives: z.array(z.string()).optional(),
+  assignees: z.array(z.string()).optional(),
+  recipients: z.array(z.string()).optional(),
+  referred_by: z.array(z.string()).optional(),
   google_place_id: z.string().max(500).optional(),
   signed_at: z.iso.datetime().optional(),
   estimated_at: z.iso.datetime().optional(),
@@ -52,10 +51,10 @@ export const jobUpdateSchema = z.object({
   categories: z.array(z.string()).optional(),
   amount: z.number().nullable().optional(),
   paid: z.number().nullable().optional(),
-  representatives: z.array(idSchema).optional(),
-  assignees: z.array(idSchema).optional(),
-  recipients: z.array(idSchema).optional(),
-  referred_by: z.array(idSchema).optional(),
+  representatives: z.array(z.string()).optional(),
+  assignees: z.array(z.string()).optional(),
+  recipients: z.array(z.string()).optional(),
+  referred_by: z.array(z.string()).optional(),
   google_place_id: z.string().max(500).optional(),
   signed_at: z.iso.datetime().nullable().optional(),
   estimated_at: z.iso.datetime().nullable().optional(),

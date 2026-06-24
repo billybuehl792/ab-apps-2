@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EPlaceListOrdering } from "../enums/places";
 
 export const placeSchema = z.object({
-  id: idSchema,
+  id: z.string(),
   google_place_id: z.string(),
   address_full: z.string(),
   address_short: z.string(),

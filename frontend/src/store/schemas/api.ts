@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { idSchema } from "./basic";
 
-const pageParamSchema = z.number().int().positive().default(1);
+const pageParamSchema = z.coerce.number().int().positive().default(1);
 
-const pageSizeParamSchema = z
+const pageSizeParamSchema = z.coerce
   .number()
   .int()
   .positive()
@@ -29,5 +28,5 @@ export const listResponseSchema = z.object({
   count: z.number().int().nonnegative(),
   next: z.url().nullable(),
   previous: z.url().nullable(),
-  results: z.array(z.object({ id: idSchema })),
+  results: z.array(z.object({ id: z.string() })),
 });

@@ -1,5 +1,4 @@
 import z from "zod";
-import { objectSchema } from "./basic";
 import { EUserGroup, EUserListOrdering } from "../enums/account";
 import { listRequestSchema, listResponseSchema } from "./api";
 
@@ -25,13 +24,16 @@ export const credentialsSchema = z.object({
   password: passwordSchema,
 });
 
-export const userSchema = objectSchema.extend({
+export const userSchema = z.object({
+  id: z.string(),
   username: usernameSchema,
   full_name: z.string().min(1, "Full name is required"),
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
   email: z.email("Invalid email address"),
-  groups: z.array(z.nativeEnum(EUserGroup)),
+  groups: z.array(z.enum(EUserGroup)),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime().nullable(),
 });
 
 export const userCreateSchema = z.object({

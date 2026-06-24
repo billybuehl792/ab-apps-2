@@ -1,16 +1,15 @@
 import z from "zod";
-import { idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 
 export const documentSchema = z.object({
-  id: idSchema,
+  id: z.string(),
   label: z.string(),
   description: z.string(),
   file: z.string(),
   thumbnail: z.string().nullable(),
   original_filename: z.string(),
   mime_type: z.string(),
-  uploaded_by: idSchema.nullable(),
+  uploaded_by: z.string().nullable(),
   created_at: z.iso.datetime(),
   updated_at: z.iso.datetime(),
 });

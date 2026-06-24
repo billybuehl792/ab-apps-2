@@ -4,15 +4,13 @@ import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import { JobIcons } from "@/store/constants/jobs";
 import jobEndpoints from "@/store/endpoints/jobs";
 import { errorUtils } from "@/store/utils/error";
-import { idSchema } from "@/store/schemas/basic";
 
 export const Route = createFileRoute("/app/jobs/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const id = idSchema.parse(params.id);
       const job = await context.queryClient.fetchQuery({
-        queryKey: jobEndpoints.job(id).id,
-        queryFn: jobEndpoints.job(id).get,
+        queryKey: jobEndpoints.job(params.id).id,
+        queryFn: jobEndpoints.job(params.id).get,
       });
 
       return {
