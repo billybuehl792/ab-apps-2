@@ -10,7 +10,8 @@ import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
 import type { TContact } from "../types/contacts";
-import type { TDocument } from "../types/documents";
+import type { TDocument, TDocumentCreate } from "../types/documents";
+import { compressImage } from "../utils/image";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -81,7 +82,13 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
       contactEndpoints.contact(contact.id).documents().id,
       EObjectChangeType.Create,
     ],
-    mutationFn: contactEndpoints.contact(contact.id).documents().post,
+    mutationFn: async ({ file, ...body }: TDocumentCreate) => {
+      const compressedFile = await compressImage(file);
+      return contactEndpoints
+        .contact(contact.id)
+        .documents()
+        .post({ file: compressedFile, ...body });
+    },
     onSuccess: (res) => {
       options?.onChange?.(contact, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(`${res.label} uploaded`, {
