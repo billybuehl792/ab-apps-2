@@ -127,6 +127,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
                 : undefined,
             })
           }
+          flexGrow={1}
         >
           {items.map((document) =>
             isGrid ? (
