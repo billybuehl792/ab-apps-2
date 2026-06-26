@@ -1,32 +1,33 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Container, Stack, Tab, Tabs } from "@mui/material";
-import router from "@/store/config/router";
 import JobMenuOptionIconButton from "@/containers/buttons/JobMenuOptionIconButton";
 import JobDetailCard from "@/containers/cards/JobDetailCard";
 import { EJobOptionId } from "@/store/enums/jobs";
 import { EObjectChangeType } from "@/store/enums/api";
-import type { TRouteLoaderData } from "@/store/types/router";
+
+const PageOptionsIconButton: React.FC = () => {
+  /** Values */
+
+  const { job } = Route.useRouteContext();
+  const navigate = useNavigate();
+
+  return (
+    <JobMenuOptionIconButton
+      job={job}
+      hideOptions={[EJobOptionId.Detail]}
+      onChange={(_, type) => {
+        if (type === EObjectChangeType.Delete) navigate({ to: "/app/jobs" });
+      }}
+    />
+  );
+};
 
 export const Route = createFileRoute("/app/jobs/$id/")({
-  loader: async ({ context }): Promise<TRouteLoaderData> => {
-    return {
-      slotProps: {
-        pageHeader: {
-          endContent: (
-            <JobMenuOptionIconButton
-              job={context.job}
-              hideOptions={[EJobOptionId.Detail]}
-              onChange={(_, type) => {
-                if (type === EObjectChangeType.Delete)
-                  router.navigate({ to: "/app/jobs" });
-              }}
-            />
-          ),
-        },
-      },
-    };
-  },
+  beforeLoad: () => ({
+    crumb: null,
+    pageHeaderEndContent: <PageOptionsIconButton />,
+  }),
   component: RouteComponent,
 });
 

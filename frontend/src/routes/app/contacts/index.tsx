@@ -1,36 +1,35 @@
-import {
-  createFileRoute,
-  stripSearchParams,
-  useNavigate,
-} from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { Container } from "@mui/material";
-import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
+import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
+import { contactListRequestSchema } from "@/store/schemas/contacts";
 import ContactList, {
   type IContactListProps,
 } from "@/containers/lists/ContactList";
-import { contactListRequestSchema } from "@/store/schemas/contacts";
-import type { TRouteLoaderData } from "@/store/types/router";
+import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 
 const paramsSchema = contactListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/contacts/")({
-  validateSearch: zodValidator(fallback(paramsSchema, defaultParams)),
-  search: { middlewares: [stripSearchParams(defaultParams)] },
-  component: RouteComponent,
-  loader: (): TRouteLoaderData => ({
-    slotProps: {
-      pageHeader: { endContent: <ContactCreateButton variant="text" /> },
-    },
+  validateSearch: paramsSchema,
+  search: {
+    middlewares: [
+      sanitizeSearchParams(paramsSchema),
+      stripSearchParams(defaultParams),
+    ],
+  },
+  beforeLoad: () => ({
+    crumb: null,
+    pageHeaderEndContent: <ContactCreateButton variant="text" />,
   }),
+  component: RouteComponent,
 });
 
 function RouteComponent() {
   /* Values */
 
   const params = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   /** Callbacks */
 
@@ -39,7 +38,7 @@ function RouteComponent() {
   ) =>
     navigate({
       to: ".",
-      search: paramsSchema.parse(newParams),
+      search: newParams,
       replace: true,
     });
 

@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import { Delete, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import { placeEndpoints } from "../constants/places";
+import placeEndpoints from "../endpoints/places";
 import { EObjectChangeType } from "../enums/api";
 import { EPlaceOptionId } from "../enums/places";
 import type { TPlaceBasic } from "../types/places";

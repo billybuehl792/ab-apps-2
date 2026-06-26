@@ -21,7 +21,8 @@ import ContactCreateFormDrawer, {
   type IContactCreateFormDrawerProps,
 } from "@/containers/modals/ContactCreateFormDrawer";
 import { contactListRequestSchema } from "@/store/schemas/contacts";
-import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
+import contactEndpoints from "@/store/endpoints/contacts";
 import { errorUtils } from "@/store/utils/error";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";

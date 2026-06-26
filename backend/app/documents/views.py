@@ -1,7 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.decorators import action
 
 from .models import Document
 
@@ -17,3 +16,7 @@ class DocumentViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     search_fields = ("label",)
     ordering_fields = ("created_at", "label")
+
+    def perform_create(self, serializer):
+        user = self.request.user if self.request.user.is_authenticated else None
+        serializer.save(uploaded_by=user)

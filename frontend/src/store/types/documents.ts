@@ -1,24 +1,20 @@
-export interface Document {
-  id: number;
-  label: string;
-  description: string;
-  file: string;
-  original_filename: string;
-  uploaded_at: string;
-  mime_type: string;
-  uploaded_by: number | null;
-  created_at: string;
-  updated_at: string;
-}
+import { z } from "zod";
+import {
+  documentCreateSchema,
+  documentListRequestSchema,
+  documentListResponseSchema,
+  documentSchema,
+} from "../schemas/documents";
 
-export interface DocumentCreate {
-  label: string;
-  description?: string;
-  file: string;
-}
+export type TDocument = z.infer<typeof documentSchema>;
 
-export interface DocumentUpdate {
-  id: number;
+export type TDocumentCreate = z.infer<typeof documentCreateSchema>;
+
+export interface TDocumentUpdate {
   label?: string;
   description?: string;
 }
+
+export type TDocumentListRequest = z.infer<typeof documentListRequestSchema>;
+
+export type TDocumentListResponse = z.infer<typeof documentListResponseSchema>;

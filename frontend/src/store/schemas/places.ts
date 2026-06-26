@@ -1,15 +1,10 @@
 import { z } from "zod";
-import { idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EPlaceListOrdering } from "../enums/places";
 
-const googlePlaceIdSchema = z.coerce
-  .string()
-  .describe("Google Places API place ID");
-
 export const placeSchema = z.object({
-  id: idSchema,
-  google_place_id: googlePlaceIdSchema,
+  id: z.string(),
+  google_place_id: z.string(),
   address_full: z.string(),
   address_short: z.string(),
   city: z.string(),
@@ -18,12 +13,12 @@ export const placeSchema = z.object({
   country: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime(),
 });
 
 export const googlePlaceSchema = z.object({
-  id: googlePlaceIdSchema,
+  id: z.string(),
   formattedAddress: z.string(),
   shortFormattedAddress: z.string(),
   postalAddress: z.object({
@@ -40,15 +35,12 @@ export const googlePlaceSchema = z.object({
   }),
 });
 
-export const googleAutocompleteSuggestionSchema = z.object(
-  {
-    placePrediction: z.object({
-      placeId: googlePlaceIdSchema,
-      text: z.object({ text: z.string() }),
-    }),
-  },
-  { required_error: "Address is required" },
-);
+export const googleAutocompleteSuggestionSchema = z.object({
+  placePrediction: z.object({
+    placeId: z.string(),
+    text: z.object({ text: z.string() }),
+  }),
+});
 
 export const placeListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({

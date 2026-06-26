@@ -7,6 +7,7 @@ import { PlaceIcons } from "@/store/constants/places";
 
 export const Route = createFileRoute("/app/")({
   component: RouteComponent,
+  beforeLoad: () => ({ crumb: null }),
 });
 
 function RouteComponent() {

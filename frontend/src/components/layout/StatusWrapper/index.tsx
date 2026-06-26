@@ -7,10 +7,13 @@ import StatusCard, {
 import { errorUtils } from "@/store/utils/error";
 import type { IStatus } from "@/components/cards/StatusCard/components/Status";
 
-export interface IStatusWrapperProps extends StackProps {
+export interface IStatusWrapperBaseProps {
   loading?: boolean | string | number | IStatus;
   error?: boolean | string | Error | null | IStatus;
   empty?: boolean | string | IStatus;
+}
+export interface IStatusWrapperProps
+  extends StackProps, IStatusWrapperBaseProps {
   slotProps?: { card?: IStatusCardProps };
 }
 

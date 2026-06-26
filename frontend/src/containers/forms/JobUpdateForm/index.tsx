@@ -43,7 +43,7 @@ export interface IJobUpdateFormProps extends Omit<
 
 const formSchema = z.object({
   categories: z
-    .array(z.nativeEnum(EJobCategory))
+    .array(z.enum(EJobCategory))
     .min(1, "At least one category is required"),
   description: z.string().min(1, "Description is required"),
   recipients: z

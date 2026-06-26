@@ -6,7 +6,8 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ContactListCard from "./components/cards/ContactListCard";
 import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactListOrderingField from "./components/fields/ContactListOrderingField";
-import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
+import contactEndpoints from "@/store/endpoints/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import type { TContact, TContactListRequest } from "@/store/types/contacts";
 

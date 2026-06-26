@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
+from rest_framework.serializers import ModelSerializer
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Contact
+from app.documents.serializers import DocumentSerializer
 from app.places.serializers import PlaceSerializer
 from app.places.services.place_factory import create_or_update_place_by_google_place_id
 
@@ -16,7 +18,7 @@ class ContactSerializer(ModelSerializer):
         allow_blank=True,
         write_only=True,
     )
-    documents = PrimaryKeyRelatedField(many=True, read_only=True)
+    documents = DocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contact
@@ -82,3 +84,23 @@ class ContactSerializer(ModelSerializer):
                 })
 
         return super().validate(attrs)
+
+
+class ContactDocumentSerializer(DocumentSerializer):
+    """Serializer for documents scoped to a contact."""
+
+    def create(self, validated_data):
+        contact = self.context.get("contact")
+        if contact is None:
+            raise serializers.ValidationError({
+                "non_field_errors": ["Contact context is required."],
+            })
+
+        request = self.context.get("request")
+        validated_data["uploaded_by"] = (
+            request.user if request and request.user.is_authenticated else None
+        )
+        validated_data["content_type"] = ContentType.objects.get_for_model(
+            Contact)
+        validated_data["object_id"] = contact.pk
+        return super().create(validated_data)

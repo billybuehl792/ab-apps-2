@@ -54,7 +54,7 @@ export interface IDrawerProps extends Omit<
   onBack?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const Drawer = ({
+const Drawer: React.FC<IDrawerProps> = ({
   anchor: anchorProp = "right",
   title,
   children,
@@ -65,7 +65,7 @@ const Drawer = ({
   slotProps,
   className,
   ...props
-}: IDrawerProps) => {
+}) => {
   /** Values */
 
   const isTouch = useMediaQuery("(pointer: coarse)");

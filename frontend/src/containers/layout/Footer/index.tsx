@@ -65,7 +65,7 @@ const Footer: React.FC<PaperProps> = (props) => {
       <BottomNavigation showLabels>
         {items
           .filter(({ render }) => render !== false)
-          .map(({ id, link, ...item }) => (
+          .map(({ id, link, render, ...item }) => (
             <BottomNavigationActionLink key={id} {...item} {...link} />
           ))}
       </BottomNavigation>

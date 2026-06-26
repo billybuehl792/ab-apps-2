@@ -1,49 +1,14 @@
-import { People, Person, PersonAdd } from "@mui/icons-material";
-import api from "../config/api";
+import { Delete, Edit, People, Person, PersonAdd } from "@mui/icons-material";
 import { EContactListOrdering } from "../enums/contacts";
-import type {
-  TContact,
-  TContactCreate,
-  TContactUpdate,
-  TContactListRequest,
-  TContactListResponse,
-} from "../types/contacts";
 
 /** Icons */
 
 export const ContactIcons = {
   List: People,
   Detail: Person,
+  Edit: Edit,
+  Delete: Delete,
   Create: PersonAdd,
-};
-
-/** API */
-
-export const contactEndpoints = {
-  id: ["contacts"] as const,
-  url: "/contacts/",
-  get: (options?: TContactListRequest) =>
-    api
-      .get<TContactListResponse>(contactEndpoints.url, options)
-      .then((res) => res.data),
-  post: (body: TContactCreate) =>
-    api.post<TContact>(contactEndpoints.url, body).then((res) => res.data),
-  contact: (id: TContact["id"]) => ({
-    id: [...contactEndpoints.id, "contact", id] as const,
-    url: `${contactEndpoints.url}${id}/`,
-    get: () =>
-      api
-        .get<TContact>(contactEndpoints.contact(id).url)
-        .then((res) => res.data),
-    patch: (body: TContactUpdate) =>
-      api
-        .patch<TContact>(contactEndpoints.contact(id).url, body)
-        .then((res) => res.data),
-    delete: () =>
-      api
-        .delete<void>(contactEndpoints.contact(id).url)
-        .then((res) => res.data),
-  }),
 };
 
 /** Other */

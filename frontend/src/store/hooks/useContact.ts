@@ -4,12 +4,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
-import { contactEndpoints } from "../constants/contacts";
+import contactEndpoints from "../endpoints/contacts";
 import { errorUtils } from "../utils/error";
 import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
 import type { TContact } from "../types/contacts";
+import type { TDocument } from "../types/documents";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -75,6 +76,37 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
       }),
   });
 
+  const createDocumentMutation = useMutation({
+    mutationKey: [
+      contactEndpoints.contact(contact.id).documents().id,
+      EObjectChangeType.Create,
+    ],
+    mutationFn: contactEndpoints.contact(contact.id).documents().post,
+    onSuccess: (res) => {
+      options?.onChange?.(contact, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar(`${res.label} uploaded`, {
+        variant: "success",
+      });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Upload failed", { variant: "error" }),
+  });
+
+  const deleteDocumentMutation = useMutation({
+    mutationKey: [
+      contactEndpoints.contact(contact.id).documents().id,
+      "delete",
+    ],
+    mutationFn: (id: TDocument["id"]) =>
+      contactEndpoints.contact(contact.id).documents().document(id).delete(),
+    onSuccess: () => {
+      options?.onChange?.(contact, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar("Document deleted", { variant: "success" });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Document delete failed", { variant: "error" }),
+  });
+
   /** Data */
 
   const isMutating = updateMutation.isPending || deleteMutation.isPending;
@@ -106,7 +138,21 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
         },
         () => deleteMutation.mutate(...options),
       ),
-    [confirm, deleteMutation],
+    [confirm, deleteMutation, fullName],
+  );
+
+  const handleCreateDocument = createDocumentMutation.mutate;
+
+  const handleDeleteDocument = useCallback(
+    (...options: Parameters<typeof deleteDocumentMutation.mutate>) =>
+      confirm(
+        {
+          title: `Delete ${fullName}?`,
+          description: `Are you sure you want to delete this document? This operation is irreversible.`,
+        },
+        () => deleteDocumentMutation.mutate(...options),
+      ),
+    [confirm, deleteDocumentMutation, fullName],
   );
 
   /** Options */
@@ -149,7 +195,13 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           onClick: handleDelete,
         },
       ],
-      [isDisabled, isChangeDisabled, handleDelete, options],
+      [
+        options?.hideOptions,
+        isDisabled,
+        contact.id,
+        isChangeDisabled,
+        handleDelete,
+      ],
     );
 
   const menuOptions = useMemo(
@@ -159,7 +211,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           ? options.options(contact, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [contact, options?.options, baseMenuOptions],
+    [options, contact, baseMenuOptions],
   );
 
   return {
@@ -167,9 +219,18 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
     options: menuOptions,
     disabled: isDisabled,
     isMutating: isMutating,
-    mutations: { update: updateMutation, delete: deleteMutation },
+    mutations: {
+      update: updateMutation,
+      delete: deleteMutation,
+      documents: {
+        create: createDocumentMutation,
+        delete: deleteDocumentMutation,
+      },
+    },
     update: handleUpdate,
     delete: handleDelete,
+    createDocument: handleCreateDocument,
+    deleteDocument: handleDeleteDocument,
     view: handleView,
     edit: handleEdit,
   };

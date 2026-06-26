@@ -5,7 +5,8 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
-import { contactEndpoints, ContactIcons } from "@/store/constants/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
+import contactEndpoints from "@/store/endpoints/contacts";
 import ContactCreateForm, {
   type IContactCreateFormProps,
 } from "@/containers/forms/ContactCreateForm";
@@ -14,10 +15,9 @@ import { EObjectChangeType } from "@/store/enums/api";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/contacts/create")({
-  loader: (): TRouteLoaderData => ({
+  beforeLoad: () => ({
     crumb: { label: "Create", Icon: ContactIcons.Create },
   }),
   component: RouteComponent,

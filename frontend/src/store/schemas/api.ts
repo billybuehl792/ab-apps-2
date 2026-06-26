@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { idSchema } from "./basic";
 
 const pageParamSchema = z.coerce.number().int().positive().default(1);
 
@@ -10,7 +9,7 @@ const pageSizeParamSchema = z.coerce
   .max(100, "Cannot exceed a page size of 100")
   .default(20);
 
-const searchParamSchema = z.coerce
+const searchParamSchema = z
   .string()
   .trim()
   .max(100, "Cannot exceed a search length of 100 characters")
@@ -27,7 +26,7 @@ export const listRequestSchema = z.object({
 
 export const listResponseSchema = z.object({
   count: z.number().int().nonnegative(),
-  next: z.string().url().nullable(),
-  previous: z.string().url().nullable(),
-  results: z.array(z.object({ id: idSchema })),
+  next: z.url().nullable(),
+  previous: z.url().nullable(),
+  results: z.array(z.object({ id: z.string() })),
 });

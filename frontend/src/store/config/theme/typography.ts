@@ -10,7 +10,7 @@ const typography: TypographyVariantsOptions = {
   body2: {
     fontSize: "0.875rem",
     lineHeight: 1.43,
-    fontWeight: 300,
+    fontWeight: 400,
     letterSpacing: "0.01071em",
   },
   caption: {

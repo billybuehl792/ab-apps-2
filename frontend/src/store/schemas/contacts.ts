@@ -1,61 +1,64 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { EContactListOrdering } from "../enums/contacts";
+import { documentSchema } from "./documents";
 import { placeSchema } from "./places";
-import {
-  emailSchema,
-  idOrIdArraySchema,
-  idSchema,
-  nameSchema,
-  phoneSchema,
-} from "./basic";
+import { idOrIdArraySchema, phoneSchema } from "./basic";
 
 export const contactSchema = z.object({
-  id: idSchema,
-  first_name: nameSchema,
-  last_name: nameSchema,
-  email: emailSchema,
+  id: z.string(),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.email("Invalid email address"),
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable(),
   place: placeSchema.nullable(),
-  documents: z.array(idSchema),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  documents: z.array(documentSchema),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime(),
 });
 
 export const contactCreateSchema = z.object({
-  first_name: nameSchema,
-  last_name: nameSchema,
-  email: emailSchema,
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.email("Invalid email address"),
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.optional(),
   google_place_id: z.string().optional(),
 });
 
 export const contactUpdateSchema = z.object({
-  first_name: nameSchema.optional(),
-  last_name: nameSchema.optional(),
-  email: emailSchema.optional(),
+  first_name: z.string().min(1, "First name is required").optional(),
+  last_name: z.string().min(1, "Last name is required").optional(),
+  email: z.email("Invalid email address").optional(),
   phone_primary: phoneSchema.optional(),
   phone_secondary: phoneSchema.nullable().optional(),
   google_place_id: z.string().optional(),
-  tags: z.array(idSchema).optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const contactListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params
     .extend({
-      ordering: z.nativeEnum(EContactListOrdering).optional(),
+      ordering: z.enum(EContactListOrdering).optional().catch(undefined),
       city: idOrIdArraySchema
         .optional()
-        .transform((val) => (val?.length ? val : undefined)),
+        .transform((val) => (val?.length ? val : undefined))
+        .catch(undefined),
       tag: idOrIdArraySchema
         .optional()
-        .transform((val) => (val?.length ? val : undefined)),
+        .transform((val) => (val?.length ? val : undefined))
+        .catch(undefined),
     })
-    .default({ ordering: EContactListOrdering.FirstNameAsc }),
+    .strip(),
 });
 
 export const contactListResponseSchema = listResponseSchema.extend({
   results: z.array(contactSchema),
+});
+
+export const contactDocumentListRequestSchema = listRequestSchema;
+
+export const contactDocumentListResponseSchema = listResponseSchema.extend({
+  results: z.array(documentSchema),
 });

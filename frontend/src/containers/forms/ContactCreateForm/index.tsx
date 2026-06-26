@@ -14,7 +14,7 @@ import {
 import PhoneField from "@/components/fields/PhoneField";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import useConfirm from "@/store/hooks/useConfirm";
-import { emailSchema, phoneSchema } from "@/store/schemas/basic";
+import { phoneSchema } from "@/store/schemas/basic";
 import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 
 type TContactCreateFormValues = z.infer<typeof formSchema>;
@@ -37,7 +37,7 @@ export interface IContactCreateFormProps extends Omit<
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: emailSchema,
+  email: z.email("Invalid email address"),
   phonePrimary: phoneSchema,
   phoneSecondary: phoneSchema.optional(),
   place: googleAutocompleteSuggestionSchema.optional(),

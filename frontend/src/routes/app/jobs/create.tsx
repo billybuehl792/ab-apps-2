@@ -6,19 +6,18 @@ import {
 } from "@tanstack/react-router";
 import { Container, Stack, Typography } from "@mui/material";
 import { JobIcons } from "@/store/constants/jobs";
+import jobEndpoints from "@/store/endpoints/jobs";
 import JobCreateForm, {
   type IJobCreateFormProps,
 } from "@/containers/forms/JobCreateForm";
-import { jobEndpoints } from "@/store/constants/jobs";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
 import { EObjectChangeType } from "@/store/enums/api";
-import type { TRouteLoaderData } from "@/store/types/router";
 
 export const Route = createFileRoute("/app/jobs/create")({
-  loader: (): TRouteLoaderData => ({
+  beforeLoad: () => ({
     crumb: { label: "Create", Icon: JobIcons.Create },
   }),
   component: RouteComponent,
