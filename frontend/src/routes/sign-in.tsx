@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import z from "zod";
 import { Card, CardContent, CardHeader, Divider, Stack } from "@mui/material";
+import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import useAuth from "@/store/hooks/useAuth";
 import FullScreen from "@/components/layout/FullScreen";
 import SignInForm from "@/containers/forms/SignInForm";
@@ -32,7 +33,12 @@ const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/sign-in")({
   validateSearch: paramsSchema,
-  search: { middlewares: [stripSearchParams(defaultParams)] },
+  search: {
+    middlewares: [
+      sanitizeSearchParams(paramsSchema),
+      stripSearchParams(defaultParams),
+    ],
+  },
   beforeLoad: async ({ context, search }) => {
     if (search.force) await context.auth.signOut();
     else {

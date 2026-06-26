@@ -1,17 +1,23 @@
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { Container } from "@mui/material";
+import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
+import { contactListRequestSchema } from "@/store/schemas/contacts";
 import ContactList, {
   type IContactListProps,
 } from "@/containers/lists/ContactList";
 import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
-import { contactListRequestSchema } from "@/store/schemas/contacts";
 
 const paramsSchema = contactListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/contacts/")({
   validateSearch: paramsSchema,
-  search: { middlewares: [stripSearchParams(defaultParams)] },
+  search: {
+    middlewares: [
+      sanitizeSearchParams(paramsSchema),
+      stripSearchParams(defaultParams),
+    ],
+  },
   beforeLoad: () => ({
     crumb: null,
     pageHeaderEndContent: <ContactCreateButton variant="text" />,

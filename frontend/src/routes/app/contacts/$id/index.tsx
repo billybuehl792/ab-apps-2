@@ -10,6 +10,7 @@ import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import useContact from "@/store/hooks/useContact";
+import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import DocumentList from "@/containers/lists/DocumentList";
@@ -56,7 +57,12 @@ const PageOptionsIconButton: React.FC = () => {
 
 export const Route = createFileRoute("/app/contacts/$id/")({
   validateSearch: paramsSchema,
-  search: { middlewares: [stripSearchParams(defaultParams)] },
+  search: {
+    middlewares: [
+      sanitizeSearchParams(paramsSchema),
+      stripSearchParams(defaultParams),
+    ],
+  },
   beforeLoad: () => ({
     crumb: null,
     pageHeaderEndContent: <PageOptionsIconButton />,
@@ -130,12 +136,7 @@ const DocumentsTab: React.FC = () => {
 
   const handleOnParamsChange = (
     newParams: Partial<z.infer<typeof paramsSchema>>,
-  ) =>
-    navigate({
-      to: ".",
-      replace: true,
-      search: (s) => ({ ...s, ...newParams }),
-    });
+  ) => navigate({ to: ".", replace: true, search: newParams });
 
   /** Options */
 
@@ -164,11 +165,15 @@ const DocumentsTab: React.FC = () => {
         loading={contactDocumentListQuery.isLoading}
         error={contactDocumentListQuery.error}
         listVariant={listVariant}
-        onSearchChange={(search) => handleOnParamsChange({ search })}
-        onPageChange={(page) => handleOnParamsChange({ page })}
-        onPageSizeChange={(page_size) => handleOnParamsChange({ page_size })}
+        onPageChange={(page) => handleOnParamsChange({ ...params, tab, page })}
+        onPageSizeChange={(page_size) =>
+          handleOnParamsChange({ ...params, tab, page: 1, page_size })
+        }
+        onSearchChange={(search) =>
+          handleOnParamsChange({ ...params, tab, page: 1, search })
+        }
         onListVariantChange={(listVariant) =>
-          handleOnParamsChange({ listVariant })
+          handleOnParamsChange({ ...params, tab, listVariant })
         }
         slotProps={{
           list: {

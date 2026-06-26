@@ -4,13 +4,19 @@ import { userListRequestSchema } from "@/store/schemas/account";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import ButtonLink from "@/components/links/ButtonLink";
 import { Container } from "@mui/material";
+import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 
 const paramsSchema = userListRequestSchema.shape.params;
 const defaultParams = paramsSchema.parse({});
 
 export const Route = createFileRoute("/app/admin/users/")({
   validateSearch: paramsSchema,
-  search: { middlewares: [stripSearchParams(defaultParams)] },
+  search: {
+    middlewares: [
+      sanitizeSearchParams(paramsSchema),
+      stripSearchParams(defaultParams),
+    ],
+  },
   beforeLoad: () => ({
     crumb: null,
     pageHeaderEndContent: (

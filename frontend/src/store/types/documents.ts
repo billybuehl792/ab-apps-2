@@ -3,20 +3,10 @@ import {
   documentCreateSchema,
   documentListRequestSchema,
   documentListResponseSchema,
+  documentSchema,
 } from "../schemas/documents";
 
-export interface TDocument {
-  id: number;
-  label: string;
-  description: string;
-  file: string;
-  thumbnail: string | null;
-  original_filename: string;
-  mime_type: string;
-  uploaded_by: number | null;
-  created_at: string;
-  updated_at: string;
-}
+export type TDocument = z.infer<typeof documentSchema>;
 
 export type TDocumentCreate = z.infer<typeof documentCreateSchema>;
 

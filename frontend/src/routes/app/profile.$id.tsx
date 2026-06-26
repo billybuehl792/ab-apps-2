@@ -7,12 +7,9 @@ import { errorUtils } from "@/store/utils/error";
 export const Route = createFileRoute("/app/profile/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const userId = parseInt(params.id, 10);
-      if (isNaN(userId)) throw new Error("Invalid user ID");
-
       const user = await context.queryClient.fetchQuery({
-        queryKey: userEndpoints.user(userId).id,
-        queryFn: userEndpoints.user(userId).get,
+        queryKey: userEndpoints.user(params.id).id,
+        queryFn: userEndpoints.user(params.id).get,
       });
       return {
         user,

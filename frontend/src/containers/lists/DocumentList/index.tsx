@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, type ReactNode } from "react";
 import { Box, Grid, Pagination, Stack, type StackProps } from "@mui/material";
 import DocumentListCard, {
   type IDocumentListCardProps,
@@ -23,6 +23,7 @@ export interface IDocumentListProps
   pageSize: number;
   search?: string;
   disabled?: boolean;
+  renderCard?: (document: TDocument) => ReactNode;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onSearchChange?: (search: string) => void;
@@ -45,6 +46,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   error,
   empty,
   disabled,
+  renderCard,
   onSearchChange,
   onPageChange,
   onPageSizeChange,
@@ -60,15 +62,17 @@ const DocumentList: React.FC<IDocumentListProps> = ({
 
   /** Callbacks */
 
-  const renderCard = (document: TDocument) => (
-    <DocumentListCard
-      document={document}
-      listVariant={listVariant}
-      {...(typeof slotProps?.card === "function"
-        ? slotProps.card(document)
-        : slotProps?.card)}
-    />
-  );
+  const handleRenderCard: IDocumentListProps["renderCard"] =
+    renderCard ??
+    ((document) => (
+      <DocumentListCard
+        document={document}
+        listVariant={listVariant}
+        {...(typeof slotProps?.card === "function"
+          ? slotProps.card(document)
+          : slotProps?.card)}
+      />
+    ));
 
   return (
     <Stack position="relative" spacing={2} {...props}>
@@ -127,10 +131,12 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           {items.map((document) =>
             isGrid ? (
               <Grid key={document.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                {renderCard(document)}
+                {handleRenderCard(document)}
               </Grid>
             ) : (
-              <Fragment key={document.id}>{renderCard(document)}</Fragment>
+              <Fragment key={document.id}>
+                {handleRenderCard(document)}
+              </Fragment>
             ),
           )}
         </StatusWrapper>

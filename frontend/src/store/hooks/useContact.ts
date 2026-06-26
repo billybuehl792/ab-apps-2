@@ -10,6 +10,7 @@ import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
 import type { TContact } from "../types/contacts";
+import type { TDocument } from "../types/documents";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -96,7 +97,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
       contactEndpoints.contact(contact.id).documents().id,
       "delete",
     ],
-    mutationFn: (id: number) =>
+    mutationFn: (id: TDocument["id"]) =>
       contactEndpoints.contact(contact.id).documents().document(id).delete(),
     onSuccess: () => {
       options?.onChange?.(contact, EObjectChangeType.Update);
