@@ -7,6 +7,8 @@ import type {
   TContactListResponse,
   TContactDocumentListRequest,
   TContactDocumentListResponse,
+  TContactHistoryListRequest,
+  TContactHistoryListResponse,
 } from "../types/contacts";
 import type {
   TDocument,
@@ -61,6 +63,13 @@ const contactEndpoints = {
             .delete<void>(`/contacts/${id}/documents/${documentId}/`)
             .then(({ data }) => data),
       }),
+    }),
+    history: () => ({
+      id: ["contacts", "contact", id, "history"] as const,
+      get: (options?: TContactHistoryListRequest) =>
+        api
+          .get<TContactHistoryListResponse>(`/contacts/${id}/history/`, options)
+          .then(({ data }) => data),
     }),
   }),
 };

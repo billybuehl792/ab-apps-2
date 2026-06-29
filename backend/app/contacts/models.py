@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
+from simple_history.models import HistoricalRecords
 
 from app.common.models import PhoneNumberField
 from app.documents.models import Document
@@ -21,6 +22,8 @@ class Contact(models.Model):
         related_name="contacts",
     )
     documents = GenericRelation(Document, related_query_name='contact')
+
+    history = HistoricalRecords()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
