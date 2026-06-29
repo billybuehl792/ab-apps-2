@@ -7,6 +7,8 @@ import {
   contactListResponseSchema,
   contactDocumentListResponseSchema,
   contactDocumentListRequestSchema,
+  contactHistoryListRequestSchema,
+  contactHistoryListResponseSchema,
 } from "../schemas/contacts";
 
 export type TContact = z.infer<typeof contactSchema>;
@@ -25,4 +27,12 @@ export type TContactDocumentListRequest = z.infer<
 
 export type TContactDocumentListResponse = z.infer<
   typeof contactDocumentListResponseSchema
+>;
+
+export type TContactHistoryListRequest = z.infer<
+  typeof contactHistoryListRequestSchema
+>;
+
+export type TContactHistoryListResponse = z.infer<
+  typeof contactHistoryListResponseSchema
 >;

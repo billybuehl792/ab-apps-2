@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from .views import ContactDocumentViewSet, ContactViewSet
+from .views import ContactDocumentViewSet, ContactHistoryViewSet, ContactViewSet
 
 router = routers.DefaultRouter()
 router.register(r"", ContactViewSet, basename="contact")
@@ -22,5 +22,10 @@ urlpatterns = [
             }
         ),
         name="contact-documents-detail",
+    ),
+    path(
+        "<int:contact_pk>/history/",
+        ContactHistoryViewSet.as_view({"get": "list"}),
+        name="contact-history-list",
     ),
 ] + router.urls

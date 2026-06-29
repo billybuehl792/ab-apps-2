@@ -2,11 +2,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
 
 from app.documents.models import Document
+from app.common.serializers import HistorySerializerFactory
 
 from .models import Contact
 from .serializers import ContactDocumentSerializer, ContactSerializer
@@ -54,3 +55,20 @@ class ContactDocumentViewSet(ModelViewSet):
         context = super().get_serializer_context()
         context["contact"] = self._get_contact()
         return context
+
+
+class ContactHistoryViewSet(ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HistorySerializerFactory(
+        Contact.history.model)  # type: ignore
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering = ("-history_date",)
+    ordering_fields = ("history_date",)
+    search_fields = ("history_user__username",)
+
+    def get_queryset(self):
+        return (
+            Contact.history
+            .filter(id=self.kwargs["contact_pk"])  # type: ignore
+            .order_by("-history_date")
+        )

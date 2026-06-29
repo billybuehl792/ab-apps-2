@@ -14,6 +14,7 @@ import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
 import ContactDetailCard from "@/containers/cards/ContactDetailCard";
 import DocumentList from "@/containers/lists/DocumentList";
+import HistoryList from "@/containers/lists/HistoryList";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import { documentListRequestSchema } from "@/store/schemas/documents";
 import contactEndpoints from "@/store/endpoints/contacts";
@@ -94,7 +95,8 @@ function RouteComponent() {
           ))}
         </Tabs>
       </Container>
-      {tab === "documents" && <DocumentsTab />}
+      {tab === ETabs.Documents && <DocumentsTab />}
+      {tab === ETabs.History && <HistoryTab />}
     </Stack>
   );
 }
@@ -115,7 +117,7 @@ const DocumentsTab: React.FC = () => {
   /** Queries */
 
   const contactDocumentListQuery = useQuery({
-    queryKey: ["contactDocuments", contact.id, { params }],
+    queryKey: ["contacts", "contact", contact.id, "documents", { params }],
     queryFn: () =>
       contactEndpoints.contact(contact.id).documents().get({ params }),
   });
@@ -136,7 +138,12 @@ const DocumentsTab: React.FC = () => {
 
   const handleOnParamsChange = (
     newParams: Partial<z.infer<typeof paramsSchema>>,
-  ) => navigate({ to: ".", replace: true, search: newParams });
+  ) =>
+    navigate({
+      to: ".",
+      replace: true,
+      search: (s) => ({ ...s, ...newParams }),
+    });
 
   /** Options */
 
@@ -165,15 +172,13 @@ const DocumentsTab: React.FC = () => {
         loading={contactDocumentListQuery.isLoading}
         error={contactDocumentListQuery.error}
         listVariant={listVariant}
-        onPageChange={(page) => handleOnParamsChange({ ...params, tab, page })}
+        onPageChange={(page) => handleOnParamsChange({ page })}
         onPageSizeChange={(page_size) =>
-          handleOnParamsChange({ ...params, tab, page: 1, page_size })
+          handleOnParamsChange({ page: 1, page_size })
         }
-        onSearchChange={(search) =>
-          handleOnParamsChange({ ...params, tab, page: 1, search })
-        }
+        onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
         onListVariantChange={(listVariant) =>
-          handleOnParamsChange({ ...params, tab, listVariant })
+          handleOnParamsChange({ listVariant })
         }
         slotProps={{
           list: {
@@ -212,6 +217,51 @@ const DocumentsTab: React.FC = () => {
           sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
         />
       </FullScreenDialog>
+    </Container>
+  );
+};
+
+const HistoryTab: React.FC = () => {
+  const navigate = Route.useNavigate();
+  const { contact } = Route.useRouteContext();
+  const { tab, listVariant, ...params } = Route.useSearch();
+
+  /** Queries */
+
+  const contactHistoryListQuery = useQuery({
+    queryKey: ["contacts", "contact", contact.id, "history", { params }],
+    queryFn: () =>
+      contactEndpoints.contact(contact.id).history().get({ params }),
+  });
+
+  /** Callbacks */
+
+  const handleOnParamsChange = (
+    newParams: Partial<z.infer<typeof paramsSchema>>,
+  ) =>
+    navigate({
+      to: ".",
+      replace: true,
+      search: (s) => ({ ...s, ...newParams }),
+    });
+
+  return (
+    <Container sx={{ display: "flex", flexGrow: 1 }}>
+      <HistoryList
+        items={contactHistoryListQuery.data?.results ?? []}
+        count={contactHistoryListQuery.data?.count ?? -1}
+        page={params.page}
+        pageSize={params.page_size}
+        search={params.search}
+        loading={contactHistoryListQuery.isLoading}
+        error={contactHistoryListQuery.error}
+        onPageChange={(page) => handleOnParamsChange({ page })}
+        onPageSizeChange={(page_size) =>
+          handleOnParamsChange({ page: 1, page_size })
+        }
+        onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
+        sx={{ flexGrow: 1, width: "100%", pb: 2 }}
+      />
     </Container>
   );
 };
