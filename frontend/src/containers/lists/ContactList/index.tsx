@@ -7,8 +7,8 @@ import ContactListCard from "./components/cards/ContactListCard";
 import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactListOrderingField from "./components/fields/ContactListOrderingField";
 import { ContactIcons } from "@/store/constants/contacts";
-import contactEndpoints from "@/store/endpoints/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
+import { contactsQueries } from "@/store/queries/contacts";
 import type { TContact, TContactListRequest } from "@/store/types/contacts";
 
 type TCardProps = Partial<
@@ -32,10 +32,7 @@ const ContactList: React.FC<IContactListProps> = ({
 }) => {
   /** Queries */
 
-  const contactListQuery = useQuery({
-    queryKey: [contactEndpoints.id, { params }],
-    queryFn: () => contactEndpoints.get({ params }),
-  });
+  const contactListQuery = useQuery(contactsQueries.list({ params }));
 
   /** Data */
 

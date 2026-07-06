@@ -20,13 +20,12 @@ import { Add, Error } from "@mui/icons-material";
 import ContactCreateFormDrawer, {
   type IContactCreateFormDrawerProps,
 } from "@/containers/modals/ContactCreateFormDrawer";
-import { contactListRequestSchema } from "@/store/schemas/contacts";
 import { ContactIcons } from "@/store/constants/contacts";
-import contactEndpoints from "@/store/endpoints/contacts";
 import { errorUtils } from "@/store/utils/error";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
-import { EObjectChangeType } from "@/store/enums/api";
+import { contactsQueries } from "@/store/queries/contacts";
+import { contactsMutations } from "@/store/mutations/contacts";
 import type { TContact } from "@/store/types/contacts";
 
 type TContactAutocompleteBaseProps<
@@ -85,19 +84,14 @@ const ContactAutocomplete = <
 
   /** Queries */
 
-  const listQuery = useQuery({
-    queryKey: [
-      contactEndpoints.id,
-      contactListRequestSchema.parse({ params: { search } }),
-    ] as const,
-    queryFn: ({ queryKey }) => contactEndpoints.get(queryKey[1]),
-  });
+  const listQuery = useQuery(
+    contactsQueries.list({ params: { page: 1, page_size: 40, search } }),
+  );
 
   /** Mutations */
 
   const createContactMutation = useMutation({
-    mutationKey: [contactEndpoints.id, EObjectChangeType.Create],
-    mutationFn: contactEndpoints.post,
+    ...contactsMutations.create,
     onSuccess: (res) =>
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} created successfully`,

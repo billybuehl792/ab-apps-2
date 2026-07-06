@@ -1,8 +1,8 @@
 import api from "../config/api";
 import type {
   TContact,
-  TContactCreate,
-  TContactUpdate,
+  TContactCreateRequest,
+  TContactUpdateRequest,
   TContactListRequest,
   TContactListResponse,
   TContactDocumentListRequest,
@@ -15,6 +15,7 @@ import type {
   TDocumentCreate,
   TDocumentUpdate,
 } from "../types/documents";
+import { compressImage } from "../utils/image";
 
 const contactEndpoints = {
   id: ["contacts"] as const,
@@ -22,12 +23,12 @@ const contactEndpoints = {
     api
       .get<TContactListResponse>(`/contacts/`, options)
       .then(({ data }) => data),
-  post: (body: TContactCreate) =>
+  post: (body: TContactCreateRequest) =>
     api.post<TContact>(`/contacts/`, body).then(({ data }) => data),
   contact: (id: TContact["id"]) => ({
     id: ["contacts", "contact", id] as const,
     get: () => api.get<TContact>(`/contacts/${id}/`).then(({ data }) => data),
-    patch: (body: TContactUpdate) =>
+    patch: (body: TContactUpdateRequest) =>
       api.patch<TContact>(`/contacts/${id}/`, body).then(({ data }) => data),
     delete: () => api.delete<void>(`/contacts/${id}/`).then(({ data }) => data),
     documents: () => ({
@@ -39,9 +40,10 @@ const contactEndpoints = {
             options,
           )
           .then(({ data }) => data),
-      post: (body: TDocumentCreate) => {
+      post: async (body: TDocumentCreate) => {
         const formData = new FormData();
-        formData.append("file", body.file);
+        const compressedFile = await compressImage(body.file);
+        formData.append("file", compressedFile);
         formData.append("label", body.label);
         if (body.description) formData.append("description", body.description);
         return api

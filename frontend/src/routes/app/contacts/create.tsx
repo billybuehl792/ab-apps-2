@@ -4,15 +4,14 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
 import { Container, Stack, Typography } from "@mui/material";
 import { ContactIcons } from "@/store/constants/contacts";
-import contactEndpoints from "@/store/endpoints/contacts";
 import ContactCreateForm, {
   type IContactCreateFormProps,
 } from "@/containers/forms/ContactCreateForm";
-import { useMutation } from "@tanstack/react-query";
-import { EObjectChangeType } from "@/store/enums/api";
-import { useSnackbar } from "notistack";
+import { contactsMutations } from "@/store/mutations/contacts";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
 
@@ -34,8 +33,7 @@ function RouteComponent() {
   /** Mutations */
 
   const createContactMutation = useMutation({
-    mutationKey: [contactEndpoints.id, EObjectChangeType.Create],
-    mutationFn: contactEndpoints.post,
+    ...contactsMutations.create,
     onSuccess: (res) =>
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} created successfully`,
@@ -63,7 +61,7 @@ function RouteComponent() {
         onSuccess: (newContact) =>
           navigate({
             to: "/app/contacts/$id",
-            params: { id: String(newContact.id) },
+            params: { id: newContact.id },
             ignoreBlocker: true,
           }),
       },

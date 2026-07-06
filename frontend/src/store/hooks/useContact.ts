@@ -4,14 +4,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
-import contactEndpoints from "../endpoints/contacts";
+import { contactMutations } from "../mutations/contacts";
 import { errorUtils } from "../utils/error";
 import { markdownUtils } from "../utils/markdown";
 import { EContactOptionId } from "../enums/contacts";
 import { EObjectChangeType } from "../enums/api";
 import type { TContact } from "../types/contacts";
-import type { TDocument, TDocumentCreate } from "../types/documents";
-import { compressImage } from "../utils/image";
 
 type TContactMenuOption = IMenuOption<EContactOptionId, EContactOptionId>;
 
@@ -41,11 +39,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   /** Mutations */
 
   const updateMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).id,
-      EObjectChangeType.Update,
-    ],
-    mutationFn: contactEndpoints.contact(contact.id).patch,
+    ...contactMutations(contact.id).update,
     onSuccess: (res) => {
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(
@@ -60,11 +54,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const deleteMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).id,
-      EObjectChangeType.Delete,
-    ],
-    mutationFn: contactEndpoints.contact(contact.id).delete,
+    ...contactMutations(contact.id).delete,
     onSuccess: () => {
       options?.onChange?.(contact, EObjectChangeType.Delete);
       snackbar.enqueueSnackbar(`${markdownUtils.bold(fullName)} deleted`, {
@@ -78,17 +68,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const createDocumentMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).documents().id,
-      EObjectChangeType.Create,
-    ],
-    mutationFn: async ({ file, ...body }: TDocumentCreate) => {
-      const compressedFile = await compressImage(file);
-      return contactEndpoints
-        .contact(contact.id)
-        .documents()
-        .post({ file: compressedFile, ...body });
-    },
+    ...contactMutations(contact.id).documents.create,
     onSuccess: (res) => {
       options?.onChange?.(contact, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(`${res.label} uploaded`, {
@@ -100,12 +80,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const deleteDocumentMutation = useMutation({
-    mutationKey: [
-      contactEndpoints.contact(contact.id).documents().id,
-      "delete",
-    ],
-    mutationFn: (id: TDocument["id"]) =>
-      contactEndpoints.contact(contact.id).documents().document(id).delete(),
+    ...contactMutations(contact.id).documents.delete,
     onSuccess: () => {
       options?.onChange?.(contact, EObjectChangeType.Update);
       snackbar.enqueueSnackbar("Document deleted", { variant: "success" });

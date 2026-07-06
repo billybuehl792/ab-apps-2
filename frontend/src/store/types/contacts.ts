@@ -1,8 +1,8 @@
 import z from "zod";
 import {
   contactSchema,
-  contactCreateSchema,
-  contactUpdateSchema,
+  contactCreateRequestSchema,
+  contactUpdateRequestSchema,
   contactListRequestSchema,
   contactListResponseSchema,
   contactDocumentListResponseSchema,
@@ -13,9 +13,9 @@ import {
 
 export type TContact = z.infer<typeof contactSchema>;
 
-export type TContactCreate = z.infer<typeof contactCreateSchema>;
+export type TContactCreateRequest = z.infer<typeof contactCreateRequestSchema>;
 
-export type TContactUpdate = z.infer<typeof contactUpdateSchema>;
+export type TContactUpdateRequest = z.infer<typeof contactUpdateRequestSchema>;
 
 export type TContactListRequest = z.infer<typeof contactListRequestSchema>;
 

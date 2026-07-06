@@ -16,7 +16,7 @@ import CustomLink from "@/components/links/CustomLink";
 
 const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
 const paramsSchema = z.object({
-  force: z
+  force: z.coerce
     .boolean()
     .optional()
     .transform((value) => !!value || undefined)

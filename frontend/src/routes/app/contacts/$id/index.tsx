@@ -17,7 +17,10 @@ import DocumentList from "@/containers/lists/DocumentList";
 import HistoryList from "@/containers/lists/HistoryList";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import { documentListRequestSchema } from "@/store/schemas/documents";
-import contactEndpoints from "@/store/endpoints/contacts";
+import {
+  contactDocumentsQueries,
+  contactHistoryQueries,
+} from "@/store/queries/contacts";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import { EListVariant } from "@/store/enums/layout";
@@ -116,11 +119,9 @@ const DocumentsTab: React.FC = () => {
 
   /** Queries */
 
-  const contactDocumentListQuery = useQuery({
-    queryKey: ["contacts", "contact", contact.id, "documents", { params }],
-    queryFn: () =>
-      contactEndpoints.contact(contact.id).documents().get({ params }),
-  });
+  const documentListQuery = useQuery(
+    contactDocumentsQueries(contact.id).list({ params }),
+  );
 
   const { getRootProps, isDragActive } = useDropzone({
     multiple: true,
@@ -128,7 +129,7 @@ const DocumentsTab: React.FC = () => {
       acceptedFiles.forEach((file) =>
         createDocument(
           { label: file.name, description: "", file },
-          { onSuccess: () => contactDocumentListQuery.refetch() },
+          { onSuccess: () => documentListQuery.refetch() },
         ),
       );
     },
@@ -156,7 +157,7 @@ const DocumentsTab: React.FC = () => {
       Icon: Delete,
       onClick: () =>
         deleteDocument(document.id, {
-          onSuccess: () => contactDocumentListQuery.refetch(),
+          onSuccess: () => documentListQuery.refetch(),
         }),
     },
   ];
@@ -164,13 +165,13 @@ const DocumentsTab: React.FC = () => {
   return (
     <Container sx={{ display: "flex", flexGrow: 1 }}>
       <DocumentList
-        items={contactDocumentListQuery.data?.results ?? []}
-        count={contactDocumentListQuery.data?.count ?? -1}
+        items={documentListQuery.data?.results ?? []}
+        count={documentListQuery.data?.count ?? -1}
         page={params.page}
         pageSize={params.page_size}
         search={params.search}
-        loading={contactDocumentListQuery.isLoading}
-        error={contactDocumentListQuery.error}
+        loading={documentListQuery.isLoading}
+        error={documentListQuery.error}
         listVariant={listVariant}
         onPageChange={(page) => handleOnParamsChange({ page })}
         onPageSizeChange={(page_size) =>
@@ -228,11 +229,9 @@ const HistoryTab: React.FC = () => {
 
   /** Queries */
 
-  const contactHistoryListQuery = useQuery({
-    queryKey: ["contacts", "contact", contact.id, "history", { params }],
-    queryFn: () =>
-      contactEndpoints.contact(contact.id).history().get({ params }),
-  });
+  const contactHistoryListQuery = useQuery(
+    contactHistoryQueries(contact.id).list({ params }),
+  );
 
   /** Callbacks */
 
