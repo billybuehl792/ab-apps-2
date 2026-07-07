@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Error } from "@mui/icons-material";
-import { googleAutocompleteSuggestionListRequestSchema } from "@/store/schemas/places";
 import { placeQueries } from "@/store/queries/places";
 import { errorUtils } from "@/store/utils/error";
 import { PlaceIcons } from "@/store/constants/places";

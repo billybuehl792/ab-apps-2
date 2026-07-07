@@ -1,13 +1,11 @@
-import usePlace, { type IUsePlaceOptions } from "@/store/hooks/usePlace";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import { PlaceIcons } from "@/store/constants/places";
 import type { TPlace } from "@/store/types/places";
 
-type TListCardProps = Omit<IListCardProps, "options" | "onClick" | "onChange">;
+type TListCardProps = Omit<IListCardProps, "onClick" | "onChange">;
 
-interface IPlaceListCardProps
-  extends Partial<TListCardProps>, IUsePlaceOptions {
+export interface IPlaceListCardProps extends Partial<TListCardProps> {
   place: TPlace;
   onClick?: (
     place: TPlace,
@@ -17,22 +15,9 @@ interface IPlaceListCardProps
 
 const PlaceListCard: React.FC<IPlaceListCardProps> = ({
   place,
-  hideOptions,
-  disabled,
-  options,
   onClick,
-  onChange,
   ...props
 }) => {
-  /** Values */
-
-  const placeHook = usePlace(place, {
-    options,
-    disabled,
-    hideOptions,
-    onChange,
-  });
-
   return (
     <ListCard
       startContent={<PlaceIcons.Detail fontSize="large" color="disabled" />}
@@ -49,9 +34,7 @@ const PlaceListCard: React.FC<IPlaceListCardProps> = ({
         />
       }
       link={{ to: "/app/places/$id", params: { id: String(place.id) } }}
-      disabled={placeHook.disabled}
-      options={placeHook.options}
-      {...(onClick && { onClick: (event) => onClick(place, event) })}
+      {...(!!onClick && { onClick: (event) => onClick(place, event) })}
       {...props}
     />
   );

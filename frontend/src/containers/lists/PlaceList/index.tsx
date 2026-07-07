@@ -1,115 +1,127 @@
-import { useMemo, type ComponentProps } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Divider, Stack, type StackProps } from "@mui/material";
-import PaginatedList from "@/components/lists/PaginatedList";
+import React, { Fragment, type ReactNode } from "react";
+import { Pagination, Stack, type StackProps } from "@mui/material";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
-import PlaceListCard from "./components/cards/PlaceListCard";
-import { placeQueries } from "@/store/queries/places";
-import { PlaceIcons } from "@/store/constants/places";
-import { EObjectChangeType } from "@/store/enums/api";
-import type { TPlace, TPlaceListRequest } from "@/store/types/places";
+import StatusWrapper, {
+  type IStatusWrapperBaseProps,
+} from "@/components/layout/StatusWrapper";
+import PlaceListCard, {
+  type IPlaceListCardProps,
+} from "./components/cards/PlaceListCard";
+import { sxUtils } from "@/store/utils/sx";
+import type { TPlace } from "@/store/types/places";
 
-type TCardProps = Partial<Omit<ComponentProps<typeof PlaceListCard>, "place">>;
+type TCardProps = Partial<Omit<IPlaceListCardProps, "place">>;
 
-export interface IPlaceListProps extends StackProps {
-  params: TPlaceListRequest["params"];
-  onParamsChange: (newParams: TPlaceListRequest["params"]) => void;
+export interface IPlaceListProps extends StackProps, IStatusWrapperBaseProps {
+  items: TPlace[];
+  count: number;
+  page: number;
+  pageSize: number;
+  search?: string;
+  disabled?: boolean;
+  renderCard?: (place: TPlace) => ReactNode;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSearchChange?: (search: string) => void;
   slotProps?: {
+    root?: StackProps;
     header?: StackProps;
+    list?: StackProps;
     card?: TCardProps | ((place: TPlace) => TCardProps);
   };
 }
 
 const PlaceList: React.FC<IPlaceListProps> = ({
-  params,
-  onParamsChange,
+  items,
+  count,
+  page,
+  pageSize,
+  search,
+  loading,
+  error,
+  empty,
+  disabled,
+  renderCard,
+  onSearchChange,
+  onPageChange,
+  onPageSizeChange,
   slotProps,
   ...props
 }) => {
-  /** Queries */
+  /** Values */
 
-  const placeListQuery = useQuery(placeQueries.list({ params }));
-
-  /** Data */
-
-  const total = useMemo(
-    () => placeListQuery.data?.count ?? false,
-    [placeListQuery.data],
-  );
+  const showHeader = !!onSearchChange;
+  const pageCount = Math.ceil(count / pageSize);
 
   /** Callbacks */
 
-  const handleOnParamsChange: IPlaceListProps["onParamsChange"] = (newParams) =>
-    onParamsChange?.(newParams);
-
-  const handleOnCardChange: TCardProps["onChange"] = (place, type) => {
-    if (type === EObjectChangeType.Delete) {
-      const isLastItemOnPage =
-        placeListQuery.data?.results.at(-1)?.id === place.id;
-      const isFirstPage = params.page === 1;
-      if (isLastItemOnPage && !isFirstPage)
-        handleOnParamsChange({ ...params, page: Math.max(1, params.page - 1) });
-      else placeListQuery.refetch();
-    }
-  };
+  const handleRenderCard: IPlaceListProps["renderCard"] =
+    renderCard ??
+    ((place) => (
+      <PlaceListCard
+        place={place}
+        {...(typeof slotProps?.card === "function"
+          ? slotProps.card(place)
+          : slotProps?.card)}
+      />
+    ));
 
   return (
-    <Stack position="relative" spacing={2} {...props}>
-      <Stack {...slotProps?.header}>
-        <Stack spacing={2} py={2}>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            useFlexGap
-            alignItems="center"
-            justifyContent="flex-start"
-          >
+    <Stack position="relative" spacing={2} {...slotProps?.root} {...props}>
+      {!!showHeader && (
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          {...slotProps?.header}
+          sx={[
+            {
+              py: 2,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            },
+            ...sxUtils.asArray(slotProps?.header?.sx),
+          ]}
+        >
+          {!!onSearchChange && (
             <DebouncedSearchField
-              value={params.search}
+              value={search}
               size="small"
-              loading={!!placeListQuery.isLoading && !!params.search}
-              onChange={(value) =>
-                handleOnParamsChange({ ...params, page: 1, search: value })
-              }
+              loading={!!loading && !!search}
+              onChange={onSearchChange}
               sx={{ flex: 1 }}
             />
-          </Stack>
+          )}
         </Stack>
-        <Divider />
-      </Stack>
-      <PaginatedList
-        items={placeListQuery.data?.results ?? []}
-        total={total}
-        page={params.page}
-        pageSize={params.page_size}
-        loading={placeListQuery.isLoading}
-        error={placeListQuery.error}
-        empty={
-          total === 0 && {
-            label: "No Places Found",
-            icon: <PlaceIcons.List fontSize="large" />,
-            ...(params.search && {
-              description: `No results for "${params.search}".`,
-            }),
+      )}
+      <Stack spacing={1} {...slotProps?.list}>
+        <StatusWrapper
+          loading={loading}
+          error={error}
+          empty={
+            empty ||
+            (items.length === 0 && {
+              label: "No Places",
+              description: search?.trim()
+                ? `No places found for "${search}"`
+                : undefined,
+            })
           }
-        }
-        renderItem={(place) => (
-          <PlaceListCard
-            key={place.id}
-            place={place}
-            onChange={handleOnCardChange}
-            {...(typeof slotProps?.card === "function"
-              ? slotProps.card(place)
-              : slotProps?.card)}
-          />
-        )}
-        renderSkeletonItem
-        onPageChange={(page) => handleOnParamsChange({ ...params, page })}
-        onPageSizeChange={(pageSize) =>
-          handleOnParamsChange({ ...params, page: 1, page_size: pageSize })
-        }
-      />
+          flexGrow={1}
+        >
+          {items.map((place) => (
+            <Fragment key={place.id}>{handleRenderCard(place)}</Fragment>
+          ))}
+        </StatusWrapper>
+      </Stack>
+      <Stack direction="row" justifyContent="center" alignItems="center">
+        <Pagination
+          page={page}
+          count={pageCount}
+          variant="outlined"
+          disabled={disabled || !!loading}
+          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
+        />
+      </Stack>
     </Stack>
   );
 };
