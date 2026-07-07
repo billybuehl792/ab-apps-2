@@ -20,7 +20,7 @@ import CustomLink from "@/components/links/CustomLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import RequestPasswordResetForm from "@/containers/forms/RequestPasswordResetForm";
 import { errorUtils } from "@/store/utils/error";
-import { authMutations } from "@/store/mutations/account";
+import { accountMutations } from "@/store/mutations/account";
 
 export const Route = createFileRoute("/forgot-password")({
   validateSearch: () => ({}),
@@ -45,7 +45,7 @@ function RouteComponent() {
   /** Mutations */
 
   const requestPasswordResetMutation = useMutation(
-    authMutations.requestPasswordReset,
+    accountMutations.auth.requestPasswordReset,
   );
 
   /** Callbacks */

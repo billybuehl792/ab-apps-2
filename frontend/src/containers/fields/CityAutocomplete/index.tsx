@@ -1,6 +1,6 @@
-import { Autocomplete, type AutocompleteProps, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import placeEndpoints from "@/store/endpoints/places";
+import { Autocomplete, type AutocompleteProps, TextField } from "@mui/material";
+import { placeQueries } from "@/store/queries/places";
 
 type TCityAutocompleteProps<
   Multiple extends boolean = false,
@@ -20,15 +20,12 @@ const CityAutocomplete = <
 ) => {
   /** Values */
 
-  const cityListQuery = useQuery({
-    queryKey: placeEndpoints.cities().id,
-    queryFn: () => placeEndpoints.cities().get(),
-  });
+  const listQuery = useQuery(placeQueries.cities.list());
 
   return (
     <Autocomplete
-      options={cityListQuery.data ?? []}
-      loading={cityListQuery.isLoading}
+      options={listQuery.data ?? []}
+      loading={listQuery.isLoading}
       renderInput={(params) => (
         <TextField {...params} label="City" placeholder="Select city..." />
       )}

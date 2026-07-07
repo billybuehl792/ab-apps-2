@@ -6,9 +6,9 @@ import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ContactListCard from "./components/cards/ContactListCard";
 import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactListOrderingField from "./components/fields/ContactListOrderingField";
+import { contactQueries } from "@/store/queries/contacts";
 import { ContactIcons } from "@/store/constants/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
-import { contactsQueries } from "@/store/queries/contacts";
 import type { TContact, TContactListRequest } from "@/store/types/contacts";
 
 type TCardProps = Partial<
@@ -32,7 +32,7 @@ const ContactList: React.FC<IContactListProps> = ({
 }) => {
   /** Queries */
 
-  const contactListQuery = useQuery(contactsQueries.list({ params }));
+  const contactListQuery = useQuery(contactQueries.list({ params }));
 
   /** Data */
 

@@ -18,7 +18,6 @@ import type {
 import { compressImage } from "../utils/image";
 
 const contactEndpoints = {
-  id: ["contacts"] as const,
   get: (options?: TContactListRequest) =>
     api
       .get<TContactListResponse>(`/contacts/`, options)
@@ -26,13 +25,11 @@ const contactEndpoints = {
   post: (body: TContactCreateRequest) =>
     api.post<TContact>(`/contacts/`, body).then(({ data }) => data),
   contact: (id: TContact["id"]) => ({
-    id: ["contacts", "contact", id] as const,
     get: () => api.get<TContact>(`/contacts/${id}/`).then(({ data }) => data),
     patch: (body: TContactUpdateRequest) =>
       api.patch<TContact>(`/contacts/${id}/`, body).then(({ data }) => data),
     delete: () => api.delete<void>(`/contacts/${id}/`).then(({ data }) => data),
-    documents: () => ({
-      id: ["contacts", "contact", id, "documents"] as const,
+    documents: {
       get: (options?: TContactDocumentListRequest) =>
         api
           .get<TContactDocumentListResponse>(
@@ -51,7 +48,6 @@ const contactEndpoints = {
           .then(({ data }) => data);
       },
       document: (documentId: TDocument["id"]) => ({
-        id: ["contacts", "contact", id, "documents", documentId] as const,
         get: () =>
           api
             .get<TDocument>(`/contacts/${id}/documents/${documentId}/`)
@@ -65,14 +61,14 @@ const contactEndpoints = {
             .delete<void>(`/contacts/${id}/documents/${documentId}/`)
             .then(({ data }) => data),
       }),
-    }),
-    history: () => ({
+    },
+    history: {
       id: ["contacts", "contact", id, "history"] as const,
       get: (options?: TContactHistoryListRequest) =>
         api
           .get<TContactHistoryListResponse>(`/contacts/${id}/history/`, options)
           .then(({ data }) => data),
-    }),
+    },
   }),
 };
 

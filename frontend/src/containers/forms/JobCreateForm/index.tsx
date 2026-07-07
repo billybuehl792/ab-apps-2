@@ -24,14 +24,14 @@ import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 import { contactSchema } from "@/store/schemas/contacts";
 import { EJobCategory } from "@/store/enums/jobs";
 
-type TJobCreateFormValues = z.infer<typeof formSchema>;
+type TJobCreateRequestFormValues = z.infer<typeof formSchema>;
 
 export interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  values?: TJobCreateFormValues;
-  onSubmit: SubmitHandler<TJobCreateFormValues>;
+  values?: TJobCreateRequestFormValues;
+  onSubmit: SubmitHandler<TJobCreateRequestFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
@@ -43,7 +43,7 @@ export interface IJobCreateFormProps extends Omit<
 
 const formSchema = z.object({
   categories: z
-    .array(z.nativeEnum(EJobCategory))
+    .array(z.enum(EJobCategory))
     .min(1, "At least one category is required"),
   description: z.string().min(1, "Description is required"),
   recipients: z

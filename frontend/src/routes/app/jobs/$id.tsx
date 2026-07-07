@@ -2,8 +2,8 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container } from "@mui/material";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 import { JobIcons } from "@/store/constants/jobs";
-import jobEndpoints from "@/store/endpoints/jobs";
 import { errorUtils } from "@/store/utils/error";
+import { jobQueries } from "@/store/queries/jobs";
 
 export const Route = createFileRoute("/app/jobs/$id")({
   beforeLoad: async ({ context, params }) => {
@@ -11,10 +11,9 @@ export const Route = createFileRoute("/app/jobs/$id")({
       const id = Number(params.id);
       if (isNaN(id)) throw new Error("Invalid job ID");
 
-      const job = await context.queryClient.fetchQuery({
-        queryKey: jobEndpoints.job(id).id,
-        queryFn: jobEndpoints.job(id).get,
-      });
+      const job = await context.queryClient.fetchQuery(
+        jobQueries.job(id).detail,
+      );
 
       return {
         job,

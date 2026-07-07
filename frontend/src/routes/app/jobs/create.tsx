@@ -1,20 +1,18 @@
 import {
   createFileRoute,
   useCanGoBack,
-  useNavigate,
   useRouter,
 } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
 import { Container, Stack, Typography } from "@mui/material";
 import { JobIcons } from "@/store/constants/jobs";
-import jobEndpoints from "@/store/endpoints/jobs";
 import JobCreateForm, {
   type IJobCreateFormProps,
 } from "@/containers/forms/JobCreateForm";
-import { useMutation } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
+import { jobMutations } from "@/store/mutations/jobs";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
-import { EObjectChangeType } from "@/store/enums/api";
 
 export const Route = createFileRoute("/app/jobs/create")({
   beforeLoad: () => ({
@@ -26,16 +24,15 @@ export const Route = createFileRoute("/app/jobs/create")({
 function RouteComponent() {
   /** Values */
 
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
   const router = useRouter();
-  const snackbar = useSnackbar();
   const canGoBack = useCanGoBack();
+  const snackbar = useSnackbar();
 
   /** Mutations */
 
   const createJobMutation = useMutation({
-    mutationKey: [jobEndpoints.id, EObjectChangeType.Create],
-    mutationFn: jobEndpoints.post,
+    ...jobMutations.create,
     onSuccess: (res) =>
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(`Job ${res.id}`)} created successfully`,

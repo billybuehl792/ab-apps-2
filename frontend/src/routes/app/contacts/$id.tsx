@@ -12,7 +12,7 @@ export const Route = createFileRoute("/app/contacts/$id")({
       if (isNaN(id)) throw new Error("Invalid contact ID");
 
       const contact = await context.queryClient.fetchQuery(
-        contactQueries(id).detail,
+        contactQueries.contact(id).detail,
       );
 
       return {

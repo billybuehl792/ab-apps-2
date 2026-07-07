@@ -1,9 +1,11 @@
 import z from "zod";
+import { idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { contactSchema } from "./contacts";
 import { placeSchema } from "./places";
-import { idSchema } from "./basic";
+import { documentSchema } from "./documents";
 import { EJobCategory, EJobListOrdering } from "../enums/jobs";
+import { historyEntrySchema } from "./history";
 
 export const jobSchema = z.object({
   id: idSchema,
@@ -28,7 +30,7 @@ export const jobSchema = z.object({
   updated_at: z.iso.datetime().nullable().default(null),
 });
 
-export const jobCreateSchema = z.object({
+export const jobCreateRequestSchema = z.object({
   description: z.string().optional(),
   categories: z.array(z.enum(EJobCategory)).optional(),
   amount: z.number().optional(),
@@ -47,7 +49,7 @@ export const jobCreateSchema = z.object({
   paid_at: z.iso.datetime().optional(),
 });
 
-export const jobUpdateSchema = z.object({
+export const jobUpdateRequestSchema = z.object({
   description: z.string().max(1024).nullable().optional(),
   categories: z.array(z.enum(EJobCategory)).optional(),
   amount: z.number().nullable().optional(),
@@ -77,4 +79,16 @@ export const jobListRequestSchema = listRequestSchema.extend({
 
 export const jobListResponseSchema = listResponseSchema.extend({
   results: z.array(jobSchema),
+});
+
+export const jobDocumentListRequestSchema = listRequestSchema;
+
+export const jobDocumentListResponseSchema = listResponseSchema.extend({
+  results: z.array(documentSchema),
+});
+
+export const jobHistoryListRequestSchema = listRequestSchema;
+
+export const jobHistoryListResponseSchema = listResponseSchema.extend({
+  results: z.array(historyEntrySchema),
 });

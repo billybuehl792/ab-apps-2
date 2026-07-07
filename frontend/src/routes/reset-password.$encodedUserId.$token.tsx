@@ -10,14 +10,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { ArrowBack, CheckCircle } from "@mui/icons-material";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { ArrowBack, CheckCircle } from "@mui/icons-material";
 import ButtonLink from "@/components/links/ButtonLink";
 import CustomLink from "@/components/links/CustomLink";
 import ResetPasswordForm from "@/containers/forms/ResetPasswordForm";
-import { authQueries } from "@/store/queries/account";
-import { authMutations } from "@/store/mutations/account";
+import { accountQueries } from "@/store/queries/account";
+import { accountMutations } from "@/store/mutations/account";
 import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
   loader: async ({ context, params }) => {
     // Check if params are valid
     await context.queryClient.fetchQuery(
-      authQueries.resetPassword(params).detail,
+      accountQueries.auth.resetPassword(params).detail,
     );
   },
   component: RouteComponent,
@@ -63,7 +63,7 @@ function RouteComponent() {
   /** Mutations */
 
   const resetPasswordMutation = useMutation(
-    authMutations.resetPassword(params),
+    accountMutations.auth.resetPassword(params),
   );
 
   /** Callbacks */

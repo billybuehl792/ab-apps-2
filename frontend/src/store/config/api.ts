@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import router from "@/store/config/router";
 import { authUtils } from "../utils/auth";
-import { authEndpoints } from "../endpoints/account";
+import { accountEndpoints } from "../endpoints/account";
 import type { TAccessTokenResponse } from "../types/account";
 
 const api = axios.create({
@@ -23,7 +23,9 @@ let reauthPromise: Promise<void> | null = null;
 
 const fetchRefreshToken = () =>
   refreshPromise ??
-  authEndpoints.token.refresh.post().finally(() => (refreshPromise = null));
+  accountEndpoints.auth.token.refresh
+    .post()
+    .finally(() => (refreshPromise = null));
 
 const handleReauth = () =>
   reauthPromise ??

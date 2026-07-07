@@ -24,8 +24,8 @@ import { ContactIcons } from "@/store/constants/contacts";
 import { errorUtils } from "@/store/utils/error";
 import { useSnackbar } from "notistack";
 import { markdownUtils } from "@/store/utils/markdown";
-import { contactsQueries } from "@/store/queries/contacts";
-import { contactsMutations } from "@/store/mutations/contacts";
+import { contactQueries } from "@/store/queries/contacts";
+import { contactMutations } from "@/store/mutations/contacts";
 import type { TContact } from "@/store/types/contacts";
 
 type TContactAutocompleteBaseProps<
@@ -85,13 +85,13 @@ const ContactAutocomplete = <
   /** Queries */
 
   const listQuery = useQuery(
-    contactsQueries.list({ params: { page: 1, page_size: 40, search } }),
+    contactQueries.list({ params: { page: 1, page_size: 40, search } }),
   );
 
   /** Mutations */
 
   const createContactMutation = useMutation({
-    ...contactsMutations.create,
+    ...contactMutations.create,
     onSuccess: (res) =>
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} created successfully`,

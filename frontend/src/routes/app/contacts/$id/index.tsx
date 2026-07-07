@@ -17,10 +17,7 @@ import DocumentList from "@/containers/lists/DocumentList";
 import HistoryList from "@/containers/lists/HistoryList";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import { documentListRequestSchema } from "@/store/schemas/documents";
-import {
-  contactDocumentsQueries,
-  contactHistoryQueries,
-} from "@/store/queries/contacts";
+import { contactQueries } from "@/store/queries/contacts";
 import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import { EListVariant } from "@/store/enums/layout";
@@ -120,7 +117,7 @@ const DocumentsTab: React.FC = () => {
   /** Queries */
 
   const documentListQuery = useQuery(
-    contactDocumentsQueries(contact.id).list({ params }),
+    contactQueries.contact(contact.id).documents.list({ params }),
   );
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -230,7 +227,7 @@ const HistoryTab: React.FC = () => {
   /** Queries */
 
   const contactHistoryListQuery = useQuery(
-    contactHistoryQueries(contact.id).list({ params }),
+    contactQueries.contact(contact.id).history.list({ params }),
   );
 
   /** Callbacks */

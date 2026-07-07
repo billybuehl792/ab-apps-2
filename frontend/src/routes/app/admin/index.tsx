@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Container, Stack } from "@mui/material";
 import ListCard from "@/components/cards/ListCard";
-import { usersQueries } from "@/store/queries/account";
+import { accountQueries } from "@/store/queries/account";
 import { AccountIcons } from "@/store/constants/account";
 
 export const Route = createFileRoute("/app/admin/")({
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/app/admin/")({
 function RouteComponent() {
   /** Values */
 
-  const userListQuery = useQuery(usersQueries.list());
+  const userListQuery = useQuery(accountQueries.users.list());
 
   return (
     <Container>

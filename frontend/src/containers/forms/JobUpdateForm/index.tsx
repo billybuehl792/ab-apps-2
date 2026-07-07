@@ -24,14 +24,14 @@ import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 import { contactSchema } from "@/store/schemas/contacts";
 import { EJobCategory } from "@/store/enums/jobs";
 
-type TJobUpdateFormValues = z.infer<typeof formSchema>;
+type TJobUpdateRequestFormValues = z.infer<typeof formSchema>;
 
 export interface IJobUpdateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  values?: TJobUpdateFormValues;
-  onSubmit: SubmitHandler<TJobUpdateFormValues>;
+  values?: TJobUpdateRequestFormValues;
+  onSubmit: SubmitHandler<TJobUpdateRequestFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;

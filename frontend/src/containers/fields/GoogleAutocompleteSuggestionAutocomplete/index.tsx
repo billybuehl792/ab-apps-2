@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import { Error } from "@mui/icons-material";
 import { googleAutocompleteSuggestionListRequestSchema } from "@/store/schemas/places";
-import { PlaceIcons } from "@/store/constants/places";
-import placeEndpoints from "@/store/endpoints/places";
+import { placeQueries } from "@/store/queries/places";
 import { errorUtils } from "@/store/utils/error";
+import { PlaceIcons } from "@/store/constants/places";
 import type { TGoogleAutocompleteSuggestion } from "@/store/types/places";
 
 type TGoogleAutocompleteSuggestionAutocompleteBaseProps<
@@ -82,14 +82,9 @@ const GoogleAutocompleteSuggestionAutocomplete = <
   /** Queries */
 
   const listQuery = useQuery({
-    queryKey: [
-      placeEndpoints.googleAutocompleteSuggestions().id,
-      googleAutocompleteSuggestionListRequestSchema.parse({
-        params: { input: input || undefined },
-      }),
-    ] as const,
-    queryFn: ({ queryKey }) =>
-      placeEndpoints.googleAutocompleteSuggestions().get(queryKey[1]),
+    ...placeQueries.googleAutocompleteSuggestions.list(
+      googleAutocompleteSuggestionListRequestSchema.parse({ input }),
+    ),
     enabled: !!input,
   });
 

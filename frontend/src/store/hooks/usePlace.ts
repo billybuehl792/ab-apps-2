@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import { Delete, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
 import { errorUtils } from "../utils/error";
-import placeEndpoints from "../endpoints/places";
+import { placeMutations } from "../mutations/places";
 import { EObjectChangeType } from "../enums/api";
 import { EPlaceOptionId } from "../enums/places";
 import type { TPlaceBasic } from "../types/places";
@@ -36,8 +36,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
   /** Mutations */
 
   const deleteMutation = useMutation({
-    mutationKey: [placeEndpoints.place(place.id).id, EObjectChangeType.Delete],
-    mutationFn: placeEndpoints.place(place.id).delete,
+    ...placeMutations.delete,
     onSuccess: () => {
       options?.onChange?.(place, EObjectChangeType.Delete);
       snackbar.enqueueSnackbar(`${place.address_short} deleted`, {
@@ -70,7 +69,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
         },
         () => deleteMutation.mutate(...options),
       ),
-    [confirm, deleteMutation],
+    [confirm, deleteMutation, place.address_short],
   );
 
   /** Options */
@@ -98,10 +97,16 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
           Icon: Delete,
           color: "error.main",
           isDisabled: isChangeDisabled,
-          onClick: handleDelete,
+          onClick: () => handleDelete(place.id),
         },
       ],
-      [isDisabled, isChangeDisabled, handleDelete, options],
+      [
+        options?.hideOptions,
+        isDisabled,
+        place.id,
+        isChangeDisabled,
+        handleDelete,
+      ],
     );
 
   const menuOptions = useMemo(
@@ -111,7 +116,7 @@ const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
           ? options.options(place, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [place, options?.options, baseMenuOptions],
+    [options, place, baseMenuOptions],
   );
 
   return {

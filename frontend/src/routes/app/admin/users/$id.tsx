@@ -1,16 +1,17 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import { usersQueries } from "@/store/queries/account";
+import { accountQueries } from "@/store/queries/account";
 import { errorUtils } from "@/store/utils/error";
 import { AccountIcons } from "@/store/constants/account";
 
 export const Route = createFileRoute("/app/admin/users/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
+      const id = Number(params.id);
+      if (isNaN(id)) throw new Error("Invalid user ID");
       const user = await context.queryClient.fetchQuery(
-        usersQueries.user(params.id).detail,
+        accountQueries.users.user(id).detail,
       );
-
       return {
         user,
         crumb: { label: user.username, Icon: AccountIcons.users.Detail },

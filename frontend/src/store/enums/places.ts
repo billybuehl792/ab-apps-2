@@ -11,6 +11,5 @@ export enum EPlaceListOrdering {
 
 export enum EPlaceOptionId {
   Detail = "detail",
-  Edit = "edit",
   Delete = "delete",
 }

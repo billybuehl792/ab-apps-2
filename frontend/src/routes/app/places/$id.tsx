@@ -3,7 +3,7 @@ import { Container, Stack } from "@mui/material";
 import { PlaceIcons } from "@/store/constants/places";
 import PlaceDetailCard from "@/containers/cards/PlaceMapCard";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
-import placeEndpoints from "@/store/endpoints/places";
+import { placeQueries } from "@/store/queries/places";
 import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/app/places/$id")({
@@ -12,10 +12,9 @@ export const Route = createFileRoute("/app/places/$id")({
       const id = Number(params.id);
       if (isNaN(id)) throw new Error("Invalid place ID");
 
-      const place = await context.queryClient.fetchQuery({
-        queryKey: placeEndpoints.place(id).id,
-        queryFn: placeEndpoints.place(id).get,
-      });
+      const place = await context.queryClient.fetchQuery(
+        placeQueries.place(id).detail,
+      );
       return {
         place,
         crumb: { label: place.address_short, Icon: PlaceIcons.Detail },

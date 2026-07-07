@@ -39,7 +39,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   /** Mutations */
 
   const updateMutation = useMutation({
-    ...contactMutations(contact.id).update,
+    ...contactMutations.contact(contact.id).update,
     onSuccess: (res) => {
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(
@@ -54,7 +54,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const deleteMutation = useMutation({
-    ...contactMutations(contact.id).delete,
+    ...contactMutations.contact(contact.id).delete,
     onSuccess: () => {
       options?.onChange?.(contact, EObjectChangeType.Delete);
       snackbar.enqueueSnackbar(`${markdownUtils.bold(fullName)} deleted`, {
@@ -68,7 +68,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const createDocumentMutation = useMutation({
-    ...contactMutations(contact.id).documents.create,
+    ...contactMutations.contact(contact.id).documents.create,
     onSuccess: (res) => {
       options?.onChange?.(contact, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(`${res.label} uploaded`, {
@@ -80,7 +80,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   });
 
   const deleteDocumentMutation = useMutation({
-    ...contactMutations(contact.id).documents.delete,
+    ...contactMutations.contact(contact.id).documents.delete,
     onSuccess: () => {
       options?.onChange?.(contact, EObjectChangeType.Update);
       snackbar.enqueueSnackbar("Document deleted", { variant: "success" });

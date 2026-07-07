@@ -11,7 +11,7 @@ import { ContactIcons } from "@/store/constants/contacts";
 import ContactCreateForm, {
   type IContactCreateFormProps,
 } from "@/containers/forms/ContactCreateForm";
-import { contactsMutations } from "@/store/mutations/contacts";
+import { contactMutations } from "@/store/mutations/contacts";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
 
@@ -33,7 +33,7 @@ function RouteComponent() {
   /** Mutations */
 
   const createContactMutation = useMutation({
-    ...contactsMutations.create,
+    ...contactMutations.create,
     onSuccess: (res) =>
       snackbar.enqueueSnackbar(
         `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} created successfully`,
@@ -61,7 +61,7 @@ function RouteComponent() {
         onSuccess: (newContact) =>
           navigate({
             to: "/app/contacts/$id",
-            params: { id: newContact.id },
+            params: { id: String(newContact.id) },
             ignoreBlocker: true,
           }),
       },

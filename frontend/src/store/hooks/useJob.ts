@@ -3,8 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Delete, Edit, Info } from "@mui/icons-material";
 import useConfirm from "./useConfirm";
+import { jobMutations } from "../mutations/jobs";
 import { errorUtils } from "../utils/error";
-import jobEndpoints from "../endpoints/jobs";
 import { EJobOptionId } from "../enums/jobs";
 import { EObjectChangeType } from "../enums/api";
 import type { TJob } from "../types/jobs";
@@ -31,8 +31,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
   /** Mutations */
 
   const updateMutation = useMutation({
-    mutationKey: [jobEndpoints.job(job.id).id, EObjectChangeType.Update],
-    mutationFn: jobEndpoints.job(job.id).patch,
+    ...jobMutations.job(job.id).update,
     onSuccess: (res) => {
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(`Job updated successfully`, {
@@ -46,8 +45,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
   });
 
   const deleteMutation = useMutation({
-    mutationKey: [jobEndpoints.job(job.id).id, EObjectChangeType.Delete],
-    mutationFn: jobEndpoints.job(job.id).delete,
+    ...jobMutations.job(job.id).delete,
     onSuccess: () => {
       options?.onChange?.(job, EObjectChangeType.Delete);
       snackbar.enqueueSnackbar(`Job deleted`, { variant: "success" });
@@ -113,7 +111,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
         onClick: handleDelete,
       },
     ],
-    [isDisabled, isChangeDisabled, handleDelete, options],
+    [options?.hideOptions, isDisabled, job.id, isChangeDisabled, handleDelete],
   );
 
   const menuOptions = useMemo(
@@ -123,7 +121,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
           ? options.options(job, baseMenuOptions)
           : options.options
         : baseMenuOptions,
-    [job, options?.options, baseMenuOptions],
+    [options, job, baseMenuOptions],
   );
 
   return {

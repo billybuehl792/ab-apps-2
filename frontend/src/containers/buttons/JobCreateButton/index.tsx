@@ -2,9 +2,12 @@ import React, { type ComponentProps } from "react";
 import ButtonLink from "@/components/links/ButtonLink";
 import { Add } from "@mui/icons-material";
 
-type TJobCreateButtonProps = Omit<ComponentProps<typeof ButtonLink>, "to">;
+type TJobCreateRequestButtonProps = Omit<
+  ComponentProps<typeof ButtonLink>,
+  "to"
+>;
 
-const JobCreateButton: React.FC<TJobCreateButtonProps> = (props) => {
+const JobCreateButton: React.FC<TJobCreateRequestButtonProps> = (props) => {
   return (
     <ButtonLink to="/app/jobs/create" startIcon={<Add />} {...props}>
       Create

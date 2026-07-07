@@ -11,7 +11,7 @@ import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import { authUtils } from "@/store/utils/auth";
-import { authEndpoints } from "@/store/endpoints/account";
+import { accountEndpoints } from "@/store/endpoints/account";
 import { markdownUtils } from "@/store/utils/markdown";
 
 const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -25,10 +25,8 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   /** Callbacks */
 
-  const signIn: ContextType<typeof AuthContext>["signIn"] = async (
-    credentials,
-  ) => {
-    const res = await authEndpoints.token.post(credentials);
+  const signIn: ContextType<typeof AuthContext>["signIn"] = async (body) => {
+    const res = await accountEndpoints.auth.token.post(body);
     flushSync(() => {
       authUtils.setAccessToken(res.access);
       setMe(res.me);
@@ -41,7 +39,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const signOut: ContextType<typeof AuthContext>["signOut"] = async () => {
     try {
-      await authEndpoints.token.revoke.post();
+      await accountEndpoints.auth.token.revoke.post();
     } catch {
       // Revoke is best-effort; local state is always cleared below.
     } finally {
@@ -57,7 +55,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   /** Effects */
 
   useEffect(() => {
-    authEndpoints.token.refresh
+    accountEndpoints.auth.token.refresh
       .post()
       .then((res) => {
         authUtils.setAccessToken(res.access);
