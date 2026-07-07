@@ -36,7 +36,7 @@ export const userSchema = z.object({
   updated_at: z.iso.datetime().nullable(),
 });
 
-export const userCreateSchema = z.object({
+export const userCreateRequestSchema = z.object({
   username: usernameSchema,
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
@@ -45,7 +45,7 @@ export const userCreateSchema = z.object({
   groups: z.array(z.enum(EUserGroup)).optional(),
 });
 
-export const userUpdateSchema = z.object({
+export const userUpdateRequestSchema = z.object({
   username: usernameSchema.optional(),
   first_name: z.string().min(1, "First name is required").optional(),
   last_name: z.string().min(1, "Last name is required").optional(),

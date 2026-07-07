@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import router from "@/store/config/router";
 import { authUtils } from "../utils/auth";
-import { tokenEndpoints } from "../constants/account";
+import { authEndpoints } from "../endpoints/account";
 import type { TAccessTokenResponse } from "../types/account";
 
 const api = axios.create({
@@ -17,15 +17,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const TOKEN_ENDPOINT = "account/auth/token/";
 let refreshPromise: Promise<TAccessTokenResponse> | null = null;
 let reauthPromise: Promise<void> | null = null;
 
 const fetchRefreshToken = () =>
   refreshPromise ??
-  tokenEndpoints
-    .refresh()
-    .post()
-    .finally(() => (refreshPromise = null));
+  authEndpoints.token.refresh.post().finally(() => (refreshPromise = null));
 
 const handleReauth = () =>
   reauthPromise ??
@@ -43,7 +41,7 @@ api.interceptors.response.use(
     const originalRequest = requestError.config;
 
     if (
-      !originalRequest.url.startsWith(tokenEndpoints.url) &&
+      !originalRequest.url.startsWith(TOKEN_ENDPOINT) &&
       requestError.response?.status === 401 &&
       !originalRequest._retry
     ) {

@@ -1,16 +1,15 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import StatusWrapper from "@/components/layout/StatusWrapper";
+import { usersQueries } from "@/store/queries/account";
 import { errorUtils } from "@/store/utils/error";
+import { AccountIcons } from "@/store/constants/account";
 
 export const Route = createFileRoute("/app/admin/users/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const user = await context.queryClient.fetchQuery({
-        queryKey: userEndpoints.user(params.id).id,
-        queryFn: userEndpoints.user(params.id).get,
-      });
+      const user = await context.queryClient.fetchQuery(
+        usersQueries.user(params.id).detail,
+      );
 
       return {
         user,
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/app/admin/users/$id")({
     }
   },
   component: RouteComponent,
-  pendingComponent: () => <StatusWrapper loading="loading user..." />,
 });
 
 function RouteComponent() {

@@ -39,6 +39,12 @@ export const Route = createFileRoute("/app")({
       />
     </FullScreen>
   ),
+  // errorComponent: ({ error }) => (
+  //   <Container sx={{ my: 2 }}>
+  //     <div>app.tsx error</div>
+  //     {/* <StatusWrapper error={error} /> */}
+  //   </Container>
+  // ),
   notFoundComponent: () => (
     <Container>
       <PageNotFoundCard my={2} />

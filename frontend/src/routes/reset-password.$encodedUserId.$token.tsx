@@ -1,4 +1,7 @@
+import type { ComponentProps } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
 import {
   Card,
   CardContent,
@@ -9,14 +12,12 @@ import {
 } from "@mui/material";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { authEndpoints } from "@/store/constants/account";
 import { ArrowBack, CheckCircle } from "@mui/icons-material";
 import ButtonLink from "@/components/links/ButtonLink";
 import CustomLink from "@/components/links/CustomLink";
 import ResetPasswordForm from "@/containers/forms/ResetPasswordForm";
-import { ComponentProps } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
+import { authQueries } from "@/store/queries/account";
+import { authMutations } from "@/store/mutations/account";
 import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
@@ -26,10 +27,9 @@ export const Route = createFileRoute("/reset-password/$encodedUserId/$token")({
   },
   loader: async ({ context, params }) => {
     // Check if params are valid
-    await context.queryClient.fetchQuery({
-      queryKey: authEndpoints.resetPassword(params).id,
-      queryFn: () => authEndpoints.resetPassword(params).get(),
-    });
+    await context.queryClient.fetchQuery(
+      authQueries.resetPassword(params).detail,
+    );
   },
   component: RouteComponent,
   pendingComponent: () => (
@@ -62,10 +62,9 @@ function RouteComponent() {
 
   /** Mutations */
 
-  const resetPasswordMutation = useMutation({
-    mutationKey: authEndpoints.resetPassword(params).id,
-    mutationFn: authEndpoints.resetPassword(params).post,
-  });
+  const resetPasswordMutation = useMutation(
+    authMutations.resetPassword(params),
+  );
 
   /** Callbacks */
 
