@@ -43,7 +43,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
     onSuccess: (res) => {
       options?.onChange?.(res, EObjectChangeType.Update);
       snackbar.enqueueSnackbar(
-        `${markdownUtils.bold(fullName)} updated successfully`,
+        `${markdownUtils.bold(`${res.first_name} ${res.last_name}`)} updated successfully`,
         { variant: "success" },
       );
     },

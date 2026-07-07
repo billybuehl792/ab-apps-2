@@ -1,17 +1,20 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container, Stack } from "@mui/material";
 import { PlaceIcons } from "@/store/constants/places";
-import placeEndpoints from "@/store/endpoints/places";
-import { errorUtils } from "@/store/utils/error";
 import PlaceDetailCard from "@/containers/cards/PlaceMapCard";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
+import placeEndpoints from "@/store/endpoints/places";
+import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/app/places/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
+      const id = Number(params.id);
+      if (isNaN(id)) throw new Error("Invalid place ID");
+
       const place = await context.queryClient.fetchQuery({
-        queryKey: placeEndpoints.place(params.id).id,
-        queryFn: placeEndpoints.place(params.id).get,
+        queryKey: placeEndpoints.place(id).id,
+        queryFn: placeEndpoints.place(id).get,
       });
       return {
         place,

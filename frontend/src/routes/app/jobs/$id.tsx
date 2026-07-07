@@ -8,9 +8,12 @@ import { errorUtils } from "@/store/utils/error";
 export const Route = createFileRoute("/app/jobs/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
+      const id = Number(params.id);
+      if (isNaN(id)) throw new Error("Invalid job ID");
+
       const job = await context.queryClient.fetchQuery({
-        queryKey: jobEndpoints.job(params.id).id,
-        queryFn: jobEndpoints.job(params.id).get,
+        queryKey: jobEndpoints.job(id).id,
+        queryFn: jobEndpoints.job(id).get,
       });
 
       return {
@@ -23,7 +26,11 @@ export const Route = createFileRoute("/app/jobs/$id")({
   },
   notFoundComponent: () => (
     <Container>
-      <PageNotFoundCard my={2} />
+      <PageNotFoundCard
+        label="Job not found"
+        description="The job you are looking for does not exist or has been removed."
+        my={2}
+      />
     </Container>
   ),
 });

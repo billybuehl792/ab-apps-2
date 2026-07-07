@@ -1,6 +1,7 @@
 import z from "zod";
-import { EUserGroup, EUserListOrdering } from "../enums/account";
 import { listRequestSchema, listResponseSchema } from "./api";
+import { idSchema } from "./basic";
+import { EUserGroup, EUserListOrdering } from "../enums/account";
 
 const usernameSchema = z
   .string()
@@ -25,7 +26,7 @@ export const credentialsSchema = z.object({
 });
 
 export const userSchema = z.object({
-  id: z.string(),
+  id: idSchema,
   username: usernameSchema,
   full_name: z.string().min(1, "Full name is required"),
   first_name: z.string().min(1, "First name is required"),

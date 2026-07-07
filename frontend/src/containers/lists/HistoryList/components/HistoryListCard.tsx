@@ -2,7 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import { DateTimeFormat } from "@/store/enums/datetime";
-import type { THistoryEntry } from "@/store/types/basic";
+import type { THistoryEntry } from "@/store/types/history";
 
 export interface IHistoryListCardProps extends Omit<IListCardProps, "onClick"> {
   historyEntry: THistoryEntry;

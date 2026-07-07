@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
+import { idSchema } from "./basic";
 import { EPlaceListOrdering } from "../enums/places";
 
 export const placeSchema = z.object({
-  id: z.string(),
+  id: idSchema,
   google_place_id: z.string(),
   address_full: z.string(),
   address_short: z.string(),
@@ -44,7 +45,7 @@ export const googleAutocompleteSuggestionSchema = z.object({
 
 export const placeListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    ordering: z.nativeEnum(EPlaceListOrdering).optional(),
+    ordering: z.enum(EPlaceListOrdering).optional(),
     city: z.string().optional(),
   }),
 });

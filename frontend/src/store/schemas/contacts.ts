@@ -3,12 +3,8 @@ import { listRequestSchema, listResponseSchema } from "./api";
 import { EContactListOrdering } from "../enums/contacts";
 import { documentSchema } from "./documents";
 import { placeSchema } from "./places";
-import {
-  historyEntrySchema,
-  idOrIdArraySchema,
-  idSchema,
-  phoneSchema,
-} from "./basic";
+import { idOrIdArraySchema, idSchema, phoneSchema } from "./basic";
+import { historyEntrySchema } from "./history";
 
 export const contactSchema = z.object({
   id: idSchema,

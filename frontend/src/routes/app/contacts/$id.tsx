@@ -8,8 +8,11 @@ import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
 export const Route = createFileRoute("/app/contacts/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
+      const id = Number(params.id);
+      if (isNaN(id)) throw new Error("Invalid contact ID");
+
       const contact = await context.queryClient.fetchQuery(
-        contactQueries(params.id).detail,
+        contactQueries(id).detail,
       );
 
       return {
@@ -25,7 +28,11 @@ export const Route = createFileRoute("/app/contacts/$id")({
   },
   notFoundComponent: () => (
     <Container>
-      <PageNotFoundCard my={2} />
+      <PageNotFoundCard
+        label="Contact not found"
+        description="The contact you are looking for does not exist or has been removed."
+        my={2}
+      />
     </Container>
   ),
 });

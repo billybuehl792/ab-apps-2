@@ -1,11 +1,12 @@
 import z from "zod";
 import { listRequestSchema, listResponseSchema } from "./api";
-import { placeSchema } from "./places";
-import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 import { contactSchema } from "./contacts";
+import { placeSchema } from "./places";
+import { idSchema } from "./basic";
+import { EJobCategory, EJobListOrdering } from "../enums/jobs";
 
 export const jobSchema = z.object({
-  id: z.string(),
+  id: idSchema,
   description: z.string().default(""),
   categories: z.array(z.enum(EJobCategory)).default([]),
   amount: z.number().nullable().default(null),
@@ -32,10 +33,10 @@ export const jobCreateSchema = z.object({
   categories: z.array(z.enum(EJobCategory)).optional(),
   amount: z.number().optional(),
   paid: z.number().optional(),
-  representatives: z.array(z.string()).optional(),
-  assignees: z.array(z.string()).optional(),
-  recipients: z.array(z.string()).optional(),
-  referred_by: z.array(z.string()).optional(),
+  representatives: z.array(idSchema).optional(),
+  assignees: z.array(idSchema).optional(),
+  recipients: z.array(idSchema).optional(),
+  referred_by: z.array(idSchema).optional(),
   google_place_id: z.string().max(500).optional(),
   signed_at: z.iso.datetime().optional(),
   estimated_at: z.iso.datetime().optional(),
@@ -48,13 +49,13 @@ export const jobCreateSchema = z.object({
 
 export const jobUpdateSchema = z.object({
   description: z.string().max(1024).nullable().optional(),
-  categories: z.array(z.string()).optional(),
+  categories: z.array(z.enum(EJobCategory)).optional(),
   amount: z.number().nullable().optional(),
   paid: z.number().nullable().optional(),
-  representatives: z.array(z.string()).optional(),
-  assignees: z.array(z.string()).optional(),
-  recipients: z.array(z.string()).optional(),
-  referred_by: z.array(z.string()).optional(),
+  representatives: z.array(idSchema).optional(),
+  assignees: z.array(idSchema).optional(),
+  recipients: z.array(idSchema).optional(),
+  referred_by: z.array(idSchema).optional(),
   google_place_id: z.string().max(500).optional(),
   signed_at: z.iso.datetime().nullable().optional(),
   estimated_at: z.iso.datetime().nullable().optional(),

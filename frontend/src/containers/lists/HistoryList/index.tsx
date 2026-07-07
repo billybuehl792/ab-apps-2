@@ -8,7 +8,7 @@ import StatusWrapper, {
   type IStatusWrapperBaseProps,
 } from "@/components/layout/StatusWrapper";
 import { sxUtils } from "@/store/utils/sx";
-import type { THistoryEntry } from "@/store/types/basic";
+import type { THistoryEntry } from "@/store/types/history";
 
 type TCardProps = Partial<Omit<IHistoryListCardProps, "historyEntry">>;
 
