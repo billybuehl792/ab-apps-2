@@ -60,11 +60,7 @@ const JobListOrderingField: React.FC<IJobListOrderingFieldProps> = ({
             </Box>
           )
         }
-        onChange={(e) => {
-          e.target.value
-            ? onChange(e.target.value as EJobListOrdering)
-            : onChange(null);
-        }}
+        onChange={(e) => onChange(e.target.value)}
       >
         <MenuItem value="">
           <Box component="span" fontStyle="italic" color="text.secondary">

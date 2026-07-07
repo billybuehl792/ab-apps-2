@@ -1,14 +1,12 @@
-import useContact, { type IUseContactOptions } from "@/store/hooks/useContact";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import EmptyChip from "@/components/chips/EmptyChip";
 import { ContactIcons } from "@/store/constants/contacts";
 import type { TContact } from "@/store/types/contacts";
 
-type TListCardProps = Omit<IListCardProps, "options" | "onClick" | "onChange">;
+type TListCardProps = Omit<IListCardProps, "onClick" | "onChange">;
 
-interface IContactListCardProps
-  extends Partial<TListCardProps>, IUseContactOptions {
+interface IContactListCardProps extends Partial<TListCardProps> {
   contact: TContact;
   onClick?: (
     contact: TContact,
@@ -18,22 +16,11 @@ interface IContactListCardProps
 
 const ContactListCard: React.FC<IContactListCardProps> = ({
   contact,
-  hideOptions,
   disabled,
   options,
   onClick,
-  onChange,
   ...props
 }) => {
-  /** Values */
-
-  const contactHook = useContact(contact, {
-    options,
-    disabled,
-    hideOptions,
-    onChange,
-  });
-
   return (
     <ListCard
       startContent={<ContactIcons.Detail fontSize="large" color="disabled" />}
@@ -59,9 +46,6 @@ const ContactListCard: React.FC<IContactListCardProps> = ({
           ]}
         />
       }
-      link={{ to: "/app/contacts/$id", params: { id: String(contact.id) } }}
-      disabled={contactHook.disabled}
-      options={contactHook.options}
       {...(onClick && { onClick: (event) => onClick(contact, event) })}
       {...props}
     />

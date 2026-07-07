@@ -1,5 +1,4 @@
 import { Chip, Stack } from "@mui/material";
-import useJob, { type IUseJobOptions } from "@/store/hooks/useJob";
 import Metadata from "@/components/lists/Metadata";
 import ListCard, { type IListCardProps } from "@/components/cards/ListCard";
 import EmptyChip from "@/components/chips/EmptyChip";
@@ -7,9 +6,9 @@ import ContactChip from "@/containers/chips/ContactChip";
 import { JobIcons } from "@/store/constants/jobs";
 import type { TJob } from "@/store/types/jobs";
 
-type TListCardProps = Omit<IListCardProps, "options" | "onClick" | "onChange">;
+type TListCardProps = Omit<IListCardProps, "onClick" | "onChange">;
 
-interface IJobListCardProps extends Partial<TListCardProps>, IUseJobOptions {
+interface IJobListCardProps extends Partial<TListCardProps> {
   job: TJob;
   onClick?: (
     job: TJob,
@@ -19,22 +18,11 @@ interface IJobListCardProps extends Partial<TListCardProps>, IUseJobOptions {
 
 const JobListCard: React.FC<IJobListCardProps> = ({
   job,
-  hideOptions,
   disabled,
   options,
   onClick,
-  onChange,
   ...props
 }) => {
-  /** Values */
-
-  const jobHook = useJob(job, {
-    options,
-    disabled,
-    hideOptions,
-    onChange,
-  });
-
   return (
     <ListCard
       startContent={<JobIcons.Detail fontSize="large" color="disabled" />}
@@ -85,9 +73,6 @@ const JobListCard: React.FC<IJobListCardProps> = ({
           ]}
         />
       }
-      link={{ to: "/app/jobs/$id", params: { id: String(job.id) } }}
-      disabled={jobHook.disabled}
-      options={jobHook.options}
       {...(onClick && { onClick: (event) => onClick(job, event) })}
       {...props}
     />

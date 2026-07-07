@@ -1,8 +1,13 @@
+import type { ComponentProps } from "react";
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Container } from "@mui/material";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
-import JobList, { type IJobListProps } from "@/containers/lists/JobList";
+import useJob from "@/store/hooks/useJob";
+import JobList from "@/containers/lists/JobList";
+import JobListCard from "@/containers/lists/JobList/components/cards/JobListCard";
 import JobCreateButton from "@/containers/buttons/JobCreateButton";
+import { jobQueries } from "@/store/queries/jobs";
 import { jobListRequestSchema } from "@/store/schemas/jobs";
 
 const paramsSchema = jobListRequestSchema.shape.params;
@@ -29,20 +34,39 @@ function RouteComponent() {
   const params = Route.useSearch();
   const navigate = Route.useNavigate();
 
+  /** Queries */
+
+  const jobListQuery = useQuery(jobQueries.list({ params }));
+
   /** Callbacks */
 
-  const handleOnParamsChange: IJobListProps["onParamsChange"] = (newParams) =>
+  const handleOnParamsChange = (newParams: Partial<typeof params>) =>
     navigate({
       to: ".",
-      search: newParams,
+      search: (s) => ({ ...s, ...newParams }),
       replace: true,
     });
 
   return (
     <Container sx={{ pb: 2 }}>
       <JobList
-        params={params}
-        onParamsChange={handleOnParamsChange}
+        items={jobListQuery.data?.results ?? []}
+        count={jobListQuery.data?.count ?? -1}
+        page={params.page}
+        pageSize={params.page_size}
+        search={params.search}
+        ordering={params.ordering ?? null}
+        loading={jobListQuery.isLoading}
+        error={jobListQuery.error}
+        onPageChange={(page) => handleOnParamsChange({ page })}
+        onPageSizeChange={(page_size) =>
+          handleOnParamsChange({ page: 1, page_size })
+        }
+        onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
+        onOrderingChange={(ordering) =>
+          handleOnParamsChange({ page: 1, ordering: ordering ?? undefined })
+        }
+        renderCard={(job) => <ListCard job={job} />}
         slotProps={{
           header: {
             position: "sticky",
@@ -55,3 +79,18 @@ function RouteComponent() {
     </Container>
   );
 }
+
+const ListCard = ({ job, ...props }: ComponentProps<typeof JobListCard>) => {
+  /** Values */
+
+  const { options } = useJob(job);
+
+  return (
+    <JobListCard
+      job={job}
+      options={options}
+      link={{ to: "/app/jobs/$id", params: { id: String(job.id) } }}
+      {...props}
+    />
+  );
+};

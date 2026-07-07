@@ -1,129 +1,144 @@
-import { useMemo, type ComponentProps } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Divider, Stack, type StackProps } from "@mui/material";
-import PaginatedList from "@/components/lists/PaginatedList";
+import React, { Fragment, type ReactNode } from "react";
+import { Pagination, Stack, type StackProps } from "@mui/material";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
+import StatusWrapper, {
+  type IStatusWrapperBaseProps,
+} from "@/components/layout/StatusWrapper";
 import JobListCard from "./components/cards/JobListCard";
-import JobCreateButton from "@/containers/buttons/JobCreateButton";
 import JobListOrderingField from "./components/fields/JobListOrderingField";
-import { jobQueries } from "@/store/queries/jobs";
-import { JobIcons } from "@/store/constants/jobs";
-import { EObjectChangeType } from "@/store/enums/api";
-import type { TJob, TJobListRequest } from "@/store/types/jobs";
+import { EJobListOrdering } from "@/store/enums/jobs";
+import { sxUtils } from "@/store/utils/sx";
+import type { TJob } from "@/store/types/jobs";
 
-type TCardProps = Partial<Omit<ComponentProps<typeof JobListCard>, "job">>;
+type TCardProps = Partial<
+  Omit<React.ComponentProps<typeof JobListCard>, "job">
+>;
 
-export interface IJobListProps extends StackProps {
-  params: TJobListRequest["params"];
-  onParamsChange: (newParams: TJobListRequest["params"]) => void;
+export interface IJobListProps extends StackProps, IStatusWrapperBaseProps {
+  items: TJob[];
+  count: number;
+  page: number;
+  pageSize: number;
+  search?: string;
+  ordering?: EJobListOrdering | null;
+  disabled?: boolean;
+  renderCard?: (job: TJob) => ReactNode;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSearchChange?: (search: string) => void;
+  onOrderingChange?: (ordering: EJobListOrdering | null) => void;
   slotProps?: {
+    root?: StackProps;
     header?: StackProps;
+    list?: StackProps;
     card?: TCardProps | ((job: TJob) => TCardProps);
   };
 }
 
 const JobList: React.FC<IJobListProps> = ({
-  params,
-  onParamsChange,
+  items,
+  count,
+  page,
+  pageSize,
+  search,
+  ordering,
+  loading,
+  error,
+  empty,
+  disabled,
+  renderCard,
+  onSearchChange,
+  onOrderingChange,
+  onPageChange,
+  onPageSizeChange,
   slotProps,
   ...props
 }) => {
-  /** Queries */
+  /** Values */
 
-  const jobListQuery = useQuery(jobQueries.list({ params }));
-
-  /** Data */
-
-  const total = useMemo(
-    () => jobListQuery.data?.count ?? false,
-    [jobListQuery.data],
-  );
+  const showHeader = !!onSearchChange || !!onOrderingChange;
+  const pageCount = Math.ceil(count / pageSize);
 
   /** Callbacks */
 
-  const handleOnParamsChange: IJobListProps["onParamsChange"] = (newParams) =>
-    onParamsChange?.(newParams);
-
-  const handleOnCardChange: TCardProps["onChange"] = (job, type) => {
-    if (type === EObjectChangeType.Delete) {
-      const isLastItemOnPage = jobListQuery.data?.results.at(-1)?.id === job.id;
-      const isFirstPage = params.page === 1;
-      if (isLastItemOnPage && !isFirstPage)
-        handleOnParamsChange({ ...params, page: Math.max(1, params.page - 1) });
-      else jobListQuery.refetch();
-    }
-  };
+  const handleRenderCard: IJobListProps["renderCard"] =
+    renderCard ??
+    ((job) => (
+      <JobListCard
+        job={job}
+        {...(typeof slotProps?.card === "function"
+          ? slotProps.card(job)
+          : slotProps?.card)}
+      />
+    ));
 
   return (
-    <Stack position="relative" spacing={2} {...props}>
-      <Stack {...slotProps?.header}>
-        <Stack spacing={2} py={2}>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            useFlexGap
-            alignItems="center"
-            justifyContent="flex-start"
-          >
+    <Stack position="relative" spacing={2} {...slotProps?.root} {...props}>
+      {!!showHeader && (
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          flexWrap="wrap"
+          useFlexGap
+          {...slotProps?.header}
+          sx={[
+            {
+              py: 2,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            },
+            ...sxUtils.asArray(slotProps?.header?.sx),
+          ]}
+        >
+          {!!onSearchChange && (
             <DebouncedSearchField
-              value={params.search}
+              value={search}
               size="small"
-              loading={!!jobListQuery.isLoading && !!params.search}
-              onChange={(value) =>
-                handleOnParamsChange({ ...params, page: 1, search: value })
-              }
+              loading={!!loading && !!search}
+              onChange={onSearchChange}
               sx={{ flex: 1 }}
             />
+          )}
+          {!!onOrderingChange && (
             <JobListOrderingField
-              value={params.ordering ?? null}
-              disabled={jobListQuery.isLoading}
+              value={ordering ?? null}
+              disabled={disabled || !!loading}
               size="small"
-              onChange={(ordering) =>
-                handleOnParamsChange({
-                  ...params,
-                  page: 1,
-                  ordering: ordering ?? undefined,
-                })
-              }
+              onChange={onOrderingChange}
               sx={{ width: { xs: "100%", sm: 160 } }}
             />
-          </Stack>
+          )}
         </Stack>
-        <Divider />
-      </Stack>
-      <PaginatedList
-        items={jobListQuery.data?.results ?? []}
-        total={total}
-        page={params.page}
-        pageSize={params.page_size}
-        loading={jobListQuery.isLoading}
-        error={jobListQuery.error}
-        empty={
-          total === 0 && {
-            label: "No Jobs Found",
-            icon: <JobIcons.List fontSize="large" />,
-            ...(params.search
-              ? { description: `No results for "${params.search}".` }
-              : { actions: [<JobCreateButton />] }),
+      )}
+      <Stack spacing={1} {...slotProps?.list}>
+        <StatusWrapper
+          loading={loading}
+          error={error}
+          empty={
+            empty ||
+            (items.length === 0 && {
+              label: "No Jobs",
+              description: search?.trim()
+                ? `No jobs found for "${search}"`
+                : undefined,
+            })
           }
-        }
-        renderItem={(job) => (
-          <JobListCard
-            key={job.id}
-            job={job}
-            onChange={handleOnCardChange}
-            {...(typeof slotProps?.card === "function"
-              ? slotProps.card(job)
-              : slotProps?.card)}
-          />
-        )}
-        renderSkeletonItem
-        onPageChange={(page) => handleOnParamsChange({ ...params, page })}
-        onPageSizeChange={(pageSize) =>
-          handleOnParamsChange({ ...params, page: 1, page_size: pageSize })
-        }
-      />
+          flexGrow={1}
+        >
+          {items.map((job) => (
+            <Fragment key={job.id}>{handleRenderCard(job)}</Fragment>
+          ))}
+        </StatusWrapper>
+      </Stack>
+      <Stack direction="row" justifyContent="center" alignItems="center">
+        <Pagination
+          page={page}
+          count={pageCount}
+          variant="outlined"
+          disabled={disabled || !!loading}
+          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
+        />
+      </Stack>
     </Stack>
   );
 };

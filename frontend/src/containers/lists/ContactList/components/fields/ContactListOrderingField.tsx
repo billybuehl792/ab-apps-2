@@ -60,11 +60,7 @@ const ContactListOrderingField: React.FC<IContactListOrderingFieldProps> = ({
             </Box>
           )
         }
-        onChange={(e) => {
-          e.target.value
-            ? onChange(e.target.value as EContactListOrdering)
-            : onChange(null);
-        }}
+        onChange={(e) => onChange(e.target.value)}
       >
         <MenuItem value="">
           <Box component="span" fontStyle="italic" color="text.secondary">

@@ -1,132 +1,142 @@
-import { useMemo, type ComponentProps } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Divider, Stack, type StackProps } from "@mui/material";
-import PaginatedList from "@/components/lists/PaginatedList";
+import React, { Fragment, type ReactNode } from "react";
+import { Pagination, Stack, type StackProps } from "@mui/material";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
+import StatusWrapper, {
+  type IStatusWrapperBaseProps,
+} from "@/components/layout/StatusWrapper";
 import ContactListCard from "./components/cards/ContactListCard";
-import ContactCreateButton from "@/containers/buttons/ContactCreateButton";
 import ContactListOrderingField from "./components/fields/ContactListOrderingField";
-import { contactQueries } from "@/store/queries/contacts";
-import { ContactIcons } from "@/store/constants/contacts";
-import { EObjectChangeType } from "@/store/enums/api";
-import type { TContact, TContactListRequest } from "@/store/types/contacts";
+import { EContactListOrdering } from "@/store/enums/contacts";
+import { sxUtils } from "@/store/utils/sx";
+import type { TContact } from "@/store/types/contacts";
 
 type TCardProps = Partial<
-  Omit<ComponentProps<typeof ContactListCard>, "contact">
+  Omit<React.ComponentProps<typeof ContactListCard>, "contact">
 >;
 
-export interface IContactListProps extends StackProps {
-  params: TContactListRequest["params"];
-  onParamsChange: (newParams: TContactListRequest["params"]) => void;
+export interface IContactListProps extends StackProps, IStatusWrapperBaseProps {
+  items: TContact[];
+  count: number;
+  page: number;
+  pageSize: number;
+  search?: string;
+  ordering?: EContactListOrdering | null;
+  disabled?: boolean;
+  renderCard?: (contact: TContact) => ReactNode;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSearchChange?: (search: string) => void;
+  onOrderingChange?: (ordering: EContactListOrdering | null) => void;
   slotProps?: {
+    root?: StackProps;
     header?: StackProps;
+    list?: StackProps;
     card?: TCardProps | ((contact: TContact) => TCardProps);
   };
 }
 
 const ContactList: React.FC<IContactListProps> = ({
-  params,
-  onParamsChange,
+  items,
+  count,
+  page,
+  pageSize,
+  search,
+  ordering,
+  loading,
+  error,
+  empty,
+  disabled,
+  renderCard,
+  onSearchChange,
+  onOrderingChange,
+  onPageChange,
+  onPageSizeChange,
   slotProps,
   ...props
 }) => {
-  /** Queries */
+  /** Values */
 
-  const contactListQuery = useQuery(contactQueries.list({ params }));
-
-  /** Data */
-
-  const total = useMemo(
-    () => contactListQuery.data?.count ?? false,
-    [contactListQuery.data],
-  );
+  const showHeader = !!onSearchChange || !!onOrderingChange;
+  const pageCount = Math.ceil(count / pageSize);
 
   /** Callbacks */
 
-  const handleOnParamsChange: IContactListProps["onParamsChange"] = (
-    newParams,
-  ) => onParamsChange?.(newParams);
-
-  const handleOnCardChange: TCardProps["onChange"] = (contact, type) => {
-    if (type === EObjectChangeType.Delete) {
-      const isLastItemOnPage =
-        contactListQuery.data?.results.at(-1)?.id === contact.id;
-      const isFirstPage = params.page === 1;
-      if (isLastItemOnPage && !isFirstPage)
-        handleOnParamsChange({ ...params, page: Math.max(1, params.page - 1) });
-      else contactListQuery.refetch();
-    }
-  };
+  const handleRenderCard: IContactListProps["renderCard"] =
+    renderCard ??
+    ((contact) => (
+      <ContactListCard
+        contact={contact}
+        {...(typeof slotProps?.card === "function"
+          ? slotProps.card(contact)
+          : slotProps?.card)}
+      />
+    ));
 
   return (
-    <Stack position="relative" spacing={2} {...props}>
-      <Stack {...slotProps?.header}>
+    <Stack position="relative" spacing={2} {...slotProps?.root} {...props}>
+      {!!showHeader && (
         <Stack
           direction="row"
           spacing={1}
-          py={2}
-          flexWrap="wrap"
-          useFlexGap
           alignItems="center"
-          justifyContent="flex-start"
+          {...slotProps?.header}
+          sx={[
+            {
+              py: 2,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            },
+            ...sxUtils.asArray(slotProps?.header?.sx),
+          ]}
         >
-          <DebouncedSearchField
-            value={params.search}
-            size="small"
-            loading={!!contactListQuery.isLoading && !!params.search}
-            onChange={(value) =>
-              handleOnParamsChange({ ...params, page: 1, search: value })
-            }
-            sx={{ flex: 1 }}
-          />
-          <ContactListOrderingField
-            value={params.ordering ?? null}
-            disabled={contactListQuery.isLoading}
-            size="small"
-            onChange={(ordering) =>
-              handleOnParamsChange({
-                ...params,
-                page: 1,
-                ordering: ordering ?? undefined,
-              })
-            }
-            sx={{ width: { xs: "100%", sm: 160 } }}
-          />
+          {!!onSearchChange && (
+            <DebouncedSearchField
+              value={search}
+              size="small"
+              loading={!!loading && !!search}
+              onChange={onSearchChange}
+              sx={{ flex: 1 }}
+            />
+          )}
+          {!!onOrderingChange && (
+            <ContactListOrderingField
+              value={ordering ?? null}
+              disabled={disabled || !!loading}
+              size="small"
+              onChange={onOrderingChange}
+              sx={{ width: { xs: "100%", sm: 160 } }}
+            />
+          )}
         </Stack>
-        <Divider />
-      </Stack>
-      <PaginatedList
-        items={contactListQuery.data?.results ?? []}
-        total={total}
-        page={params.page}
-        pageSize={params.page_size}
-        loading={contactListQuery.isLoading}
-        error={contactListQuery.error}
-        empty={
-          total === 0 && {
-            label: "No Contacts Found",
-            icon: <ContactIcons.List fontSize="large" />,
-            ...(params.search
-              ? { description: `No results for "${params.search}".` }
-              : { actions: [<ContactCreateButton />] }),
+      )}
+      <Stack spacing={1} {...slotProps?.list}>
+        <StatusWrapper
+          loading={loading}
+          error={error}
+          empty={
+            empty ||
+            (items.length === 0 && {
+              label: "No Contacts",
+              description: search?.trim()
+                ? `No contacts found for "${search}"`
+                : undefined,
+            })
           }
-        }
-        renderItem={(contact) => (
-          <ContactListCard
-            key={contact.id}
-            contact={contact}
-            onChange={handleOnCardChange}
-            {...(typeof slotProps?.card === "function"
-              ? slotProps.card(contact)
-              : slotProps?.card)}
-          />
-        )}
-        renderSkeletonItem
-        onPageChange={(page) => handleOnParamsChange({ ...params, page })}
-        onPageSizeChange={(pageSize) =>
-          handleOnParamsChange({ ...params, page: 1, page_size: pageSize })
-        }
-      />
+          flexGrow={1}
+        >
+          {items.map((contact) => (
+            <Fragment key={contact.id}>{handleRenderCard(contact)}</Fragment>
+          ))}
+        </StatusWrapper>
+      </Stack>
+      <Stack direction="row" justifyContent="center" alignItems="center">
+        <Pagination
+          page={page}
+          count={pageCount}
+          variant="outlined"
+          disabled={disabled || !!loading}
+          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
+        />
+      </Stack>
     </Stack>
   );
 };
