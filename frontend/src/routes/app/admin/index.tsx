@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AccountIcons, userEndpoints } from "@/store/constants/account";
 import { Container, Stack } from "@mui/material";
 import ListCard from "@/components/cards/ListCard";
+import { usersQueries } from "@/store/queries/account";
+import { AccountIcons } from "@/store/constants/account";
 
 export const Route = createFileRoute("/app/admin/")({
   component: RouteComponent,
@@ -12,10 +13,7 @@ export const Route = createFileRoute("/app/admin/")({
 function RouteComponent() {
   /** Values */
 
-  const userListQuery = useQuery({
-    queryKey: userEndpoints.id,
-    queryFn: () => userEndpoints.get(),
-  });
+  const userListQuery = useQuery(usersQueries.list());
 
   return (
     <Container>

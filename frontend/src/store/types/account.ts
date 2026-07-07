@@ -4,11 +4,11 @@ import {
   credentialsSchema,
   resetPasswordRequestSchema,
   requestPasswordResetRequestSchema,
-  userCreateSchema,
+  userCreateRequestSchema,
   userListRequestSchema,
   userListResponseSchema,
   userSchema,
-  userUpdateSchema,
+  userUpdateRequestSchema,
 } from "../schemas/account";
 
 export type TAccessTokenResponse = z.infer<typeof accessTokenResponseSchema>;
@@ -23,9 +23,9 @@ export type TResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
 
 export type TUser = z.infer<typeof userSchema>;
 
-export type TUserCreate = z.infer<typeof userCreateSchema>;
+export type TUserCreateRequest = z.infer<typeof userCreateRequestSchema>;
 
-export type TUserUpdate = z.infer<typeof userUpdateSchema>;
+export type TUserUpdateRequest = z.infer<typeof userUpdateRequestSchema>;
 
 export type TUserListRequest = z.infer<typeof userListRequestSchema>;
 

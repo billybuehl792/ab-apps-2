@@ -19,8 +19,8 @@ import FullScreen from "@/components/layout/FullScreen";
 import CustomLink from "@/components/links/CustomLink";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import RequestPasswordResetForm from "@/containers/forms/RequestPasswordResetForm";
-import { authEndpoints } from "@/store/constants/account";
 import { errorUtils } from "@/store/utils/error";
+import { authMutations } from "@/store/mutations/account";
 
 export const Route = createFileRoute("/forgot-password")({
   validateSearch: () => ({}),
@@ -44,10 +44,9 @@ function RouteComponent() {
 
   /** Mutations */
 
-  const requestPasswordResetMutation = useMutation({
-    mutationKey: authEndpoints.requestPasswordReset().id,
-    mutationFn: authEndpoints.requestPasswordReset().post,
-  });
+  const requestPasswordResetMutation = useMutation(
+    authMutations.requestPasswordReset,
+  );
 
   /** Callbacks */
 

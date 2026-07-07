@@ -1,16 +1,16 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Container, Stack } from "@mui/material";
 import UserDetailCard from "@/containers/cards/UserDetailCard";
-import { AccountIcons, userEndpoints } from "@/store/constants/account";
+import { usersQueries } from "@/store/queries/account";
 import { errorUtils } from "@/store/utils/error";
+import { AccountIcons } from "@/store/constants/account";
 
 export const Route = createFileRoute("/app/profile/$id")({
   beforeLoad: async ({ context, params }) => {
     try {
-      const user = await context.queryClient.fetchQuery({
-        queryKey: userEndpoints.user(params.id).id,
-        queryFn: userEndpoints.user(params.id).get,
-      });
+      const user = await context.queryClient.fetchQuery(
+        usersQueries.user(params.id).detail,
+      );
       return {
         user,
         crumb: { label: user.username, Icon: AccountIcons.Detail },
