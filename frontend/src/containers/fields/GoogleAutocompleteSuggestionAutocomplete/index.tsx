@@ -82,9 +82,7 @@ const GoogleAutocompleteSuggestionAutocomplete = <
   /** Queries */
 
   const listQuery = useQuery({
-    ...placeQueries.googleAutocompleteSuggestions.list(
-      googleAutocompleteSuggestionListRequestSchema.parse({ input }),
-    ),
+    ...placeQueries.googleAutocompleteSuggestions.list({ params: { input } }),
     enabled: !!input,
   });
 
