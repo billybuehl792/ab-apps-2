@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
+import useConfirm from "@/store/hooks/useConfirm";
 import useContact from "@/store/hooks/useContact";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import ContactMenuOptionIconButton from "@/containers/buttons/ContactMenuOptionIconButton";
@@ -22,9 +23,12 @@ import { EContactOptionId } from "@/store/enums/contacts";
 import { EObjectChangeType } from "@/store/enums/api";
 import { EListVariant } from "@/store/enums/layout";
 import type { TDocument } from "@/store/types/documents";
+import { jobQueries } from "@/store/queries/jobs";
+import JobList from "@/containers/lists/JobList";
 
 enum ETabs {
   Overview = "overview",
+  Jobs = "jobs",
   Documents = "documents",
   History = "history",
 }
@@ -95,11 +99,62 @@ function RouteComponent() {
           ))}
         </Tabs>
       </Container>
+      {tab === ETabs.Jobs && <JobsTab />}
       {tab === ETabs.Documents && <DocumentsTab />}
       {tab === ETabs.History && <HistoryTab />}
     </Stack>
   );
 }
+
+const JobsTab: React.FC = () => {
+  /** Values */
+
+  const navigate = Route.useNavigate();
+  const { contact } = Route.useRouteContext();
+  const { tab, listVariant, ...params } = Route.useSearch();
+
+  /** Queries */
+
+  const jobListQuery = useQuery(
+    jobQueries.list({ params: { recipients: [contact.id], ...params } }),
+  );
+
+  /** Callbacks */
+
+  const handleOnParamsChange = (
+    newParams: Partial<z.infer<typeof paramsSchema>>,
+  ) =>
+    navigate({
+      to: ".",
+      replace: true,
+      search: (s) => ({ ...s, ...newParams }),
+    });
+
+  return (
+    <Container sx={{ display: "flex", flexGrow: 1 }}>
+      <JobList
+        items={jobListQuery.data?.results ?? []}
+        count={jobListQuery.data?.count ?? -1}
+        page={params.page}
+        pageSize={params.page_size}
+        search={params.search}
+        loading={jobListQuery.isLoading}
+        error={jobListQuery.error}
+        onPageChange={(page) => handleOnParamsChange({ page })}
+        onPageSizeChange={(page_size) =>
+          handleOnParamsChange({ page: 1, page_size })
+        }
+        onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
+        slotProps={{
+          root: { flexGrow: 1, width: "100%", pb: 2 },
+          card: (job) => ({
+            link: { to: "/app/jobs/$id", params: { id: String(job.id) } },
+          }),
+        }}
+      />
+    </Container>
+  );
+};
 
 const DocumentsTab: React.FC = () => {
   /** Values */
@@ -113,6 +168,7 @@ const DocumentsTab: React.FC = () => {
   const { contact } = Route.useRouteContext();
   const { tab, listVariant, ...params } = Route.useSearch();
   const { createDocument, deleteDocument } = useContact(contact);
+  const confirm = useConfirm();
 
   /** Queries */
 
@@ -153,9 +209,16 @@ const DocumentsTab: React.FC = () => {
       color: "error.main",
       Icon: Delete,
       onClick: () =>
-        deleteDocument(document.id, {
-          onSuccess: () => documentListQuery.refetch(),
-        }),
+        confirm(
+          {
+            title: `Delete ${document.label}?`,
+            description: `Are you sure you want to delete this document? This operation is irreversible.`,
+          },
+          () =>
+            deleteDocument(document.id, {
+              onSuccess: () => documentListQuery.refetch(),
+            }),
+        ),
     },
   ];
 
@@ -220,6 +283,8 @@ const DocumentsTab: React.FC = () => {
 };
 
 const HistoryTab: React.FC = () => {
+  /** Values */
+
   const navigate = Route.useNavigate();
   const { contact } = Route.useRouteContext();
   const { tab, listVariant, ...params } = Route.useSearch();

@@ -1,5 +1,5 @@
 import z from "zod";
-import { idSchema } from "./basic";
+import { idOrIdArraySchema, idSchema } from "./basic";
 import { listRequestSchema, listResponseSchema } from "./api";
 import { contactSchema } from "./contacts";
 import { placeSchema } from "./places";
@@ -70,6 +70,7 @@ export const jobUpdateRequestSchema = z.object({
 
 export const jobListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
+    recipients: idOrIdArraySchema.optional(),
     ordering: z.enum(EJobListOrdering).optional(),
     city: z.string().optional(),
     completed: z.boolean().optional(),
