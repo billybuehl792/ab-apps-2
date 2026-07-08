@@ -19,28 +19,27 @@ interface IContactListOrderingFieldProps extends Omit<
   onChange: (value: EContactListOrdering | null) => void;
 }
 
-const OPTIONS_MAP = new Map<EContactListOrdering, string>([
+const OPTIONS = new Map<EContactListOrdering, string>([
   [EContactListOrdering.FirstNameAsc, "First Name"],
   [EContactListOrdering.LastNameAsc, "Last Name"],
   [EContactListOrdering.UpdatedAtDesc, "Last Updated"],
   [EContactListOrdering.CreatedAtDesc, "Last Created"],
 ]);
-const OPTIONS = Array.from(OPTIONS_MAP.entries());
 
 const ContactListOrderingField: React.FC<IContactListOrderingFieldProps> = ({
-  value: valueProp,
+  value,
   onChange,
   ...props
 }) => {
   /** Values */
 
-  const value = valueProp && OPTIONS_MAP.has(valueProp) ? valueProp : "";
+  const sanitizedValue = value && OPTIONS.has(value) ? value : "";
 
   return (
     <FormControl {...props}>
       <Select
         label="Ordering"
-        value={value || ""}
+        value={sanitizedValue}
         displayEmpty
         input={
           <OutlinedInput
@@ -52,22 +51,22 @@ const ContactListOrderingField: React.FC<IContactListOrderingFieldProps> = ({
           />
         }
         renderValue={(selected) =>
-          selected && OPTIONS_MAP.has(selected) ? (
-            OPTIONS_MAP.get(selected)
+          selected && OPTIONS.has(selected) ? (
+            OPTIONS.get(selected)
           ) : (
             <Box component="span" fontStyle="italic" color="text.secondary">
               Ordering
             </Box>
           )
         }
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value || null)}
       >
         <MenuItem value="">
           <Box component="span" fontStyle="italic" color="text.secondary">
             None
           </Box>
         </MenuItem>
-        {OPTIONS.map(([key, label]) => (
+        {Array.from(OPTIONS.entries()).map(([key, label]) => (
           <MenuItem key={key} value={key}>
             {label}
           </MenuItem>

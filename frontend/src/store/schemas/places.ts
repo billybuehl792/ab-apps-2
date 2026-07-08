@@ -45,8 +45,8 @@ export const googleAutocompleteSuggestionSchema = z.object({
 
 export const placeListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    ordering: z.enum(EPlaceListOrdering).optional(),
-    city: z.string().optional(),
+    ordering: z.enum(EPlaceListOrdering).optional().catch(undefined),
+    city: z.string().optional().catch(undefined),
   }),
 });
 

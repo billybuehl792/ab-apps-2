@@ -43,12 +43,12 @@ export const contactListRequestSchema = listRequestSchema.extend({
     ordering: z.enum(EContactListOrdering).optional().catch(undefined),
     city: idOrIdArraySchema
       .transform((val) => (val?.length ? val : undefined))
-      .catch(undefined)
-      .optional(),
+      .optional()
+      .catch(undefined),
     tag: idOrIdArraySchema
       .transform((val) => (val?.length ? val : undefined))
-      .catch(undefined)
-      .optional(),
+      .optional()
+      .catch(undefined),
   }),
 });
 

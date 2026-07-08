@@ -6,7 +6,8 @@ import StatusWrapper, {
 } from "@/components/layout/StatusWrapper";
 import JobListCard from "./components/cards/JobListCard";
 import JobListOrderingField from "./components/fields/JobListOrderingField";
-import { EJobListOrdering } from "@/store/enums/jobs";
+import JobListStatusField from "./components/fields/JobListStatusField";
+import { EJobListOrdering, EJobStatus } from "@/store/enums/jobs";
 import { sxUtils } from "@/store/utils/sx";
 import type { TJob } from "@/store/types/jobs";
 
@@ -21,12 +22,14 @@ export interface IJobListProps extends StackProps, IStatusWrapperBaseProps {
   pageSize: number;
   search?: string;
   ordering?: EJobListOrdering | null;
+  status?: EJobStatus | null;
   disabled?: boolean;
   renderCard?: (job: TJob) => ReactNode;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onSearchChange?: (search: string) => void;
   onOrderingChange?: (ordering: EJobListOrdering | null) => void;
+  onStatusChange?: (status: EJobStatus | null) => void;
   slotProps?: {
     root?: StackProps;
     header?: StackProps;
@@ -42,6 +45,7 @@ const JobList: React.FC<IJobListProps> = ({
   pageSize,
   search,
   ordering,
+  status,
   loading,
   error,
   empty,
@@ -51,12 +55,13 @@ const JobList: React.FC<IJobListProps> = ({
   onOrderingChange,
   onPageChange,
   onPageSizeChange,
+  onStatusChange,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const showHeader = !!onSearchChange || !!onOrderingChange;
+  const showHeader = !!onSearchChange || !!onOrderingChange || !!onStatusChange;
   const pageCount = Math.ceil(count / pageSize);
 
   /** Callbacks */
@@ -108,6 +113,15 @@ const JobList: React.FC<IJobListProps> = ({
               sx={{ width: { xs: "100%", sm: 160 } }}
             />
           )}
+          {!!onStatusChange && (
+            <JobListStatusField
+              value={status ?? null}
+              disabled={disabled || !!loading}
+              size="small"
+              onChange={onStatusChange}
+              sx={{ py: 1, width: { xs: "100%" } }}
+            />
+          )}
         </Stack>
       )}
       <Stack spacing={1} {...slotProps?.list}>
@@ -117,9 +131,9 @@ const JobList: React.FC<IJobListProps> = ({
           empty={
             empty ||
             (items.length === 0 && {
-              label: "No Jobs",
+              label: `No ${status + " "}Jobs`,
               description: search?.trim()
-                ? `No jobs found for "${search}"`
+                ? `No ${status + " "}jobs found for "${search}"`
                 : undefined,
             })
           }

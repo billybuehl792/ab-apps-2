@@ -56,6 +56,7 @@ function RouteComponent() {
         pageSize={params.page_size}
         search={params.search}
         ordering={params.ordering ?? null}
+        status={params.status ?? null}
         loading={jobListQuery.isLoading}
         error={jobListQuery.error}
         onPageChange={(page) => handleOnParamsChange({ page })}
@@ -65,6 +66,9 @@ function RouteComponent() {
         onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
         onOrderingChange={(ordering) =>
           handleOnParamsChange({ page: 1, ordering: ordering ?? undefined })
+        }
+        onStatusChange={(status) =>
+          handleOnParamsChange({ page: 1, status: status ?? undefined })
         }
         renderCard={(job) => <ListCard job={job} />}
         slotProps={{

@@ -15,7 +15,12 @@ export enum EJobCategory {
   Other = "Other",
 }
 
-/** API */
+export enum EJobStatus {
+  Lead = "Lead",
+  InProgress = "In Progress",
+  Completed = "Completed",
+  Cancelled = "Cancelled",
+}
 
 export enum EJobListOrdering {
   LabelAsc = "label",

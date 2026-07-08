@@ -19,28 +19,27 @@ interface IJobListOrderingFieldProps extends Omit<
   onChange: (value: EJobListOrdering | null) => void;
 }
 
-const OPTIONS_MAP = new Map<EJobListOrdering, string>([
+const OPTIONS = new Map<EJobListOrdering, string>([
   [EJobListOrdering.AmountAsc, "Amount (Low to High)"],
   [EJobListOrdering.AmountDesc, "Amount (High to Low)"],
   [EJobListOrdering.UpdatedAtDesc, "Last Updated"],
   [EJobListOrdering.CreatedAtDesc, "Last Created"],
 ]);
-const OPTIONS = Array.from(OPTIONS_MAP.entries());
 
 const JobListOrderingField: React.FC<IJobListOrderingFieldProps> = ({
-  value: valueProp,
+  value,
   onChange,
   ...props
 }) => {
   /** Values */
 
-  const value = valueProp && OPTIONS_MAP.has(valueProp) ? valueProp : "";
+  const sanitizedValue = value && OPTIONS.has(value) ? value : "";
 
   return (
     <FormControl {...props}>
       <Select
         label="Ordering"
-        value={value || ""}
+        value={sanitizedValue}
         displayEmpty
         input={
           <OutlinedInput
@@ -52,22 +51,22 @@ const JobListOrderingField: React.FC<IJobListOrderingFieldProps> = ({
           />
         }
         renderValue={(selected) =>
-          selected && OPTIONS_MAP.has(selected) ? (
-            OPTIONS_MAP.get(selected)
+          selected && OPTIONS.has(selected) ? (
+            OPTIONS.get(selected)
           ) : (
             <Box component="span" fontStyle="italic" color="text.secondary">
               Ordering
             </Box>
           )
         }
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value || null)}
       >
         <MenuItem value="">
           <Box component="span" fontStyle="italic" color="text.secondary">
             None
           </Box>
         </MenuItem>
-        {OPTIONS.map(([key, label]) => (
+        {Array.from(OPTIONS.entries()).map(([key, label]) => (
           <MenuItem key={key} value={key}>
             {label}
           </MenuItem>

@@ -19,27 +19,26 @@ interface IPlaceListOrderingFieldProps extends Omit<
   onChange: (value: EPlaceListOrdering | null) => void;
 }
 
-const OPTIONS_MAP = new Map<EPlaceListOrdering, string>([
+const OPTIONS = new Map<EPlaceListOrdering, string>([
   [EPlaceListOrdering.CityAsc, "City"],
   [EPlaceListOrdering.UpdatedAtDesc, "Last Updated"],
   [EPlaceListOrdering.CreatedAtDesc, "Last Created"],
 ]);
-const OPTIONS = Array.from(OPTIONS_MAP.entries());
 
 const PlaceListOrderingField: React.FC<IPlaceListOrderingFieldProps> = ({
-  value: valueProp,
+  value,
   onChange,
   ...props
 }) => {
   /** Values */
 
-  const value = valueProp && OPTIONS_MAP.has(valueProp) ? valueProp : "";
+  const sanitizedValue = value && OPTIONS.has(value) ? value : "";
 
   return (
     <FormControl {...props}>
       <Select
         label="Ordering"
-        value={value}
+        value={sanitizedValue}
         displayEmpty
         input={
           <OutlinedInput
@@ -51,26 +50,22 @@ const PlaceListOrderingField: React.FC<IPlaceListOrderingFieldProps> = ({
           />
         }
         renderValue={(selected) =>
-          selected && OPTIONS_MAP.has(selected) ? (
-            OPTIONS_MAP.get(selected)
+          selected && OPTIONS.has(selected) ? (
+            OPTIONS.get(selected)
           ) : (
             <Box component="span" fontStyle="italic" color="text.secondary">
               Ordering
             </Box>
           )
         }
-        onChange={(e) => {
-          e.target.value
-            ? onChange(e.target.value as EPlaceListOrdering)
-            : onChange(null);
-        }}
+        onChange={(e) => onChange(e.target.value || null)}
       >
         <MenuItem value="">
           <Box component="span" fontStyle="italic" color="text.secondary">
             None
           </Box>
         </MenuItem>
-        {OPTIONS.map(([key, label]) => (
+        {Array.from(OPTIONS.entries()).map(([key, label]) => (
           <MenuItem key={key} value={key}>
             {label}
           </MenuItem>

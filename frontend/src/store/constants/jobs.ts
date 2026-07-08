@@ -1,12 +1,36 @@
-import { Cases, MedicalServices, Work } from "@mui/icons-material";
-import { EJobListOrdering } from "../enums/jobs";
+import type { ElementType } from "react";
+import type { ChipProps } from "@mui/material/Chip";
+import {
+  Cases,
+  Check,
+  CreateNewFolder,
+  DoNotDisturb,
+  Grading,
+  MedicalServices,
+  Work,
+} from "@mui/icons-material";
+import { EJobListOrdering, EJobStatus } from "../enums/jobs";
 
 /** Icons */
 
-export const JobIcons = {
+export const JobIcons: Record<string, ElementType> = {
   List: Cases,
   Detail: Work,
   Create: MedicalServices,
+};
+
+export const JobStatusIcons: Record<EJobStatus, ElementType> = {
+  [EJobStatus.Lead]: CreateNewFolder,
+  [EJobStatus.InProgress]: Grading,
+  [EJobStatus.Completed]: Check,
+  [EJobStatus.Cancelled]: DoNotDisturb,
+};
+
+export const JobStatusColors: Record<EJobStatus, ChipProps["color"]> = {
+  [EJobStatus.Lead]: "default",
+  [EJobStatus.InProgress]: "primary",
+  [EJobStatus.Completed]: "success",
+  [EJobStatus.Cancelled]: "error",
 };
 
 /** Other */

@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import OrderingFilter, SearchFilter
 
 from .models import Job, JobComment
-from .serializers import JobCommentSerializer, JobReadSerializer, JobWriteSerializer
+from .serializers import JobCommentSerializer, JobSerializer
 from .filters import JobsFilter
 
 
@@ -13,6 +13,7 @@ class JobViewSet(ModelViewSet):
 
     permission_classes = (IsAuthenticated,)
     queryset = Job.objects.all()
+    serializer_class = JobSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = JobsFilter
     ordering = ("-created_at",)
@@ -22,11 +23,6 @@ class JobViewSet(ModelViewSet):
                        "scheduled_at", "completed_at", "assignees__last_name",
                        "recipients__last_name", "representatives__last_name",
                        "place__address_full")
-
-    def get_serializer_class(self):  # type: ignore[override]
-        if self.action in ("list", "retrieve"):
-            return JobReadSerializer
-        return JobWriteSerializer
 
     def perform_create(self, serializer):
         serializer.save(

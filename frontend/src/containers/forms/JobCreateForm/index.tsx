@@ -17,12 +17,13 @@ import {
   MenuItem,
   Divider,
 } from "@mui/material";
+import useConfirm from "@/store/hooks/useConfirm";
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import ContactAutocomplete from "@/containers/fields/ContactAutocomplete";
-import useConfirm from "@/store/hooks/useConfirm";
+import JobStatusChip from "@/containers/chips/JobStatusChip";
 import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 import { contactSchema } from "@/store/schemas/contacts";
-import { EJobCategory } from "@/store/enums/jobs";
+import { EJobCategory, EJobStatus } from "@/store/enums/jobs";
 
 type TJobCreateRequestFormValues = z.infer<typeof formSchema>;
 
@@ -42,6 +43,7 @@ export interface IJobCreateFormProps extends Omit<
 }
 
 const formSchema = z.object({
+  status: z.enum(EJobStatus).default(EJobStatus.Lead),
   categories: z
     .array(z.enum(EJobCategory))
     .min(1, "At least one category is required"),
@@ -50,7 +52,9 @@ const formSchema = z.object({
     .array(contactSchema)
     .min(1, "At least one recipient is required"),
   representatives: z.array(contactSchema),
-  place: googleAutocompleteSuggestionSchema,
+  place: googleAutocompleteSuggestionSchema.optional().refine(Boolean, {
+    message: "Address is required",
+  }),
 });
 
 const JobCreateForm: React.FC<IJobCreateFormProps> = ({
@@ -67,6 +71,7 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
     resolver: zodResolver(formSchema),
     values,
     defaultValues: {
+      status: EJobStatus.Lead,
       categories: [],
       description: "",
       recipients: [],
@@ -115,24 +120,60 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <Controller
+          name="status"
+          control={methods.control}
+          render={({ field: { value, onChange, ...field } }) => (
+            <FormControl
+              required
+              fullWidth
+              error={!!methods.formState.errors.status}
+              disabled={isFieldDisabled}
+              {...field}
+            >
+              <InputLabel id="job-status-label">Status</InputLabel>
+              <Select
+                id="job-status"
+                labelId="job-status-label"
+                value={value}
+                disabled={isFieldDisabled}
+                input={<OutlinedInput label="Status" />}
+                renderValue={(selected) => <JobStatusChip value={selected} />}
+                onChange={(e) => onChange(e.target.value)}
+              >
+                {Object.values(EJobStatus).map((status) => (
+                  <MenuItem key={status} value={status}>
+                    <JobStatusChip value={status} />
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!methods.formState.errors.status && (
+                <FormHelperText error>
+                  {methods.formState.errors.status.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+        <Controller
           name="categories"
           control={methods.control}
-          render={({ field }) => (
-            <FormControl>
-              <InputLabel id="job-categories-label" required>
-                Categories
-              </InputLabel>
+          render={({ field: { value, onChange, ...field } }) => (
+            <FormControl
+              required
+              fullWidth
+              error={!!methods.formState.errors.categories}
+              disabled={isFieldDisabled}
+              {...field}
+            >
+              <InputLabel id="job-categories-label">Categories</InputLabel>
               <Select
                 id="job-categories"
                 labelId="job-categories-label"
                 multiple
-                value={field.value}
-                input={<OutlinedInput label="Categories" />}
-                onChange={(e) =>
-                  field.onChange(e.target.value as EJobCategory[])
-                }
+                value={value}
                 disabled={isFieldDisabled}
-                error={!!methods.formState.errors.categories}
+                input={<OutlinedInput label="Categories" />}
+                onChange={(e) => onChange(e.target.value as EJobCategory[])}
               >
                 {Object.values(EJobCategory).map((name) => (
                   <MenuItem key={name} value={name}>

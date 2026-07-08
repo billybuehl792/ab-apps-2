@@ -10,6 +10,7 @@ User = get_user_model()
 class Job(models.Model):
     description = models.TextField()
     categories = models.JSONField(default=list, blank=True)
+    status = models.CharField(max_length=255, blank=True)
 
     place = models.ForeignKey(
         "places.Place", blank=True, null=True, on_delete=models.SET_NULL, related_name="jobs")
@@ -30,6 +31,7 @@ class Job(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
     invoiced_at = models.DateTimeField(null=True, blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
 
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)

@@ -4,30 +4,30 @@ import { listRequestSchema, listResponseSchema } from "./api";
 import { contactSchema } from "./contacts";
 import { placeSchema } from "./places";
 import { documentSchema } from "./documents";
-import { EJobCategory, EJobListOrdering } from "../enums/jobs";
+import { EJobCategory, EJobListOrdering, EJobStatus } from "../enums/jobs";
 import { historyEntrySchema } from "./history";
 
 export const jobSchema = z.object({
   id: idSchema,
-  description: z.string().default(""),
-  categories: z.array(z.enum(EJobCategory)).default([]),
-  amount: z.number().nullable().default(null),
-  paid: z.number().nullable().default(null),
-  representatives: z.array(contactSchema).default([]),
-  assignees: z.array(contactSchema).default([]),
-  recipients: z.array(contactSchema).default([]),
-  referred_by: z.array(contactSchema).default([]),
-  place: placeSchema.nullable().default(null),
-  documents: z.array(z.string()).default([]),
-  signed_at: z.iso.datetime().nullable().default(null),
-  estimated_at: z.iso.datetime().nullable().default(null),
-  sold_at: z.iso.datetime().nullable().default(null),
-  invoiced_at: z.iso.datetime().nullable().default(null),
-  scheduled_at: z.iso.datetime().nullable().default(null),
-  completed_at: z.iso.datetime().nullable().default(null),
-  paid_at: z.iso.datetime().nullable().default(null),
-  created_at: z.iso.datetime().nullable().default(null),
-  updated_at: z.iso.datetime().nullable().default(null),
+  description: z.string(),
+  categories: z.array(z.enum(EJobCategory)),
+  amount: z.number().nullable(),
+  paid: z.number().nullable(),
+  representatives: z.array(contactSchema),
+  assignees: z.array(contactSchema),
+  recipients: z.array(contactSchema),
+  referred_by: z.array(contactSchema),
+  place: placeSchema.nullable(),
+  documents: z.array(z.string()),
+  signed_at: z.iso.datetime().nullable(),
+  estimated_at: z.iso.datetime().nullable(),
+  sold_at: z.iso.datetime().nullable(),
+  invoiced_at: z.iso.datetime().nullable(),
+  scheduled_at: z.iso.datetime().nullable(),
+  completed_at: z.iso.datetime().nullable(),
+  paid_at: z.iso.datetime().nullable(),
+  created_at: z.iso.datetime().nullable(),
+  updated_at: z.iso.datetime().nullable(),
 });
 
 export const jobCreateRequestSchema = z.object({
@@ -70,11 +70,10 @@ export const jobUpdateRequestSchema = z.object({
 
 export const jobListRequestSchema = listRequestSchema.extend({
   params: listRequestSchema.shape.params.extend({
-    recipients: idOrIdArraySchema.optional(),
-    ordering: z.enum(EJobListOrdering).optional(),
-    city: z.string().optional(),
-    completed: z.boolean().optional(),
-    scheduled: z.boolean().optional(),
+    recipients: idOrIdArraySchema.optional().catch(undefined),
+    ordering: z.enum(EJobListOrdering).optional().catch(undefined),
+    city: z.string().optional().catch(undefined),
+    status: z.enum(EJobStatus).optional().catch(undefined),
   }),
 });
 

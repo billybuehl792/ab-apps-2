@@ -84,7 +84,7 @@ const components: Components<
           height: 16,
           fontSize: 10,
           padding: 0,
-          "& .MuiChip-icon": { fontSize: 10 },
+          "& .MuiChip-icon": { fontSize: 8 },
           "& .MuiChip-deleteIcon": { fontSize: 10 },
           "& .MuiChip-label": { paddingLeft: 8, paddingRight: 8 },
         },
