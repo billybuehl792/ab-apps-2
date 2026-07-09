@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import qs from "qs";
 import { routeTree } from "@/routeTree.gen";
 import { createRouter } from "@tanstack/react-router";
@@ -9,6 +10,10 @@ import type { IGlobalRouterContext } from "../types/router";
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
+  }
+  interface StaticDataRouteOption {
+    PageHeaderEndContentComponent?: ComponentType;
+    crumb?: { id: string; Component: ComponentType };
   }
 }
 

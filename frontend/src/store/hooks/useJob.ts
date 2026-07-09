@@ -89,7 +89,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
         label: "Detail",
         Icon: Info,
         isDisabled: isDisabled,
-        link: { to: "/app/jobs/$id", params: { id: String(job.id) } },
+        link: { to: "/app/jobs/$id", params: { id: job.id } },
       },
       {
         id: EJobOptionId.Edit,
@@ -98,7 +98,7 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
         label: "Edit",
         Icon: Edit,
         isDisabled: isDisabled,
-        link: { to: "/app/jobs/$id/edit", params: { id: String(job.id) } },
+        link: { to: "/app/jobs/edit/$id", params: { id: job.id } },
       },
       {
         id: EJobOptionId.Delete,

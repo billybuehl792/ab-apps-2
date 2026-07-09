@@ -1,13 +1,12 @@
-import { type MouseEventHandler, useState, type ComponentProps } from "react";
 import {
-  type MakeRouteMatchUnion,
-  useLocation,
-  useNavigate,
-} from "@tanstack/react-router";
+  type MouseEventHandler,
+  useState,
+  type ComponentProps,
+  type ComponentType,
+} from "react";
+import { useMatches } from "@tanstack/react-router";
 import {
   Breadcrumbs,
-  ListItemIcon,
-  ListItemText,
   Menu,
   MenuItem,
   useMediaQuery,
@@ -21,45 +20,45 @@ interface INavBreadcrumbProps extends Omit<
   BreadcrumbsProps,
   "maxItems" | "itemsBeforeCollapse" | "itemsAfterCollapse" | "slotProps"
 > {
-  matches: MakeRouteMatchUnion[];
   slotProps?: {
     crumb?: ComponentProps<typeof ButtonLink>;
   } & BreadcrumbsProps["slotProps"];
 }
 
 const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
-  matches,
-  sx,
   slotProps: { crumb: crumbProps, ...slotProps } = {},
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+  const [menuCrumbs, setMenuCrumbs] = useState<
+    { id: string; Component: ComponentType }[]
+  >([]);
 
   /** Values */
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const crumbs = matches
-    .map(({ context, status, pathname }) =>
-      !!context.crumb && status === "success"
-        ? { ...context.crumb, pathname }
-        : null,
-    )
-    .filter((crumb) => !!crumb);
+  const crumbs = useMatches({
+    select: (matches) =>
+      matches.map((m) => m.staticData?.crumb).filter((c) => !!c),
+  });
 
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
   const maxCrumbs = isSm ? 1 : 2;
-  const menuCrumbs = crumbs.slice(0, crumbs.length - maxCrumbs);
 
   /** Callbacks */
 
   const handleOnMenuOpen: MouseEventHandler = (event) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
+    setMenuCrumbs(crumbs.slice(0, crumbs.length - maxCrumbs));
   };
 
-  const handleOnMenuClose = () => setAnchorEl(null);
+  const handleOnMenuClose = () => {
+    setAnchorEl(null);
+    setTimeout(
+      () => setMenuCrumbs([]),
+      theme.transitions.duration.leavingScreen,
+    );
+  };
 
   return (
     <>
@@ -76,24 +75,12 @@ const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
             overflowX: "auto",
             "& .MuiBreadcrumbs-ol": { flexWrap: "nowrap" },
           },
-          ...sxUtils.asArray(sx),
+          ...sxUtils.asArray(props?.sx),
         ]}
         {...props}
       >
-        {crumbs.map((crumb) => (
-          <ButtonLink
-            key={crumb.pathname}
-            to={crumb.pathname}
-            children={crumb.label}
-            variant="text"
-            size="small"
-            color="inherit"
-            activeOptions={{ exact: true, includeSearch: false }}
-            activeProps={{ color: "primary" }}
-            {...(crumb.Icon && { startIcon: <crumb.Icon /> })}
-            {...crumbProps}
-            sx={[{ whiteSpace: "nowrap" }, ...sxUtils.asArray(crumbProps?.sx)]}
-          />
+        {crumbs.map(({ id, Component }) => (
+          <Component key={id} />
         ))}
       </Breadcrumbs>
       <Menu
@@ -101,24 +88,13 @@ const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
         open={Boolean(anchorEl)}
         onClose={handleOnMenuClose}
       >
-        {menuCrumbs.map((crumb) => (
+        {menuCrumbs.map(({ id, Component }) => (
           <MenuItem
-            key={crumb.pathname}
-            selected={location.pathname === crumb.pathname}
-            onClick={() => {
-              handleOnMenuClose();
-              setTimeout(
-                () => navigate({ to: crumb.pathname }),
-                theme.transitions.duration.leavingScreen,
-              );
-            }}
+            key={id}
+            onClick={handleOnMenuClose}
+            sx={{ p: 0, "> a": { p: 1 } }}
           >
-            {!!crumb.Icon && (
-              <ListItemIcon>
-                <crumb.Icon />
-              </ListItemIcon>
-            )}
-            <ListItemText primary={crumb.label} />
+            <Component />
           </MenuItem>
         ))}
       </Menu>

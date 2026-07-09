@@ -7,19 +7,29 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Container, Stack, Typography } from "@mui/material";
-import { ContactIcons } from "@/store/constants/contacts";
+import Breadcrumb from "@/components/links/Breadcrumb";
 import ContactCreateForm, {
   type IContactCreateFormProps,
 } from "@/containers/forms/ContactCreateForm";
 import { contactMutations } from "@/store/mutations/contacts";
+import { ContactIcons } from "@/store/constants/contacts";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
 
 export const Route = createFileRoute("/app/contacts/create")({
-  beforeLoad: () => ({
-    crumb: { label: "Create", Icon: ContactIcons.Create },
-  }),
   component: RouteComponent,
+  staticData: {
+    crumb: {
+      id: "contacts/create",
+      Component: () => (
+        <Breadcrumb
+          to="/app/contacts/create"
+          children="Create"
+          startIcon={<ContactIcons.Create />}
+        />
+      ),
+    },
+  },
 });
 
 function RouteComponent() {
@@ -61,7 +71,7 @@ function RouteComponent() {
         onSuccess: (newContact) =>
           navigate({
             to: "/app/contacts/$id",
-            params: { id: String(newContact.id) },
+            params: { id: newContact.id },
             ignoreBlocker: true,
           }),
       },

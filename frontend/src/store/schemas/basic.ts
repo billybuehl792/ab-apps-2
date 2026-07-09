@@ -1,7 +1,7 @@
 import z from "zod";
 import { RegexPattern } from "../constants/regex";
 
-export const idSchema = z.number().int().positive();
+export const idSchema = z.coerce.number().int().positive();
 
 export const idOrIdArraySchema = z
   .union([idSchema, z.array(idSchema)])

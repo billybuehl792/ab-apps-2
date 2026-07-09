@@ -2,7 +2,7 @@ import {
   createFileRoute,
   Outlet,
   redirect,
-  useRouterState,
+  useMatches,
 } from "@tanstack/react-router";
 import { Box, Container, Paper, Stack, useMediaQuery } from "@mui/material";
 import { Home } from "@mui/icons-material";
@@ -13,6 +13,7 @@ import Footer from "@/containers/layout/Footer";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
 import PageNotFoundCard from "@/components/cards/PageNotFoundCard";
+import Breadcrumb from "@/components/links/Breadcrumb";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: ({ context, location }) => {
@@ -39,26 +40,30 @@ export const Route = createFileRoute("/app")({
       />
     </FullScreen>
   ),
-  // errorComponent: ({ error }) => (
-  //   <Container sx={{ my: 2 }}>
-  //     <div>app.tsx error</div>
-  //     {/* <StatusWrapper error={error} /> */}
-  //   </Container>
-  // ),
   notFoundComponent: () => (
     <Container>
       <PageNotFoundCard my={2} />
     </Container>
   ),
+  staticData: {
+    crumb: {
+      id: "contacts",
+      Component: () => (
+        <Breadcrumb to="/app" children="Home" startIcon={<Home />} />
+      ),
+    },
+  },
 });
 
 function RouteComponent() {
   /** Values */
 
-  const matches = useRouterState({ select: (s) => s.matches });
-  const currentMatch = matches.at(-1);
-
   const isDesktop = useMediaQuery(({ breakpoints }) => breakpoints.up("sm"));
+
+  const currentPageHeaderEndContent = useMatches({
+    select: (matches) =>
+      matches.findLast((m) => !!m.staticData?.PageHeaderEndContentComponent),
+  });
 
   return (
     <>
@@ -115,8 +120,11 @@ function RouteComponent() {
               borderBottom: `1px solid ${theme.palette.divider}`,
             })}
           >
-            <NavBreadcrumbs matches={matches} />
-            {currentMatch?.context.pageHeaderEndContent}
+            <NavBreadcrumbs />
+            {!!currentPageHeaderEndContent?.staticData
+              ?.PageHeaderEndContentComponent && (
+              <currentPageHeaderEndContent.staticData.PageHeaderEndContentComponent />
+            )}
           </Stack>
         </Container>
         <Box

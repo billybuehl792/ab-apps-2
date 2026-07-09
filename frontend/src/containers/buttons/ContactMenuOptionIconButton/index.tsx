@@ -12,7 +12,7 @@ type TMenuOptionIconButtonProps = Omit<
   "options"
 >;
 
-interface IContactMenuOptionIconButtonProps
+export interface IContactMenuOptionIconButtonProps
   extends TMenuOptionIconButtonProps, IUseContactOptions {
   contact: TContact;
 }

@@ -105,7 +105,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
 
   const handleEdit = () =>
     navigate({
-      to: "/app/contacts/$id/edit",
+      to: "/app/contacts/edit/$id",
       params: { id: String(contact.id) },
     });
 
@@ -162,7 +162,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           Icon: Edit,
           isDisabled: isDisabled,
           link: {
-            to: "/app/contacts/$id/edit",
+            to: "/app/contacts/edit/$id",
             params: { id: String(contact.id) },
           },
         },

@@ -5,6 +5,7 @@ import {
   Check,
   CreateNewFolder,
   DoNotDisturb,
+  Edit,
   Grading,
   MedicalServices,
   Work,
@@ -17,6 +18,7 @@ export const JobIcons: Record<string, ElementType> = {
   List: Cases,
   Detail: Work,
   Create: MedicalServices,
+  Edit: Edit,
 };
 
 export const JobStatusIcons: Record<EJobStatus, ElementType> = {

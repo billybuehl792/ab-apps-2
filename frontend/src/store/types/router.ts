@@ -9,6 +9,7 @@ export interface IGlobalRouterContext {
   crumb?: {
     label: ReactNode;
     Icon?: SvgIconComponent;
+    exact?: boolean;
   } | null;
   pageHeaderEndContent?: ReactNode;
 }

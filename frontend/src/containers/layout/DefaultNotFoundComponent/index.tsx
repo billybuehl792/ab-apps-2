@@ -5,7 +5,7 @@ import type { NotFoundRouteProps } from "@tanstack/react-router";
 const DefaultNotFoundComponent: React.FC<NotFoundRouteProps> = () => {
   return (
     <Container>
-      <PageNotFoundCard />
+      <PageNotFoundCard my={2} />
     </Container>
   );
 };

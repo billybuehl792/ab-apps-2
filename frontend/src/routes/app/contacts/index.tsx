@@ -21,11 +21,10 @@ export const Route = createFileRoute("/app/contacts/")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({
-    crumb: null,
-    pageHeaderEndContent: <ContactCreateButton variant="text" />,
-  }),
   component: RouteComponent,
+  staticData: {
+    PageHeaderEndContentComponent: () => <ContactCreateButton variant="text" />,
+  },
 });
 
 function RouteComponent() {

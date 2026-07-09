@@ -21,11 +21,10 @@ export const Route = createFileRoute("/app/jobs/")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({
-    crumb: null,
-    pageHeaderEndContent: <JobCreateButton variant="text" />,
-  }),
   component: RouteComponent,
+  staticData: {
+    PageHeaderEndContentComponent: () => <JobCreateButton variant="text" />,
+  },
 });
 
 function RouteComponent() {

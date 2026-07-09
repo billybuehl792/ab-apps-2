@@ -6,19 +6,29 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { Container, Stack, Typography } from "@mui/material";
-import { JobIcons } from "@/store/constants/jobs";
+import Breadcrumb from "@/components/links/Breadcrumb";
 import JobCreateForm, {
   type IJobCreateFormProps,
 } from "@/containers/forms/JobCreateForm";
 import { jobMutations } from "@/store/mutations/jobs";
 import { markdownUtils } from "@/store/utils/markdown";
 import { errorUtils } from "@/store/utils/error";
+import { JobIcons } from "@/store/constants/jobs";
 
 export const Route = createFileRoute("/app/jobs/create")({
-  beforeLoad: () => ({
-    crumb: { label: "Create", Icon: JobIcons.Create },
-  }),
   component: RouteComponent,
+  staticData: {
+    crumb: {
+      id: "/app/jobs/create",
+      Component: () => (
+        <Breadcrumb
+          to="/app/jobs/create"
+          children="Create"
+          startIcon={<JobIcons.Create />}
+        />
+      ),
+    },
+  },
 });
 
 function RouteComponent() {
@@ -59,7 +69,7 @@ function RouteComponent() {
         onSuccess: (newJob) =>
           navigate({
             to: "/app/jobs/$id",
-            params: { id: String(newJob.id) },
+            params: { id: newJob.id },
             ignoreBlocker: true,
           }),
       },

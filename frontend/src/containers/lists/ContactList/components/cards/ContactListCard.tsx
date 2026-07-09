@@ -25,6 +25,8 @@ const ContactListCard: React.FC<IContactListCardProps> = ({
     <ListCard
       startContent={<ContactIcons.Detail fontSize="large" color="disabled" />}
       label={`${contact.first_name} ${contact.last_name}`}
+      disabled={disabled}
+      options={options}
       description={
         <Metadata
           items={[
