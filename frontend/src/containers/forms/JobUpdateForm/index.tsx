@@ -20,9 +20,10 @@ import {
 import GoogleAutocompleteSuggestionAutocomplete from "@/containers/fields/GoogleAutocompleteSuggestionAutocomplete";
 import ContactAutocomplete from "@/containers/fields/ContactAutocomplete";
 import useConfirm from "@/store/hooks/useConfirm";
+import JobStatusChip from "@/containers/chips/JobStatusChip";
 import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 import { contactSchema } from "@/store/schemas/contacts";
-import { EJobCategory } from "@/store/enums/jobs";
+import { EJobCategory, EJobStatus } from "@/store/enums/jobs";
 
 type TJobUpdateRequestFormValues = z.infer<typeof formSchema>;
 
@@ -42,6 +43,7 @@ export interface IJobUpdateFormProps extends Omit<
 }
 
 const formSchema = z.object({
+  status: z.enum(EJobStatus).default(EJobStatus.Lead),
   categories: z
     .array(z.enum(EJobCategory))
     .min(1, "At least one category is required"),
@@ -67,6 +69,7 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
     resolver: zodResolver(formSchema),
     values,
     defaultValues: {
+      status: EJobStatus.Lead,
       categories: [],
       description: "",
       recipients: [],
@@ -115,6 +118,41 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
     >
       <Stack spacing={2} mb={2} {...slotProps?.fields}>
         <Controller
+          name="status"
+          control={methods.control}
+          render={({ field: { value, onChange, ...field } }) => (
+            <FormControl
+              required
+              fullWidth
+              error={!!methods.formState.errors.status}
+              disabled={isFieldDisabled}
+              {...field}
+            >
+              <InputLabel id="job-status-label">Status</InputLabel>
+              <Select
+                id="job-status"
+                labelId="job-status-label"
+                value={value}
+                disabled={isFieldDisabled}
+                input={<OutlinedInput label="Status" />}
+                renderValue={(selected) => <JobStatusChip value={selected} />}
+                onChange={(e) => onChange(e.target.value)}
+              >
+                {Object.values(EJobStatus).map((status) => (
+                  <MenuItem key={status} value={status}>
+                    <JobStatusChip value={status} />
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!methods.formState.errors.status && (
+                <FormHelperText error>
+                  {methods.formState.errors.status.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+        <Controller
           name="categories"
           control={methods.control}
           render={({ field }) => (
@@ -151,8 +189,9 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
         <Controller
           name="recipients"
           control={methods.control}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field: { value, onChange, ...field } }) => (
             <ContactAutocomplete
+              value={contactSchema.array().parse(value)}
               label="Recipient(s)"
               required
               multiple
@@ -197,8 +236,9 @@ const JobUpdateForm: React.FC<IJobUpdateFormProps> = ({
         <Controller
           name="representatives"
           control={methods.control}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field: { value, onChange, ...field } }) => (
             <ContactAutocomplete
+              value={contactSchema.array().parse(value)}
               label="Representative(s)"
               multiple
               disabled={isFieldDisabled}

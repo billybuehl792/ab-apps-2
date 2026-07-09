@@ -25,14 +25,14 @@ import { googleAutocompleteSuggestionSchema } from "@/store/schemas/places";
 import { contactSchema } from "@/store/schemas/contacts";
 import { EJobCategory, EJobStatus } from "@/store/enums/jobs";
 
-type TJobCreateRequestFormValues = z.infer<typeof formSchema>;
+type TJobCreateFormValues = z.infer<typeof formSchema>;
 
 export interface IJobCreateFormProps extends Omit<
   StackProps<"form">,
   "component" | "onSubmit" | "onReset"
 > {
-  values?: TJobCreateRequestFormValues;
-  onSubmit: SubmitHandler<TJobCreateRequestFormValues>;
+  values?: TJobCreateFormValues;
+  onSubmit: SubmitHandler<TJobCreateFormValues>;
   onCancel: ButtonProps["onClick"];
   slotProps?: {
     fields?: StackProps;
@@ -192,8 +192,9 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
         <Controller
           name="recipients"
           control={methods.control}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field: { value, onChange, ...field } }) => (
             <ContactAutocomplete
+              value={contactSchema.array().parse(value)}
               label="Recipient(s)"
               required
               multiple
@@ -238,8 +239,9 @@ const JobCreateForm: React.FC<IJobCreateFormProps> = ({
         <Controller
           name="representatives"
           control={methods.control}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field: { value, onChange, ...field } }) => (
             <ContactAutocomplete
+              value={contactSchema.array().parse(value)}
               label="Representative(s)"
               multiple
               disabled={isFieldDisabled}

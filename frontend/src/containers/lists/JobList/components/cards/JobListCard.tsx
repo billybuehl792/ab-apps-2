@@ -73,6 +73,7 @@ const JobListCard: React.FC<IJobListCardProps> = ({
           ]}
         />
       }
+      options={options}
       {...(onClick && { onClick: (event) => onClick(job, event) })}
       {...props}
     />
