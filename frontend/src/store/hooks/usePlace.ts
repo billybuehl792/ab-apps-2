@@ -8,7 +8,7 @@ import { errorUtils } from "../utils/error";
 import { placeMutations } from "../mutations/places";
 import { EObjectChangeType } from "../enums/api";
 import { EPlaceOptionId } from "../enums/places";
-import type { TPlaceBasic } from "../types/places";
+import type { TPlace } from "../types/places";
 
 type TPlaceMenuOption = IMenuOption<EPlaceOptionId, EPlaceOptionId>;
 
@@ -18,15 +18,15 @@ export interface IUsePlaceOptions {
   options?:
     | TPlaceMenuOption[]
     | ((
-        place: TPlaceBasic,
+        place: TPlace,
         baseMenuOptions: TPlaceMenuOption[],
       ) => TPlaceMenuOption[]);
-  onChange?: (place: TPlaceBasic, type: EObjectChangeType) => void;
+  onChange?: (place: TPlace, type: EObjectChangeType) => void;
 }
 
 export type TUsePlace = ReturnType<typeof usePlace>;
 
-const usePlace = (place: TPlaceBasic, options?: IUsePlaceOptions) => {
+const usePlace = (place: TPlace, options?: IUsePlaceOptions) => {
   /** Values */
 
   const navigate = useNavigate();

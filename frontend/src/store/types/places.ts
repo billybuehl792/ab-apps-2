@@ -13,8 +13,6 @@ import {
 
 export type TPlace = z.infer<typeof placeSchema>;
 
-export type TPlaceBasic = z.infer<typeof placeSchema>;
-
 export type TGoogleAutocompleteSuggestion = z.infer<
   typeof googleAutocompleteSuggestionSchema
 >;

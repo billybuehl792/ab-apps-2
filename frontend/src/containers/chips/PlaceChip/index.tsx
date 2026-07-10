@@ -2,10 +2,10 @@ import { Chip, type ChipProps } from "@mui/material";
 import usePlace from "@/store/hooks/usePlace";
 import { PlaceIcons } from "@/store/constants/places";
 import type { IUsePlaceOptions, TUsePlace } from "@/store/hooks/usePlace";
-import type { TPlaceBasic } from "@/store/types/places";
+import type { TPlace } from "@/store/types/places";
 
 interface IPlaceChipProps extends Omit<ChipProps, "onClick"> {
-  place: TPlaceBasic;
+  place: TPlace;
   options?: IUsePlaceOptions;
   onClick?: (placeHook: TUsePlace) => void;
 }
