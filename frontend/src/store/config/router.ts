@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
-import qs from "qs";
 import { routeTree } from "@/routeTree.gen";
 import { createRouter } from "@tanstack/react-router";
+import qs from "qs";
 import DefaultPendingComponent from "@/containers/layout/DefaultPendingComponent";
 import DefaultErrorComponent from "@/containers/layout/DefaultErrorComponent";
 import DefaultNotFoundComponent from "@/containers/layout/DefaultNotFoundComponent";
@@ -17,7 +17,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   defaultPendingMs: 0,
   context: {} as IGlobalRouterContext,
@@ -30,5 +30,3 @@ const router = createRouter({
   defaultErrorComponent: DefaultErrorComponent,
   defaultNotFoundComponent: DefaultNotFoundComponent,
 });
-
-export default router;

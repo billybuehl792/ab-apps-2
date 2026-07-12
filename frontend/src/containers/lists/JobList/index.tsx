@@ -117,7 +117,6 @@ const JobList: React.FC<IJobListProps> = ({
             <JobListStatusField
               value={status ?? null}
               disabled={disabled || !!loading}
-              size="small"
               onChange={onStatusChange}
               sx={{ py: 1, width: { xs: "100%" } }}
             />

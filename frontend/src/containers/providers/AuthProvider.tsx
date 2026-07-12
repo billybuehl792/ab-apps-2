@@ -10,9 +10,10 @@ import { useSnackbar } from "notistack";
 import AuthContext from "@/store/context/AuthContext";
 import FullScreen from "@/components/layout/FullScreen";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import { authUtils } from "@/store/utils/auth";
+import { setAccessToken } from "@/store/utils/auth";
 import { accountEndpoints } from "@/store/endpoints/account";
 import { markdownUtils } from "@/store/utils/markdown";
+import { router } from "@/store/config/router";
 
 const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -28,7 +29,7 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const signIn: ContextType<typeof AuthContext>["signIn"] = async (body) => {
     const res = await accountEndpoints.auth.token.post(body);
     flushSync(() => {
-      authUtils.setAccessToken(res.access);
+      setAccessToken(res.access);
       setMe(res.me);
     });
     snackbar.enqueueSnackbar(
@@ -44,10 +45,12 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // Revoke is best-effort; local state is always cleared below.
     } finally {
       flushSync(() => {
-        authUtils.setAccessToken(null);
+        setAccessToken(null);
         setMe(null);
+        queryClient.clear();
+        router.clearCache();
       });
-      queryClient.clear();
+
       snackbar.enqueueSnackbar("Signed out", { variant: "success" });
     }
   };
@@ -58,11 +61,11 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     accountEndpoints.auth.token.refresh
       .post()
       .then((res) => {
-        authUtils.setAccessToken(res.access);
+        setAccessToken(res.access);
         setMe(res.me);
       })
       .catch(() => {
-        authUtils.setAccessToken(null);
+        setAccessToken(null);
         setMe(null);
       })
       .finally(() => setIsInitialized(true));

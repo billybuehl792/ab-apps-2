@@ -1,5 +1,7 @@
+import { Fragment, type ReactNode } from "react";
 import {
   Card,
+  CardActions,
   CardContent,
   Stack,
   Typography,
@@ -7,14 +9,18 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import Metadata from "@/components/lists/Metadata";
-import { DateTimeFormat } from "@/store/enums/datetime";
 import type { TContact } from "@/store/types/contacts";
 
-interface IContactDetailCardProps extends CardProps {
+interface IContactDetailCardProps extends Omit<CardProps, "children"> {
   contact: TContact;
+  actions?: ReactNode[];
 }
 
-const ContactDetailCard = ({ contact, ...props }: IContactDetailCardProps) => {
+const ContactDetailCard = ({
+  contact,
+  actions,
+  ...props
+}: IContactDetailCardProps) => {
   return (
     <Card variant="outlined" {...props}>
       <CardContent component={Stack} spacing={1}>
@@ -32,24 +38,30 @@ const ContactDetailCard = ({ contact, ...props }: IContactDetailCardProps) => {
               value: contact.phone_primary.toPhone(),
             },
             {
+              id: "address",
+              label: "Address",
+              value: contact.place ? contact.place.address_short : "N/A",
+            },
+            {
               id: "created",
               label: "Created",
               value: dayjs(contact.created_at).fromNow(),
-              tooltip: dayjs(contact.created_at).format(
-                DateTimeFormat.DATETIME_MERIDIEM,
-              ),
             },
             {
               id: "updated",
               label: "Updated",
               value: dayjs(contact.updated_at).fromNow(),
-              tooltip: dayjs(contact.updated_at).format(
-                DateTimeFormat.DATETIME_MERIDIEM,
-              ),
             },
           ]}
         />
       </CardContent>
+      {actions && (
+        <CardActions sx={{ pt: 0 }}>
+          {actions.map((action, index) => (
+            <Fragment key={index}>{action}</Fragment>
+          ))}
+        </CardActions>
+      )}
     </Card>
   );
 };

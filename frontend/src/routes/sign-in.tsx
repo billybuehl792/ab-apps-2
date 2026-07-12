@@ -15,25 +15,23 @@ import ButtonLink from "@/components/links/ButtonLink";
 import { errorUtils } from "@/store/utils/error";
 
 const APP_ROUTE_PATH: keyof FileRoutesByPath = "/app";
-const forceParamSchema = z.coerce
-  .boolean()
-  .optional()
-  .transform((value) => !!value || undefined)
-  .catch(undefined);
-const redirectParamSchema = z
-  .string()
-  .optional()
-  .transform((redirect) =>
-    !!redirect &&
-    redirect.startsWith(APP_ROUTE_PATH) &&
-    redirect !== APP_ROUTE_PATH
-      ? redirect
-      : undefined,
-  )
-  .catch(undefined);
 const paramsSchema = z.object({
-  force: forceParamSchema,
-  redirect: redirectParamSchema,
+  force: z.coerce
+    .boolean()
+    .optional()
+    .transform((value) => !!value || undefined)
+    .catch(undefined),
+  redirect: z
+    .string()
+    .optional()
+    .transform((redirect) =>
+      !!redirect &&
+      redirect.startsWith(APP_ROUTE_PATH) &&
+      redirect !== APP_ROUTE_PATH
+        ? redirect
+        : undefined,
+    )
+    .catch(undefined),
 });
 
 export const Route = createFileRoute("/sign-in")({

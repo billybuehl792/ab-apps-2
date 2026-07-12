@@ -3,8 +3,8 @@ import {
   RouterProvider as TanstackRouterProvider,
 } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { router } from "@/store/config/router";
 import useAuth from "@/store/hooks/useAuth";
-import router from "@/store/config/router";
 
 const RouterProvider: React.FC<Omit<RouterProps, "router" | "context">> = (
   props,

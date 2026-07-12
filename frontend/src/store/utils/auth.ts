@@ -1,9 +1,7 @@
 let accessToken: string | null = null;
 
-const getAccessToken = () => accessToken;
+export const getAccessToken = () => accessToken;
 
-const setAccessToken = (token?: string | null) => {
+export const setAccessToken = (token: typeof accessToken) => {
   accessToken = token ?? null;
 };
-
-export const authUtils = { getAccessToken, setAccessToken };
