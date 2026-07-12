@@ -22,7 +22,6 @@ export const Route = createFileRoute("/app/contacts/$id/jobs")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({ crumb: null }),
   component: RouteComponent,
 });
 
@@ -57,16 +56,24 @@ function RouteComponent() {
       <JobList
         items={jobListQuery.data?.results ?? []}
         count={jobListQuery.data?.count ?? -1}
+        loading={jobListQuery.isLoading}
+        error={jobListQuery.error}
         page={params.page}
         pageSize={params.page_size}
         search={params.search}
-        loading={jobListQuery.isLoading}
-        error={jobListQuery.error}
+        status={params.status}
+        ordering={params.ordering}
         onPageChange={(page) => handleOnParamsChange({ page })}
         onPageSizeChange={(page_size) =>
           handleOnParamsChange({ page: 1, page_size })
         }
         onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
+        onStatusChange={(status) =>
+          handleOnParamsChange({ page: 1, status: status || undefined })
+        }
+        onOrderingChange={(ordering) =>
+          handleOnParamsChange({ page: 1, ordering: ordering || undefined })
+        }
         slotProps={{
           root: { flexGrow: 1, width: "100%", pb: 2 },
           card: (job) => ({

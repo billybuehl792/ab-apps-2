@@ -21,7 +21,7 @@ const PlaceChip = ({ place, options, onClick, ...props }: IPlaceChipProps) => {
       label={place.address_short}
       {...(props?.clickable !== false
         ? {
-            onClick: !!onClick
+            onClick: onClick
               ? () => onClick(placeHook)
               : () => placeHook.view(),
           }
