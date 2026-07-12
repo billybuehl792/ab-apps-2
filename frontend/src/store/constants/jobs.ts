@@ -14,7 +14,7 @@ import { EJobListOrdering, EJobStatus } from "../enums/jobs";
 
 /** Icons */
 
-export const JobIcons: Record<string, ElementType> = {
+export const JobIcons = {
   List: Cases,
   Detail: Work,
   Create: MedicalServices,

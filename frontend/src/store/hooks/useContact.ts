@@ -100,13 +100,13 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
   const handleView = () =>
     navigate({
       to: "/app/contacts/$id",
-      params: { id: String(contact.id) },
+      params: { id: contact.id },
     });
 
   const handleEdit = () =>
     navigate({
       to: "/app/contacts/edit/$id",
-      params: { id: String(contact.id) },
+      params: { id: contact.id },
     });
 
   const handleUpdate = updateMutation.mutate;

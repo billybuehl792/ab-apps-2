@@ -7,7 +7,7 @@ import theme from "./src/store/config/theme";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/",
+  base: "/app/",
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),

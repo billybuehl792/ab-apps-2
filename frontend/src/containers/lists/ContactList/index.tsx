@@ -79,6 +79,8 @@ const ContactList: React.FC<IContactListProps> = ({
           direction="row"
           spacing={1}
           alignItems="center"
+          flexWrap="wrap"
+          useFlexGap
           {...slotProps?.header}
           sx={[
             {

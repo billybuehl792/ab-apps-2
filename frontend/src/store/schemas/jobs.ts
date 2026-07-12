@@ -10,6 +10,7 @@ import { historyEntrySchema } from "./history";
 export const jobSchema = z.object({
   id: idSchema,
   description: z.string(),
+  status: z.enum(EJobStatus),
   categories: z.array(z.enum(EJobCategory)),
   amount: z.number().nullable(),
   paid: z.number().nullable(),

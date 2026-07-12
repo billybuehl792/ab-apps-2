@@ -140,6 +140,7 @@ function RouteComponent() {
         <Typography variant="h5">Edit Job</Typography>
         <JobUpdateForm
           values={{
+            status: job.status,
             categories: job.categories,
             description: job.description,
             recipients: job.recipients,
