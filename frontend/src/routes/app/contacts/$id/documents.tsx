@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type MouseEventHandler, useState } from "react";
 import {
   createFileRoute,
   stripSearchParams,
@@ -8,11 +8,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import { z } from "zod";
 import { Box, Container } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Delete, FileUpload } from "@mui/icons-material";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import useContact from "@/store/hooks/useContact";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import DocumentList from "@/containers/lists/DocumentList";
+import MenuOptionMenu from "@/components/modals/MenuOptionMenu";
 import { contactQueries } from "@/store/queries/contacts";
 import { contactDocumentListRequestSchema } from "@/store/schemas/contacts";
 import { EListVariant } from "@/store/enums/layout";
@@ -44,13 +45,19 @@ function RouteComponent() {
   const [selectedDocument, setSelectedDocument] = useState<TDocument | null>(
     null,
   );
+  const [contextMenuPos, setContextMenuPos] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
 
   const navigate = Route.useNavigate();
   const loaderData = useLoaderData({ from: "/app/contacts/$id" });
   const { listVariant, ...params } = Route.useSearch();
 
   const { contact } = loaderData;
-  const { createDocument, deleteDocument } = useContact(contact);
+  const { createDocument, deleteDocument } = useContact(contact, {
+    onChange: () => documentListQuery.refetch(),
+  });
 
   /** Queries */
 
@@ -58,14 +65,13 @@ function RouteComponent() {
     contactQueries.contact(contact.id).documents.list({ params }),
   );
 
-  const { getRootProps, isDragActive } = useDropzone({
+  const { inputRef, getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
+    noClick: true,
+    noKeyboard: true,
     onDrop: (acceptedFiles) => {
       acceptedFiles.forEach((file) =>
-        createDocument(
-          { label: file.name, description: "", file },
-          { onSuccess: () => documentListQuery.refetch() },
-        ),
+        createDocument({ label: file.name, description: "", file }),
       );
     },
   });
@@ -81,7 +87,13 @@ function RouteComponent() {
       search: (s) => ({ ...s, ...newParams }),
     });
 
-  /** Options */
+  const handleOnContextMenu: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    setContextMenuPos({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 6,
+    });
+  };
 
   const getCardOptions = (document: TDocument): IMenuOption[] => [
     {
@@ -90,53 +102,68 @@ function RouteComponent() {
       value: "delete",
       color: "error.main",
       Icon: Delete,
-      onClick: () =>
-        deleteDocument(document.id, {
-          onSuccess: () => documentListQuery.refetch(),
-        }),
+      onClick: () => deleteDocument(document.id),
+    },
+  ];
+
+  /** Options */
+
+  const contextMenuOptions: IMenuOption[] = [
+    {
+      id: "create",
+      label: "Upload File(s)",
+      value: "create",
+      Icon: FileUpload,
+      onClick: () => {
+        setContextMenuPos(null);
+        inputRef.current?.click();
+      },
     },
   ];
 
   return (
-    <Container sx={{ display: "flex", flexGrow: 1 }}>
-      <DocumentList
-        items={documentListQuery.data?.results ?? []}
-        count={documentListQuery.data?.count ?? -1}
-        page={params.page}
-        pageSize={params.page_size}
-        search={params.search}
-        loading={documentListQuery.isLoading}
-        error={documentListQuery.error}
-        listVariant={listVariant}
-        onPageChange={(page) => handleOnParamsChange({ page })}
-        onPageSizeChange={(page_size) =>
-          handleOnParamsChange({ page: 1, page_size })
-        }
-        onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
-        onListVariantChange={(listVariant) =>
-          handleOnParamsChange({ listVariant })
-        }
-        slotProps={{
-          list: {
-            ...getRootProps(),
-            sx: [
-              { flexGrow: 1 },
-              isDragActive && {
-                opacity: 0.5,
-                bgcolor: (theme) => theme.palette.action.hover,
+    <>
+      <Container
+        {...getRootProps()}
+        onContextMenu={handleOnContextMenu}
+        sx={{ display: "flex", flexGrow: 1 }}
+      >
+        <input {...getInputProps()} />
+        <DocumentList
+          items={documentListQuery.data?.results ?? []}
+          count={documentListQuery.data?.count ?? -1}
+          page={params.page}
+          pageSize={params.page_size}
+          search={params.search}
+          loading={documentListQuery.isLoading}
+          error={documentListQuery.error}
+          listVariant={listVariant}
+          onPageChange={(page) => handleOnParamsChange({ page })}
+          onPageSizeChange={(page_size) =>
+            handleOnParamsChange({ page: 1, page_size })
+          }
+          onSearchChange={(search) => handleOnParamsChange({ page: 1, search })}
+          onListVariantChange={(listVariant) =>
+            handleOnParamsChange({ listVariant })
+          }
+          slotProps={{
+            card: (document) => ({
+              options: getCardOptions(document),
+              onClick: () => {
+                setSelectedDocument(document);
+                setDialogOpen(true);
               },
-            ],
-          },
-          card: (document) => ({
-            options: getCardOptions(document),
-            onClick: () => {
-              setSelectedDocument(document);
-              setDialogOpen(true);
+            }),
+          }}
+          sx={[
+            { flexGrow: 1, width: "100%", pb: 2 },
+            isDragActive && {
+              opacity: 0.5,
+              bgcolor: (theme) => theme.palette.action.hover,
             },
-          }),
-        }}
-        sx={{ flexGrow: 1, width: "100%", pb: 2 }}
-      />
+          ]}
+        />
+      </Container>
       <FullScreenDialog
         open={dialogOpen}
         label={selectedDocument?.label ?? ""}
@@ -153,6 +180,17 @@ function RouteComponent() {
           sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
         />
       </FullScreenDialog>
-    </Container>
+      <MenuOptionMenu
+        open={!!contextMenuPos}
+        options={contextMenuOptions}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenuPos
+            ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
+            : undefined
+        }
+        onClose={() => setContextMenuPos(null)}
+      />
+    </>
   );
 }
