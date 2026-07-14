@@ -40,7 +40,6 @@ import { Route as AppContactsEditIdRouteImport } from './routes/app/contacts/edi
 import { Route as AppContactsIdJobsRouteImport } from './routes/app/contacts/$id/jobs'
 import { Route as AppContactsIdHistoryRouteImport } from './routes/app/contacts/$id/history'
 import { Route as AppContactsIdDocumentsRouteImport } from './routes/app/contacts/$id/documents'
-import { Route as AppAdminUsersCreateRouteImport } from './routes/app/admin/users/create'
 import { Route as AppAdminUsersIdRouteImport } from './routes/app/admin/users/$id'
 
 const SignInRoute = SignInRouteImport.update({
@@ -199,11 +198,6 @@ const AppContactsIdDocumentsRoute = AppContactsIdDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => AppContactsIdRoute,
 } as any)
-const AppAdminUsersCreateRoute = AppAdminUsersCreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => AppAdminUsersRoute,
-} as any)
 const AppAdminUsersIdRoute = AppAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -233,7 +227,6 @@ export interface FileRoutesByFullPath {
   '/app/jobs/': typeof AppJobsIndexRoute
   '/app/places/': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/contacts/$id/documents': typeof AppContactsIdDocumentsRoute
   '/app/contacts/$id/history': typeof AppContactsIdHistoryRoute
   '/app/contacts/$id/jobs': typeof AppContactsIdJobsRoute
@@ -260,7 +253,6 @@ export interface FileRoutesByTo {
   '/app/jobs': typeof AppJobsIndexRoute
   '/app/places': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/contacts/$id/documents': typeof AppContactsIdDocumentsRoute
   '/app/contacts/$id/history': typeof AppContactsIdHistoryRoute
   '/app/contacts/$id/jobs': typeof AppContactsIdJobsRoute
@@ -296,7 +288,6 @@ export interface FileRoutesById {
   '/app/jobs/': typeof AppJobsIndexRoute
   '/app/places/': typeof AppPlacesIndexRoute
   '/app/admin/users/$id': typeof AppAdminUsersIdRoute
-  '/app/admin/users/create': typeof AppAdminUsersCreateRoute
   '/app/contacts/$id/documents': typeof AppContactsIdDocumentsRoute
   '/app/contacts/$id/history': typeof AppContactsIdHistoryRoute
   '/app/contacts/$id/jobs': typeof AppContactsIdJobsRoute
@@ -333,7 +324,6 @@ export interface FileRouteTypes {
     | '/app/jobs/'
     | '/app/places/'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/contacts/$id/documents'
     | '/app/contacts/$id/history'
     | '/app/contacts/$id/jobs'
@@ -360,7 +350,6 @@ export interface FileRouteTypes {
     | '/app/jobs'
     | '/app/places'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/contacts/$id/documents'
     | '/app/contacts/$id/history'
     | '/app/contacts/$id/jobs'
@@ -395,7 +384,6 @@ export interface FileRouteTypes {
     | '/app/jobs/'
     | '/app/places/'
     | '/app/admin/users/$id'
-    | '/app/admin/users/create'
     | '/app/contacts/$id/documents'
     | '/app/contacts/$id/history'
     | '/app/contacts/$id/jobs'
@@ -635,13 +623,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContactsIdDocumentsRouteImport
       parentRoute: typeof AppContactsIdRoute
     }
-    '/app/admin/users/create': {
-      id: '/app/admin/users/create'
-      path: '/create'
-      fullPath: '/app/admin/users/create'
-      preLoaderRoute: typeof AppAdminUsersCreateRouteImport
-      parentRoute: typeof AppAdminUsersRoute
-    }
     '/app/admin/users/$id': {
       id: '/app/admin/users/$id'
       path: '/$id'
@@ -654,13 +635,11 @@ declare module '@tanstack/react-router' {
 
 interface AppAdminUsersRouteChildren {
   AppAdminUsersIdRoute: typeof AppAdminUsersIdRoute
-  AppAdminUsersCreateRoute: typeof AppAdminUsersCreateRoute
   AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute
 }
 
 const AppAdminUsersRouteChildren: AppAdminUsersRouteChildren = {
   AppAdminUsersIdRoute: AppAdminUsersIdRoute,
-  AppAdminUsersCreateRoute: AppAdminUsersCreateRoute,
   AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
 }
 

@@ -33,7 +33,7 @@ const PlaceListCard: React.FC<IPlaceListCardProps> = ({
           ]}
         />
       }
-      link={{ to: "/app/places/$id", params: { id: String(place.id) } }}
+      link={{ to: "/app/places/$id", params: { id: place.id } }}
       {...(!!onClick && { onClick: (event) => onClick(place, event) })}
       {...props}
     />

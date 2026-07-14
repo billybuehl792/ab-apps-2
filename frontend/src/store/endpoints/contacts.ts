@@ -47,18 +47,18 @@ const contactEndpoints = {
           .post<TDocument>(`/contacts/${id}/documents/`, formData)
           .then(({ data }) => data);
       },
-      document: (documentId: TDocument["id"]) => ({
+      document: (dId: TDocument["id"]) => ({
         get: () =>
           api
-            .get<TDocument>(`/contacts/${id}/documents/${documentId}/`)
+            .get<TDocument>(`/contacts/${id}/documents/${dId}/`)
             .then(({ data }) => data),
         patch: (body: TDocumentUpdate) =>
           api
-            .patch<TDocument>(`/contacts/${id}/documents/${documentId}/`, body)
+            .patch<TDocument>(`/contacts/${id}/documents/${dId}/`, body)
             .then(({ data }) => data),
         delete: () =>
           api
-            .delete<void>(`/contacts/${id}/documents/${documentId}/`)
+            .delete<void>(`/contacts/${id}/documents/${dId}/`)
             .then(({ data }) => data),
       }),
     },

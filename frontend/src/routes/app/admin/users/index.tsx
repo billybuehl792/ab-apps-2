@@ -1,8 +1,6 @@
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
-import { Add } from "@mui/icons-material";
 import { userListRequestSchema } from "@/store/schemas/account";
 import StatusWrapper from "@/components/layout/StatusWrapper";
-import ButtonLink from "@/components/links/ButtonLink";
 import { Container } from "@mui/material";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 
@@ -17,17 +15,6 @@ export const Route = createFileRoute("/app/admin/users/")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({
-    crumb: null,
-    pageHeaderEndContent: (
-      <ButtonLink
-        variant="text"
-        to="/app/admin/users/create"
-        startIcon={<Add />}
-        children="Create New"
-      />
-    ),
-  }),
   component: RouteComponent,
 });
 

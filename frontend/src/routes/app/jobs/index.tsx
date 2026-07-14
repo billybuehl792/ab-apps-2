@@ -92,7 +92,7 @@ const ListCard = ({ job, ...props }: ComponentProps<typeof JobListCard>) => {
     <JobListCard
       job={job}
       options={options}
-      link={{ to: "/app/jobs/$id", params: { id: String(job.id) } }}
+      link={{ to: "/app/jobs/$id", params: { id: job.id } }}
       {...props}
     />
   );

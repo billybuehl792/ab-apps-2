@@ -14,7 +14,6 @@ export const contactSchema = z.object({
   phone_primary: phoneSchema,
   phone_secondary: phoneSchema.nullable(),
   place: placeSchema.nullable(),
-  documents: z.array(documentSchema),
   created_at: z.iso.datetime(),
   updated_at: z.iso.datetime(),
 });

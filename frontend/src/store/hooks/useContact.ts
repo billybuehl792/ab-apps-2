@@ -151,7 +151,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           isDisabled: isDisabled,
           link: {
             to: "/app/contacts/$id",
-            params: { id: String(contact.id) },
+            params: { id: contact.id },
           },
         },
         {
@@ -163,7 +163,7 @@ const useContact = (contact: TContact, options?: IUseContactOptions) => {
           isDisabled: isDisabled,
           link: {
             to: "/app/contacts/edit/$id",
-            params: { id: String(contact.id) },
+            params: { id: contact.id },
           },
         },
         {

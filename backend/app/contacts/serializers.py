@@ -18,15 +18,13 @@ class ContactSerializer(ModelSerializer):
         allow_blank=True,
         write_only=True,
     )
-    documents = DocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contact
         fields = ("id", "first_name", "last_name",
                   "email", "phone_primary", "phone_secondary", "place",
-                  "google_place_id", "documents", "created_at", "updated_at")
-        read_only_fields = ("id", "place", "documents",
-                            "created_at", "updated_at")
+                  "google_place_id", "created_at", "updated_at")
+        read_only_fields = ("id", "place", "created_at", "updated_at")
 
     def _apply_google_place_id(self, validated_data):
         google_place_id = validated_data.pop("google_place_id", None)

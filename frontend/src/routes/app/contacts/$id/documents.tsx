@@ -11,7 +11,6 @@ import { Box, Container } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import useContact from "@/store/hooks/useContact";
-import useConfirm from "@/store/hooks/useConfirm";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import DocumentList from "@/containers/lists/DocumentList";
 import { contactQueries } from "@/store/queries/contacts";
@@ -35,7 +34,6 @@ export const Route = createFileRoute("/app/contacts/$id/documents")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({ crumb: null }),
   component: RouteComponent,
 });
 
@@ -50,10 +48,8 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const loaderData = useLoaderData({ from: "/app/contacts/$id" });
   const { listVariant, ...params } = Route.useSearch();
-  const confirm = useConfirm();
 
   const { contact } = loaderData;
-
   const { createDocument, deleteDocument } = useContact(contact);
 
   /** Queries */
@@ -95,16 +91,9 @@ function RouteComponent() {
       color: "error.main",
       Icon: Delete,
       onClick: () =>
-        confirm(
-          {
-            title: `Delete ${document.label}?`,
-            description: `Are you sure you want to delete this document? This operation is irreversible.`,
-          },
-          () =>
-            deleteDocument(document.id, {
-              onSuccess: () => documentListQuery.refetch(),
-            }),
-        ),
+        deleteDocument(document.id, {
+          onSuccess: () => documentListQuery.refetch(),
+        }),
     },
   ];
 

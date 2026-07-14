@@ -56,6 +56,28 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
       }),
   });
 
+  const createDocumentMutation = useMutation({
+    ...jobMutations.job(job.id).documents.create,
+    onSuccess: (res) => {
+      options?.onChange?.(job, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar(`${res.label} uploaded`, {
+        variant: "success",
+      });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Upload failed", { variant: "error" }),
+  });
+
+  const deleteDocumentMutation = useMutation({
+    ...jobMutations.job(job.id).documents.delete,
+    onSuccess: () => {
+      options?.onChange?.(job, EObjectChangeType.Update);
+      snackbar.enqueueSnackbar("Document deleted", { variant: "success" });
+    },
+    onError: () =>
+      snackbar.enqueueSnackbar("Document delete failed", { variant: "error" }),
+  });
+
   /** Data */
 
   const isMutating = updateMutation.isPending || deleteMutation.isPending;
@@ -76,6 +98,20 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
         () => deleteMutation.mutate(...options),
       ),
     [confirm, deleteMutation],
+  );
+
+  const handleCreateDocument = createDocumentMutation.mutate;
+
+  const handleDeleteDocument = useCallback(
+    (...options: Parameters<typeof deleteDocumentMutation.mutate>) =>
+      confirm(
+        {
+          title: `Delete Document?`,
+          description: `Are you sure you want to delete this document? This operation is irreversible.`,
+        },
+        () => deleteDocumentMutation.mutate(...options),
+      ),
+    [confirm, deleteDocumentMutation],
   );
 
   /** Options */
@@ -129,9 +165,16 @@ const useJob = (job: TJob, options?: IUseJobOptions) => {
     options: menuOptions,
     disabled: isDisabled,
     isMutating: isMutating,
-    mutations: { update: updateMutation, delete: deleteMutation },
+    mutations: {
+      update: updateMutation,
+      delete: deleteMutation,
+      createDocument: createDocumentMutation,
+      deleteDocument: deleteDocumentMutation,
+    },
     update: handleUpdate,
     delete: handleDelete,
+    createDocument: handleCreateDocument,
+    deleteDocument: handleDeleteDocument,
   };
 };
 

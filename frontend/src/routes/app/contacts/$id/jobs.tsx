@@ -77,7 +77,7 @@ function RouteComponent() {
         slotProps={{
           root: { flexGrow: 1, width: "100%", pb: 2 },
           card: (job) => ({
-            link: { to: "/app/jobs/$id", params: { id: String(job.id) } },
+            link: { to: "/app/jobs/$id", params: { id: job.id } },
           }),
         }}
       />

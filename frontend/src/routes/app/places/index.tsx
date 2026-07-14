@@ -23,7 +23,6 @@ export const Route = createFileRoute("/app/places/")({
     ],
   },
   component: RouteComponent,
-  beforeLoad: () => ({ crumb: null }),
 });
 
 function RouteComponent() {
@@ -83,7 +82,7 @@ const ListCard: React.FC<IPlaceListCardProps> = ({ place, ...props }) => {
     <PlaceListCard
       place={place}
       options={options}
-      link={{ to: "/app/places/$id", params: { id: String(place.id) } }}
+      link={{ to: "/app/places/$id", params: { id: place.id } }}
       {...props}
     />
   );

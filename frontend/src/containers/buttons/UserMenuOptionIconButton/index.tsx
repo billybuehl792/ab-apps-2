@@ -28,7 +28,7 @@ const UserMenuOptionIconButton: React.FC<TUserMenuOptionIconButtonProps> = ({
       label: "Profile",
       icon: <Person />,
       onClick: () =>
-        navigate({ to: "/app/profile/$id", params: { id: String(userId) } }),
+        navigate({ to: "/app/profile/$id", params: { id: userId } }),
     },
   ];
 

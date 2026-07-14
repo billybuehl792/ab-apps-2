@@ -91,7 +91,7 @@ const ListCard = ({
     <ContactListCard
       contact={contact}
       options={options}
-      link={{ to: "/app/contacts/$id", params: { id: String(contact.id) } }}
+      link={{ to: "/app/contacts/$id", params: { id: contact.id } }}
       {...props}
     />
   );

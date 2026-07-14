@@ -22,7 +22,6 @@ export const Route = createFileRoute("/app/contacts/$id/history")({
       stripSearchParams(defaultParams),
     ],
   },
-  beforeLoad: () => ({ crumb: null }),
   component: RouteComponent,
 });
 

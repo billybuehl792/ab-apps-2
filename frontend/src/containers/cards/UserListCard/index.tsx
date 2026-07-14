@@ -18,10 +18,7 @@ interface UserListCardProps extends CardProps {
 const UserListCard = ({ user, ...props }: UserListCardProps) => {
   return (
     <Stack component={Card} position="relative" {...props}>
-      <CardActionAreaLink
-        to="/app/admin/users/$id"
-        params={{ id: String(user.id) }}
-      >
+      <CardActionAreaLink to="/app/admin/users/$id" params={{ id: user.id }}>
         <CardContent
           component={Stack}
           direction="row"

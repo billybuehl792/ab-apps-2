@@ -58,7 +58,7 @@ const usePlace = (place: TPlace, options?: IUsePlaceOptions) => {
   /** Callbacks */
 
   const handleView = () =>
-    navigate({ to: "/app/places/$id", params: { id: String(place.id) } });
+    navigate({ to: "/app/places/$id", params: { id: place.id } });
 
   const handleDelete = useCallback(
     (...options: Parameters<typeof deleteMutation.mutate>) =>
@@ -84,10 +84,7 @@ const usePlace = (place: TPlace, options?: IUsePlaceOptions) => {
           label: "Detail",
           Icon: Info,
           isDisabled: isDisabled,
-          link: {
-            to: "/app/places/$id",
-            params: { id: String(place.id) },
-          },
+          link: { to: "/app/places/$id", params: { id: place.id } },
         },
         {
           id: EPlaceOptionId.Delete,

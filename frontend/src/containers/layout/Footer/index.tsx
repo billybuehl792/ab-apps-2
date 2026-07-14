@@ -45,10 +45,12 @@ const Footer: React.FC<PaperProps> = (props) => {
       value: "profile",
       label: "Profile",
       icon: <AccountIcons.Detail />,
-      link: {
-        to: "/app/profile/$id",
-        params: { id: String(auth.me?.id) },
-      },
+      ...(auth.me?.id && {
+        link: {
+          to: "/app/profile/$id",
+          params: { id: auth.me.id },
+        },
+      }),
     },
     {
       id: "admin",

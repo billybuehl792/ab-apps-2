@@ -55,7 +55,7 @@ const NavList = (props: Partial<INestedListProps>) => {
       Icon: AccountIcons.Detail,
       link: {
         to: "/app/profile/$id",
-        params: { id: String(auth.me?.id) },
+        params: { id: auth.me?.id },
       },
     },
     {

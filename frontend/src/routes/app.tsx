@@ -24,10 +24,6 @@ export const Route = createFileRoute("/app")({
         search: { redirect: location.href },
         replace: true,
       });
-
-    return {
-      crumb: { label: "Home", Icon: Home, pathname: location.pathname },
-    };
   },
   component: RouteComponent,
   pendingComponent: () => (
@@ -47,7 +43,7 @@ export const Route = createFileRoute("/app")({
   ),
   staticData: {
     crumb: {
-      id: "contacts",
+      id: "/app",
       Component: () => (
         <Breadcrumb to="/app" children="Home" startIcon={<Home />} />
       ),

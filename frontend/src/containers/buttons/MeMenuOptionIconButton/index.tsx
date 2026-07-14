@@ -49,10 +49,11 @@ const MeMenuOptionIconButton: React.FC<IconButtonProps> = (props) => {
           selected={location.pathname.startsWith("/app/profile")}
           disabled={!userId}
           onClick={() => {
-            navigate({
-              to: "/app/profile/$id",
-              params: { id: String(userId) },
-            });
+            if (userId)
+              navigate({
+                to: "/app/profile/$id",
+                params: { id: userId },
+              });
             handleOnClose();
           }}
         >

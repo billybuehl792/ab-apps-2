@@ -19,7 +19,6 @@ export const jobSchema = z.object({
   recipients: z.array(contactSchema),
   referred_by: z.array(contactSchema),
   place: placeSchema.nullable(),
-  documents: z.array(z.string()),
   signed_at: z.iso.datetime().nullable(),
   estimated_at: z.iso.datetime().nullable(),
   sold_at: z.iso.datetime().nullable(),
