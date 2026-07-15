@@ -94,11 +94,10 @@ const GridCard: React.FC<IGridCardProps> = ({
         )}
         {image && (
           <CardMedia
-            component="img"
-            height="200"
             image={image}
-            alt={typeof label === "string" ? label : "Card image"}
+            title={typeof label === "string" ? label : "Card image"}
             {...slotProps?.cardMedia}
+            sx={[{ height: 200 }, ...sxUtils.asArray(slotProps?.cardMedia?.sx)]}
           />
         )}
         <GridCardContent
