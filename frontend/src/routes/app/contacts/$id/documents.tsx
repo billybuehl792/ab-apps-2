@@ -8,18 +8,20 @@ import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import { z } from "zod";
 import { Box, Container } from "@mui/material";
-import { Delete, FileUpload } from "@mui/icons-material";
+import { Delete, FileUpload, Info } from "@mui/icons-material";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
 import useContact from "@/store/hooks/useContact";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import DocumentList from "@/containers/lists/DocumentList";
 import MenuOptionMenu from "@/components/modals/MenuOptionMenu";
 import { contactQueries } from "@/store/queries/contacts";
+import { idSchema } from "@/store/schemas/basic";
 import { contactDocumentListRequestSchema } from "@/store/schemas/contacts";
 import { EListVariant } from "@/store/enums/layout";
 import type { TDocument } from "@/store/types/documents";
 
 const paramsSchema = contactDocumentListRequestSchema.shape.params.extend({
+  selected: idSchema.optional(),
   listVariant: z
     .enum(EListVariant)
     .default(EListVariant.List)
@@ -41,10 +43,6 @@ export const Route = createFileRoute("/app/contacts/$id/documents")({
 function RouteComponent() {
   /** Values */
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<TDocument | null>(
-    null,
-  );
   const [contextMenuPos, setContextMenuPos] = useState<{
     mouseX: number;
     mouseY: number;
@@ -52,7 +50,7 @@ function RouteComponent() {
 
   const navigate = Route.useNavigate();
   const loaderData = useLoaderData({ from: "/app/contacts/$id" });
-  const { listVariant, ...params } = Route.useSearch();
+  const { listVariant, selected, ...params } = Route.useSearch();
 
   const { contact } = loaderData;
   const { createDocument, deleteDocument } = useContact(contact, {
@@ -61,6 +59,10 @@ function RouteComponent() {
 
   /** Queries */
 
+  const documentQuery = useQuery({
+    ...contactQueries.contact(contact.id).documents.document(selected!).detail,
+    enabled: !!selected,
+  });
   const documentListQuery = useQuery(
     contactQueries.contact(contact.id).documents.list({ params }),
   );
@@ -95,7 +97,27 @@ function RouteComponent() {
     });
   };
 
-  const getCardOptions = (document: TDocument): IMenuOption[] => [
+  const listOptions: IMenuOption[] = [
+    {
+      id: "create",
+      label: "Add File",
+      value: "create",
+      Icon: FileUpload,
+      onClick: () => {
+        setContextMenuPos(null);
+        inputRef.current?.click();
+      },
+    },
+  ];
+
+  const getDocumentOptions = (document: TDocument): IMenuOption[] => [
+    {
+      id: "view",
+      label: "View",
+      value: "view",
+      Icon: Info,
+      onClick: () => handleOnParamsChange({ selected: document.id }),
+    },
     {
       id: "delete",
       label: "Delete",
@@ -106,18 +128,17 @@ function RouteComponent() {
     },
   ];
 
-  /** Options */
-
-  const contextMenuOptions: IMenuOption[] = [
+  const getSelectedDocumentOptions = (document: TDocument): IMenuOption[] => [
     {
-      id: "create",
-      label: "Upload File(s)",
-      value: "create",
-      Icon: FileUpload,
-      onClick: () => {
-        setContextMenuPos(null);
-        inputRef.current?.click();
-      },
+      id: "delete",
+      label: "Delete",
+      value: "delete",
+      color: "error.main",
+      Icon: Delete,
+      onClick: () =>
+        deleteDocument(document.id, {
+          onSuccess: () => handleOnParamsChange({ selected: undefined }),
+        }),
     },
   ];
 
@@ -138,6 +159,7 @@ function RouteComponent() {
           loading={documentListQuery.isLoading}
           error={documentListQuery.error}
           listVariant={listVariant}
+          options={listOptions}
           onPageChange={(page) => handleOnParamsChange({ page })}
           onPageSizeChange={(page_size) =>
             handleOnParamsChange({ page: 1, page_size })
@@ -148,11 +170,8 @@ function RouteComponent() {
           }
           slotProps={{
             card: (document) => ({
-              options: getCardOptions(document),
-              onClick: () => {
-                setSelectedDocument(document);
-                setDialogOpen(true);
-              },
+              options: getDocumentOptions(document),
+              onClick: () => handleOnParamsChange({ selected: document.id }),
             }),
           }}
           sx={[
@@ -165,24 +184,28 @@ function RouteComponent() {
         />
       </Container>
       <FullScreenDialog
-        open={dialogOpen}
-        label={selectedDocument?.label ?? ""}
-        onClose={() => setDialogOpen(false)}
-        onTransitionExited={() => setSelectedDocument(null)}
-        slotProps={{
-          backdrop: { sx: { opacity: 0.5 } },
-        }}
+        open={!!selected}
+        label={documentQuery.data?.label ?? ""}
+        loading={documentQuery.isLoading}
+        error={documentQuery.error}
+        empty={!documentQuery.data}
+        options={
+          documentQuery.isSuccess
+            ? getSelectedDocumentOptions(documentQuery.data)
+            : []
+        }
+        onClose={() => handleOnParamsChange({ selected: undefined })}
       >
         <Box
           component="img"
-          src={selectedDocument?.file ?? ""}
-          alt={selectedDocument?.label ?? ""}
+          src={documentQuery.data?.file ?? ""}
+          alt={documentQuery.data?.label ?? ""}
           sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
         />
       </FullScreenDialog>
       <MenuOptionMenu
         open={!!contextMenuPos}
-        options={contextMenuOptions}
+        options={listOptions}
         anchorReference="anchorPosition"
         anchorPosition={
           contextMenuPos

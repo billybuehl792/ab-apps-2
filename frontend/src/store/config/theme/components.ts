@@ -22,13 +22,9 @@ const components: Components<
   Omit<Theme, "palette" | "components"> & CssVarsTheme
 > = {
   MuiAppBar: {
+    defaultProps: { variant: "outlined" },
     styleOverrides: {
-      root: ({ theme }) => ({
-        height: theme.layout.nav.height,
-      }),
-    },
-    defaultProps: {
-      variant: "outlined",
+      root: ({ theme }) => ({ height: theme.layout.nav.height }),
     },
   },
   MuiAvatar: {
@@ -108,15 +104,6 @@ const components: Components<
   },
   MuiDialogContent: { defaultProps: { dividers: true } },
   MuiIconButton: {
-    variants: [
-      {
-        props: { "aria-selected": "true" },
-        style: ({ theme }) => ({
-          color: theme.palette.action.active,
-          backgroundColor: theme.palette.action.selected,
-        }),
-      },
-    ],
     styleOverrides: {
       root: {
         ["& .MuiSvgIcon-root"]: { fontSize: "inherit" },
@@ -222,16 +209,11 @@ const components: Components<
   },
   MuiToolbar: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: {
         position: "relative",
         height: "100%",
-        [theme.breakpoints.up("xs")]: {
-          minHeight: "unset",
-        },
-        [theme.breakpoints.up("sm")]: {
-          minHeight: "unset",
-        },
-      }),
+        "@media all": { minHeight: "unset" },
+      },
     },
   },
 };

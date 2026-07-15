@@ -3,6 +3,7 @@ import { Box, Grid, Pagination, Stack, type StackProps } from "@mui/material";
 import DocumentListCard, {
   type IDocumentListCardProps,
 } from "./components/DocumentListCard";
+import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
 import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
 import ListVariantSwitch from "@/components/fields/ListVariantSwitch";
 import StatusWrapper, {
@@ -23,6 +24,7 @@ export interface IDocumentListProps
   pageSize: number;
   search?: string;
   disabled?: boolean;
+  options?: IMenuOption[];
   renderCard?: (document: TDocument) => ReactNode;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
@@ -46,6 +48,7 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   error,
   empty,
   disabled,
+  options,
   renderCard,
   onSearchChange,
   onPageChange,
@@ -56,7 +59,8 @@ const DocumentList: React.FC<IDocumentListProps> = ({
 }) => {
   /** Values */
 
-  const showHeader = !!onSearchChange || !!onListVariantChange;
+  const showHeader =
+    !!onSearchChange || !!onListVariantChange || !!options?.length;
   const isGrid = listVariant === EListVariant.Grid;
   const pageCount = Math.ceil(count / pageSize);
 
@@ -101,12 +105,11 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           )}
           {!!onListVariantChange && (
             <ListVariantSwitch
-              checked={isGrid}
-              onChange={(_, v) =>
-                onListVariantChange(v ? EListVariant.Grid : EListVariant.List)
-              }
+              value={listVariant}
+              onChange={(_, v) => onListVariantChange(v)}
             />
           )}
+          {!!options?.length && <MenuOptionIconButton options={options} />}
         </Stack>
       )}
       <Box
@@ -142,15 +145,19 @@ const DocumentList: React.FC<IDocumentListProps> = ({
           )}
         </StatusWrapper>
       </Box>
-      <Stack direction="row" justifyContent="center" alignItems="center">
-        <Pagination
-          page={page}
-          count={pageCount}
-          variant="outlined"
-          disabled={disabled || !!loading}
-          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
-        />
-      </Stack>
+      {pageCount > 1 && (
+        <Stack direction="row" justifyContent="center" alignItems="center">
+          <Pagination
+            page={page}
+            count={pageCount}
+            variant="outlined"
+            disabled={disabled || !!loading}
+            onChange={(_, newPage) =>
+              page !== newPage && onPageChange?.(newPage)
+            }
+          />
+        </Stack>
+      )}
     </Stack>
   );
 };

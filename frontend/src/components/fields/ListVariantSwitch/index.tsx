@@ -2,6 +2,7 @@ import { Box, Switch, type SwitchProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import { EListVariant } from "@/store/enums/layout";
 
 const StyledSwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -46,8 +47,24 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const ListVariantSwitch: React.FC<SwitchProps> = (props) => (
+export interface IListVariantSwitchProps extends Omit<
+  SwitchProps,
+  "checked" | "onChange"
+> {
+  value?: EListVariant;
+  onChange?: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    newValue: EListVariant,
+  ) => void;
+}
+
+const ListVariantSwitch: React.FC<IListVariantSwitchProps> = ({
+  value,
+  onChange,
+  ...props
+}) => (
   <StyledSwitch
+    checked={value === EListVariant.Grid}
     icon={
       <Box component="span" className="MuiSwitch-thumb">
         <ViewListIcon sx={{ fontSize: 18 }} />
@@ -57,6 +74,9 @@ const ListVariantSwitch: React.FC<SwitchProps> = (props) => (
       <Box component="span" className="MuiSwitch-thumb">
         <GridViewIcon sx={{ fontSize: 18 }} />
       </Box>
+    }
+    onChange={(event, checked) =>
+      onChange?.(event, checked ? EListVariant.Grid : EListVariant.List)
     }
     {...props}
   />

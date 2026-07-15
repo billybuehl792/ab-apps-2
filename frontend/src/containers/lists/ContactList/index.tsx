@@ -130,15 +130,19 @@ const ContactList: React.FC<IContactListProps> = ({
           ))}
         </StatusWrapper>
       </Stack>
-      <Stack direction="row" justifyContent="center" alignItems="center">
-        <Pagination
-          page={page}
-          count={pageCount}
-          variant="outlined"
-          disabled={disabled || !!loading}
-          onChange={(_, newPage) => page !== newPage && onPageChange?.(newPage)}
-        />
-      </Stack>
+      {pageCount > 1 && (
+        <Stack direction="row" justifyContent="center" alignItems="center">
+          <Pagination
+            page={page}
+            count={pageCount}
+            variant="outlined"
+            disabled={disabled || !!loading}
+            onChange={(_, newPage) =>
+              page !== newPage && onPageChange?.(newPage)
+            }
+          />
+        </Stack>
+      )}
     </Stack>
   );
 };

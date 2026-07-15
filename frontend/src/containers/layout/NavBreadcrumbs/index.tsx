@@ -68,12 +68,13 @@ const NavBreadcrumbs: React.FC<INavBreadcrumbProps> = ({
         itemsAfterCollapse={maxCrumbs}
         slotProps={{
           ...slotProps,
-          collapsedIcon: { onClick: handleOnMenuOpen },
+          collapsedIcon: { onClick: handleOnMenuOpen, sx: { p: 0.5 } },
         }}
         sx={[
           {
             overflowX: "auto",
             "& .MuiBreadcrumbs-ol": { flexWrap: "nowrap" },
+            "& .MuiBreadcrumbs-li": { whiteSpace: "nowrap" },
           },
           ...sxUtils.asArray(props?.sx),
         ]}
