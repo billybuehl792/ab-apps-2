@@ -43,10 +43,7 @@ const components: Components<
       root: ({ theme, ownerState }) => ({
         '&[data-selected="true"]': {
           backgroundColor: theme.palette.action.selected,
-          border:
-            ownerState.variant === "outlined"
-              ? `1px solid ${theme.palette.action.selected}`
-              : undefined,
+          border: `1px solid ${theme.palette.primary.light}`,
         },
         '&[data-disabled="true"]': {
           color: theme.palette.text.disabled,

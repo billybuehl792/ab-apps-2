@@ -7,7 +7,11 @@ import { CardMedia } from "@mui/material";
 interface IDocumentListCardBaseProps {
   document: TDocument;
   options?: IMenuOption[];
-  onClick?: (document: TDocument) => void;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    document: TDocument,
+    selected: boolean,
+  ) => void;
 }
 
 type IDocumentListCardListProps = {
@@ -28,6 +32,7 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
   document,
   options,
   listVariant,
+  selected,
   onClick,
   ...props
 }) => {
@@ -36,9 +41,12 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
       <GridCard
         image={document.thumbnail ?? undefined}
         label={document.label}
+        selected={selected}
         description={document.original_filename}
         options={options}
-        {...(!!onClick && { onClick: () => onClick?.(document) })}
+        {...(!!onClick && {
+          onClick: (event) => onClick?.(event, document, !!selected),
+        })}
         {...props}
       />
     );
@@ -47,6 +55,7 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
     <ListCard
       label={document.label}
       description={document.original_filename}
+      selected={selected}
       options={options}
       startContent={
         <CardMedia
@@ -54,7 +63,9 @@ const DocumentListCard: React.FC<IDocumentListCardProps> = ({
           sx={{ width: 48, height: 48, borderRadius: 1 }}
         />
       }
-      {...(!!onClick && { onClick: () => onClick?.(document) })}
+      {...(!!onClick && {
+        onClick: (event) => onClick?.(event, document, !!selected),
+      })}
       {...props}
     />
   );

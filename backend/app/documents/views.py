@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 
+from .filters import DocumentsFilter
 from .models import Document
 
 from .serializers import DocumentSerializer
@@ -14,6 +15,7 @@ class DocumentViewSet(ModelViewSet):
     serializer_class = DocumentSerializer
     ordering = ("created_at",)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
+    filterset_class = DocumentsFilter
     search_fields = ("label",)
     ordering_fields = ("created_at", "label")
 

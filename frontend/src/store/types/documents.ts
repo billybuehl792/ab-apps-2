@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   documentCreateSchema,
+  documentUpdateSchema,
   documentListRequestSchema,
   documentListResponseSchema,
   documentSchema,
@@ -10,10 +11,7 @@ export type TDocument = z.infer<typeof documentSchema>;
 
 export type TDocumentCreate = z.infer<typeof documentCreateSchema>;
 
-export interface TDocumentUpdate {
-  label?: string;
-  description?: string;
-}
+export type TDocumentUpdate = z.infer<typeof documentUpdateSchema>;
 
 export type TDocumentListRequest = z.infer<typeof documentListRequestSchema>;
 

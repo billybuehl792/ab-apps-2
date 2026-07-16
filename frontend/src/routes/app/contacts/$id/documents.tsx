@@ -4,17 +4,19 @@ import {
   stripSearchParams,
   useLoaderData,
 } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import { z } from "zod";
 import { Box, Container } from "@mui/material";
 import { Delete, FileUpload, Info } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import useConfirm from "@/store/hooks/useConfirm";
 import sanitizeSearchParams from "@/store/middleware/sanitizeSearchParams";
-import useContact from "@/store/hooks/useContact";
 import FullScreenDialog from "@/components/modals/FullScreenDialog";
 import DocumentList from "@/containers/lists/DocumentList";
 import MenuOptionMenu from "@/components/modals/MenuOptionMenu";
-import { contactQueries } from "@/store/queries/contacts";
+import { documentQueries } from "@/store/queries/documents";
+import { documentMutations } from "@/store/mutations/documents";
 import { idSchema } from "@/store/schemas/basic";
 import { contactDocumentListRequestSchema } from "@/store/schemas/contacts";
 import { EListVariant } from "@/store/enums/layout";
@@ -43,40 +45,45 @@ export const Route = createFileRoute("/app/contacts/$id/documents")({
 function RouteComponent() {
   /** Values */
 
+  const [selectedDocuments, setSelectedDocuments] = useState<TDocument[]>([]);
   const [contextMenuPos, setContextMenuPos] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
 
   const navigate = Route.useNavigate();
+  const searchParams = Route.useSearch();
   const loaderData = useLoaderData({ from: "/app/contacts/$id" });
-  const { listVariant, selected, ...params } = Route.useSearch();
+  const snackbar = useSnackbar();
+  const confirm = useConfirm();
 
   const { contact } = loaderData;
-  const { createDocument, deleteDocument } = useContact(contact, {
-    onChange: () => documentListQuery.refetch(),
-  });
-
-  /** Queries */
-
-  const documentQuery = useQuery({
-    ...contactQueries.contact(contact.id).documents.document(selected!).detail,
-    enabled: !!selected,
-  });
-  const documentListQuery = useQuery(
-    contactQueries.contact(contact.id).documents.list({ params }),
-  );
+  const { listVariant, selected, ...params } = searchParams;
 
   const { inputRef, getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
     noClick: true,
     noKeyboard: true,
-    onDrop: (acceptedFiles) => {
-      acceptedFiles.forEach((file) =>
-        createDocument({ label: file.name, description: "", file }),
-      );
-    },
+    onDrop: (acceptedFiles) => handleCreateDocuments(acceptedFiles),
   });
+
+  /** Queries */
+
+  const documentListQuery = useQuery(
+    documentQueries.list({ params: { ...params, contact: contact.id } }),
+  );
+  const selectedDocumentQuery = useQuery({
+    ...documentQueries.document(selected!).detail,
+    enabled: !!selected,
+  });
+
+  /** Mutations */
+
+  const createDocumentMutation = useMutation(documentMutations.create);
+  const deleteDocumentMutation = useMutation(documentMutations.delete);
+
+  const isMutating =
+    createDocumentMutation.isPending || deleteDocumentMutation.isPending;
 
   /** Callbacks */
 
@@ -97,6 +104,68 @@ function RouteComponent() {
     });
   };
 
+  const handleCreateDocuments = async (files: File[]) => {
+    setSelectedDocuments([]);
+    const results = await Promise.allSettled(
+      files.map((file) =>
+        createDocumentMutation.mutateAsync({
+          label: file.name,
+          description: "",
+          file,
+          contact: contact.id,
+        }),
+      ),
+    );
+
+    const fulfilled = results.filter((r) => r.status === "fulfilled");
+    const rejected = results.filter((r) => r.status === "rejected");
+
+    if (fulfilled.length > 0)
+      snackbar.enqueueSnackbar(
+        `${fulfilled.length} files uploaded successfully`,
+        { variant: "success" },
+      );
+    if (rejected.length > 0)
+      snackbar.enqueueSnackbar(`${rejected.length} files failed to upload`, {
+        variant: "error",
+      });
+
+    documentListQuery.refetch();
+  };
+
+  const handleDeleteDocuments = (documents: TDocument[]) =>
+    confirm(
+      {
+        title: `Delete ${documents.length} document(s)?`,
+        description: `Are you sure you want to delete these documents? This operation is irreversible.`,
+      },
+      async () => {
+        const results = await Promise.allSettled(
+          documents.map(({ id }) => deleteDocumentMutation.mutateAsync(id)),
+        );
+
+        const fulfilled = results.filter((r) => r.status === "fulfilled");
+        const rejected = results.filter((r) => r.status === "rejected");
+
+        if (fulfilled.length > 0)
+          snackbar.enqueueSnackbar(
+            `${fulfilled.length} files deleted successfully`,
+            { variant: "success" },
+          );
+
+        if (rejected.length > 0)
+          snackbar.enqueueSnackbar(
+            `${rejected.length} files failed to delete`,
+            { variant: "error" },
+          );
+
+        documentListQuery.refetch();
+        setSelectedDocuments([]);
+      },
+    );
+
+  /** Options */
+
   const listOptions: IMenuOption[] = [
     {
       id: "create",
@@ -110,7 +179,7 @@ function RouteComponent() {
     },
   ];
 
-  const getDocumentOptions = (document: TDocument): IMenuOption[] => [
+  const getCardOptions = (document: TDocument): IMenuOption[] => [
     {
       id: "view",
       label: "View",
@@ -124,7 +193,18 @@ function RouteComponent() {
       value: "delete",
       color: "error.main",
       Icon: Delete,
-      onClick: () => deleteDocument(document.id),
+      onClick: () => deleteDocumentMutation.mutate(document.id),
+    },
+  ];
+
+  const getSelectedOptions = (documents: TDocument[]): IMenuOption[] => [
+    {
+      id: "delete",
+      label: "Delete",
+      value: "delete",
+      color: "error.main",
+      Icon: Delete,
+      onClick: () => handleDeleteDocuments(documents),
     },
   ];
 
@@ -136,7 +216,7 @@ function RouteComponent() {
       color: "error.main",
       Icon: Delete,
       onClick: () =>
-        deleteDocument(document.id, {
+        deleteDocumentMutation.mutate(document.id, {
           onSuccess: () => handleOnParamsChange({ selected: undefined }),
         }),
     },
@@ -157,9 +237,13 @@ function RouteComponent() {
           pageSize={params.page_size}
           search={params.search}
           loading={documentListQuery.isLoading}
+          disabled={isMutating}
           error={documentListQuery.error}
           listVariant={listVariant}
+          selected={selectedDocuments}
           options={listOptions}
+          cardOptions={getCardOptions}
+          selectedOptions={getSelectedOptions}
           onPageChange={(page) => handleOnParamsChange({ page })}
           onPageSizeChange={(page_size) =>
             handleOnParamsChange({ page: 1, page_size })
@@ -168,12 +252,7 @@ function RouteComponent() {
           onListVariantChange={(listVariant) =>
             handleOnParamsChange({ listVariant })
           }
-          slotProps={{
-            card: (document) => ({
-              options: getDocumentOptions(document),
-              onClick: () => handleOnParamsChange({ selected: document.id }),
-            }),
-          }}
+          onSelectedChange={setSelectedDocuments}
           sx={[
             { flexGrow: 1, width: "100%", pb: 2 },
             isDragActive && {
@@ -185,21 +264,21 @@ function RouteComponent() {
       </Container>
       <FullScreenDialog
         open={!!selected}
-        label={documentQuery.data?.label ?? ""}
-        loading={documentQuery.isLoading}
-        error={documentQuery.error}
-        empty={!documentQuery.data}
+        label={selectedDocumentQuery.data?.label ?? ""}
+        loading={selectedDocumentQuery.isLoading}
+        error={selectedDocumentQuery.error}
+        empty={!selectedDocumentQuery.data}
         options={
-          documentQuery.isSuccess
-            ? getSelectedDocumentOptions(documentQuery.data)
+          selectedDocumentQuery.isSuccess
+            ? getSelectedDocumentOptions(selectedDocumentQuery.data)
             : []
         }
         onClose={() => handleOnParamsChange({ selected: undefined })}
       >
         <Box
           component="img"
-          src={documentQuery.data?.file ?? ""}
-          alt={documentQuery.data?.label ?? ""}
+          src={selectedDocumentQuery.data?.file ?? ""}
+          alt={selectedDocumentQuery.data?.label ?? ""}
           sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
         />
       </FullScreenDialog>

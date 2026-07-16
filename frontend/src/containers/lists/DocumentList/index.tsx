@@ -1,15 +1,14 @@
 import React, { Fragment, type ReactNode } from "react";
 import { Box, Grid, Pagination, Stack, type StackProps } from "@mui/material";
-import DocumentListCard, {
-  type IDocumentListCardProps,
-} from "./components/DocumentListCard";
-import MenuOptionIconButton from "@/components/buttons/MenuOptionIconButton";
-import DebouncedSearchField from "@/components/fields/DebouncedSearchField";
-import ListVariantSwitch from "@/components/fields/ListVariantSwitch";
 import StatusWrapper, {
   type IStatusWrapperBaseProps,
 } from "@/components/layout/StatusWrapper";
-import { sxUtils } from "@/store/utils/sx";
+import DocumentListHeader, {
+  IDocumentListHeaderProps,
+} from "./components/DocumentListHeader";
+import DocumentListCard, {
+  type IDocumentListCardProps,
+} from "./components/DocumentListCard";
 import { EListVariant } from "@/store/enums/layout";
 import type { TDocument } from "@/store/types/documents";
 
@@ -24,14 +23,18 @@ export interface IDocumentListProps
   pageSize: number;
   search?: string;
   disabled?: boolean;
+  selected?: TDocument[];
   options?: IMenuOption[];
+  selectedOptions?: IMenuOption[] | ((selected: TDocument[]) => IMenuOption[]);
+  cardOptions?: IMenuOption[] | ((document: TDocument) => IMenuOption[]);
   renderCard?: (document: TDocument) => ReactNode;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onSearchChange?: (search: string) => void;
   onListVariantChange?: (variant: EListVariant) => void;
+  onSelectedChange?: (documents: TDocument[]) => void;
   slotProps?: {
-    header?: StackProps;
+    header?: Partial<IDocumentListHeaderProps>;
     list?: StackProps;
     card?: TCardProps | ((document: TDocument) => TCardProps);
   };
@@ -48,69 +51,113 @@ const DocumentList: React.FC<IDocumentListProps> = ({
   error,
   empty,
   disabled,
+  selected,
   options,
+  cardOptions,
+  selectedOptions,
   renderCard,
   onSearchChange,
   onPageChange,
   onPageSizeChange,
   onListVariantChange,
+  onSelectedChange,
   slotProps,
   ...props
 }) => {
   /** Values */
 
-  const showHeader =
-    !!onSearchChange || !!onListVariantChange || !!options?.length;
   const isGrid = listVariant === EListVariant.Grid;
   const pageCount = Math.ceil(count / pageSize);
+  const showHeader =
+    Boolean(!!onSearchChange || !!search) ||
+    Boolean(!!onListVariantChange || !!listVariant) ||
+    Boolean(!!onSelectedChange || !!selected?.length) ||
+    !!options?.length;
 
   /** Callbacks */
 
+  const handlePushSelection = (value: TDocument) =>
+    onSelectedChange?.([
+      ...(selected ?? []).filter((d) => d.id !== value.id),
+      value,
+    ]);
+
+  const handleReplaceSelection = (document: TDocument) =>
+    onSelectedChange?.([document]);
+
+  const handleSelectRange = (items: TDocument[], from: number, to: number) => {
+    if (from !== -1 && to !== -1) {
+      if (from < to) onSelectedChange?.(items.slice(from, to + 1));
+      else onSelectedChange?.(items.slice(to, from + 1).reverse());
+    }
+  };
+
+  const handleDeselectItem = (value: TDocument) =>
+    onSelectedChange?.(selected?.filter((d) => d.id !== value.id) ?? []);
+
+  const handleDeselectAll = () => onSelectedChange?.([]);
+
+  const handleOnCardClick: IDocumentListCardProps["onClick"] = (
+    event,
+    document,
+    isSelected,
+  ) => {
+    if (event.metaKey || event.ctrlKey) {
+      if (isSelected) handleDeselectItem(document);
+      else handlePushSelection(document);
+    } else if (event.shiftKey)
+      handleSelectRange(
+        items,
+        items.findIndex((d) => d.id === selected?.[0]?.id),
+        items.findIndex((d) => d.id === document.id),
+      );
+    else {
+      if (!!selected?.length && selected.length > 1)
+        handleReplaceSelection(document);
+      else if (isSelected) handleDeselectAll();
+      else handleReplaceSelection(document);
+    }
+  };
+
   const handleRenderCard: IDocumentListProps["renderCard"] =
     renderCard ??
-    ((document) => (
-      <DocumentListCard
-        document={document}
-        listVariant={listVariant}
-        {...(typeof slotProps?.card === "function"
-          ? slotProps.card(document)
-          : slotProps?.card)}
-      />
-    ));
+    ((document) => {
+      const isSelected = selected?.some((d) => d.id === document.id);
+      return (
+        <DocumentListCard
+          document={document}
+          listVariant={listVariant}
+          disabled={disabled}
+          selected={isSelected}
+          options={
+            typeof cardOptions === "function"
+              ? cardOptions(document)
+              : cardOptions
+          }
+          onClick={handleOnCardClick}
+          {...(typeof slotProps?.card === "function"
+            ? slotProps.card(document)
+            : slotProps?.card)}
+        />
+      );
+    });
 
   return (
     <Stack position="relative" spacing={2} {...props}>
       {!!showHeader && (
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
+        <DocumentListHeader
+          search={search}
+          loading={!!loading}
+          listVariant={listVariant}
+          options={options}
+          selected={selected}
+          selectedOptions={selectedOptions}
+          disabled={disabled}
+          onSearchChange={onSearchChange}
+          onListVariantChange={onListVariantChange}
+          onSelectedChange={onSelectedChange}
           {...slotProps?.header}
-          sx={[
-            {
-              py: 2,
-              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-            },
-            ...sxUtils.asArray(slotProps?.header?.sx),
-          ]}
-        >
-          {!!onSearchChange && (
-            <DebouncedSearchField
-              value={search}
-              size="small"
-              loading={!!loading && !!search}
-              onChange={onSearchChange}
-              sx={{ flex: 1 }}
-            />
-          )}
-          {!!onListVariantChange && (
-            <ListVariantSwitch
-              value={listVariant}
-              onChange={(_, v) => onListVariantChange(v)}
-            />
-          )}
-          {!!options?.length && <MenuOptionIconButton options={options} />}
-        </Stack>
+        />
       )}
       <Box
         {...slotProps?.list}

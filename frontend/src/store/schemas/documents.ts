@@ -19,9 +19,23 @@ export const documentCreateSchema = z.object({
   label: z.string(),
   description: z.string().optional(),
   file: z.instanceof(File),
+  contact: idSchema.optional().catch(undefined),
+  job: idSchema.optional().catch(undefined),
 });
 
-export const documentListRequestSchema = listRequestSchema;
+export const documentUpdateSchema = z.object({
+  label: z.string().optional(),
+  description: z.string().optional(),
+  contact: idSchema.optional().catch(undefined),
+  job: idSchema.optional().catch(undefined),
+});
+
+export const documentListRequestSchema = listRequestSchema.extend({
+  params: listRequestSchema.shape.params.extend({
+    contact: idSchema.optional().catch(undefined),
+    job: idSchema.optional().catch(undefined),
+  }),
+});
 
 export const documentListResponseSchema = listResponseSchema.extend({
   results: z.array(documentSchema),

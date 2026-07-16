@@ -10,6 +10,5 @@ export enum EDocumentListOrdering {
 }
 
 export enum EDocumentOptionId {
-  Detail = "detail",
   Delete = "delete",
 }
