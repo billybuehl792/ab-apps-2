@@ -22,6 +22,7 @@ env/
 .coverage.*
 htmlcov/
 test_data/
+test_output/
 
 # Type checking
 .mypy_cache/
