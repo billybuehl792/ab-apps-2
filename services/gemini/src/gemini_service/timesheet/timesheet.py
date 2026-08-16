@@ -69,12 +69,21 @@ class Timesheet:
 
         return report
 
-    def generate_report(self, path: Path) -> Path:
+    def create_json(self, path: Path) -> Path:
         report = self.get_report()
-        output_path = path / "report.pdf"
+
+        path.write_text(
+            report.model_dump_json(indent=2),
+            encoding="utf-8",
+        )
+
+        return path
+
+    def create_pdf(self, path: Path) -> Path:
+        report = self.get_report()
 
         document = SimpleDocTemplate(
-            str(output_path),
+            str(path),
             pagesize=letter,
             rightMargin=0.25 * inch,
             leftMargin=0.25 * inch,
@@ -164,7 +173,7 @@ class Timesheet:
 
         document.build(elements)
 
-        return output_path
+        return path
 
     @staticmethod
     def extract_from_json(file: Path) -> TimesheetModel:

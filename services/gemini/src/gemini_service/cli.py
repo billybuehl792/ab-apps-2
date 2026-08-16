@@ -1,39 +1,6 @@
 import argparse
-import json
 from pathlib import Path
 from .timesheet import Timesheet
-from .timesheet.models import TimesheetModel
-
-
-def extract_timesheet(path: Path):
-    result = Timesheet.extract(path)
-    for i in result:
-        print(i.model_dump_json(indent=4))
-
-
-def test(path: Path):
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    timesheets = [
-        TimesheetModel.model_validate(item)
-        for item in data
-    ]
-
-    ts = Timesheet(timesheets)
-    report = ts.generate_report(path.parent)
-    print(f"Report generated at {report.absolute()}")
-
-
-# def generate_report(file: Path):
-#     report = test(path)
-
-#     Path(file).write_text(
-#         report.model_dump_json(indent=2),
-#         encoding="utf-8",
-#     )
-
-#     print(f"Report generated at {file.absolute}")
 
 
 def main():
@@ -43,25 +10,26 @@ def main():
     # extract
     extract = commands.add_parser("extract")
     extract.add_argument("path", type=Path)
-
-    # test
-    extract = commands.add_parser("test")
-    extract.add_argument("path", type=Path)
-
-    # validate
-    validate = commands.add_parser("validate")
-    validate.add_argument("--valid", action=argparse.BooleanOptionalAction)
+    extract.add_argument("--output", "-o", type=Path, default=Path.cwd())
+    extract.add_argument("--json", action="store_true")
+    extract.add_argument("--pdf", action="store_true")
 
     args = parser.parse_args()
 
     if args.command == "extract":
-        extract_timesheet(args.path)
+        timesheets = Timesheet.extract(Path(args.path))
+        ts = Timesheet(timesheets)
 
-    elif args.command == "test":
-        test(args.path)
+        if (args.output):
+            output_dir = Path(args.output)
 
-    elif args.command == "validate":
-        pass
+            if args.json:
+                json_path = output_dir / "output.json"
+                ts.create_json(json_path)
+
+            if args.pdf:
+                pdf_path = output_dir / "output.pdf"
+                ts.create_pdf(pdf_path)
 
 
 if __name__ == "__main__":
