@@ -1,4 +1,3 @@
-import os
 import json
 from pathlib import Path
 import mimetypes
@@ -28,16 +27,6 @@ class Timesheet:
     def __init__(self, timesheets: list[TimesheetModel] = []):
         self.timesheets = timesheets
 
-    def append_timesheet(self, timesheet: TimesheetModel):
-        self.timesheets.append(timesheet)
-
-    def get_timesheet_data(self):
-        sheets = []
-        for timesheet in self.timesheets:
-            sheets.append(timesheet.model_dump())
-
-        return sheets
-
     def get_report(self):
         report = TimesheetReportModel(weeks={})
         for timesheet in self.timesheets:
@@ -48,6 +37,7 @@ class Timesheet:
             week_start_date = get_week_start(timesheet_date)
             if week_start_date not in report.weeks:
                 report.weeks[week_start_date] = TimesheetReportWeekModel(
+                    name="",
                     total_time=0,
                     overtime=0,
                     days={day: TimesheetReportDayModel(
@@ -63,6 +53,7 @@ class Timesheet:
             day.total_time = hours_between(
                 timesheet.data.start_time, timesheet.data.end_time)
             day.entries.extend(timesheet.data.entries)
+            week.name = timesheet.data.name
             week.total_time += day.total_time
             week.overtime = max(0, week.total_time -
                                 timesheet_settings.overtime_threshold)
@@ -72,8 +63,13 @@ class Timesheet:
     def create_json(self, path: Path) -> Path:
         report = self.get_report()
 
+        raw = [timesheet.model_dump(mode="json")
+               for timesheet in self.timesheets]
+
+        data = {"report": report.model_dump(mode="json"), "raw": raw}
+
         path.write_text(
-            report.model_dump_json(indent=2),
+            json.dumps(data, indent=2),
             encoding="utf-8",
         )
 
@@ -105,13 +101,13 @@ class Timesheet:
         for week_start, week in sorted(report.weeks.items()):
             elements.append(
                 Paragraph(
-                    f"Week of {week_start.strftime('%m/%d/%Y')}",
+                    f"{week.name} - Week of {week_start.strftime('%m/%d/%Y')}",
                     styles["Heading2"],
                 )
             )
 
             data = [
-                ["Date", "Start", "End", "Address, ""Description, ""Total Hours"]
+                ["Date", "Start", "End", "Address", "Description", "Total Hours"]
             ]
 
             for day_date, day in sorted(week.days.items()):
@@ -132,17 +128,17 @@ class Timesheet:
                         entry_start_time, entry_end_time)
                     data.append([
                         "",
-                        entry_start_time.strftime("%I:%M %p"),
-                        entry_end_time.strftime("%I:%M %p"),
-                        entry.address,
-                        entry.description,
+                        entry_start_time.strftime("%I:%M %p") or "",
+                        entry_end_time.strftime("%I:%M %p") or "",
+                        entry.address or "",
+                        entry.description or "",
                         f"{total_entry_time:.2f}",
                     ])
 
             table = Table(
                 data,
                 hAlign="LEFT",
-                colWidths=[inch, inch, inch, inch * 2, inch * 2, inch * .75],
+                colWidths=[inch, inch, inch, inch * 1.5, inch * 2, inch],
             )
 
             table.setStyle(
@@ -174,15 +170,6 @@ class Timesheet:
         document.build(elements)
 
         return path
-
-    @staticmethod
-    def extract_from_json(file: Path) -> TimesheetModel:
-        print(f"Extracting timesheet from json: {file.absolute()}")
-
-        with open(file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        return TimesheetModel.model_validate(data)
 
     @staticmethod
     def extract_from_image(file: Path) -> TimesheetModel:
@@ -228,8 +215,5 @@ class Timesheet:
 
             if mime_type.startswith("image/"):
                 return [Timesheet.extract_from_image(path)]
-
-            if mime_type.startswith("application/json"):
-                return [Timesheet.extract_from_json(path)]
 
         return []

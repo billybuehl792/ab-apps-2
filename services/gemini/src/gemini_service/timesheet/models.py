@@ -10,6 +10,7 @@ class TimesheetEntryModel(BaseModel):
 
 
 class TimesheetDataModel(BaseModel):
+    name: str
     date: str
     start_time: str
     end_time: str
@@ -29,6 +30,7 @@ class TimesheetReportDayModel(BaseModel):
 
 
 class TimesheetReportWeekModel(BaseModel):
+    name: str
     total_time: float
     overtime: float
     days: dict[datetime.date, TimesheetReportDayModel]

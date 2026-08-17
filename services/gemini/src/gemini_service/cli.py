@@ -1,6 +1,25 @@
+import json
 import argparse
 from pathlib import Path
+
 from .timesheet import Timesheet
+from .timesheet.models import TimesheetModel
+
+
+def test():
+    root_path = Path(__file__).parent.parent.parent
+    output_file_path = root_path / "test_output" / "output.json"
+
+    with open(output_file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    timesheets: list[TimesheetModel] = []
+    for timesheet in data['raw']:
+        timesheets.append(TimesheetModel.model_validate(timesheet))
+
+    ts = Timesheet(timesheets)
+    ts.create_pdf(Path(root_path / "test_output" / "output2.pdf"))
+    print(ts.get_report().model_dump_json(indent=2))
 
 
 def main():
@@ -17,7 +36,9 @@ def main():
     args = parser.parse_args()
 
     if args.command == "extract":
-        timesheets = Timesheet.extract(Path(args.path))
+        input_path = Path(args.path)
+
+        timesheets = Timesheet.extract(input_path)
         ts = Timesheet(timesheets)
 
         if (args.output):
@@ -30,6 +51,8 @@ def main():
             if args.pdf:
                 pdf_path = output_dir / "output.pdf"
                 ts.create_pdf(pdf_path)
+        else:
+            print(ts.get_report().model_dump_json(indent=2))
 
 
 if __name__ == "__main__":
