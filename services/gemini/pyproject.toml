@@ -1,0 +1,23 @@
+[project]
+name = "gemini-service"
+version = "0.1.0"
+description = "Gemini AI service"
+readme = "README.md"
+authors = [
+    { name = "billybuehl792", email = "billybuehl792@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "google-genai>=1.47.0",
+    "pydantic>=2.13.4",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.2.1",
+    "reportlab>=5.0.0",
+]
+
+[project.scripts]
+gemini = "gemini_service.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
